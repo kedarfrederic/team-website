@@ -5,6 +5,20 @@
    correctly styled nav without duplicating CSS in every page.
    ──────────────────────────────────────────────────────────── */
 
+/* Nyght Serif — italic accent face used across the site for the
+   "stylised" portion of headlines and the .nyght utility class.
+   Hosted on the team-nomorechaos repo (already public, already used
+   by older Webflow landing pages). */
+@font-face{
+  font-family:"Nyght Serif";font-weight:500;font-style:italic;font-display:swap;
+  src:url("https://raw.githubusercontent.com/siteamrollouts/team-nomorechaos/main/NyghtSerif-MediumItalic.woff2") format("woff2");
+}
+@font-face{
+  font-family:"Nyght Serif";font-weight:300;font-style:italic;font-display:swap;
+  src:url("https://raw.githubusercontent.com/siteamrollouts/team-nomorechaos/main/NyghtSerif-LightItalic.woff2") format("woff2");
+}
+.nyght{font-family:"Nyght Serif",Georgia,serif;font-style:italic;font-weight:300}
+
 /* Token fallbacks — host pages may already define these in :root,
    but we also define them here so a Webflow page with no other
    CSS still has the colours the nav references. */
