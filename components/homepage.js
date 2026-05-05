@@ -390,10 +390,10 @@ gsap.ticker.lagSmoothing(0);
   // ── Flanking tiles: force hidden, set BG to cover ──
   gsap.set(left, { x: 0, rotation: 0, opacity: 0 });
   gsap.set(right, { x: 0, rotation: 0, opacity: 0 });
-  left.style.backgroundImage = 'url(assets/hero-bg-option-4.jpeg)';
+  left.style.backgroundImage = 'url(https://siteamrollouts.github.io/team-website/assets/hero-bg-option-4.jpeg)';
   left.style.backgroundSize = 'cover';
   left.style.backgroundPosition = 'center';
-  right.style.backgroundImage = 'url(assets/hero-bg-option-3.jpeg)';
+  right.style.backgroundImage = 'url(https://siteamrollouts.github.io/team-website/assets/hero-bg-option-3.jpeg)';
   right.style.backgroundSize = 'cover';
   right.style.backgroundPosition = 'center';
 

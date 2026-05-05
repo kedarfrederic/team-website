@@ -1,6 +1,16 @@
 /* Team — Homepage stylesheet
    Hosted on GH Pages, loaded via Webflow page custom code on /. */
 
+/* Webflow's body has its own font/color which beats body{} below since
+   the homepage HTML is injected as a child. Force defaults on the mount
+   point so headlines etc. inherit the right text color. */
+#team-home-root{
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  color:#111110;
+  background:#fff;
+}
+#team-home-root h1,#team-home-root h2,#team-home-root h3,#team-home-root h4,#team-home-root h5,#team-home-root h6{color:inherit}
+
 /* =============================================
    RESET & TOKENS
    ============================================= */
