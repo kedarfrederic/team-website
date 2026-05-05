@@ -38,28 +38,28 @@
 
   // ─── SINGLE SOURCE OF TRUTH FOR ALL SITE LINKS ───
   const links = {
-    home: 'homepage.html',
+    home: '/',
     // Product
-    orchestration: 'orchestration.html',
-    intelligence: 'intelligence.html',
-    integrations: 'integrations.html',
-    security: 'security.html',
+    orchestration: '/orchestration',
+    intelligence: '/intelligence',
+    integrations: '/integrations',
+    security: '/security',
     // Solutions (Enterprise moved in here as "For Enterprise")
-    labels: 'for-labels.html',
-    managers: 'for-managers.html',
-    artists: 'for-artists.html',
-    partners: 'for-partners.html',
-    enterprise: 'enterprise.html',
+    labels: '/for-labels',
+    managers: '/for-managers',
+    artists: '/for-artists',
+    partners: '/for-partners',
+    enterprise: '/enterprise',
     // Resources
-    insights: 'insights.html',
-    demo: 'demo.html',
-    contact: 'contact.html',
-    about: 'about.html',
-    changelog: 'changelog.html',
+    insights: '/insights',
+    demo: '/demo',
+    contact: '/contact',
+    about: '/about',
+    changelog: '/changelog',
     // Right nav
-    pricing: 'pricing.html',
-    login: 'sign-in.html',
-    signup: 'onboarding.html',
+    pricing: '/pricing',
+    login: '/sign-in',
+    signup: '/onboarding',
     // Status (TODO: replace with real status page URL once provisioned)
     status: '#status',
   };
