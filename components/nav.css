@@ -22,7 +22,9 @@
 /* Inline arrow SVGs across the site rely on stroke + fill:none to render
    as line arrows instead of filled triangles. Webflow can strip those
    inline attributes on insertion, so we enforce them here too. */
-.about-cta__link svg,.role-item__link svg,.trust-section__link svg{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.about-cta__link svg,.about-cta__link svg *,
+.role-item__link svg,.role-item__link svg *,
+.trust-section__link svg,.trust-section__link svg *{fill:none !important;stroke:currentColor !important;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
 /* Token fallbacks — host pages may already define these in :root,
    but we also define them here so a Webflow page with no other
