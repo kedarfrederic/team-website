@@ -61,11 +61,24 @@
     if (field.parentNode) field.parentNode.appendChild(pill);
   }
 
+  function isFormDark(form){
+    // If the form's computed text color is bright, the page is dark.
+    try {
+      var c = getComputedStyle(form).color;
+      var m = c.match(/\d+/g);
+      if (!m || m.length < 3) return false;
+      var r = +m[0], g = +m[1], b = +m[2];
+      var lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+      return lum > 180;
+    } catch (e) { return false; }
+  }
+
   function attach(form){
     if (form.hasAttribute('data-team-validated')) return;
     if (!form.querySelector('[required]')) return;
     form.setAttribute('data-team-validated', '');
     form.setAttribute('novalidate', '');
+    if (isFormDark(form)) form.classList.add('team-form--dark');
 
     form.addEventListener('submit', function(e){
       var firstInvalid = null;

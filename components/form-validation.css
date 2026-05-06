@@ -51,12 +51,21 @@
   outline:none !important;
 }
 
-/* On dark surfaces (e.g. nav, footer newsletter) flip text colors */
+/* On dark surfaces (e.g. nav, footer newsletter, demo/contact pages)
+   flip text + bg colors. .team-form--dark is added by form-validation.js
+   when the form's computed text colour is bright (= dark page). */
 .footer .team-form-error,
-[data-theme="dark"] .team-form-error{
-  background:rgba(255,255,255,0.06);
-  border-color:rgba(255,255,255,0.12);
+[data-theme="dark"] .team-form-error,
+.team-form--dark .team-form-error{
+  background:rgba(255,255,255,0.08);
+  border-color:rgba(255,255,255,0.15);
   color:#fff;
+}
+/* Dark-variant invalid field ring — slightly heavier so it stands out
+   against the translucent dark card. */
+.team-form--dark .team-form-field--invalid{
+  border-color:#D9FA87 !important;
+  box-shadow:0 0 0 3px rgba(217,250,135,0.35) !important;
 }
 
 @keyframes team-form-error-in{
