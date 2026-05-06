@@ -81,6 +81,12 @@
     var utms = readUtms();
     Object.keys(utms).forEach(function(k){ if (utms[k]) payload[k] = utms[k]; });
     payload.page_url = window.location.href;
+    // Newsletter only collects email; derive a first_name from the
+    // email local-part so the CRM contact passes validation. SDR can
+    // tidy up on enrichment.
+    if (sourceForm === 'newsletter' && !payload.first_name && payload.email) {
+      payload.first_name = payload.email.split('@')[0].slice(0, 80) || 'Newsletter';
+    }
     return payload;
   }
 
@@ -117,6 +123,7 @@
         if (submitBtn) submitBtn.textContent = sourceForm === 'demo'  ? 'Booked — we\'ll be in touch'
                                        : sourceForm === 'contact'    ? 'Sent — we\'ll be in touch'
                                        : sourceForm === 'onboarding' ? 'Setting up your workspace…'
+                                       : sourceForm === 'newsletter' ? 'Subscribed!'
                                                                      : 'Thanks!';
         form.dispatchEvent(new CustomEvent('team:lead-submitted', { detail: payload, bubbles: true }));
         // Optional: redirect onboarding straight into the app handoff

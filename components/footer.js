@@ -45,8 +45,8 @@
       <p>Monthly insights on rollout strategy, industry trends, and how the best teams ship releases. No spam.</p>
     </div>
     <div>
-      <form class="footer__newsletter-form" id="newsletterForm">
-        <input type="email" class="footer__newsletter-input" id="newsletterEmail" placeholder="you@yourlabel.com" required>
+      <form class="footer__newsletter-form" id="newsletterForm" data-hubspot-form="newsletter">
+        <input type="email" class="footer__newsletter-input" id="newsletterEmail" name="email" placeholder="you@yourlabel.com" required>
         <button type="submit" class="footer__newsletter-btn" id="newsletterBtn">Subscribe</button>
       </form>
       <p id="newsletterMsg" style="margin-top:0.75rem;font-size:0.8125rem;color:rgba(255,255,255,0.65);opacity:0;transition:opacity 0.3s">Thanks for joining us on this wild ride!</p>
@@ -113,15 +113,14 @@
     document.body.insertAdjacentHTML('beforeend', footerHTML);
   }
 
-  // Newsletter form handler
-  const form = document.getElementById('newsletterForm');
-  if (form) {
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-      const msg = document.getElementById('newsletterMsg');
-      const btn = document.getElementById('newsletterBtn');
-      if (msg) msg.style.opacity = '1';
-      if (btn) { btn.textContent = 'Subscribed!'; btn.disabled = true; }
-    });
-  }
+  // Newsletter — submit is handled site-wide by website-leads.js (any
+// form with data-hubspot-form). Reveal the success message when that
+// loader fires its team:lead-submitted event for the newsletter source.
+  document.addEventListener('team:lead-submitted', function(e) {
+    if (!e.detail || e.detail.source_form !== 'newsletter') return;
+    const msg = document.getElementById('newsletterMsg');
+    const btn = document.getElementById('newsletterBtn');
+    if (msg) msg.style.opacity = '1';
+    if (btn) { btn.disabled = true; }
+  });
 })();
