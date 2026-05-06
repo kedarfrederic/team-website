@@ -1,0 +1,62 @@
+/* ────────────────────────────────────────────────────────────
+   Team — Form validation styles
+   Auto-injected by components/form-validation.js. Provides the
+   pill-style error message + invalid-field highlight that
+   replaces the browser default validation tooltip.
+   ──────────────────────────────────────────────────────────── */
+
+.team-form-error{
+  display:inline-flex;
+  align-items:center;
+  gap:0.5rem;
+  margin-top:0.5rem;
+  padding:0.375rem 0.875rem 0.375rem 0.375rem;
+  background:rgba(25,25,25,0.04);
+  border:1px solid rgba(25,25,25,0.08);
+  border-radius:100px;
+  font-size:0.8125rem;
+  font-weight:500;
+  color:#191919;
+  letter-spacing:-0.005em;
+  animation:team-form-error-in 0.28s cubic-bezier(0.16,1,0.3,1);
+  max-width:100%;
+}
+.team-form-error__icon{
+  width:1.25rem;height:1.25rem;
+  border-radius:50%;
+  background:#D9FA87;
+  color:#191919;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:800;
+  font-size:0.8125rem;
+  line-height:1;
+  flex-shrink:0;
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+}
+
+/* Field highlight when invalid — subtle ring in the same lime accent */
+.team-form-field--invalid{
+  border-color:#D9FA87 !important;
+  box-shadow:0 0 0 3px rgba(217,250,135,0.28) !important;
+  outline:none !important;
+}
+
+/* On dark surfaces (e.g. nav, footer newsletter) flip text colors */
+.footer .team-form-error,
+[data-theme="dark"] .team-form-error{
+  background:rgba(255,255,255,0.06);
+  border-color:rgba(255,255,255,0.12);
+  color:#fff;
+}
+
+@keyframes team-form-error-in{
+  from{opacity:0;transform:translateY(-4px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* Respect reduced-motion */
+@media(prefers-reduced-motion:reduce){
+  .team-form-error{animation:none}
+}
