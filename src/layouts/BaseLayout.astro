@@ -1,0 +1,81 @@
+---
+import "../styles/global.css";
+import Nav from "../components/layout/Nav.astro";
+import Footer from "../components/layout/Footer.astro";
+import { getSiteSettings } from "../lib/queries";
+import { urlFor } from "../lib/sanity";
+
+interface SeoBlock {
+  metaTitle?: string;
+  metaDescription?: string;
+  ogImage?: { asset?: { _ref: string } };
+  noIndex?: boolean;
+}
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: { asset?: { _ref: string } };
+  seo?: SeoBlock;
+  /** Override canonical URL — defaults to current page path */
+  canonical?: string;
+}
+
+const { title, description, ogImage, seo, canonical } = Astro.props;
+const settings = await getSiteSettings();
+
+// Compose final SEO values: page-specific seo block wins, then page-level
+// props, then site-wide defaults from settings.
+const defaultSeo: SeoBlock = settings?.defaultSeo ?? {};
+
+const finalTitle =
+  seo?.metaTitle ?? title ?? defaultSeo.metaTitle ?? "Team — The Operating System for Music Releases";
+const finalDescription =
+  seo?.metaDescription ?? description ?? defaultSeo.metaDescription ?? "Stop juggling spreadsheets, Slack threads, and email chains. One platform for your entire rollout.";
+const finalOgImage = seo?.ogImage ?? ogImage ?? defaultSeo.ogImage;
+const ogImageUrl = finalOgImage?.asset?._ref
+  ? urlFor(finalOgImage).width(1200).height(630).fit("crop").url()
+  : "https://teamrollouts.com/og-image.png";
+
+const noIndex = seo?.noIndex === true;
+const canonicalUrl =
+  canonical ?? new URL(Astro.url.pathname, Astro.site ?? "https://teamrollouts.com").toString();
+---
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{finalTitle}</title>
+  <meta name="description" content={finalDescription} />
+  {noIndex && <meta name="robots" content="noindex" />}
+  <link rel="canonical" href={canonicalUrl} />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content={finalTitle} />
+  <meta property="og:description" content={finalDescription} />
+  <meta property="og:image" content={ogImageUrl} />
+  <meta property="og:url" content={canonicalUrl} />
+  <meta property="og:type" content="website" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={finalTitle} />
+  <meta name="twitter:description" content={finalDescription} />
+  <meta name="twitter:image" content={ogImageUrl} />
+
+  <!-- Preconnect for fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <slot name="head" />
+</head>
+<body>
+  <Nav settings={settings} />
+  <main>
+    <slot />
+  </main>
+  <Footer settings={settings} />
+</body>
+</html>

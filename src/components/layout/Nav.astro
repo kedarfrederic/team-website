@@ -1,0 +1,155 @@
+---
+/**
+ * Top navigation bar — driven by siteSettings.navGroups.
+ *
+ * Phase 2 v1: simple flat layout (links inline, no dropdown). The
+ * dropdown chrome from the legacy site (with featured cards, descriptions
+ * per link) ports in Phase 3 once we have block components for it.
+ */
+
+interface NavLink {
+  label: string;
+  description?: string;
+  href: string;
+}
+
+interface NavGroup {
+  label: string;
+  links?: NavLink[];
+}
+
+interface Cta {
+  label?: string;
+  href?: string;
+}
+
+interface Props {
+  settings: {
+    navGroups?: NavGroup[];
+    navPrimaryCta?: Cta;
+    navSecondaryCta?: Cta;
+  } | null;
+}
+
+const { settings } = Astro.props;
+const groups = settings?.navGroups ?? [];
+const primary = settings?.navPrimaryCta;
+const secondary = settings?.navSecondaryCta;
+---
+
+<nav class="nav" id="nav">
+  <div class="nav__inner container">
+    <a href="/" class="nav__logo" aria-label="Team home">Team</a>
+
+    <ul class="nav__groups">
+      {
+        groups.map((group) => (
+          <li class="nav__group">
+            <span class="nav__group-label">{group.label}</span>
+            {group.links && group.links.length > 0 && (
+              <ul class="nav__sublinks">
+                {group.links.map((link) => (
+                  <li>
+                    <a href={link.href}>{link.label}</a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="nav__cta">
+      {secondary?.label && secondary.href && (
+        <a href={secondary.href} class="nav__secondary">
+          {secondary.label}
+        </a>
+      )}
+      {primary?.label && primary.href && (
+        <a href={primary.href} class="btn btn--primary">
+          {primary.label}
+        </a>
+      )}
+    </div>
+  </div>
+</nav>
+
+<style>
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--grey);
+  }
+  .nav__inner {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    height: 64px;
+  }
+  .nav__logo {
+    font-weight: 700;
+    font-size: 1.125rem;
+    letter-spacing: -0.02em;
+  }
+  .nav__groups {
+    display: flex;
+    gap: 1.5rem;
+    list-style: none;
+    flex: 1;
+  }
+  .nav__group {
+    position: relative;
+  }
+  .nav__group-label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    cursor: default;
+  }
+  .nav__sublinks {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #fff;
+    border: 1px solid var(--grey);
+    border-radius: 8px;
+    padding: 0.5rem 0;
+    list-style: none;
+    min-width: 200px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-4px);
+    transition: opacity 0.15s, transform 0.15s, visibility 0.15s;
+  }
+  .nav__group:hover .nav__sublinks,
+  .nav__group:focus-within .nav__sublinks {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+  .nav__sublinks li a {
+    display: block;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    transition: background 0.15s;
+  }
+  .nav__sublinks li a:hover {
+    background: var(--bg);
+  }
+  .nav__cta {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+  .nav__secondary {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+  }
+  .nav__secondary:hover {
+    color: #111;
+  }
+</style>

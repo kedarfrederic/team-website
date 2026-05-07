@@ -3,7 +3,19 @@ node_modules/
 *.log
 .env
 .env.local
+.env.production
+
+# Astro build artifacts
+.astro/
+dist/
+
+# Sanity local artifacts
+.sanity/
 
 # Internal exploration folders — not referenced by any production page
 example-moving-screen/
 rotato-test/
+
+# Oversized source video — exceeds Cloudflare Pages 25MB limit.
+# The web-optimized brain-1-web.mp4 is what's actually referenced in HTML.
+assets/brain-1.mov
