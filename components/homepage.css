@@ -2052,40 +2052,85 @@ details[open] .accordion-summary svg{transform:rotate(180deg)}
     padding: 1rem;
     box-shadow: 0 4px 24px rgba(0,0,0,0.04);
   }
-  /* Scroll-triggered stagger for the chat bubbles. JS toggles
-     .is-visible via IntersectionObserver (initMobileChatHero in
-     homepage.js) when the panel enters the viewport. */
+  /* Chat bubbles cascade in via pure CSS @keyframes — no JS dependency.
+     Each row starts hidden and fades to visible with a stagger. The
+     animation runs once on mount; if the user scrolls past before it
+     finishes, they still see the final visible state because the
+     keyframe ends at opacity:1. Earlier IO/ScrollTrigger version was
+     unreliable (sometimes left the panel empty), so visibility is now
+     guaranteed by the CSS alone. */
   .mobile-chat-hero__panel > * {
     opacity: 0;
     transform: translateY(10px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
+    animation: mchBubbleIn 0.5s ease forwards;
   }
-  .mobile-chat-hero__panel.is-visible > *:nth-child(1) { opacity: 1; transform: translateY(0); transition-delay: 0.1s; }
-  .mobile-chat-hero__panel.is-visible > *:nth-child(2) { opacity: 1; transform: translateY(0); transition-delay: 0.7s; }
-  .mobile-chat-hero__panel.is-visible > *:nth-child(3) { opacity: 1; transform: translateY(0); transition-delay: 1.6s; }
-  .mobile-chat-hero__panel.is-visible > *:nth-child(4) { opacity: 1; transform: translateY(0); transition-delay: 2.2s; }
+  .mobile-chat-hero__panel > *:nth-child(1) { animation-delay: 0.2s; }
+  .mobile-chat-hero__panel > *:nth-child(2) { animation-delay: 0.9s; }
+  .mobile-chat-hero__panel > *:nth-child(3) { animation-delay: 1.8s; }
+  .mobile-chat-hero__panel > *:nth-child(4) { animation-delay: 2.4s; }
+  @keyframes mchBubbleIn {
+    to { opacity: 1; transform: translateY(0); }
+  }
 
-  /* FIX-#5 (CX-46): tile illustrations overflowed the cards because
-     .features-preview had padding:3rem (huge on a narrow card) and
-     ph-budget laid out donut+legend horizontally. Constrain every
-     placeholder to 100% width, drop the heavy padding, and stack
-     ph-budget vertically so legend rows have full width to breathe. */
-  .features-preview { padding: 1rem !important; aspect-ratio: 4/3; }
-  .features-preview__panel { padding: 0.75rem !important; }
+  /* FIX-#5 (CX-46 / r4): tile illustrations were still cropped after
+     round 1 because (a) the locked 4:3 aspect-ratio didn't allow the
+     content to grow vertically when stacked, and (b) the inner text
+     (e.g. "Spent $48k" in the budget donut) stayed at desktop sizes
+     and dwarfed its container. Two changes: drop the aspect-ratio
+     entirely on mobile so the preview grows with content, and shrink
+     the placeholder text + chart elements so they fit comfortably. */
+  .features-preview {
+    padding: 0.75rem !important;
+    aspect-ratio: auto !important;
+    max-height: none !important;
+  }
+  .features-preview__panel {
+    padding: 0.75rem !important;
+    /* preview panels are absolute-positioned over the parent — let
+       them flow with the content instead so the parent grows. */
+    position: relative !important;
+    inset: auto !important;
+  }
+  .feature-card.is-active .feature-card__preview-mobile {
+    max-height: 32rem !important;
+  }
   .ph-timeline,
   .ph-chat,
   .ph-intel,
   .ph-rollout,
   .ph-budget { max-width: 100% !important; width: 100% !important; }
   .ph-intel { grid-template-columns: 1fr !important; }
+  .ph-intel__stat-value { font-size: 1rem !important; }
+
+  /* Budget donut — keep the chart visible but shrink the centre text
+     so it fits inside the donut without bleeding past the ring. */
   .ph-budget {
     flex-direction: column !important;
-    gap: 1rem !important;
-    padding: 1rem !important;
+    gap: 0.75rem !important;
+    padding: 0.875rem !important;
     align-items: center;
   }
-  .ph-budget__donut { width: 5rem !important; height: 5rem !important; }
-  .ph-budget__legend { width: 100%; font-size: 0.75rem; }
+  .ph-budget__donut {
+    width: 6rem !important;
+    height: 6rem !important;
+  }
+  .ph-budget__total-value { font-size: 0.875rem !important; }
+  .ph-budget__total-label { font-size: 0.5rem !important; }
+  .ph-budget__legend {
+    width: 100%;
+    font-size: 0.6875rem;
+  }
+  .ph-budget__legend-row { line-height: 1.4; }
+
+  /* Timeline rows — shorten the label column so the gantt bars have
+     room to breathe on narrow widths. */
+  .ph-timeline__label { width: 3rem !important; font-size: 0.625rem !important; }
+  .ph-timeline__row { gap: 0.5rem !important; }
+  .ph-timeline__track { height: 1.125rem !important; }
+
+  /* Rollout list — pull padding in. */
+  .ph-rollout { padding: 0.75rem !important; }
+  .ph-rollout__row { font-size: 0.75rem !important; padding: 0.25rem 0 !important; }
 }
 @media (max-width: 480px) {
   .roles-tab { padding: 0.5rem 1rem; font-size: 0.8125rem; }
