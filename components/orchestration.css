@@ -187,7 +187,7 @@ a.nav__cta:hover{color:#111 !important;background:rgba(255,255,255,0.75);backdro
 .problem-viewport{
   position:sticky;
   top:0;
-  height:100vh;
+  height:100vh;height:100svh;
   display:flex;align-items:center;justify-content:center;
   padding:2rem;
   overflow:hidden;

@@ -83,7 +83,7 @@ a.nav__cta:hover{color:#111 !important;background:rgba(255,255,255,0.75);backdro
 }
 
 .auth-page{
-  min-height:100vh;
+  min-height:100vh;min-height:100svh;
   display:flex;flex-direction:column;
   align-items:center;justify-content:center;
   padding:7rem 1.5rem 3rem;

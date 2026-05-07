@@ -517,7 +517,7 @@ a.nav__cta:hover{color:#111 !important;background:rgba(255,255,255,0.75);backdro
 .compliance-viewport{
   position:sticky;
   top:0;
-  height:100vh;
+  height:100vh;height:100svh;
   display:flex;flex-direction:column;align-items:center;
   padding:6rem 2rem 3rem;
   overflow:hidden;
