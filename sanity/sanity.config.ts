@@ -8,7 +8,7 @@ import { deskStructure } from "./deskStructure";
  * Sanity Studio config for the Team marketing site CMS.
  *
  * Project: g1olb5am
- * Dataset: public (read access does not require a token)
+ * Dataset: production (with public visibility — read access does not require a token)
  *
  * Run locally:
  *   cd sanity
@@ -23,7 +23,7 @@ export default defineConfig({
   title: "Team Marketing CMS",
 
   projectId: "g1olb5am",
-  dataset: "public",
+  dataset: "production",
 
   plugins: [
     structureTool({ structure: deskStructure }),
