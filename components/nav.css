@@ -92,6 +92,41 @@ a.nav__cta:hover{color:#111 !important;background:rgba(255,255,255,0.75);backdro
   .nav__pill--left .nav__link,.nav__pill--left .nav__dropdown{display:none}
   .nav__pill--right .nav__link,.nav__pill--right .nav__divider{display:none}
   .nav__login{display:none}
+
+  /* CX-49 r5 — Mobile nav scroll behaviour (site-wide).
+     At top of page: keep the existing transparent state.
+     On scroll past hero: stay always visible (no hide-on-scroll-down)
+     and switch to a single full-width frosted-glass bar — the inner
+     pill bubble around "Start free" + burger melts away so the bar
+     itself carries the chrome. Calmer, slicker, CTA always reachable. */
+
+  /* Always visible — kill the slide-up-on-scroll-down behaviour. */
+  .nav.nav--hidden { transform: none !important; }
+
+  /* Past-hero state: full-width frosted bar, drop the right pill chrome. */
+  .nav.nav--solid {
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: blur(18px) saturate(160%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    transition: background 0.25s ease, backdrop-filter 0.25s ease, padding 0.25s ease;
+  }
+  .nav.nav--solid .nav__pill--right {
+    background: transparent !important;
+    border-color: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    gap: 0.5rem;
+  }
+  /* Burger keeps a subtle hover hit-area now that the surrounding pill
+     is gone in solid mode. */
+  .nav.nav--solid .nav__burger:hover {
+    background: rgba(0, 0, 0, 0.05);
+  }
 }
 
 /* ────────────────────────────────────────────────────────────
