@@ -658,10 +658,18 @@ body.nav-mobile-lock{overflow:hidden}
     document.body.insertAdjacentHTML('afterbegin', navHTML);
   }
 
-  // If theme is "light", start with nav--solid
+  // If theme is "light", start with nav--solid — UNLESS the page has a
+  // #heroSection. Pages with a hero (e.g. the homepage) want the nav to
+  // be transparent over the hero on first paint and only flip to solid
+  // once the user has scrolled past it (handled by the ScrollTrigger
+  // further down). Without this guard a light-themed page with a dark
+  // hero image showed a stark white frosted bar at the top of the
+  // viewport on load — fixed itself only after a scroll round-trip
+  // because the ScrollTrigger's onLeaveBack would then remove the class.
   const theme = container ? container.getAttribute('data-theme') : null;
   const nav = document.getElementById('nav');
-  if (theme === 'light' && nav) {
+  const hasHero = !!document.getElementById('heroSection');
+  if (theme === 'light' && nav && !hasHero) {
     nav.classList.add('nav--solid');
   }
 
