@@ -10,6 +10,7 @@ const page = await getIcpPage("forArtistsPage");
   title={page?.hero?.headline ?? "For Artists"}
   description="Focus on your music. Team handles the rest."
   seo={page?.seo}
+  navTheme="dark"
 >
   <IcpPageContent page={page} fallbackTitle="For Artists" />
 </BaseLayout>

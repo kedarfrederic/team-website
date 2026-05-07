@@ -10,6 +10,7 @@ const page = await getIcpPage("forLabelsPage");
   title={page?.hero?.headline ?? "For Labels"}
   description="Scale your roster. Not your headcount."
   seo={page?.seo}
+  navTheme="dark"
 >
   <IcpPageContent page={page} fallbackTitle="For Labels" />
 </BaseLayout>

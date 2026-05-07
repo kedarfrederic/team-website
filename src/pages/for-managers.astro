@@ -10,6 +10,7 @@ const page = await getIcpPage("forManagersPage");
   title={page?.hero?.headline ?? "For Managers"}
   description="Every artist. Every release. One dashboard."
   seo={page?.seo}
+  navTheme="dark"
 >
   <IcpPageContent page={page} fallbackTitle="For Managers" />
 </BaseLayout>
