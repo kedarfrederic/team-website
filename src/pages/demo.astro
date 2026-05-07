@@ -1,0 +1,215 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getDemoPage } from "../lib/queries";
+
+const page = await getDemoPage();
+const headline = page?.headline ?? "Book a demo";
+const subhead = page?.subhead ?? "See how Team can streamline your release workflow. Meet a founder — not a sales rep.";
+const submitLabel = page?.submitLabel ?? "Continue to pick a time";
+const formHint = page?.formHint;
+const fallback = page?.emailFallbackText;
+const videoSrc = page?.backgroundVideo?.src;
+---
+
+<BaseLayout title={headline} description={subhead} seo={page?.seo}>
+  <section class="demo">
+    {videoSrc && (
+      <video class="demo__bg-video" autoplay loop muted playsinline preload="metadata">
+        <source src={videoSrc} type="video/mp4" />
+      </video>
+    )}
+
+    <div class="container">
+      <div class="demo__copy">
+        <h1 class="headline-xl">{headline}</h1>
+        <p class="body-lg">{subhead}</p>
+      </div>
+
+      <form class="demo-form" id="demo-form" novalidate>
+        <div class="demo-form__row">
+          <label>
+            <span>First name</span>
+            <input name="firstName" type="text" required autocomplete="given-name" />
+          </label>
+          <label>
+            <span>Last name</span>
+            <input name="lastName" type="text" required autocomplete="family-name" />
+          </label>
+        </div>
+        <label>
+          <span>Email</span>
+          <input name="email" type="email" required autocomplete="email" />
+        </label>
+        <label>
+          <span>Organization</span>
+          <input name="organization" type="text" autocomplete="organization" />
+        </label>
+
+        <div class="demo-form__row">
+          <label>
+            <span>Role</span>
+            <select name="role">
+              <option value="">Select…</option>
+              <option>Artist</option>
+              <option>Manager</option>
+              <option>Label</option>
+              <option>Distributor</option>
+              <option>Marketing & PR</option>
+              <option>Other</option>
+            </select>
+          </label>
+          <label>
+            <span>Artist count</span>
+            <select name="artistCount">
+              <option value="">Select…</option>
+              <option>1</option>
+              <option>2–5</option>
+              <option>6–20</option>
+              <option>21–50</option>
+              <option>50+</option>
+            </select>
+          </label>
+        </div>
+
+        <label>
+          <span>What do you want to see?</span>
+          <textarea name="interest" rows="3"></textarea>
+        </label>
+
+        <button type="submit" class="btn btn--primary">{submitLabel}</button>
+        {formHint && <small class="demo-form__hint">{formHint}</small>}
+        <p class="demo-form__status" id="demo-status" aria-live="polite"></p>
+        {fallback && <small class="demo-form__fallback">{fallback}</small>}
+      </form>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const form = document.getElementById("demo-form") as HTMLFormElement | null;
+  const status = document.getElementById("demo-status");
+  if (form && status) {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const data = new FormData(form);
+      const payload = {
+        firstName: data.get("firstName"),
+        lastName: data.get("lastName"),
+        email: data.get("email"),
+        organization: data.get("organization") || undefined,
+        role: data.get("role") || undefined,
+        artistCount: data.get("artistCount") || undefined,
+        interest: data.get("interest") || undefined,
+      };
+      status.textContent = "Sending…";
+      try {
+        const res = await fetch("/api/forms/demo", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (res.ok) {
+          status.textContent = "Thanks — pick a time on the next page.";
+          form.reset();
+        } else {
+          const body = await res.json().catch(() => ({}));
+          status.textContent = body.error ?? "Something went wrong. Please try again.";
+        }
+      } catch {
+        status.textContent = "Network error. Please try again.";
+      }
+    });
+  }
+</script>
+
+<style>
+  .demo {
+    position: relative;
+    min-height: calc(100vh - 64px);
+    display: flex;
+    align-items: center;
+    padding: 4rem 0;
+    overflow: hidden;
+  }
+  .demo__bg-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+    opacity: 0.4;
+  }
+  .demo .container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+  }
+  .demo__copy h1 {
+    margin-bottom: 1.5rem;
+    color: #fff;
+    text-shadow: 0 2px 24px rgba(0, 0, 0, 0.5);
+  }
+  .demo__copy p {
+    color: rgba(255, 255, 255, 0.85);
+  }
+  .demo-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    padding: 2.5rem;
+    border-radius: 16px;
+  }
+  .demo-form__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  .demo-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+  .demo-form input,
+  .demo-form textarea,
+  .demo-form select {
+    padding: 0.625rem 0.75rem;
+    border: 1px solid var(--grey);
+    border-radius: 8px;
+    font: inherit;
+    font-size: 0.9375rem;
+    transition: border-color 0.15s;
+    background: #fff;
+  }
+  .demo-form input:focus,
+  .demo-form textarea:focus,
+  .demo-form select:focus {
+    outline: none;
+    border-color: #111;
+  }
+  .demo-form button {
+    margin-top: 0.5rem;
+    align-self: flex-start;
+  }
+  .demo-form__hint,
+  .demo-form__fallback {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+  }
+  .demo-form__status {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    min-height: 1.25rem;
+  }
+  @media (max-width: 768px) {
+    .demo .container {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+  }
+</style>

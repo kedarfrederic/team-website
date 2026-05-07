@@ -1,0 +1,273 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import FaqBlock from "../components/blocks/FaqBlock.astro";
+import CtaBlock from "../components/blocks/CtaBlock.astro";
+import { getSecurityPage } from "../lib/queries";
+
+const page = await getSecurityPage();
+const hero = page?.hero;
+const pillars = page?.pillarsSection;
+const aiPrivacy = page?.aiPrivacySection;
+const enterprise = page?.enterpriseSection;
+const compliance = page?.complianceSection;
+---
+
+<BaseLayout title="Security" description="Your releases. Your data. Your rules." seo={page?.seo}>
+  {/* Hero */}
+  <section class="security-hero">
+    <div class="container container--center">
+      {hero?.pillLabel && <span class="label-sm pill">{hero.pillLabel}</span>}
+      <h1 class="headline-xl">{hero?.headline ?? "Security"}</h1>
+      {hero?.subhead && <p class="body-lg">{hero.subhead}</p>}
+      {(hero?.primaryCta?.label || hero?.secondaryCta?.label) && (
+        <div class="security-hero__ctas">
+          {hero.primaryCta?.label && hero.primaryCta?.href && (
+            <a href={hero.primaryCta.href} class="btn btn--primary">{hero.primaryCta.label}</a>
+          )}
+          {hero.secondaryCta?.label && hero.secondaryCta?.href && (
+            <a href={hero.secondaryCta.href} class="btn btn--outline">{hero.secondaryCta.label}</a>
+          )}
+        </div>
+      )}
+    </div>
+  </section>
+
+  {/* 4 pillars */}
+  {pillars?.pillars && pillars.pillars.length > 0 && (
+    <section class="security-pillars">
+      <div class="container">
+        {pillars.headline && <h2 class="headline-lg">{pillars.headline}</h2>}
+        <div class="pillars-grid">
+          {pillars.pillars.map((p: any) => (
+            <article class="pillar-card">
+              {p.tag && <span class="pillar-tag">{p.tag}</span>}
+              <h3>{p.title}</h3>
+              <p>{p.body}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {/* AI privacy */}
+  {aiPrivacy && (
+    <section class="security-ai-privacy">
+      <div class="container">
+        {aiPrivacy.metadataPill && <span class="label-sm pill">{aiPrivacy.metadataPill}</span>}
+        {aiPrivacy.headline && <h2 class="headline-lg">{aiPrivacy.headline}</h2>}
+        {aiPrivacy.paragraphs && (
+          <div class="security-ai-privacy__copy">
+            {aiPrivacy.paragraphs.map((p: string) => <p class="body-lg">{p}</p>)}
+          </div>
+        )}
+        {aiPrivacy.trustPills && aiPrivacy.trustPills.length > 0 && (
+          <ul class="trust-pills">
+            {aiPrivacy.trustPills.map((t: string) => <li>{t}</li>)}
+          </ul>
+        )}
+      </div>
+    </section>
+  )}
+
+  {/* Enterprise blocks */}
+  {enterprise?.blocks && enterprise.blocks.length > 0 && (
+    <section class="security-enterprise">
+      <div class="container">
+        {enterprise.headline && <h2 class="headline-lg">{enterprise.headline}</h2>}
+        <div class="enterprise-grid">
+          {enterprise.blocks.map((b: any) => (
+            <article class="enterprise-card">
+              {b.tag && <span class="pillar-tag">{b.tag}</span>}
+              <h3>{b.title}</h3>
+              <p>{b.body}</p>
+            </article>
+          ))}
+        </div>
+        {enterprise.enterpriseCta && (
+          <div class="enterprise-cta">
+            {enterprise.enterpriseCta.headline && <h3>{enterprise.enterpriseCta.headline}</h3>}
+            {enterprise.enterpriseCta.body && <p>{enterprise.enterpriseCta.body}</p>}
+            {enterprise.enterpriseCta.ctaLabel && enterprise.enterpriseCta.ctaHref && (
+              <a href={enterprise.enterpriseCta.ctaHref} class="btn btn--primary">
+                {enterprise.enterpriseCta.ctaLabel}
+              </a>
+            )}
+          </div>
+        )}
+      </div>
+    </section>
+  )}
+
+  {/* Compliance card stack */}
+  {compliance?.cards && compliance.cards.length > 0 && (
+    <section class="security-compliance">
+      <div class="container">
+        {compliance.headline && <h2 class="headline-lg">{compliance.headline}</h2>}
+        <ul class="compliance-cards">
+          {compliance.cards.map((c: any) => (
+            <li class={`compliance-card compliance-card--${c.status}`}>
+              <h3>{c.title}</h3>
+              <p>{c.body}</p>
+              <span class="compliance-status">
+                {c.status === "active" && "Active"}
+                {c.status === "on_request" && "Available on request"}
+                {c.status === "coming_soon" && "Coming soon"}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  <FaqBlock value={page?.faq} />
+  <CtaBlock value={page?.finalCta} />
+
+  {!page && (
+    <section class="empty-state container container--center">
+      <p class="body-lg">This page hasn't been authored in Sanity yet.</p>
+    </section>
+  )}
+</BaseLayout>
+
+<style>
+  .security-hero,
+  .security-pillars,
+  .security-ai-privacy,
+  .security-enterprise,
+  .security-compliance,
+  .empty-state {
+    padding: 6rem 0;
+  }
+  .pill {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border: 1px solid var(--grey);
+    border-radius: 999px;
+    margin-bottom: 1.5rem;
+  }
+  .security-hero__ctas {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 2.5rem;
+  }
+  .pillars-grid,
+  .enterprise-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+  .pillar-card,
+  .enterprise-card {
+    padding: 1.75rem;
+    border: 1px solid var(--grey);
+    border-radius: 16px;
+    background: #fff;
+  }
+  .pillar-tag {
+    display: inline-block;
+    font-size: 0.625rem;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.75rem;
+  }
+  .pillar-card h3,
+  .enterprise-card h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  .pillar-card p,
+  .enterprise-card p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    font-size: 0.9375rem;
+  }
+  .security-ai-privacy {
+    background: var(--bg);
+  }
+  .security-ai-privacy__copy {
+    max-width: 36rem;
+    margin: 1.5rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .trust-pills {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+  }
+  .trust-pills li {
+    padding: 0.375rem 0.875rem;
+    background: #fff;
+    border: 1px solid var(--grey);
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+  .enterprise-cta {
+    margin-top: 3rem;
+    padding: 2rem;
+    background: #111;
+    color: #fff;
+    border-radius: 16px;
+    text-align: center;
+  }
+  .enterprise-cta h3 {
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+  .enterprise-cta p {
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 1.5rem;
+  }
+  .compliance-cards {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 36rem;
+    margin: 3rem auto 0;
+  }
+  .compliance-card {
+    padding: 1.5rem 1.75rem;
+    border: 1px solid var(--grey);
+    border-radius: 16px;
+    position: relative;
+    background: #fff;
+  }
+  .compliance-card h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 0.375rem;
+  }
+  .compliance-card p {
+    color: var(--text-secondary);
+    line-height: 1.55;
+    font-size: 0.9375rem;
+  }
+  .compliance-status {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.75rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    padding: 0.25rem 0.625rem;
+    border-radius: 999px;
+    background: var(--bg);
+  }
+  .compliance-card--active .compliance-status {
+    background: var(--accent-lime);
+    color: #111;
+  }
+</style>

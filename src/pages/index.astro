@@ -1,0 +1,600 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import FeatureSpotlight from "../components/blocks/FeatureSpotlight.astro";
+import FaqBlock from "../components/blocks/FaqBlock.astro";
+import CtaBlock from "../components/blocks/CtaBlock.astro";
+import { getHomepage } from "../lib/queries";
+import { urlFor } from "../lib/sanity";
+
+const page = await getHomepage();
+const hero = page?.hero;
+const upload = page?.uploadSection;
+const rolesTabs = page?.rolesTabs;
+const engine = page?.engineSection;
+const guidelines = page?.guidelinesSection;
+const brain = page?.brainSection;
+const marquee = page?.integrationsMarquee;
+const stories = page?.stories;
+
+const heroBg = hero?.backgroundImage?.asset?._ref
+  ? urlFor(hero.backgroundImage).width(1920).quality(80).format("webp").url()
+  : null;
+
+// Phase 4 v1: Static typewriter — shows first word only. Phase 5 wires up
+// the cycling animation across `typewriterWords[]`.
+const typerFirstWord = hero?.typewriterWords?.[0] ?? "Command Center";
+const typerWordsJson = JSON.stringify(hero?.typewriterWords ?? []);
+---
+
+<BaseLayout
+  title={hero?.headline ?? "Team — The Operating System for Music Releases"}
+  description="Stop juggling spreadsheets, Slack threads, and email chains. One platform for your entire rollout."
+  seo={page?.seo}
+>
+  {/* Hero */}
+  <section class="home-hero" style={heroBg ? `background-image:url(${heroBg});` : undefined}>
+    <div class="container">
+      <div class="home-hero__cover">
+        <h1 class="headline-xl">
+          The <span class="typer" id="hero-typer" data-words={typerWordsJson}>{typerFirstWord}</span>
+          <span class="typer__caret" aria-hidden="true"></span><br />
+          <span class="nyght">{hero?.headlineSuffix ?? "for your music releases"}</span>
+        </h1>
+        {hero?.subhead && <p class="body-lg">{hero.subhead}</p>}
+        <div class="home-hero__ctas">
+          {hero?.primaryCta?.label && hero?.primaryCta?.href && (
+            <a href={hero.primaryCta.href} class="btn btn--primary">{hero.primaryCta.label}</a>
+          )}
+          {hero?.secondaryCta?.label && (
+            <a
+              href={hero.secondaryCta.type === "video" ? "#" : (hero.secondaryCta.href ?? "#")}
+              class="btn btn--outline"
+            >
+              {hero.secondaryCta.label}
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* Upload section */}
+  {upload && (
+    <section class="home-upload">
+      <div class="container container--center">
+        <h2 class="headline-lg">{upload.headline}</h2>
+        {upload.body && <p class="body-lg">{upload.body}</p>}
+        {upload.cta?.label && upload.cta?.href && (
+          <a href={upload.cta.href} class="btn btn--primary">{upload.cta.label}</a>
+        )}
+      </div>
+    </section>
+  )}
+
+  {/* Roles tabs */}
+  {rolesTabs?.tabs && rolesTabs.tabs.length > 0 && (
+    <section class="home-roles">
+      <div class="container">
+        <div class="home-roles__intro">
+          <h2 class="headline-lg">{rolesTabs.headline}</h2>
+          {rolesTabs.subhead && <p class="body-lg">{rolesTabs.subhead}</p>}
+        </div>
+        <div class="home-roles__tabs" role="tablist">
+          {rolesTabs.tabs.map((tab: any, i: number) => (
+            <button class={`role-tab__btn ${i === 0 ? "is-active" : ""}`} data-tab-index={i}>
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <div class="home-roles__panels">
+          {rolesTabs.tabs.map((tab: any, i: number) => (
+            <div class={`role-tab__panel ${i === 0 ? "is-active" : ""}`} data-panel-index={i}>
+              {tab.featuredHeading && <h3>{tab.featuredHeading}</h3>}
+              {tab.featuredBody && <p class="body-lg">{tab.featuredBody}</p>}
+              {tab.stackRows && tab.stackRows.length > 0 && (
+                <ul class="role-tab__stack">
+                  {tab.stackRows.map((row: any) => (
+                    <li>
+                      <span class="role-tab__num">{row.number}</span>
+                      <h4>{row.title}</h4>
+                      <p>{row.description}</p>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {tab.learnMoreLabel && tab.learnMoreHref && (
+                <a href={tab.learnMoreHref} class="role-tab__learn-more">{tab.learnMoreLabel} →</a>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {/* Engine / TeamMate demo (Phase 5 will animate the search demo) */}
+  {engine && (
+    <section class="home-engine">
+      <div class="container">
+        <div class="home-engine__intro">
+          <h2 class="headline-lg">{engine.headline}</h2>
+          {engine.subhead && <p class="body-lg">{engine.subhead}</p>}
+        </div>
+        <div class="home-engine__demo">
+          <div class="home-engine__search">
+            <input type="text" disabled placeholder={engine.searchPlaceholder ?? "Ask TeamMate…"} />
+          </div>
+          {engine.resultLabels && engine.resultLabels.length > 0 && (
+            <ul class="home-engine__results">
+              {engine.resultLabels.map((label: string) => (
+                <li>{label}</li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {/* Guidelines demo (Phase 5 will animate releases→timeline transition) */}
+  {guidelines && (
+    <section class="home-guidelines">
+      <div class="container">
+        <div class="home-guidelines__intro">
+          <h2 class="headline-lg">{guidelines.headline}</h2>
+          {guidelines.subhead && <p class="body-lg">{guidelines.subhead}</p>}
+        </div>
+        {guidelines.demoReleases && guidelines.demoReleases.length > 0 && (
+          <ul class="home-guidelines__releases">
+            {guidelines.demoReleases.map((r: any) => (
+              <li class="release-card">
+                <span class="release-card__status">{r.status}</span>
+                <h3>{r.title}</h3>
+                <p>{r.artist}</p>
+                <span class="release-card__date">{r.releaseDate}</span>
+                <div class="release-card__progress">
+                  <span style={`width:${Math.min(100, Math.max(0, r.progressPercent ?? 0))}%;`}></span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </section>
+  )}
+
+  <FeatureSpotlight value={page?.featureSpotlight} />
+
+  {/* Brain video */}
+  {brain && (
+    <section class="home-brain">
+      <div class="container">
+        <div class="home-brain__copy">
+          <h2 class="headline-lg">{brain.headline}</h2>
+          {brain.body && <p class="body-lg">{brain.body}</p>}
+        </div>
+        {brain.video?.src && (
+          <div class="home-brain__video">
+            <video
+              autoplay
+              loop
+              muted
+              playsinline
+              preload="metadata"
+              poster={brain.video.poster?.asset?._ref ? urlFor(brain.video.poster).width(1200).format("webp").url() : undefined}
+            >
+              <source src={brain.video.src} type="video/mp4" />
+            </video>
+          </div>
+        )}
+      </div>
+    </section>
+  )}
+
+  {/* Integrations marquee */}
+  {marquee?.logos && marquee.logos.length > 0 && (
+    <section class="home-marquee">
+      <div class="container">
+        <div class="home-marquee__intro">
+          <h2 class="headline-lg">{marquee.headline}</h2>
+          {marquee.subhead && <p class="body-lg">{marquee.subhead}</p>}
+        </div>
+      </div>
+      <div class="home-marquee__rows">
+        <div class="home-marquee__row home-marquee__row--ltr">
+          {[...marquee.logos, ...marquee.logos].map((l: any) => (
+            <div class="home-marquee__logo" title={l.title ?? l.name}>
+              {l.logo && <img src={urlFor(l.logo).width(120).format("webp").url()} alt={l.name} />}
+            </div>
+          ))}
+        </div>
+        <div class="home-marquee__row home-marquee__row--rtl">
+          {[...marquee.logos, ...marquee.logos].reverse().map((l: any) => (
+            <div class="home-marquee__logo" title={l.title ?? l.name}>
+              {l.logo && <img src={urlFor(l.logo).width(120).format("webp").url()} alt={l.name} />}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <FaqBlock value={page?.faq} />
+
+  {/* Stories carousel */}
+  {stories?.slides && stories.slides.length > 0 && (
+    <section class="home-stories">
+      <div class="container">
+        {stories.headline && <h2 class="headline-lg home-stories__headline">{stories.headline}</h2>}
+        <ul class="home-stories__list">
+          {stories.slides.map((slide: any) => (
+            <li class={`story-card story-card--${slide.tier ?? "team"}`}>
+              {slide.photo && (
+                <img src={urlFor(slide.photo).width(80).format("webp").url()} alt={slide.name} class="story-card__photo" />
+              )}
+              <p class="story-card__quote">"{slide.quote}"</p>
+              <footer>
+                <strong>{slide.name}</strong>
+                {slide.role && <span>, {slide.role}</span>}
+              </footer>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  <CtaBlock value={page?.finalCta} />
+
+  {!page && (
+    <section class="empty-state container container--center">
+      <p class="body-lg">This page hasn't been authored in Sanity yet.</p>
+    </section>
+  )}
+</BaseLayout>
+
+<script>
+  // Roles tabs switching
+  const tabBtns = document.querySelectorAll<HTMLButtonElement>(".role-tab__btn");
+  const tabPanels = document.querySelectorAll<HTMLElement>(".role-tab__panel");
+  tabBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const idx = btn.dataset.tabIndex;
+      tabBtns.forEach((b) => b.classList.toggle("is-active", b.dataset.tabIndex === idx));
+      tabPanels.forEach((p) => p.classList.toggle("is-active", p.dataset.panelIndex === idx));
+    });
+  });
+
+  // Typewriter cycling — Phase 5 will polish this with real type-on/erase.
+  const typer = document.getElementById("hero-typer");
+  if (typer) {
+    const words: string[] = JSON.parse(typer.dataset.words ?? "[]");
+    if (words.length > 1) {
+      let i = 0;
+      setInterval(() => {
+        i = (i + 1) % words.length;
+        typer.textContent = words[i] ?? "";
+      }, 2400);
+    }
+  }
+</script>
+
+<style>
+  .home-hero {
+    padding: 8rem 0 6rem;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+  }
+  .home-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.95));
+  }
+  .home-hero .container {
+    position: relative;
+  }
+  .home-hero__cover {
+    max-width: 36rem;
+  }
+  .home-hero__cover h1 {
+    margin-bottom: 1.5rem;
+  }
+  .typer__caret {
+    display: inline-block;
+    width: 0.06em;
+    height: 0.95em;
+    background: currentColor;
+    margin-left: 0.05em;
+    vertical-align: -0.1em;
+    animation: typerBlink 0.85s steps(1) infinite;
+    border-radius: 1px;
+  }
+  @keyframes typerBlink {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0; }
+  }
+  .home-hero__ctas {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+  }
+
+  .home-upload,
+  .home-roles,
+  .home-engine,
+  .home-guidelines,
+  .home-brain,
+  .home-marquee,
+  .home-stories,
+  .empty-state {
+    padding: 6rem 0;
+  }
+  .home-upload .body-lg {
+    max-width: 38rem;
+    margin: 1.25rem auto 2rem;
+  }
+
+  .home-roles__intro {
+    text-align: center;
+    max-width: 38rem;
+    margin: 0 auto 3rem;
+  }
+  .home-roles__intro .body-lg {
+    margin-top: 1rem;
+  }
+  .home-roles__tabs {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+  }
+  .role-tab__btn {
+    padding: 0.625rem 1.25rem;
+    border: 1px solid var(--grey);
+    border-radius: 999px;
+    font-size: 0.875rem;
+    background: #fff;
+    font-weight: 500;
+  }
+  .role-tab__btn.is-active {
+    background: #111;
+    color: #fff;
+    border-color: #111;
+  }
+  .role-tab__panel {
+    display: none;
+  }
+  .role-tab__panel.is-active {
+    display: block;
+    max-width: 36rem;
+    margin: 0 auto;
+  }
+  .role-tab__panel h3 {
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+  }
+  .role-tab__stack {
+    list-style: none;
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .role-tab__stack li {
+    padding: 1.25rem;
+    border: 1px solid var(--grey);
+    border-radius: 12px;
+  }
+  .role-tab__num {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 0.375rem;
+  }
+  .role-tab__stack h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+  .role-tab__stack p {
+    color: var(--text-secondary);
+    line-height: 1.55;
+    font-size: 0.9375rem;
+  }
+  .role-tab__learn-more {
+    display: inline-block;
+    margin-top: 1.5rem;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .home-engine__intro,
+  .home-guidelines__intro,
+  .home-marquee__intro {
+    text-align: center;
+    max-width: 38rem;
+    margin: 0 auto 3rem;
+  }
+  .home-engine__demo {
+    max-width: 48rem;
+    margin: 0 auto;
+    border: 1px solid var(--grey);
+    border-radius: 16px;
+    padding: 2rem;
+    background: #fff;
+  }
+  .home-engine__search input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--grey);
+    border-radius: 999px;
+    font-size: 1rem;
+    background: var(--bg);
+  }
+  .home-engine__results {
+    list-style: none;
+    margin-top: 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.75rem;
+  }
+  .home-engine__results li {
+    aspect-ratio: 1;
+    background: var(--bg);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+  }
+
+  .home-guidelines__releases {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+  .release-card {
+    padding: 1.25rem;
+    border: 1px solid var(--grey);
+    border-radius: 12px;
+    background: #fff;
+  }
+  .release-card__status {
+    display: inline-block;
+    font-size: 0.625rem;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.5rem;
+  }
+  .release-card h3 {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+  .release-card p {
+    color: var(--text-secondary);
+    font-size: 0.8125rem;
+  }
+  .release-card__date {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+  }
+  .release-card__progress {
+    margin-top: 0.75rem;
+    height: 4px;
+    background: var(--bg);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .release-card__progress span {
+    display: block;
+    height: 100%;
+    background: var(--accent);
+  }
+
+  .home-brain {
+    background: var(--bg);
+  }
+  .home-brain .container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+  .home-brain__video video {
+    width: 100%;
+    border-radius: 16px;
+  }
+  @media (max-width: 768px) {
+    .home-brain .container {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .home-marquee {
+    overflow: hidden;
+  }
+  .home-marquee__rows {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 1rem;
+  }
+  .home-marquee__row {
+    display: flex;
+    gap: 3rem;
+    width: max-content;
+    animation: marquee-scroll 60s linear infinite;
+  }
+  .home-marquee__row--rtl {
+    animation-direction: reverse;
+  }
+  .home-marquee__logo {
+    flex-shrink: 0;
+    width: 100px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+  .home-marquee__logo:hover {
+    opacity: 1;
+  }
+  .home-marquee__logo img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+  @keyframes marquee-scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  .home-stories__headline {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  .home-stories__list {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  .story-card {
+    padding: 2rem;
+    border: 1px solid var(--grey);
+    border-radius: 16px;
+    background: #fff;
+  }
+  .story-card__photo {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 1rem;
+  }
+  .story-card__quote {
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    color: #111;
+    margin-bottom: 1rem;
+  }
+  .story-card footer {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+  }
+</style>

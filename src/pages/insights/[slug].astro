@@ -1,0 +1,199 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PortableText from "../../components/PortableText.astro";
+import CtaBlock from "../../components/blocks/CtaBlock.astro";
+import { getInsightPostSlugs, getInsightPostBySlug, getInsightsIndexPage } from "../../lib/queries";
+import { urlFor } from "../../lib/sanity";
+
+export async function getStaticPaths() {
+  const slugs = await getInsightPostSlugs();
+  return slugs.map((slug) => ({ params: { slug } }));
+}
+
+const { slug } = Astro.params;
+const [post, indexPage] = await Promise.all([
+  getInsightPostBySlug(slug as string),
+  getInsightsIndexPage(),
+]);
+
+if (!post) {
+  return Astro.redirect("/insights");
+}
+
+const fallbackCta = indexPage?.globalCta;
+const cta = post.ctaOverride ?? fallbackCta;
+
+function formatDate(d?: string): string {
+  if (!d) return "";
+  return new Date(d).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+}
+---
+
+<BaseLayout
+  title={post.title}
+  description={post.excerpt}
+  ogImage={post.heroImage}
+  seo={post.seo}
+>
+  <article class="insight-post">
+    <header class="insight-post__header">
+      <div class="container">
+        <a href="/insights" class="insight-post__back">← Back to Insights</a>
+        {post.category && (
+          <span class="insight-post__category" style={`color:${post.category.color ?? "#191919"};`}>
+            {post.category.title}
+          </span>
+        )}
+        <h1 class="headline-xl">{post.title}</h1>
+        <div class="insight-post__meta">
+          <span>By {post.authorName ?? "Team"}</span>
+          <span>•</span>
+          <span>{formatDate(post.publishDate)}</span>
+          {post.readMinutes && (
+            <>
+              <span>•</span>
+              <span>{post.readMinutes} min read</span>
+            </>
+          )}
+        </div>
+      </div>
+    </header>
+
+    {post.heroImage && (
+      <div class="insight-post__hero-img">
+        <div class="container">
+          <img
+            src={urlFor(post.heroImage).width(1200).format("webp").url()}
+            alt=""
+          />
+        </div>
+      </div>
+    )}
+
+    <div class="insight-post__body">
+      <div class="container">
+        <PortableText value={post.body} />
+      </div>
+    </div>
+
+    <CtaBlock value={cta} />
+
+    {post.relatedPosts && post.relatedPosts.length > 0 && (
+      <section class="insight-post__related">
+        <div class="container">
+          <h2 class="headline-lg">Related</h2>
+          <ul class="related-grid">
+            {post.relatedPosts.map((p: any) => (
+              <li>
+                <a href={`/insights/${p.slug?.current}`} class="related-card">
+                  {p.heroImage && (
+                    <img
+                      src={urlFor(p.heroImage).width(640).format("webp").url()}
+                      alt=""
+                      class="related-card__img"
+                    />
+                  )}
+                  {p.category && <span class="related-card__category">{p.category.title}</span>}
+                  <h3>{p.title}</h3>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )}
+  </article>
+</BaseLayout>
+
+<style>
+  .insight-post__header {
+    padding: 6rem 0 2rem;
+    text-align: center;
+  }
+  .insight-post__back {
+    display: inline-block;
+    margin-bottom: 2rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+  }
+  .insight-post__back:hover {
+    color: #111;
+  }
+  .insight-post__category {
+    display: block;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 1rem;
+  }
+  .insight-post__header h1 {
+    max-width: 36rem;
+    margin: 0 auto 1.5rem;
+  }
+  .insight-post__meta {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+  }
+  .insight-post__hero-img {
+    margin: 2rem 0 4rem;
+  }
+  .insight-post__hero-img img {
+    width: 100%;
+    border-radius: 16px;
+  }
+  .insight-post__body {
+    padding-bottom: 4rem;
+  }
+  .insight-post__body :global(.portable-text) {
+    max-width: 36rem;
+    margin: 0 auto;
+  }
+  .insight-post__related {
+    padding: 6rem 0;
+    background: var(--bg);
+  }
+  .insight-post__related .headline-lg {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  .related-grid {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+  }
+  .related-card {
+    display: block;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.2s;
+  }
+  .related-card:hover {
+    transform: translateY(-2px);
+  }
+  .related-card__img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    background: #fff;
+  }
+  .related-card__category {
+    display: block;
+    margin-top: 1rem;
+    font-size: 0.625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+  }
+  .related-card h3 {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-top: 0.5rem;
+    line-height: 1.35;
+  }
+</style>

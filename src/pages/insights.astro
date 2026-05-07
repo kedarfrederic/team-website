@@ -1,0 +1,240 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getInsightsIndexPage, getInsightPosts } from "../lib/queries";
+import { urlFor } from "../lib/sanity";
+
+const [page, posts] = await Promise.all([getInsightsIndexPage(), getInsightPosts()]);
+const hero = page?.hero;
+const search = page?.search;
+
+// Build category filter list from posts
+const categories = Array.from(
+  new Map(
+    (posts ?? [])
+      .filter((p: any) => p.category)
+      .map((p: any) => [p.category.slug?.current, p.category])
+  ).values()
+);
+
+function formatDate(d?: string): string {
+  if (!d) return "";
+  return new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+}
+---
+
+<BaseLayout
+  title={hero?.headline ?? "Insights"}
+  description={hero?.subhead ?? "Strategy, product, and industry takes from the Team."}
+  seo={page?.seo}
+>
+  {/* Hero */}
+  <section class="insights-hero">
+    <div class="container container--center">
+      <h1 class="headline-xl">{hero?.headline ?? "Insights & ideas"}</h1>
+      {hero?.subhead && <p class="body-lg">{hero.subhead}</p>}
+    </div>
+  </section>
+
+  {/* Search + filter + grid */}
+  <section class="insights-grid-section">
+    <div class="container">
+      <div class="insights-toolbar">
+        <input
+          type="search"
+          id="insights-search"
+          class="insights-search"
+          placeholder={search?.placeholder ?? "Search insights…"}
+        />
+        <div class="insights-filters" role="tablist">
+          <button class="filter-btn is-active" data-filter="all">All</button>
+          {categories.map((cat: any) => (
+            <button class="filter-btn" data-filter={cat.slug?.current}>{cat.title}</button>
+          ))}
+        </div>
+      </div>
+
+      {posts && posts.length > 0 ? (
+        <ul class="insights-grid" id="insights-grid">
+          {posts.map((p: any, i: number) => (
+            <li
+              class={`insight-card ${i === 0 ? "insight-card--featured" : ""}`}
+              data-title={p.title?.toLowerCase()}
+              data-excerpt={p.excerpt?.toLowerCase() ?? ""}
+              data-category={p.category?.slug?.current ?? ""}
+            >
+              <a href={`/insights/${p.slug?.current}`}>
+                {p.heroImage && (
+                  <img
+                    src={urlFor(p.heroImage).width(640).format("webp").url()}
+                    alt=""
+                    class="insight-card__img"
+                    loading="lazy"
+                  />
+                )}
+                <div class="insight-card__body">
+                  {p.category && (
+                    <span class="insight-card__category" style={`color:${p.category.color ?? "#191919"};`}>
+                      {p.category.title}
+                    </span>
+                  )}
+                  <h3>{p.title}</h3>
+                  {p.excerpt && <p>{p.excerpt}</p>}
+                  <footer class="insight-card__meta">
+                    <span>{formatDate(p.publishDate)}</span>
+                    {p.readMinutes && <span>{p.readMinutes} min read</span>}
+                  </footer>
+                </div>
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p class="empty-state">No posts have been published yet.</p>
+      )}
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const grid = document.getElementById("insights-grid");
+  const search = document.getElementById("insights-search") as HTMLInputElement | null;
+  const filterButtons = document.querySelectorAll<HTMLButtonElement>(".filter-btn");
+  let activeFilter = "all";
+  let activeQuery = "";
+
+  function applyFilters() {
+    if (!grid) return;
+    grid.querySelectorAll<HTMLElement>(".insight-card").forEach((card) => {
+      const title = card.dataset.title ?? "";
+      const excerpt = card.dataset.excerpt ?? "";
+      const cat = card.dataset.category ?? "";
+      const matchesQuery = activeQuery === "" || title.includes(activeQuery) || excerpt.includes(activeQuery);
+      const matchesFilter = activeFilter === "all" || cat === activeFilter;
+      card.style.display = matchesQuery && matchesFilter ? "" : "none";
+    });
+  }
+
+  filterButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      filterButtons.forEach((b) => b.classList.remove("is-active"));
+      btn.classList.add("is-active");
+      activeFilter = btn.dataset.filter ?? "all";
+      applyFilters();
+    });
+  });
+
+  search?.addEventListener("input", () => {
+    activeQuery = (search.value ?? "").trim().toLowerCase();
+    applyFilters();
+  });
+</script>
+
+<style>
+  .insights-hero,
+  .insights-grid-section {
+    padding: 6rem 0;
+  }
+  .insights-hero .body-lg {
+    max-width: 38rem;
+    margin: 1.25rem auto 0;
+  }
+  .insights-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+  .insights-search {
+    flex: 1;
+    min-width: 200px;
+    max-width: 320px;
+    padding: 0.625rem 1rem;
+    border: 1px solid var(--grey);
+    border-radius: 999px;
+    font-size: 0.875rem;
+  }
+  .insights-filters {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--grey);
+    border-radius: 999px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    background: #fff;
+  }
+  .filter-btn.is-active {
+    background: #111;
+    color: #fff;
+    border-color: #111;
+  }
+  .insights-grid {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+  }
+  .insight-card--featured {
+    grid-column: 1 / -1;
+  }
+  .insight-card a {
+    display: block;
+    border-radius: 16px;
+    overflow: hidden;
+    transition: transform 0.2s;
+  }
+  .insight-card a:hover {
+    transform: translateY(-2px);
+  }
+  .insight-card__img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    background: var(--bg);
+  }
+  .insight-card--featured .insight-card__img {
+    aspect-ratio: 21 / 9;
+  }
+  .insight-card__body {
+    padding: 1.5rem 0;
+  }
+  .insight-card__category {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.75rem;
+    display: block;
+  }
+  .insight-card h3 {
+    font-size: 1.25rem;
+    font-weight: 500;
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.01em;
+  }
+  .insight-card--featured h3 {
+    font-size: 2rem;
+  }
+  .insight-card p {
+    color: var(--text-secondary);
+    line-height: 1.55;
+    font-size: 0.9375rem;
+    margin-bottom: 1rem;
+  }
+  .insight-card__meta {
+    display: flex;
+    gap: 1rem;
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+  }
+  .empty-state {
+    text-align: center;
+    color: var(--text-secondary);
+  }
+</style>

@@ -1,0 +1,93 @@
+---
+/**
+ * Shared rendering for ICP pages (for-artists, for-labels, for-managers).
+ * Each route file calls the matching query, then mounts this component.
+ *
+ * for-partners has a tabbed-features variant — separate `PartnerPageContent`.
+ */
+
+import PainSection from "../blocks/PainSection.astro";
+import FeatureSpotlight from "../blocks/FeatureSpotlight.astro";
+import StepsBlock from "../blocks/StepsBlock.astro";
+import RolesGrid from "../blocks/RolesGrid.astro";
+import CtaBlock from "../blocks/CtaBlock.astro";
+import { urlFor } from "../../lib/sanity";
+
+interface Props {
+  page: any;
+  fallbackTitle: string;
+}
+
+const { page, fallbackTitle } = Astro.props;
+const hero = page?.hero;
+const bgImageUrl = hero?.backgroundImage?.asset?._ref
+  ? urlFor(hero.backgroundImage).width(1920).quality(80).format("webp").url()
+  : null;
+---
+
+{/* Hero */}
+<section class="icp-hero" style={bgImageUrl ? `background-image:linear-gradient(180deg,rgba(0,0,0,0.45),rgba(0,0,0,0.55)),url(${bgImageUrl});` : undefined}>
+  <div class="container container--center">
+    {hero?.pillLabel && <span class="label-sm pill">{hero.pillLabel}</span>}
+    <h1 class="headline-xl">{hero?.headline ?? fallbackTitle}</h1>
+    {hero?.subhead && <p class="body-lg">{hero.subhead}</p>}
+    {(hero?.primaryCta?.label || hero?.secondaryCta?.label) && (
+      <div class="icp-hero__ctas">
+        {hero.primaryCta?.label && hero.primaryCta?.href && (
+          <a href={hero.primaryCta.href} class="btn btn--primary">{hero.primaryCta.label}</a>
+        )}
+        {hero.secondaryCta?.label && hero.secondaryCta?.href && (
+          <a href={hero.secondaryCta.href} class="btn btn--outline">{hero.secondaryCta.label}</a>
+        )}
+      </div>
+    )}
+  </div>
+</section>
+
+<PainSection value={page?.painSection} />
+<FeatureSpotlight value={page?.featureSpotlight} />
+<StepsBlock value={page?.stepsBlock} />
+<RolesGrid value={page?.rolesGrid} />
+<CtaBlock value={page?.finalCta} />
+
+{!page && (
+  <section class="empty-state container container--center">
+    <p class="body-lg">This page hasn't been authored in Sanity yet.</p>
+  </section>
+)}
+
+<style>
+  .icp-hero {
+    padding: 8rem 0;
+    background-size: cover;
+    background-position: center;
+    color: #fff;
+  }
+  .icp-hero h1 {
+    color: inherit;
+    text-shadow: 0 2px 24px rgba(0, 0, 0, 0.4);
+  }
+  .icp-hero .body-lg {
+    color: rgba(255, 255, 255, 0.9);
+    max-width: 38rem;
+    margin: 1.5rem auto 0;
+  }
+  .pill {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 999px;
+    margin-bottom: 1.5rem;
+    color: rgba(255, 255, 255, 0.9);
+  }
+  .icp-hero__ctas {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 2.5rem;
+  }
+  .empty-state {
+    padding: 6rem 0;
+  }
+</style>

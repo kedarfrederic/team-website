@@ -1,0 +1,257 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getChangelogPage, getChangelogEntries } from "../lib/queries";
+
+const [page, entries] = await Promise.all([getChangelogPage(), getChangelogEntries()]);
+const hero = page?.hero;
+const search = page?.search;
+
+// Group entries by releaseDate
+type Entry = { releaseDate: string; groupHeadline?: string; type: string; title: string; description: string };
+const groups = new Map<string, { headline?: string; entries: Entry[] }>();
+for (const e of (entries ?? []) as Entry[]) {
+  const key = e.releaseDate ?? "";
+  const group = groups.get(key) ?? { entries: [] };
+  if (e.groupHeadline && !group.headline) group.headline = e.groupHeadline;
+  group.entries.push(e);
+  groups.set(key, group);
+}
+const sortedGroups = Array.from(groups.entries()).sort((a, b) => (a[0] < b[0] ? 1 : -1));
+
+function formatDate(d?: string): string {
+  if (!d) return "";
+  return new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+}
+
+const TYPE_LABELS: Record<string, string> = {
+  new: "New",
+  improved: "Improved",
+  fixed: "Fixed",
+  performance: "Performance",
+};
+---
+
+<BaseLayout
+  title={hero?.headline ?? "Changelog"}
+  description="What's new in Team."
+  seo={page?.seo}
+>
+  <section class="changelog-hero">
+    <div class="container container--center">
+      <h1 class="headline-xl">{hero?.headline ?? "What's new in Team"}</h1>
+      {hero?.subhead && <p class="body-lg">{hero.subhead}</p>}
+    </div>
+  </section>
+
+  <section class="changelog-list-section">
+    <div class="container">
+      <div class="changelog-toolbar">
+        <input
+          type="search"
+          id="changelog-search"
+          class="changelog-search"
+          placeholder={search?.placeholder ?? "Search changelog…"}
+        />
+        <div class="changelog-filters" role="tablist">
+          <button class="filter-btn is-active" data-filter="all">All</button>
+          {Object.entries(TYPE_LABELS).map(([value, label]) => (
+            <button class="filter-btn" data-filter={value}>{label}</button>
+          ))}
+        </div>
+      </div>
+
+      {sortedGroups.length > 0 ? (
+        <ul class="changelog-timeline" id="changelog-timeline">
+          {sortedGroups.map(([date, group]) => (
+            <li class="changelog-group">
+              <header class="changelog-group__header">
+                <time>{formatDate(date)}</time>
+                {group.headline && <h2>{group.headline}</h2>}
+              </header>
+              <ul class="changelog-entries">
+                {group.entries.map((e: Entry) => (
+                  <li
+                    class="changelog-entry"
+                    data-type={e.type}
+                    data-title={e.title?.toLowerCase()}
+                    data-description={e.description?.toLowerCase()}
+                  >
+                    <span class={`changelog-tag changelog-tag--${e.type}`}>{TYPE_LABELS[e.type] ?? e.type}</span>
+                    <div>
+                      <h3>{e.title}</h3>
+                      <p>{e.description}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p class="empty-state">No changelog entries yet.</p>
+      )}
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const grid = document.getElementById("changelog-timeline");
+  const search = document.getElementById("changelog-search") as HTMLInputElement | null;
+  const filterButtons = document.querySelectorAll<HTMLButtonElement>(".filter-btn");
+  let activeFilter = "all";
+  let activeQuery = "";
+
+  function applyFilters() {
+    if (!grid) return;
+    grid.querySelectorAll<HTMLElement>(".changelog-entry").forEach((entry) => {
+      const type = entry.dataset.type ?? "";
+      const title = entry.dataset.title ?? "";
+      const desc = entry.dataset.description ?? "";
+      const matchesQuery =
+        activeQuery === "" || title.includes(activeQuery) || desc.includes(activeQuery);
+      const matchesFilter = activeFilter === "all" || type === activeFilter;
+      entry.style.display = matchesQuery && matchesFilter ? "" : "none";
+    });
+    // Hide empty groups
+    grid.querySelectorAll<HTMLElement>(".changelog-group").forEach((group) => {
+      const visible = group.querySelectorAll<HTMLElement>('.changelog-entry:not([style*="display: none"])');
+      group.style.display = visible.length > 0 ? "" : "none";
+    });
+  }
+
+  filterButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      filterButtons.forEach((b) => b.classList.remove("is-active"));
+      btn.classList.add("is-active");
+      activeFilter = btn.dataset.filter ?? "all";
+      applyFilters();
+    });
+  });
+
+  search?.addEventListener("input", () => {
+    activeQuery = (search.value ?? "").trim().toLowerCase();
+    applyFilters();
+  });
+</script>
+
+<style>
+  .changelog-hero,
+  .changelog-list-section {
+    padding: 6rem 0;
+  }
+  .changelog-hero .body-lg {
+    max-width: 38rem;
+    margin: 1.25rem auto 0;
+  }
+  .changelog-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+  .changelog-search {
+    flex: 1;
+    min-width: 200px;
+    max-width: 320px;
+    padding: 0.625rem 1rem;
+    border: 1px solid var(--grey);
+    border-radius: 999px;
+    font-size: 0.875rem;
+  }
+  .changelog-filters {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--grey);
+    border-radius: 999px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    background: #fff;
+  }
+  .filter-btn.is-active {
+    background: #111;
+    color: #fff;
+    border-color: #111;
+  }
+  .changelog-timeline {
+    list-style: none;
+    max-width: 56rem;
+    margin: 0 auto;
+  }
+  .changelog-group {
+    padding: 2rem 0;
+    border-top: 1px solid var(--grey);
+  }
+  .changelog-group__header time {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  .changelog-group__header h2 {
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.02em;
+  }
+  .changelog-entries {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .changelog-entry {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 1.25rem;
+    align-items: start;
+  }
+  .changelog-tag {
+    display: inline-block;
+    padding: 0.125rem 0.625rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-radius: 999px;
+    text-align: center;
+  }
+  .changelog-tag--new {
+    background: var(--accent-lime);
+    color: #111;
+  }
+  .changelog-tag--improved {
+    background: #A0C9CB;
+    color: #111;
+  }
+  .changelog-tag--fixed {
+    background: #f1a636;
+    color: #111;
+  }
+  .changelog-tag--performance {
+    background: #5679b5;
+    color: #fff;
+  }
+  .changelog-entry h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+  .changelog-entry p {
+    color: var(--text-secondary);
+    line-height: 1.55;
+    font-size: 0.9375rem;
+  }
+  .empty-state {
+    text-align: center;
+    color: var(--text-secondary);
+  }
+</style>

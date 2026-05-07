@@ -1,0 +1,209 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PainSection from "../components/blocks/PainSection.astro";
+import StepsBlock from "../components/blocks/StepsBlock.astro";
+import RolesGrid from "../components/blocks/RolesGrid.astro";
+import CtaBlock from "../components/blocks/CtaBlock.astro";
+import MockData from "../components/mocks/MockData.astro";
+import { getPartnerPage } from "../lib/queries";
+import { urlFor } from "../lib/sanity";
+
+const page = await getPartnerPage();
+const hero = page?.hero;
+const tabs = page?.tabbedFeatures;
+const bgImageUrl = hero?.backgroundImage?.asset?._ref
+  ? urlFor(hero.backgroundImage).width(1920).quality(80).format("webp").url()
+  : null;
+---
+
+<BaseLayout
+  title={hero?.headline ?? "For Partners"}
+  description="Your clients are already on Team. Now you can be too."
+  seo={page?.seo}
+>
+  {/* Hero — same template as ICP */}
+  <section class="partner-hero" style={bgImageUrl ? `background-image:linear-gradient(180deg,rgba(0,0,0,0.45),rgba(0,0,0,0.55)),url(${bgImageUrl});` : undefined}>
+    <div class="container container--center">
+      {hero?.pillLabel && <span class="label-sm pill">{hero.pillLabel}</span>}
+      <h1 class="headline-xl">{hero?.headline ?? "For Partners"}</h1>
+      {hero?.subhead && <p class="body-lg">{hero.subhead}</p>}
+      {(hero?.primaryCta?.label || hero?.secondaryCta?.label) && (
+        <div class="partner-hero__ctas">
+          {hero.primaryCta?.label && hero.primaryCta?.href && (
+            <a href={hero.primaryCta.href} class="btn btn--primary">{hero.primaryCta.label}</a>
+          )}
+          {hero.secondaryCta?.label && hero.secondaryCta?.href && (
+            <a href={hero.secondaryCta.href} class="btn btn--outline">{hero.secondaryCta.label}</a>
+          )}
+        </div>
+      )}
+    </div>
+  </section>
+
+  <PainSection value={page?.painSection} />
+
+  {/* Tabbed feature spotlight — partner variant */}
+  {tabs?.tabs && tabs.tabs.length > 0 && (
+    <section class="partner-tabs">
+      <div class="container">
+        <div class="partner-tabs__intro">
+          {tabs.eyebrow && <span class="label-sm">{tabs.eyebrow}</span>}
+          {tabs.headline && <h2 class="headline-lg">{tabs.headline}</h2>}
+          {tabs.subhead && <p class="body-lg">{tabs.subhead}</p>}
+        </div>
+
+        <div class="partner-tabs__nav" role="tablist">
+          {tabs.tabs.map((tab: any, i: number) => (
+            <button class={`partner-tab__btn ${i === 0 ? "is-active" : ""}`} role="tab" data-tab-index={i}>
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        <div class="partner-tabs__panels">
+          {tabs.tabs.map((tab: any, i: number) => (
+            <div class={`partner-tab__panel ${i === 0 ? "is-active" : ""}`} data-panel-index={i}>
+              <div class="partner-tab__features">
+                {(tab.features ?? []).map((f: any) => (
+                  <article>
+                    <h3>{f.title}</h3>
+                    <p>{f.description}</p>
+                  </article>
+                ))}
+              </div>
+              <div class="partner-tab__preview">
+                {tab.previewMock && tab.previewMock[0] && <MockData value={tab.previewMock[0]} />}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <StepsBlock value={page?.stepsBlock} />
+  <RolesGrid value={page?.rolesGrid} />
+  <CtaBlock value={page?.finalCta} />
+
+  {!page && (
+    <section class="empty-state container container--center">
+      <p class="body-lg">This page hasn't been authored in Sanity yet.</p>
+    </section>
+  )}
+</BaseLayout>
+
+<script>
+  // Tab switching for partner-tabs
+  const buttons = document.querySelectorAll<HTMLButtonElement>(".partner-tab__btn");
+  const panels = document.querySelectorAll<HTMLElement>(".partner-tab__panel");
+  buttons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const idx = btn.dataset.tabIndex;
+      buttons.forEach((b) => b.classList.toggle("is-active", b.dataset.tabIndex === idx));
+      panels.forEach((p) => p.classList.toggle("is-active", p.dataset.panelIndex === idx));
+    });
+  });
+</script>
+
+<style>
+  .partner-hero,
+  .partner-tabs,
+  .empty-state {
+    padding: 6rem 0;
+  }
+  .partner-hero {
+    padding: 8rem 0;
+    background-size: cover;
+    background-position: center;
+    color: #fff;
+  }
+  .partner-hero h1 {
+    color: inherit;
+  }
+  .partner-hero .body-lg {
+    color: rgba(255, 255, 255, 0.9);
+    max-width: 38rem;
+    margin: 1.5rem auto 0;
+  }
+  .pill {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 999px;
+    margin-bottom: 1.5rem;
+    color: rgba(255, 255, 255, 0.9);
+  }
+  .partner-hero__ctas {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 2.5rem;
+  }
+  .partner-tabs__intro {
+    text-align: center;
+    max-width: 38rem;
+    margin: 0 auto 3rem;
+  }
+  .partner-tabs__intro .body-lg {
+    margin-top: 1rem;
+  }
+  .partner-tabs__nav {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+  }
+  .partner-tab__btn {
+    padding: 0.625rem 1.25rem;
+    border: 1px solid var(--grey);
+    border-radius: 999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    background: #fff;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .partner-tab__btn:hover {
+    border-color: #111;
+  }
+  .partner-tab__btn.is-active {
+    background: #111;
+    color: #fff;
+    border-color: #111;
+  }
+  .partner-tab__panel {
+    display: none;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+  .partner-tab__panel.is-active {
+    display: grid;
+  }
+  .partner-tab__features {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .partner-tab__features article h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  .partner-tab__features article p {
+    color: var(--text-secondary);
+    line-height: 1.55;
+    font-size: 0.9375rem;
+  }
+  .partner-tab__preview {
+    min-height: 280px;
+    display: flex;
+    align-items: center;
+  }
+  @media (max-width: 768px) {
+    .partner-tab__panel.is-active {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

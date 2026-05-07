@@ -1,0 +1,15 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import VerticalProductContent from "../components/pages/VerticalProductContent.astro";
+import { getVerticalProductPage } from "../lib/queries";
+
+const page = await getVerticalProductPage("intelligencePage");
+---
+
+<BaseLayout
+  title={page?.hero?.headline ?? "Intelligence"}
+  description="The smartest person in the room."
+  seo={page?.seo}
+>
+  <VerticalProductContent page={page} fallbackTitle="Intelligence" />
+</BaseLayout>

@@ -1,0 +1,237 @@
+---
+/**
+ * Shared rendering for vertical product pages (intelligence, orchestration).
+ * 4-tab spotlight + scroll-reveal problem section + trust callout.
+ */
+
+import PainSection from "../blocks/PainSection.astro";
+import RolesGrid from "../blocks/RolesGrid.astro";
+import CtaBlock from "../blocks/CtaBlock.astro";
+import MockData from "../mocks/MockData.astro";
+
+interface Props {
+  page: any;
+  fallbackTitle: string;
+}
+
+const { page, fallbackTitle } = Astro.props;
+const hero = page?.hero;
+const problem = page?.problemSection;
+const tabs = page?.tabbedSpotlight;
+const trust = page?.trustCallout;
+---
+
+{/* Hero */}
+<section class="vertical-hero">
+  <div class="container container--center">
+    {hero?.pillLabel && <span class="label-sm pill">{hero.pillLabel}</span>}
+    <h1 class="headline-xl">{hero?.headline ?? fallbackTitle}</h1>
+    {hero?.subhead && <p class="body-lg">{hero.subhead}</p>}
+    {(hero?.primaryCta?.label || hero?.secondaryCta?.label) && (
+      <div class="vertical-hero__ctas">
+        {hero.primaryCta?.label && hero.primaryCta?.href && (
+          <a href={hero.primaryCta.href} class="btn btn--primary">{hero.primaryCta.label}</a>
+        )}
+        {hero.secondaryCta?.label && hero.secondaryCta?.href && (
+          <a href={hero.secondaryCta.href} class="btn btn--outline">{hero.secondaryCta.label}</a>
+        )}
+      </div>
+    )}
+  </div>
+</section>
+
+{/* Problem section — large copy block (Phase 5 will add scroll-reveal animation) */}
+{problem && (
+  <section class="vertical-problem">
+    <div class="container">
+      {problem.headline && <h2 class="headline-lg">{problem.headline}</h2>}
+      {problem.paragraphs && (
+        <div class="vertical-problem__copy">
+          {problem.paragraphs.map((p: string) => <p class="body-lg">{p}</p>)}
+        </div>
+      )}
+    </div>
+  </section>
+)}
+
+<PainSection value={page?.painSection} />
+
+{/* 4-tab spotlight */}
+{tabs?.tabs && tabs.tabs.length > 0 && (
+  <section class="vertical-tabs">
+    <div class="container">
+      <div class="vertical-tabs__intro">
+        {tabs.headline && <h2 class="headline-lg">{tabs.headline}</h2>}
+        {tabs.subhead && <p class="body-lg">{tabs.subhead}</p>}
+      </div>
+
+      <div class="vertical-tabs__nav" role="tablist">
+        {tabs.tabs.map((tab: any, i: number) => (
+          <button class={`vertical-tab__btn ${i === 0 ? "is-active" : ""}`} data-tab-index={i}>
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      <div class="vertical-tabs__panels">
+        {tabs.tabs.map((tab: any, i: number) => (
+          <div class={`vertical-tab__panel ${i === 0 ? "is-active" : ""}`} data-panel-index={i}>
+            <div class="vertical-tab__features">
+              {(tab.features ?? []).map((f: any) => (
+                <article>
+                  <h3>{f.title}</h3>
+                  <p>{f.description}</p>
+                </article>
+              ))}
+            </div>
+            <div class="vertical-tab__preview">
+              {tab.previewMock && tab.previewMock[0] && <MockData value={tab.previewMock[0]} />}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+)}
+
+{/* Trust callout */}
+{trust && (
+  <section class="vertical-trust">
+    <div class="container container--center">
+      {trust.headline && <h2 class="headline-lg">{trust.headline}</h2>}
+      {trust.body && <p class="body-lg">{trust.body}</p>}
+      {trust.ctaLabel && trust.ctaHref && (
+        <a href={trust.ctaHref} class="btn btn--outline">{trust.ctaLabel}</a>
+      )}
+    </div>
+  </section>
+)}
+
+<RolesGrid value={page?.rolesGrid} />
+<CtaBlock value={page?.finalCta} />
+
+{!page && (
+  <section class="empty-state container container--center">
+    <p class="body-lg">This page hasn't been authored in Sanity yet.</p>
+  </section>
+)}
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>(".vertical-tab__btn");
+  const panels = document.querySelectorAll<HTMLElement>(".vertical-tab__panel");
+  buttons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const idx = btn.dataset.tabIndex;
+      buttons.forEach((b) => b.classList.toggle("is-active", b.dataset.tabIndex === idx));
+      panels.forEach((p) => p.classList.toggle("is-active", p.dataset.panelIndex === idx));
+    });
+  });
+</script>
+
+<style>
+  .vertical-hero,
+  .vertical-problem,
+  .vertical-tabs,
+  .vertical-trust,
+  .empty-state {
+    padding: 6rem 0;
+  }
+  .vertical-hero {
+    padding: 8rem 0;
+  }
+  .pill {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border: 1px solid var(--grey);
+    border-radius: 999px;
+    margin-bottom: 1.5rem;
+  }
+  .vertical-hero__ctas {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 2.5rem;
+  }
+  .vertical-problem {
+    background: var(--bg);
+  }
+  .vertical-problem .headline-lg {
+    margin-bottom: 2rem;
+  }
+  .vertical-problem__copy {
+    max-width: 36rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .vertical-tabs__intro {
+    text-align: center;
+    max-width: 38rem;
+    margin: 0 auto 3rem;
+  }
+  .vertical-tabs__intro .body-lg {
+    margin-top: 1rem;
+  }
+  .vertical-tabs__nav {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+  }
+  .vertical-tab__btn {
+    padding: 0.625rem 1.25rem;
+    border: 1px solid var(--grey);
+    border-radius: 999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    background: #fff;
+  }
+  .vertical-tab__btn:hover {
+    border-color: #111;
+  }
+  .vertical-tab__btn.is-active {
+    background: #111;
+    color: #fff;
+    border-color: #111;
+  }
+  .vertical-tab__panel {
+    display: none;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+  .vertical-tab__panel.is-active {
+    display: grid;
+  }
+  .vertical-tab__features {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .vertical-tab__features article h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  .vertical-tab__features article p {
+    color: var(--text-secondary);
+    line-height: 1.55;
+    font-size: 0.9375rem;
+  }
+  .vertical-tab__preview {
+    min-height: 280px;
+    display: flex;
+    align-items: center;
+  }
+  .vertical-trust .body-lg {
+    max-width: 38rem;
+    margin: 1rem auto 2rem;
+  }
+  @media (max-width: 768px) {
+    .vertical-tab__panel.is-active {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
