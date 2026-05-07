@@ -1,0 +1,210 @@
+---
+/**
+ * PortableText — minimal renderer for Sanity's portable-text block format.
+ *
+ * Handles the marks/styles we actually use in the schema:
+ *   - block styles: normal, h2, h3, blockquote
+ *   - decorators: strong, em
+ *   - link annotations (with optional openInNew)
+ *   - lists: bullet, number
+ *   - inline image blocks (with optional alt)
+ *
+ * Anything more exotic (footnotes, custom marks, etc.) we add as we go.
+ */
+
+import { urlFor } from "../lib/sanity";
+
+interface Span {
+  _type: "span";
+  text: string;
+  marks?: string[];
+}
+
+interface MarkDef {
+  _key: string;
+  _type: string;
+  href?: string;
+  openInNew?: boolean;
+}
+
+interface Block {
+  _type: "block";
+  style?: string;
+  listItem?: "bullet" | "number";
+  level?: number;
+  children: Span[];
+  markDefs?: MarkDef[];
+}
+
+interface ImageBlock {
+  _type: "image";
+  asset: { _ref: string };
+  alt?: string;
+}
+
+type Node = Block | ImageBlock;
+
+interface Props {
+  value?: Node[] | undefined | null;
+}
+
+const { value } = Astro.props;
+const blocks = value ?? [];
+
+// Walk blocks once and group consecutive list items so we can wrap them in
+// the right <ul>/<ol>. Otherwise each list-item block would render as a
+// standalone <li> outside any list element.
+type RenderItem =
+  | { kind: "block"; block: Block }
+  | { kind: "image"; image: ImageBlock }
+  | { kind: "list"; listItem: "bullet" | "number"; items: Block[] };
+
+function group(nodes: Node[]): RenderItem[] {
+  const out: RenderItem[] = [];
+  let listBuffer: { listItem: "bullet" | "number"; items: Block[] } | null = null;
+
+  for (const node of nodes) {
+    if (node._type === "block" && node.listItem) {
+      if (!listBuffer || listBuffer.listItem !== node.listItem) {
+        if (listBuffer) out.push({ kind: "list", ...listBuffer });
+        listBuffer = { listItem: node.listItem, items: [] };
+      }
+      listBuffer.items.push(node);
+    } else {
+      if (listBuffer) {
+        out.push({ kind: "list", ...listBuffer });
+        listBuffer = null;
+      }
+      if (node._type === "block") out.push({ kind: "block", block: node });
+      else if (node._type === "image") out.push({ kind: "image", image: node });
+    }
+  }
+  if (listBuffer) out.push({ kind: "list", ...listBuffer });
+  return out;
+}
+
+function renderInline(span: Span, markDefs: MarkDef[]): string {
+  let html = escapeHtml(span.text);
+  const marks = span.marks ?? [];
+  // Apply marks in order, innermost first
+  for (const mark of marks) {
+    if (mark === "strong") html = `<strong>${html}</strong>`;
+    else if (mark === "em") html = `<em>${html}</em>`;
+    else if (mark === "underline") html = `<u>${html}</u>`;
+    else if (mark === "code") html = `<code>${html}</code>`;
+    else {
+      // Annotation reference (e.g. link)
+      const def = markDefs.find((m) => m._key === mark);
+      if (def?._type === "link" && def.href) {
+        const target = def.openInNew ? ` target="_blank" rel="noopener noreferrer"` : "";
+        html = `<a href="${escapeAttr(def.href)}"${target}>${html}</a>`;
+      }
+    }
+  }
+  return html;
+}
+
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function escapeAttr(s: string): string {
+  return s.replace(/"/g, "&quot;").replace(/&/g, "&amp;");
+}
+
+function blockInner(block: Block): string {
+  return (block.children ?? [])
+    .map((span) => renderInline(span, block.markDefs ?? []))
+    .join("");
+}
+
+const grouped = group(blocks);
+---
+
+<div class="portable-text">
+  {
+    grouped.map((item) => {
+      if (item.kind === "list") {
+        const Tag = item.listItem === "number" ? "ol" : "ul";
+        return (
+          <Tag>
+            {item.items.map((b) => (
+              <li set:html={blockInner(b)} />
+            ))}
+          </Tag>
+        );
+      }
+      if (item.kind === "image") {
+        const src = urlFor(item.image).width(1200).format("webp").url();
+        return <img src={src} alt={item.image.alt ?? ""} loading="lazy" />;
+      }
+      const block = item.block;
+      const style = block.style ?? "normal";
+      if (style === "h2") return <h2 set:html={blockInner(block)} />;
+      if (style === "h3") return <h3 set:html={blockInner(block)} />;
+      if (style === "blockquote") return <blockquote set:html={blockInner(block)} />;
+      return <p set:html={blockInner(block)} />;
+    })
+  }
+</div>
+
+<style>
+  .portable-text :global(p) {
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    margin-bottom: 1.25rem;
+  }
+  .portable-text :global(h2) {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin: 2.5rem 0 1rem;
+    letter-spacing: -0.02em;
+  }
+  .portable-text :global(h3) {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 2rem 0 0.75rem;
+  }
+  .portable-text :global(blockquote) {
+    border-left: 3px solid var(--accent);
+    padding-left: 1.25rem;
+    margin: 1.5rem 0;
+    font-style: italic;
+    color: #111;
+  }
+  .portable-text :global(ul),
+  .portable-text :global(ol) {
+    margin: 1.25rem 0 1.25rem 1.5rem;
+    color: var(--text-secondary);
+  }
+  .portable-text :global(li) {
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+  }
+  .portable-text :global(a) {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .portable-text :global(strong) {
+    color: #111;
+    font-weight: 600;
+  }
+  .portable-text :global(code) {
+    background: var(--bg);
+    padding: 0.125rem 0.375rem;
+    border-radius: 4px;
+    font-family: ui-monospace, monospace;
+    font-size: 0.9em;
+  }
+  .portable-text :global(img) {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 2rem 0;
+  }
+</style>

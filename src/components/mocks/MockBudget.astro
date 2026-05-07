@@ -1,0 +1,122 @@
+---
+/**
+ * Fake budget breakdown — horizontal bars with labels, percentages, $ values.
+ */
+
+interface BudgetBar {
+  label?: string;
+  value?: string;
+  percent?: number;
+  color?: "lime" | "orange" | "teal" | "steel" | "rose" | "amber" | "foreground";
+}
+
+interface Props {
+  value?: {
+    totalLabel?: string;
+    totalValue?: string;
+    bars?: BudgetBar[];
+  };
+}
+
+const { value } = Astro.props;
+const bars = value?.bars ?? [];
+const colorMap: Record<string, string> = {
+  lime: "var(--accent-lime)",
+  orange: "var(--accent)",
+  teal: "#A0C9CB",
+  steel: "#5679b5",
+  rose: "#885d73",
+  amber: "#f1a636",
+  foreground: "#191919",
+};
+---
+
+<div class="mock-budget">
+  {(value?.totalLabel || value?.totalValue) && (
+    <header class="mock-budget__header">
+      {value.totalLabel && <span class="mock-budget__label">{value.totalLabel}</span>}
+      {value.totalValue && <span class="mock-budget__total">{value.totalValue}</span>}
+    </header>
+  )}
+  <ul class="mock-budget__bars">
+    {
+      bars.map((bar) => (
+        <li class="mock-budget__row">
+          <div class="mock-budget__row-meta">
+            <span class="mock-budget__row-label">{bar.label}</span>
+            {bar.value && <span class="mock-budget__row-value">{bar.value}</span>}
+          </div>
+          <div class="mock-budget__track">
+            <span
+              class="mock-budget__fill"
+              style={`width:${Math.min(100, Math.max(0, bar.percent ?? 0))}%;background:${
+                colorMap[bar.color ?? "lime"] ?? colorMap.lime
+              };`}
+            />
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<style>
+  .mock-budget {
+    padding: 1rem;
+    background: #fff;
+    border: 1px solid var(--grey);
+    border-radius: 8px;
+    width: 100%;
+  }
+  .mock-budget__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.875rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--grey);
+  }
+  .mock-budget__label {
+    font-size: 0.625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-secondary);
+    font-weight: 600;
+  }
+  .mock-budget__total {
+    font-size: 0.875rem;
+    font-weight: 700;
+  }
+  .mock-budget__bars {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+  .mock-budget__row-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.25rem;
+    font-size: 0.6875rem;
+  }
+  .mock-budget__row-label {
+    color: #111;
+    font-weight: 500;
+  }
+  .mock-budget__row-value {
+    color: var(--text-secondary);
+  }
+  .mock-budget__track {
+    height: 8px;
+    background: var(--bg);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .mock-budget__fill {
+    display: block;
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.4s ease;
+  }
+</style>

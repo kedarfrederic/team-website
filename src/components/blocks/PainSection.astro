@@ -1,0 +1,112 @@
+---
+/**
+ * Alternating pain/feature rows — appears on every ICP + vertical product page.
+ * Each row: pill label + headline + body + structured mock visual on the side.
+ */
+
+import MockData from "../mocks/MockData.astro";
+
+interface PainRow {
+  metadataPill?: string;
+  headline?: string;
+  body?: string;
+  mock?: any[]; // array with 0 or 1 mock object
+}
+
+interface Props {
+  value?: {
+    eyebrow?: string;
+    headline?: string;
+    rows?: PainRow[];
+  };
+}
+
+const { value } = Astro.props;
+if (!value || !value.rows || value.rows.length === 0) return null;
+---
+
+<section class="pain-section">
+  <div class="container">
+    {(value.eyebrow || value.headline) && (
+      <div class="pain-intro">
+        {value.eyebrow && <span class="label-sm">{value.eyebrow}</span>}
+        {value.headline && <h2 class="headline-lg">{value.headline}</h2>}
+      </div>
+    )}
+
+    <ul class="pain-rows">
+      {
+        value.rows.map((row, i) => (
+          <li class={`pain-row ${i % 2 === 1 ? "pain-row--reverse" : ""}`}>
+            <div class="pain-copy">
+              {row.metadataPill && <span class="label-sm pain-pill">{row.metadataPill}</span>}
+              {row.headline && <h3>{row.headline}</h3>}
+              {row.body && <p>{row.body}</p>}
+            </div>
+            <div class="pain-mock">
+              {row.mock && row.mock[0] && <MockData value={row.mock[0]} />}
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .pain-section {
+    padding: 6rem 0;
+  }
+  .pain-intro {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+  .pain-rows {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6rem;
+  }
+  .pain-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+  .pain-row--reverse .pain-copy {
+    order: 2;
+  }
+  .pain-pill {
+    display: inline-block;
+    margin-bottom: 1rem;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+  .pain-row h3 {
+    font-size: 1.75rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+  .pain-row p {
+    color: var(--text-secondary);
+    line-height: 1.65;
+    font-size: 1.0625rem;
+  }
+  .pain-mock {
+    min-height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  @media (max-width: 768px) {
+    .pain-row {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+    .pain-row--reverse .pain-copy {
+      order: 0;
+    }
+  }
+</style>

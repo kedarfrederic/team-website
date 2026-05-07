@@ -1,0 +1,29 @@
+---
+/**
+ * Polymorphic mock dispatcher — picks the right mock component based on the
+ * Sanity object's `_type` field. Used inside painRow, featureCard, and any
+ * other place a mock visual is allowed.
+ *
+ * Why a dispatcher: each mock variant has different fields (Gantt has rows,
+ * Budget has bars, Chat has messages). The schema stores them as a single
+ * polymorphic array; the renderer needs to switch on `_type` to render
+ * the right shape.
+ */
+
+import MockGantt from "./MockGantt.astro";
+import MockBudget from "./MockBudget.astro";
+import MockChat from "./MockChat.astro";
+import MockTimeline from "./MockTimeline.astro";
+
+interface Props {
+  value?: { _type?: string } & Record<string, any>;
+}
+
+const { value } = Astro.props;
+const type = value?._type;
+---
+
+{type === "mockGantt" && <MockGantt value={value} />}
+{type === "mockBudget" && <MockBudget value={value} />}
+{type === "mockChat" && <MockChat value={value} />}
+{type === "mockTimeline" && <MockTimeline value={value} />}

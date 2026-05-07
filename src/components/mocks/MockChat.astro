@@ -1,0 +1,120 @@
+---
+/**
+ * Fake TeamMate AI chat thread — alternating user/assistant message bubbles.
+ */
+
+import PortableText from "../PortableText.astro";
+
+interface ChatMessage {
+  from?: "user" | "assistant";
+  text?: string;
+  richBody?: any[];
+}
+
+interface Props {
+  value?: {
+    headerLabel?: string;
+    messages?: ChatMessage[];
+  };
+}
+
+const { value } = Astro.props;
+const messages = value?.messages ?? [];
+---
+
+<div class="mock-chat">
+  {value?.headerLabel && (
+    <header class="mock-chat__header">
+      <span class="mock-chat__avatar">{value.headerLabel.slice(0, 1)}</span>
+      <span class="mock-chat__label">{value.headerLabel}</span>
+    </header>
+  )}
+  <ul class="mock-chat__messages">
+    {
+      messages.map((msg) => (
+        <li class={`mock-chat__msg mock-chat__msg--${msg.from ?? "user"}`}>
+          <div class="mock-chat__bubble">
+            {msg.richBody && msg.richBody.length > 0 ? (
+              <PortableText value={msg.richBody} />
+            ) : (
+              <span>{msg.text}</span>
+            )}
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<style>
+  .mock-chat {
+    width: 100%;
+    background: #fff;
+    border: 1px solid var(--grey);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .mock-chat__header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1rem;
+    border-bottom: 1px solid var(--grey);
+    background: var(--bg);
+  }
+  .mock-chat__avatar {
+    width: 22px;
+    height: 22px;
+    background: #111;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.625rem;
+    font-weight: 700;
+  }
+  .mock-chat__label {
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  .mock-chat__messages {
+    list-style: none;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+  .mock-chat__msg {
+    display: flex;
+    max-width: 85%;
+  }
+  .mock-chat__msg--user {
+    align-self: flex-end;
+  }
+  .mock-chat__msg--assistant {
+    align-self: flex-start;
+  }
+  .mock-chat__bubble {
+    padding: 0.5rem 0.875rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    line-height: 1.5;
+  }
+  .mock-chat__msg--user .mock-chat__bubble {
+    background: #111;
+    color: #fff;
+    border-bottom-right-radius: 4px;
+  }
+  .mock-chat__msg--assistant .mock-chat__bubble {
+    background: var(--bg);
+    color: #111;
+    border-bottom-left-radius: 4px;
+  }
+  .mock-chat__bubble :global(p) {
+    margin: 0;
+    font-size: inherit;
+    color: inherit;
+    line-height: inherit;
+  }
+</style>

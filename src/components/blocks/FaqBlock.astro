@@ -1,0 +1,127 @@
+---
+/**
+ * FAQ section — accordion list using native <details>/<summary>.
+ * Eyebrow + headline + sub + N items + optional footer CTA.
+ */
+
+import PortableText from "../PortableText.astro";
+
+interface FaqItem {
+  question: string;
+  answer: any[]; // Portable Text
+}
+
+interface Props {
+  value?: {
+    eyebrow?: string;
+    headline?: string;
+    subhead?: string;
+    items?: FaqItem[];
+    footerCta?: { label?: string; href?: string };
+  };
+}
+
+const { value } = Astro.props;
+if (!value || !value.items || value.items.length === 0) return null;
+---
+
+<section class="faq-block">
+  <div class="container">
+    <div class="faq-intro">
+      {value.eyebrow && <span class="label-sm faq-eyebrow">{value.eyebrow}</span>}
+      {value.headline && <h2 class="headline-lg">{value.headline}</h2>}
+      {value.subhead && <p class="body-lg">{value.subhead}</p>}
+    </div>
+
+    <ul class="faq-list">
+      {
+        value.items.map((item) => (
+          <li class="faq-item">
+            <details>
+              <summary>
+                <span>{item.question}</span>
+                <svg class="faq-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <line x1="3" y1="8" x2="13" y2="8" />
+                  <line x1="8" y1="3" x2="8" y2="13" class="faq-icon-vertical" />
+                </svg>
+              </summary>
+              <div class="faq-answer">
+                <PortableText value={item.answer} />
+              </div>
+            </details>
+          </li>
+        ))
+      }
+    </ul>
+
+    {value.footerCta?.label && value.footerCta?.href && (
+      <div class="faq-footer">
+        <a href={value.footerCta.href}>{value.footerCta.label} →</a>
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .faq-block {
+    padding: 6rem 0;
+  }
+  .faq-intro {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  .faq-eyebrow {
+    display: inline-block;
+    margin-bottom: 1rem;
+    color: var(--accent);
+  }
+  .faq-intro .body-lg {
+    max-width: 38rem;
+    margin: 1rem auto 0;
+  }
+  .faq-list {
+    list-style: none;
+    max-width: 48rem;
+    margin: 0 auto;
+  }
+  .faq-item {
+    border-bottom: 1px solid var(--grey);
+  }
+  .faq-item details {
+    padding: 1.5rem 0;
+  }
+  .faq-item summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    list-style: none;
+    font-size: 1.0625rem;
+    font-weight: 500;
+  }
+  .faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+  .faq-icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    transition: transform 0.2s;
+    color: var(--accent);
+  }
+  .faq-item details[open] .faq-icon {
+    transform: rotate(45deg);
+  }
+  .faq-answer {
+    padding-top: 1rem;
+  }
+  .faq-footer {
+    margin-top: 3rem;
+    text-align: center;
+  }
+  .faq-footer a {
+    color: var(--accent);
+    font-weight: 600;
+  }
+</style>

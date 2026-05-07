@@ -1,0 +1,104 @@
+---
+/**
+ * Feature spotlight grid — homepage features, ICP feature spotlights.
+ * Each card: title + description + optional mock visual + optional link.
+ */
+
+import MockData from "../mocks/MockData.astro";
+
+interface FeatureCard {
+  title?: string;
+  description?: string;
+  mock?: any[];
+  href?: string;
+}
+
+interface Props {
+  value?: {
+    eyebrow?: string;
+    headline?: string;
+    subhead?: string;
+    cards?: FeatureCard[];
+  };
+}
+
+const { value } = Astro.props;
+if (!value || !value.cards || value.cards.length === 0) return null;
+---
+
+<section class="feature-spotlight">
+  <div class="container">
+    <div class="feature-intro">
+      {value.eyebrow && <span class="label-sm">{value.eyebrow}</span>}
+      {value.headline && <h2 class="headline-lg">{value.headline}</h2>}
+      {value.subhead && <p class="body-lg">{value.subhead}</p>}
+    </div>
+
+    <div class="feature-grid">
+      {
+        value.cards.map((card) => {
+          const Wrapper = card.href ? "a" : "article";
+          return (
+            <Wrapper class="feature-card" href={card.href ?? undefined}>
+              {card.mock && card.mock[0] && (
+                <div class="feature-mock">
+                  <MockData value={card.mock[0]} />
+                </div>
+              )}
+              {card.title && <h3>{card.title}</h3>}
+              {card.description && <p>{card.description}</p>}
+            </Wrapper>
+          );
+        })
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .feature-spotlight {
+    padding: 6rem 0;
+  }
+  .feature-intro {
+    text-align: center;
+    max-width: 38rem;
+    margin: 0 auto 4rem;
+  }
+  .feature-intro .body-lg {
+    margin-top: 1rem;
+  }
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  .feature-card {
+    display: block;
+    padding: 1.75rem;
+    border: 1px solid var(--grey);
+    border-radius: 16px;
+    background: #fff;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .feature-card[href]:hover {
+    border-color: #111;
+    transform: translateY(-2px);
+  }
+  .feature-mock {
+    margin-bottom: 1.25rem;
+    height: 180px;
+    background: var(--bg);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .feature-card h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  .feature-card p {
+    color: var(--text-secondary);
+    line-height: 1.55;
+    font-size: 0.9375rem;
+  }
+</style>

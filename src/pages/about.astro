@@ -1,15 +1,15 @@
 ---
 /**
- * /about — Phase 2 proof-of-concept page.
+ * /about — first migrated page, validates the full block-component pipeline.
  *
- * Validates the full pipeline:
- *   Sanity content → GROQ query → Astro page → static HTML.
- *
- * Renders sensible empty states when content is missing so the build
- * doesn't fail before editors populate Sanity.
+ * Uses the Phase 3 components (PortableText, CtaBlock, RolesGrid) so the
+ * page is the canonical reference for how subsequent pages compose blocks.
  */
 
 import BaseLayout from "../layouts/BaseLayout.astro";
+import PortableText from "../components/PortableText.astro";
+import CtaBlock from "../components/blocks/CtaBlock.astro";
+import RolesGrid from "../components/blocks/RolesGrid.astro";
 import { getAboutPage } from "../lib/queries";
 
 const page = await getAboutPage();
@@ -17,21 +17,6 @@ const hero = page?.hero;
 const mission = page?.mission;
 const story = page?.story;
 const values = page?.valuesSection;
-const rolesGrid = page?.rolesGrid;
-const finalCta = page?.finalCta;
-
-// Render Portable Text minimally for the proof-of-concept. Phase 3 will
-// extract this into a proper PortableText component with link/heading
-// handling — for now we just render the plain text spans.
-function portableTextToString(blocks: any[] | undefined): string {
-  if (!blocks) return "";
-  return blocks
-    .map((block) => {
-      if (block._type !== "block" || !Array.isArray(block.children)) return "";
-      return block.children.map((child: any) => child.text ?? "").join("");
-    })
-    .join("\n\n");
-}
 ---
 
 <BaseLayout
@@ -53,16 +38,7 @@ function portableTextToString(blocks: any[] | undefined): string {
     <section class="about-mission">
       <div class="container">
         {mission.headline && <h2 class="headline-lg">{mission.headline}</h2>}
-        {mission.body && (
-          <div class="prose">
-            {portableTextToString(mission.body)
-              .split("\n\n")
-              .filter(Boolean)
-              .map((p) => (
-                <p>{p}</p>
-              ))}
-          </div>
-        )}
+        {mission.body && <PortableText value={mission.body} />}
       </div>
     </section>
   )}
@@ -72,16 +48,7 @@ function portableTextToString(blocks: any[] | undefined): string {
     <section class="about-story">
       <div class="container">
         {story.headline && <h2 class="headline-lg">{story.headline}</h2>}
-        {story.body && (
-          <div class="prose">
-            {portableTextToString(story.body)
-              .split("\n\n")
-              .filter(Boolean)
-              .map((p) => (
-                <p>{p}</p>
-              ))}
-          </div>
-        )}
+        {story.body && <PortableText value={story.body} />}
       </div>
     </section>
   )}
@@ -103,46 +70,11 @@ function portableTextToString(blocks: any[] | undefined): string {
     </section>
   )}
 
-  {/* Roles grid (cross-link) */}
-  {rolesGrid?.cards && rolesGrid.cards.length > 0 && (
-    <section class="about-roles">
-      <div class="container">
-        {rolesGrid.headline && <h2 class="headline-lg">{rolesGrid.headline}</h2>}
-        <div class="roles-grid">
-          {rolesGrid.cards.map((c: any) => (
-            <a class="role-card" href={c.href}>
-              <h3>{c.title}</h3>
-              <p>{c.description}</p>
-            </a>
-          ))}
-        </div>
-      </div>
-    </section>
-  )}
+  {/* Roles grid (cross-link) — uses Phase 3 component */}
+  <RolesGrid value={page?.rolesGrid} />
 
-  {/* Final CTA */}
-  {finalCta && (
-    <section class="about-final-cta">
-      <div class="container container--center">
-        {finalCta.eyebrow && <span class="label-sm">{finalCta.eyebrow}</span>}
-        {finalCta.headline && <h2 class="headline-lg">{finalCta.headline}</h2>}
-        {finalCta.body && <p class="body-lg">{finalCta.body}</p>}
-        <div class="cta-row">
-          {finalCta.primaryCta?.label && finalCta.primaryCta?.href && (
-            <a href={finalCta.primaryCta.href} class="btn btn--primary">
-              {finalCta.primaryCta.label}
-            </a>
-          )}
-          {finalCta.secondaryCta?.label && finalCta.secondaryCta?.href && (
-            <a href={finalCta.secondaryCta.href} class="btn btn--outline">
-              {finalCta.secondaryCta.label}
-            </a>
-          )}
-        </div>
-        {finalCta.footnote && <small class="cta-footnote">{finalCta.footnote}</small>}
-      </div>
-    </section>
-  )}
+  {/* Final CTA — uses Phase 3 component */}
+  <CtaBlock value={page?.finalCta} />
 
   {/* Empty-state hint shown when no content has been authored yet */}
   {!page && (
@@ -158,7 +90,11 @@ function portableTextToString(blocks: any[] | undefined): string {
 </BaseLayout>
 
 <style>
-  section {
+  .about-hero,
+  .about-mission,
+  .about-story,
+  .about-values,
+  .empty-state {
     padding: 6rem 0;
   }
   .pill {
@@ -168,11 +104,10 @@ function portableTextToString(blocks: any[] | undefined): string {
     border-radius: 999px;
     margin-bottom: 1.5rem;
   }
-  .prose p {
-    font-size: 1.125rem;
-    line-height: 1.7;
-    color: var(--text-secondary);
-    margin-bottom: 1rem;
+  .about-mission .headline-lg,
+  .about-story .headline-lg,
+  .about-values .headline-lg {
+    margin-bottom: 1.5rem;
     max-width: 36rem;
   }
   .values-grid {
@@ -193,49 +128,10 @@ function portableTextToString(blocks: any[] | undefined): string {
     color: var(--text-secondary);
     line-height: 1.6;
   }
-  .roles-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1rem;
-    margin-top: 3rem;
-  }
-  .role-card {
-    display: block;
-    padding: 1.25rem;
-    border: 1px solid var(--grey);
-    border-radius: 12px;
-    transition: border-color 0.2s, transform 0.2s;
-  }
-  .role-card:hover {
-    border-color: #111;
-    transform: translateY(-2px);
-  }
-  .role-card h3 {
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-  }
-  .role-card p {
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-  }
-  .cta-row {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-    margin-top: 2rem;
-  }
-  .cta-footnote {
-    display: block;
-    margin-top: 1rem;
-    color: var(--text-secondary);
-    font-size: 0.75rem;
-  }
   .empty-state code {
     background: var(--bg);
     padding: 0.125rem 0.375rem;
     border-radius: 4px;
-    font-family: monospace;
+    font-family: ui-monospace, monospace;
   }
 </style>

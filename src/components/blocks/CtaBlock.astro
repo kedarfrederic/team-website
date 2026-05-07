@@ -1,0 +1,81 @@
+---
+/**
+ * "Final CTA" pattern. Optional eyebrow + headline + body + 1–2 buttons + optional footnote.
+ */
+
+interface Cta {
+  label?: string;
+  href?: string;
+}
+
+interface Props {
+  value?: {
+    eyebrow?: string;
+    headline?: string;
+    body?: string;
+    primaryCta?: Cta;
+    secondaryCta?: Cta;
+    footnote?: string;
+  };
+}
+
+const { value } = Astro.props;
+if (!value) return null;
+---
+
+<section class="cta-block">
+  <div class="container container--center">
+    {value.eyebrow && <span class="label-sm cta-eyebrow">{value.eyebrow}</span>}
+    {value.headline && <h2 class="headline-lg">{value.headline}</h2>}
+    {value.body && <p class="body-lg">{value.body}</p>}
+
+    {(value.primaryCta?.label || value.secondaryCta?.label) && (
+      <div class="cta-row">
+        {value.primaryCta?.label && value.primaryCta?.href && (
+          <a href={value.primaryCta.href} class="btn btn--primary">
+            {value.primaryCta.label}
+          </a>
+        )}
+        {value.secondaryCta?.label && value.secondaryCta?.href && (
+          <a href={value.secondaryCta.href} class="btn btn--outline">
+            {value.secondaryCta.label}
+          </a>
+        )}
+      </div>
+    )}
+
+    {value.footnote && <small class="cta-footnote">{value.footnote}</small>}
+  </div>
+</section>
+
+<style>
+  .cta-block {
+    padding: 7rem 0;
+    background: var(--bg);
+  }
+  .cta-eyebrow {
+    display: inline-block;
+    margin-bottom: 1rem;
+    color: var(--accent);
+  }
+  .cta-block .headline-lg {
+    margin-bottom: 1rem;
+  }
+  .cta-block .body-lg {
+    max-width: 38rem;
+    margin: 0 auto;
+  }
+  .cta-row {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 2.5rem;
+  }
+  .cta-footnote {
+    display: block;
+    margin-top: 1.25rem;
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+  }
+</style>
