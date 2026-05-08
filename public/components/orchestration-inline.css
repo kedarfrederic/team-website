@@ -184,9 +184,11 @@ a.nav__cta:hover{color:#111 !important;background:rgba(255,255,255,0.75);backdro
   position:relative;
 }
 .problem-viewport{
-  position:relative;
+  position:sticky;
+  top:0;
+  height:100vh;
   display:flex;align-items:center;justify-content:center;
-  padding:6rem 2rem;
+  padding:2rem;
   overflow:hidden;
 }
 /* Animated gradient background */
@@ -750,7 +752,7 @@ a.nav__cta:hover{color:#111 !important;background:rgba(255,255,255,0.75);backdro
   .roles-grid{grid-template-columns:1fr;gap:0}
   .roles-divider{width:100%;height:1px;align-self:auto}
   .role-item{padding:1.5rem 1rem}
-  .problem-scroll{height:auto}
+  .problem-scroll{height:300vh}
 
   .bridge-section{padding:4rem 1.5rem}
 

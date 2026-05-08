@@ -184,9 +184,11 @@ a.nav__cta:hover{color:#111 !important;background:rgba(255,255,255,0.75);backdro
   position:relative;
 }
 .problem-viewport{
-  position:relative;
+  position:sticky;
+  top:0;
+  height:100vh;
   display:flex;align-items:center;justify-content:center;
-  padding:6rem 2rem;
+  padding:2rem;
   overflow:hidden;
 }
 /* Animated gradient background */
@@ -819,7 +821,7 @@ a.nav__cta:hover{color:#111 !important;background:rgba(255,255,255,0.75);backdro
   .icp-hero__buttons{flex-direction:column;align-items:center}
   .icp-hero__buttons .btn{width:100%;max-width:18rem;justify-content:center}
 
-  .problem-scroll{height:auto}
+  .problem-scroll{height:300vh}
 
   .pain-row{grid-template-columns:1fr;gap:2rem}
   .pain-row--flipped .pain-row__text{order:1}

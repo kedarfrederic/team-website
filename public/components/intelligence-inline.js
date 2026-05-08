@@ -23,52 +23,100 @@
 })();
 
 (function() {
-  // Per-paragraph reveal via IntersectionObserver. Replaces the original
-  // scroll-driven 400vh sticky reveal: that approach left a huge blank
-  // scroll area when the per-frame scroll math was off in this Astro
-  // setup. Cleaner UX: paragraphs fade in word-by-word when scrolled
-  // into view, no giant pinned scroll dead-zone.
+  // Word-by-word reveal driven by scroll progress through a 400vh-tall
+  // pinned section. Restored from the legacy approach but tightened up:
+  //   - calculation re-runs on requestAnimationFrame while the section is
+  //     in view (some browsers drop scroll events under fast scrolling +
+  //     trackpad inertia, leaving words stuck mid-paragraph)
+  //   - rAF loop is gated by IntersectionObserver so it sleeps when the
+  //     section is offscreen
   var section = document.getElementById('problemSection');
   if (!section) return;
+  var scroll = section.querySelector('.problem-scroll');
   var paras = section.querySelectorAll('.problem-para');
+  var numParas = paras.length;
+  if (!scroll || numParas === 0) return;
 
-  // Split each paragraph into word spans (same as before)
+  // Split each paragraph into word spans
   paras.forEach(function(p) {
     var text = p.textContent.trim();
-    if (!text) return;
     var words = text.split(/\s+/);
     p.innerHTML = '';
-    words.forEach(function(w, i) {
+    words.forEach(function(w) {
       var span = document.createElement('span');
       span.className = 'word';
       span.textContent = w;
-      // Staggered transition delay so words ripple in
-      span.style.transitionDelay = (i * 30) + 'ms';
       p.appendChild(span);
     });
-    // Make paragraph visible (CSS hides individual words via opacity)
-    p.style.position = 'relative';
-    p.style.opacity = '1';
   });
 
-  // Reveal all words when paragraph enters viewport
+  function update() {
+    var rect = scroll.getBoundingClientRect();
+    var scrollH = scroll.offsetHeight;
+    var viewH = window.innerHeight;
+    var scrolled = -rect.top;
+    var totalRange = scrollH - viewH;
+    if (totalRange <= 0) return;
+    var progress = Math.max(0, Math.min(1, scrolled / totalRange));
+    var segSize = 1 / numParas;
+
+    paras.forEach(function(p, i) {
+      var segStart = i * segSize;
+      var segEnd = segStart + segSize;
+      var words = p.querySelectorAll('.word');
+
+      if (progress >= segStart && progress < segEnd) {
+        p.style.opacity = '1';
+        p.style.position = 'relative';
+        var subProgress = (progress - segStart) / segSize;
+        var wordsToShow = Math.floor(subProgress * words.length);
+        words.forEach(function(w, wi) {
+          if (wi <= wordsToShow) w.classList.add('is-visible');
+          else w.classList.remove('is-visible');
+        });
+      } else if (progress >= segEnd) {
+        var activeIdx = Math.min(numParas - 1, Math.floor(progress / segSize));
+        if (i < activeIdx) {
+          p.style.opacity = '0';
+          p.style.position = 'absolute';
+        } else {
+          p.style.opacity = '1';
+          p.style.position = 'relative';
+          words.forEach(function(w) { w.classList.add('is-visible'); });
+        }
+      } else {
+        p.style.opacity = '0';
+        p.style.position = 'absolute';
+        words.forEach(function(w) { w.classList.remove('is-visible'); });
+      }
+    });
+  }
+
+  // rAF loop — runs only while section is in viewport
+  var inView = false;
+  var rafId = null;
+  function loop() {
+    update();
+    if (inView) rafId = requestAnimationFrame(loop);
+  }
   if ('IntersectionObserver' in window) {
     var obs = new IntersectionObserver(function(entries) {
       entries.forEach(function(e) {
-        if (e.isIntersecting) {
-          e.target.querySelectorAll('.word').forEach(function(w) {
-            w.classList.add('is-visible');
-          });
+        inView = e.isIntersecting;
+        if (inView && rafId === null) {
+          rafId = requestAnimationFrame(loop);
+        } else if (!inView && rafId !== null) {
+          cancelAnimationFrame(rafId);
+          rafId = null;
         }
       });
-    }, { threshold: 0.15 });
-    paras.forEach(function(p) { obs.observe(p); });
+    }, { threshold: 0 });
+    obs.observe(section);
   } else {
-    // Fallback: just reveal everything
-    paras.forEach(function(p) {
-      p.querySelectorAll('.word').forEach(function(w) { w.classList.add('is-visible'); });
-    });
+    // Fallback: plain scroll listener
+    window.addEventListener('scroll', update, { passive: true });
   }
+  update();
 })();
 
 (function() {
