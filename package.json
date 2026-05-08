@@ -10,7 +10,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "check": "astro check"
+    "check": "astro check",
+    "seed": "tsx scripts/seed-sanity.ts"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
@@ -29,5 +30,8 @@
     "react-is": "^18.3.1",
     "styled-components": "^6.4.1",
     "typescript": "^5.7.3"
+  },
+  "devDependencies": {
+    "tsx": "^4.21.0"
   }
 }
