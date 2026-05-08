@@ -3,17 +3,19 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import PortableText from "../../components/PortableText.astro";
 import CtaBlock from "../../components/blocks/CtaBlock.astro";
 import { getInsightPostSlugs, getInsightPostBySlug, getInsightsIndexPage } from "../../lib/queries";
-import { urlFor } from "../../lib/sanity";
+import { getClient, urlFor } from "../../lib/sanity";
 
 export async function getStaticPaths() {
+  // Build-time only — no request context, so the published client is fine.
   const slugs = await getInsightPostSlugs();
   return slugs.map((slug) => ({ params: { slug } }));
 }
 
 const { slug } = Astro.params;
+const client = getClient(Astro);
 const [post, indexPage] = await Promise.all([
-  getInsightPostBySlug(slug as string),
-  getInsightsIndexPage(),
+  getInsightPostBySlug(slug as string, client),
+  getInsightsIndexPage(client),
 ]);
 
 if (!post) {

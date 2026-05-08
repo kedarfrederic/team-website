@@ -1,10 +1,11 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getChangelogPage } from "../lib/queries";
+import { getClient } from "../lib/sanity";
 // @ts-expect-error — ?raw modifier returns string at build time
 import bodyHtml from "../lib/changelog-body.html?raw";
 
-const page = await getChangelogPage();
+const page = await getChangelogPage(getClient(Astro));
 ---
 
 <BaseLayout

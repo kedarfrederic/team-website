@@ -22,10 +22,11 @@
 
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getHomepage } from "../lib/queries";
+import { getClient } from "../lib/sanity";
 // @ts-expect-error — Astro's ?raw modifier returns a string at build time
 import bodyHtml from "../lib/homepage-body.html?raw";
 
-const page = await getHomepage();
+const page = await getHomepage(getClient(Astro));
 const hero = page?.hero;
 const heroBg = !!hero?.backgroundImage?.asset?._ref;
 ---
