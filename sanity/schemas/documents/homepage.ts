@@ -261,15 +261,54 @@ export const homepage = defineType({
       type: "object",
       group: "sections",
       description:
-        "Scroll-driven demo: releases grid → loading → timeline view. Demo data is content-controlled.",
+        "Scroll-driven product demo: releases grid → loading → timeline view + TeamMate chat panel. All labels, release names, chat prompts, and card artwork are editable so marketing can iterate the demo content.",
       fields: [
-        defineField({ name: "headlineTop", type: "string", description: "First line — sans font." }),
-        defineField({ name: "headlineBottom", type: "string", description: "Second line — serif italic (Nyght)." }),
+        defineField({ name: "headlineTop", type: "string", description: "Optional marketing headline above the demo — first line, sans font." }),
+        defineField({ name: "headlineBottom", type: "string", description: "Optional marketing headline above the demo — second line, serif italic (Nyght)." }),
+        defineField({ name: "subhead", type: "text", rows: 2, description: "Optional marketing subhead above the demo." }),
         defineField({ name: "headline", type: "string", description: "Legacy single-line headline.", hidden: true }),
-        defineField({ name: "subhead", type: "text", rows: 2 }),
+
+        // ── Sidebar / nav copy ─────────────────────────────────
+        defineField({
+          name: "sidebar",
+          title: "Sidebar (fake-app left rail)",
+          type: "object",
+          fields: [
+            defineField({ name: "searchPlaceholder", type: "string", initialValue: "Search releases..." }),
+            defineField({ name: "navCommandCenter", type: "string", initialValue: "Command Center" }),
+            defineField({ name: "navRecents", type: "string", initialValue: "Recents" }),
+            defineField({ name: "navArtists", type: "string", initialValue: "Artists" }),
+            defineField({ name: "navPressRuns", type: "string", initialValue: "Press Runs" }),
+            defineField({ name: "navTouring", type: "string", initialValue: "Touring" }),
+            defineField({ name: "yourReleasesLabel", type: "string", initialValue: "Your Releases" }),
+            defineField({ name: "allReleasesLabel", type: "string", initialValue: "All Releases" }),
+            defineField({ name: "allReleasesCount", type: "string", initialValue: "99" }),
+            defineField({ name: "inProgressLabel", type: "string", initialValue: "In Progress" }),
+            defineField({ name: "inProgressCount", type: "string", initialValue: "61" }),
+            defineField({ name: "releasedLabel", type: "string", initialValue: "Released" }),
+            defineField({ name: "releasedCount", type: "string", initialValue: "38" }),
+          ],
+        }),
+
+        // ── Content header (Releases / + Add Artist / + New Release / tabs) ───
+        defineField({
+          name: "contentHeader",
+          title: "Content area header",
+          type: "object",
+          fields: [
+            defineField({ name: "title", type: "string", initialValue: "Releases" }),
+            defineField({ name: "addArtistLabel", type: "string", initialValue: "+ Add Artist" }),
+            defineField({ name: "newReleaseLabel", type: "string", initialValue: "+ New Release" }),
+            defineField({ name: "tabAll", type: "string", initialValue: "All Releases" }),
+            defineField({ name: "tabInProgress", type: "string", initialValue: "In Progress" }),
+            defineField({ name: "tabReleased", type: "string", initialValue: "Released" }),
+          ],
+        }),
+
+        // ── Demo release cards ─────────────────────────────────
         defineField({
           name: "demoReleases",
-          title: "Demo release cards",
+          title: "Demo release cards (9 max)",
           type: "array",
           of: [
             {
@@ -278,34 +317,226 @@ export const homepage = defineType({
               fields: [
                 defineField({ name: "title", type: "string", validation: (R) => R.required() }),
                 defineField({ name: "artist", type: "string" }),
-                defineField({
-                  name: "releaseDate",
-                  type: "string",
-                  description: "Display label (e.g. \"Mar 14\").",
-                }),
+                defineField({ name: "releaseDate", type: "string", description: "Display label (e.g. \"29 May 2026\")." }),
                 defineField({
                   name: "status",
                   type: "string",
-                  options: {
-                    list: ["Planning", "In progress", "Pre-release", "Released"],
-                  },
+                  options: { list: ["Planning", "In progress", "Pre-release", "Released", "Active"] },
                 }),
+                defineField({ name: "progressPercent", type: "number", validation: (Rule) => Rule.min(0).max(100) }),
                 defineField({
-                  name: "progressPercent",
-                  type: "number",
-                  validation: (Rule) => Rule.min(0).max(100),
+                  name: "artwork",
+                  type: "image",
+                  options: { hotspot: true },
+                  description: "Card artwork. If empty, falls back to the legacy SVG illustration.",
                 }),
               ],
-              preview: { select: { title: "title", subtitle: "artist" } },
+              preview: { select: { title: "title", subtitle: "artist", media: "artwork" } },
             },
           ],
           validation: (Rule) => Rule.max(12),
         }),
+
+        // ── TeamMate chat overlay ──────────────────────────────
         defineField({
-          name: "demoTimeline",
-          title: "Demo timeline (zoomed-in view)",
-          type: "mockTimeline",
+          name: "chat",
+          title: "TeamMate chat overlay",
+          type: "object",
+          fields: [
+            defineField({ name: "online", type: "string", initialValue: "ONLINE" }),
+            defineField({ name: "userTimestamp", type: "string", initialValue: "You · 2m ago" }),
+            defineField({ name: "userMessage", type: "text", rows: 2, initialValue: "Plan a comprehensive pre-release strategy focused on fan engagement" }),
+            defineField({ name: "aiTimestamp", type: "string", initialValue: "TeamMate · just now" }),
+            defineField({ name: "aiPrefix", type: "string", description: "Text before the bold task count (e.g. \"Done. I've added\").", initialValue: "Done. I've added" }),
+            defineField({ name: "aiTaskCount", type: "string", description: "Bold count (e.g. \"6 tasks\").", initialValue: "6 tasks" }),
+            defineField({ name: "aiSuffix", type: "text", rows: 2, description: "Text after the bold task count.", initialValue: "to the Arcadia timeline covering social teasers, playlist pitch, press run, and launch week." }),
+            defineField({
+              name: "categoryPills",
+              type: "array",
+              of: [
+                {
+                  type: "object",
+                  name: "categoryPill",
+                  fields: [
+                    defineField({ name: "label", type: "string" }),
+                    defineField({
+                      name: "color",
+                      type: "string",
+                      options: {
+                        list: [
+                          { title: "Pink (Social)", value: "pink" },
+                          { title: "Green (A&R)", value: "green" },
+                          { title: "Orange (Marketing/Events)", value: "orange" },
+                          { title: "Blue", value: "blue" },
+                          { title: "Purple", value: "purple" },
+                        ],
+                        layout: "radio",
+                      },
+                    }),
+                  ],
+                  preview: { select: { title: "label", subtitle: "color" } },
+                },
+              ],
+              validation: (Rule) => Rule.max(6),
+            }),
+            defineField({ name: "replyPlaceholder", type: "string", initialValue: "Reply to TeamMate..." }),
+          ],
         }),
+
+        // ── Demo timeline (zoomed-in mock — every label, status, task editable) ───
+        defineField({
+          name: "timelineRelease",
+          title: "Timeline · release header",
+          type: "object",
+          fields: [
+            defineField({ name: "title", type: "string", initialValue: "Arcadia" }),
+            defineField({ name: "meta", type: "string", description: "Subtitle (e.g. \"Marlowe Sky · Release · 29 May 2026\")", initialValue: "Marlowe Sky · Release · 29 May 2026" }),
+            defineField({ name: "artwork", type: "image", description: "Optional artwork override; falls back to the dark gradient SVG." }),
+          ],
+        }),
+        defineField({
+          name: "timelineFilters",
+          title: "Timeline · filter pills",
+          type: "array",
+          of: [
+            {
+              type: "object",
+              name: "timelineFilter",
+              fields: [
+                defineField({ name: "label", type: "string", validation: (R) => R.required() }),
+                defineField({ name: "active", type: "boolean", initialValue: false, description: "Active = solid black pill" }),
+              ],
+              preview: { select: { title: "label", subtitle: "active" } },
+            },
+          ],
+          validation: (Rule) => Rule.max(8),
+        }),
+        defineField({ name: "timelineWeekLabel", title: "Timeline · week label", type: "string", initialValue: "Week of 13 Mar" }),
+        defineField({ name: "timelineWeekSummary", title: "Timeline · week summary", type: "string", initialValue: "11 tasks · 1 late · 3 done" }),
+        defineField({
+          name: "timelineDays",
+          title: "Timeline · 5 day columns",
+          type: "array",
+          of: [
+            {
+              type: "object",
+              name: "timelineDay",
+              fields: [
+                defineField({ name: "dayNumber", type: "string", description: "e.g. \"13\"", validation: (R) => R.required() }),
+                defineField({ name: "dayLabel", type: "string", description: "e.g. \"Fri\"", validation: (R) => R.required() }),
+                defineField({
+                  name: "badge",
+                  type: "string",
+                  description: "Optional badge on the day header (e.g. \"TODAY\", \"RELEASE\").",
+                }),
+                defineField({
+                  name: "badgeStyle",
+                  type: "string",
+                  options: {
+                    list: [
+                      { title: "Today (orange on black)", value: "today" },
+                      { title: "Release (orange tint)", value: "release" },
+                    ],
+                    layout: "radio",
+                  },
+                }),
+                defineField({
+                  name: "tasks",
+                  type: "array",
+                  of: [
+                    {
+                      type: "object",
+                      name: "timelineTask",
+                      fields: [
+                        defineField({
+                          name: "status",
+                          type: "string",
+                          options: {
+                            list: [
+                              { title: "Done (green)", value: "done" },
+                              { title: "Active (orange)", value: "active" },
+                              { title: "Late (red)", value: "late" },
+                              { title: "Pending (grey)", value: "pending" },
+                            ],
+                            layout: "radio",
+                          },
+                          initialValue: "pending",
+                        }),
+                        defineField({ name: "statusLabel", type: "string", description: "Override the default status text (e.g. \"LATE · 2 DAYS\")." }),
+                        defineField({ name: "time", type: "string", description: "e.g. \"9 AM\", \"2 PM\"." }),
+                        defineField({ name: "title", type: "string", validation: (R) => R.required() }),
+                        defineField({ name: "subtitle", type: "string", description: "Optional second line (e.g. \"28,430 subscribers\")." }),
+                        defineField({
+                          name: "category",
+                          type: "string",
+                          description: "Pill label (e.g. \"Marketing\", \"Social\", \"PR\").",
+                        }),
+                        defineField({
+                          name: "categoryColor",
+                          type: "string",
+                          options: {
+                            list: [
+                              { title: "Marketing (orange)", value: "marketing" },
+                              { title: "Social (pink)", value: "social" },
+                              { title: "Distribution (blue)", value: "distribution" },
+                              { title: "PR (red)", value: "pr" },
+                              { title: "A&R (green)", value: "ar" },
+                              { title: "Content (purple)", value: "content" },
+                              { title: "Radio (sky)", value: "radio" },
+                              { title: "Commerce (lime)", value: "commerce" },
+                              { title: "Video (purple)", value: "video" },
+                              { title: "Events (orange)", value: "events" },
+                            ],
+                            layout: "dropdown",
+                          },
+                        }),
+                        defineField({
+                          name: "assignees",
+                          type: "array",
+                          of: [
+                            {
+                              type: "object",
+                              name: "timelineAssignee",
+                              fields: [
+                                defineField({ name: "initials", type: "string", validation: (R) => R.required().max(3) }),
+                                defineField({
+                                  name: "color",
+                                  type: "string",
+                                  options: {
+                                    list: [
+                                      { title: "Orange/red", value: "orangeRed" },
+                                      { title: "Blue/indigo", value: "blueIndigo" },
+                                      { title: "Pink/violet", value: "pinkViolet" },
+                                      { title: "Cyan/blue", value: "cyanBlue" },
+                                      { title: "Orange burst", value: "orangeBurst" },
+                                      { title: "Green emerald", value: "greenEmerald" },
+                                      { title: "Sky cyan", value: "skyCyan" },
+                                      { title: "Lime", value: "lime" },
+                                      { title: "Purple/pink", value: "purplePink" },
+                                    ],
+                                    layout: "dropdown",
+                                  },
+                                  initialValue: "orangeRed",
+                                }),
+                              ],
+                              preview: { select: { title: "initials", subtitle: "color" } },
+                            },
+                          ],
+                          validation: (Rule) => Rule.max(4),
+                        }),
+                      ],
+                      preview: { select: { title: "title", subtitle: "category" } },
+                    },
+                  ],
+                }),
+              ],
+              preview: { select: { title: "dayNumber", subtitle: "dayLabel" } },
+            },
+          ],
+          validation: (Rule) => Rule.max(7),
+        }),
+
+        defineField({ name: "demoTimeline", title: "Legacy mockTimeline", type: "mockTimeline", hidden: true }),
       ],
     }),
 

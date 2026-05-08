@@ -1,0 +1,559 @@
+---
+/**
+ * Guidelines / AI Assistant scroll-driven demo.
+ *
+ * The marketing team can iterate on this whole section: sidebar labels,
+ * tab labels, release card content (titles, artists, dates, status,
+ * progress, optional artwork uploads), and the TeamMate chat overlay.
+ * Schema lives at homepage.guidelinesSection.
+ *
+ * Inside-the-card timeline view (post-loading) is left as static markup
+ * because it's a 50+ task fake task board — editable for code, not via
+ * Studio. Surface those if marketing wants finer control later.
+ *
+ * Critical DOM IDs preserved verbatim (assistantTrigger, guidelinesWrap,
+ * teammateChat, chatUserMsg, chatAiMsg, releasesGridWrap, showcaseLoading,
+ * showcaseLoadingLabel, showcaseLoadingFill, showcaseTimeline) — the
+ * legacy inline JS in /components/homepage-inline-1.js targets each.
+ */
+import { urlFor } from "../../lib/sanity";
+
+interface DemoRelease {
+  title?: string;
+  artist?: string;
+  releaseDate?: string;
+  status?: string;
+  progressPercent?: number;
+  artwork?: any;
+}
+interface CategoryPill { label?: string; color?: string }
+interface TimelineAssignee { initials?: string; color?: string }
+interface TimelineTask {
+  status?: "done" | "active" | "late" | "pending";
+  statusLabel?: string;
+  time?: string;
+  title?: string;
+  subtitle?: string;
+  category?: string;
+  categoryColor?: string;
+  assignees?: TimelineAssignee[];
+}
+interface TimelineDay {
+  dayNumber?: string;
+  dayLabel?: string;
+  badge?: string;
+  badgeStyle?: "today" | "release";
+  tasks?: TimelineTask[];
+}
+interface Props {
+  data?: {
+    headlineTop?: string;
+    headlineBottom?: string;
+    subhead?: string;
+    sidebar?: Record<string, string>;
+    contentHeader?: Record<string, string>;
+    demoReleases?: DemoRelease[];
+    chat?: {
+      online?: string;
+      userTimestamp?: string;
+      userMessage?: string;
+      aiTimestamp?: string;
+      aiPrefix?: string;
+      aiTaskCount?: string;
+      aiSuffix?: string;
+      categoryPills?: CategoryPill[];
+      replyPlaceholder?: string;
+    };
+    timelineRelease?: { title?: string; meta?: string; artwork?: any };
+    timelineFilters?: { label?: string; active?: boolean }[];
+    timelineWeekLabel?: string;
+    timelineWeekSummary?: string;
+    timelineDays?: TimelineDay[];
+  };
+}
+
+const { data } = Astro.props;
+const sb = data?.sidebar ?? {};
+const ch = data?.contentHeader ?? {};
+const chat = data?.chat ?? {};
+
+const sidebar = {
+  searchPlaceholder: sb.searchPlaceholder ?? "Search releases...",
+  navCommandCenter: sb.navCommandCenter ?? "Command Center",
+  navRecents: sb.navRecents ?? "Recents",
+  navArtists: sb.navArtists ?? "Artists",
+  navPressRuns: sb.navPressRuns ?? "Press Runs",
+  navTouring: sb.navTouring ?? "Touring",
+  yourReleasesLabel: sb.yourReleasesLabel ?? "Your Releases",
+  allReleasesLabel: sb.allReleasesLabel ?? "All Releases",
+  allReleasesCount: sb.allReleasesCount ?? "99",
+  inProgressLabel: sb.inProgressLabel ?? "In Progress",
+  inProgressCount: sb.inProgressCount ?? "61",
+  releasedLabel: sb.releasedLabel ?? "Released",
+  releasedCount: sb.releasedCount ?? "38",
+};
+const header = {
+  title: ch.title ?? "Releases",
+  addArtistLabel: ch.addArtistLabel ?? "+ Add Artist",
+  newReleaseLabel: ch.newReleaseLabel ?? "+ New Release",
+  tabAll: ch.tabAll ?? "All Releases",
+  tabInProgress: ch.tabInProgress ?? "In Progress",
+  tabReleased: ch.tabReleased ?? "Released",
+};
+const chatCopy = {
+  online: chat.online ?? "ONLINE",
+  userTimestamp: chat.userTimestamp ?? "You · 2m ago",
+  userMessage: chat.userMessage ?? "Plan a comprehensive pre-release strategy focused on fan engagement",
+  aiTimestamp: chat.aiTimestamp ?? "TeamMate · just now",
+  aiPrefix: chat.aiPrefix ?? "Done. I've added",
+  aiTaskCount: chat.aiTaskCount ?? "6 tasks",
+  aiSuffix: chat.aiSuffix ?? "to the Arcadia timeline covering social teasers, playlist pitch, press run, and launch week.",
+  replyPlaceholder: chat.replyPlaceholder ?? "Reply to TeamMate...",
+};
+
+const DEFAULT_PILLS: CategoryPill[] = [
+  { label: "+ Social · 2", color: "pink" },
+  { label: "+ A&R · 1", color: "green" },
+  { label: "+ Marketing · 2", color: "orange" },
+  { label: "+ Events · 1", color: "orange" },
+];
+const pills = (chat.categoryPills && chat.categoryPills.length > 0) ? chat.categoryPills : DEFAULT_PILLS;
+function pillBg(color: string | undefined): string {
+  switch (color) {
+    case "pink": return "rgba(236,72,153,0.12)";
+    case "green": return "rgba(16,185,129,0.12)";
+    case "orange": return "rgba(245,96,2,0.12)";
+    case "blue": return "rgba(59,130,246,0.12)";
+    case "purple": return "rgba(139,92,246,0.12)";
+    default: return "rgba(245,96,2,0.12)";
+  }
+}
+function pillFg(color: string | undefined): string {
+  switch (color) {
+    case "pink": return "#be185d";
+    case "green": return "#047857";
+    case "orange": return "#c2410c";
+    case "blue": return "#1d4ed8";
+    case "purple": return "#6d28d9";
+    default: return "#c2410c";
+  }
+}
+
+const DEFAULT_RELEASES: Required<Omit<DemoRelease, "artwork">>[] = [
+  { title: "Arcadia", artist: "Marlowe Sky", releaseDate: "29 May 2026", status: "In Progress", progressPercent: 35 },
+  { title: "Velvet Static", artist: "Kite Harlan", releaseDate: "12 Jun 2026", status: "Promo", progressPercent: 60 },
+  { title: "Cedar & Honey", artist: "Orra Lane", releaseDate: "12 Jun 2026", status: "Planning", progressPercent: 60 },
+  { title: "Deadreckon", artist: "Juno Palm", releaseDate: "2 May 2026", status: "Released", progressPercent: 100 },
+  { title: "Ember Pact", artist: "Sable Roux", releaseDate: "5 Jul 2026", status: "Active", progressPercent: 45 },
+  { title: "Lowtide", artist: "Nine Twenty", releaseDate: "14 Aug 2026", status: "Planning", progressPercent: 10 },
+  { title: "Analog Soul", artist: "Petra Vox", releaseDate: "28 Jun 2026", status: "Promo", progressPercent: 70 },
+  { title: "Runaway Signal", artist: "Blythe Orson", releaseDate: "9 Jul 2026", status: "Active", progressPercent: 50 },
+  { title: "Marigold", artist: "West Canyon", releaseDate: "21 Aug 2026", status: "Planning", progressPercent: 20 },
+];
+
+const sourceReleases = data?.demoReleases ?? [];
+const releases: (Required<Omit<DemoRelease, "artwork">> & { artworkUrl?: string })[] = [];
+for (let i = 0; i < 9; i++) {
+  const src = sourceReleases[i];
+  const def = DEFAULT_RELEASES[i];
+  releases.push({
+    title: src?.title ?? def.title,
+    artist: src?.artist ?? def.artist,
+    releaseDate: src?.releaseDate ?? def.releaseDate,
+    status: src?.status ?? def.status,
+    progressPercent: src?.progressPercent ?? def.progressPercent,
+    artworkUrl: src?.artwork?.asset
+      ? urlFor(src.artwork).width(400).quality(85).format("webp").url()
+      : undefined,
+  });
+}
+
+// Status pill colors (matches the legacy color choices)
+function statusPillStyle(status: string, lightCard: boolean): string {
+  if (status === "In Progress") return "background:rgba(245,96,2,0.15);color:#fb923c";
+  if (status === "Promo") return lightCard ? "background:rgba(0,0,0,0.08);color:var(--text-secondary)" : "background:rgba(245,255,255,0.12);color:#fafafa";
+  if (status === "Released") return "background:rgba(0,0,0,0.08);color:var(--text-secondary)";
+  if (status === "Active") return lightCard ? "background:rgba(0,0,0,0.08);color:var(--text-secondary)" : "background:rgba(245,255,255,0.12);color:#fafafa";
+  return "background:rgba(0,0,0,0.08);color:var(--text-secondary)";
+}
+
+// Hardcoded SVG illustrations (used when no Sanity artwork upload)
+const cardArtSvg: string[] = [
+  `<svg width="100%" height="100%" viewBox="0 0 160 96" preserveAspectRatio="none" style="position:absolute;bottom:0"><circle cx="120" cy="30" r="14" fill="none" stroke="#f5f5f5" stroke-width="1" opacity="0.5"/><circle cx="120" cy="30" r="6" fill="#f5f5f5" opacity="0.9"/><path d="M0 96 L30 55 L55 70 L85 35 L115 60 L140 45 L160 75 L160 96 Z" fill="#f5f5f5" opacity="0.12"/><path d="M0 96 L20 75 L50 85 L80 70 L110 82 L140 72 L160 86 L160 96 Z" fill="#f5f5f5" opacity="0.2"/></svg>`,
+  `<svg width="100%" height="100%" viewBox="0 0 160 96" preserveAspectRatio="none" style="position:absolute"><path d="M0 60 Q40 40 80 55 T160 50 L160 96 L0 96 Z" fill="#fafafa" opacity="0.08"/><path d="M0 75 Q40 55 80 70 T160 65 L160 96 L0 96 Z" fill="#fafafa" opacity="0.14"/><circle cx="130" cy="25" r="5" fill="#fafafa" opacity="0.8"/></svg>`,
+  `<svg width="64" height="64" viewBox="0 0 64 64" style="position:relative"><circle cx="32" cy="32" r="12" fill="none" stroke="#1a1a1a" stroke-width="1"/><circle cx="32" cy="32" r="6" fill="#1a1a1a"/></svg>`,
+  `<svg width="100%" height="100%" viewBox="0 0 160 96" preserveAspectRatio="none"><path d="M10 70 L40 40 L65 55 L95 25 L130 45 L150 30" stroke="#1a1a1a" stroke-width="1.5" fill="none" stroke-linecap="round"/><circle cx="40" cy="40" r="2.5" fill="#1a1a1a"/><circle cx="95" cy="25" r="2.5" fill="#1a1a1a"/><circle cx="150" cy="30" r="2.5" fill="#1a1a1a"/></svg>`,
+  `<svg width="60" height="60" viewBox="0 0 60 60" style="position:relative"><path d="M30 6 L54 48 L6 48 Z" fill="none" stroke="#fafafa" stroke-width="1" opacity="0.6"/><circle cx="30" cy="32" r="4" fill="#fafafa"/></svg>`,
+  `<svg width="100%" height="100%" viewBox="0 0 160 96" preserveAspectRatio="none"><line x1="20" y1="20" x2="140" y2="20" stroke="#1a1a1a" stroke-width="1.5" opacity="1"/><line x1="20" y1="35" x2="140" y2="35" stroke="#1a1a1a" stroke-width="1.5" opacity="0.7"/><line x1="20" y1="50" x2="140" y2="50" stroke="#1a1a1a" stroke-width="1.5" opacity="0.5"/><line x1="20" y1="65" x2="140" y2="65" stroke="#1a1a1a" stroke-width="1.5" opacity="0.3"/><line x1="20" y1="80" x2="140" y2="80" stroke="#1a1a1a" stroke-width="1.5" opacity="0.15"/></svg>`,
+  `<svg width="72" height="72" viewBox="0 0 72 72"><rect x="10" y="10" width="52" height="52" rx="2" fill="none" stroke="#1a1a1a" stroke-width="1"/><rect x="20" y="20" width="32" height="32" rx="2" fill="none" stroke="#1a1a1a" stroke-width="1" opacity="0.6"/><rect x="28" y="28" width="16" height="16" rx="1" fill="#1a1a1a"/></svg>`,
+  `<svg width="100%" height="100%" viewBox="0 0 160 96" preserveAspectRatio="none"><line x1="30" y1="30" x2="85" y2="55" stroke="#fafafa" stroke-width="1" opacity="0.35"/><line x1="85" y1="55" x2="130" y2="25" stroke="#fafafa" stroke-width="1" opacity="0.35"/><line x1="85" y1="55" x2="140" y2="70" stroke="#fafafa" stroke-width="1" opacity="0.35"/><line x1="30" y1="30" x2="40" y2="70" stroke="#fafafa" stroke-width="1" opacity="0.35"/><circle cx="30" cy="30" r="4" fill="#fafafa"/><circle cx="85" cy="55" r="5" fill="#fafafa" opacity="0.9"/><circle cx="130" cy="25" r="3" fill="#fafafa"/><circle cx="40" cy="70" r="2.5" fill="#fafafa" opacity="0.7"/><circle cx="140" cy="70" r="3" fill="#fafafa"/></svg>`,
+  `<svg width="72" height="72" viewBox="0 0 72 72"><circle cx="36" cy="36" r="3" fill="#1a1a1a"/><circle cx="36" cy="36" r="10" fill="none" stroke="#1a1a1a" stroke-width="1" opacity="0.7"/><circle cx="36" cy="36" r="20" fill="none" stroke="#1a1a1a" stroke-width="1" opacity="0.4"/><circle cx="36" cy="36" r="30" fill="none" stroke="#1a1a1a" stroke-width="1" opacity="0.18"/></svg>`,
+];
+const cardBg: string[] = [
+  "linear-gradient(180deg,#2a2a2a 0%,#1a1a1a 100%)",
+  "linear-gradient(135deg,#3a3a3a 0%,#242424 100%)",
+  "linear-gradient(135deg,#eeeae4 0%,#d9d3c8 100%)",
+  "linear-gradient(135deg,#f4f4f4 0%,#e4e4e4 100%)",
+  "linear-gradient(135deg,#1f1f1f 0%,#2e2e2e 100%)",
+  "linear-gradient(135deg,#ececec 0%,#dcdcdc 100%)",
+  "linear-gradient(135deg,#f4f4f4 0%,#e8e8e8 100%)",
+  "linear-gradient(135deg,#262626 0%,#1a1a1a 100%)",
+  "linear-gradient(135deg,#efefef 0%,#dbdbdb 100%)",
+];
+const cardLightBg = [false, false, true, true, false, true, true, false, true];
+const cardLayout = ["bottom", "center", "center", "center", "center", "center", "center", "center", "center"];
+
+// Optional marketing intro headline (only renders if either field is set)
+const headlineTop = data?.headlineTop ?? "";
+const headlineBottom = data?.headlineBottom ?? "";
+const subhead = data?.subhead ?? "";
+const showIntro = !!(headlineTop || headlineBottom || subhead);
+
+// ── Timeline (zoomed-in release view, post-loading) ─────────────────────
+const tlRelease = data?.timelineRelease ?? {};
+const timelineTitle = tlRelease.title ?? "Arcadia";
+const timelineMeta = tlRelease.meta ?? "Marlowe Sky · Release · 29 May 2026";
+const timelineArtworkUrl = tlRelease.artwork?.asset
+  ? urlFor(tlRelease.artwork).width(72).quality(85).format("webp").url()
+  : undefined;
+
+const DEFAULT_FILTERS = [
+  { label: "All tasks · 11", active: true },
+  { label: "Marketing · 3", active: false },
+  { label: "Social · 2", active: false },
+  { label: "+ 4", active: false },
+];
+const filters = (data?.timelineFilters && data.timelineFilters.length > 0) ? data.timelineFilters : DEFAULT_FILTERS;
+const weekLabel = data?.timelineWeekLabel ?? "Week of 13 Mar";
+const weekSummary = data?.timelineWeekSummary ?? "11 tasks · 1 late · 3 done";
+
+const DEFAULT_DAYS: TimelineDay[] = [
+  { dayNumber: "13", dayLabel: "Fri", tasks: [
+    { status: "done", time: "9 AM", title: "Finalise cover artwork v4", category: "Marketing", categoryColor: "marketing", assignees: [{ initials: "JR", color: "orangeRed" }] },
+    { status: "done", time: "2 PM", title: "Pre-save link QA across DSPs", category: "Distribution", categoryColor: "distribution", assignees: [{ initials: "SL", color: "blueIndigo" }] },
+    { status: "done", time: "5 PM", title: "Brief press photographer", category: "PR", categoryColor: "pr", assignees: [{ initials: "MK", color: "pinkViolet" }] },
+  ]},
+  { dayNumber: "14", dayLabel: "Sat", tasks: [
+    { status: "active", time: "11 AM", title: "Instagram teaser #1", category: "Social", categoryColor: "social", assignees: [{ initials: "AK", color: "cyanBlue" }] },
+    { status: "active", time: "4 PM", title: "TikTok challenge launch", category: "Social", categoryColor: "social", assignees: [{ initials: "TB", color: "orangeBurst" }] },
+  ]},
+  { dayNumber: "15", dayLabel: "Sun", badge: "TODAY", badgeStyle: "today", tasks: [
+    { status: "late", statusLabel: "LATE · 2 DAYS", time: "10 AM", title: "Spotify playlist pitch", category: "A&R", categoryColor: "ar", assignees: [{ initials: "DR", color: "greenEmerald" }] },
+    { status: "active", time: "3 PM", title: "Upload Spotify Canvas", category: "Content", categoryColor: "content", assignees: [{ initials: "NL", color: "purplePink" }] },
+    { status: "active", time: "6 PM", title: "Send fan newsletter", subtitle: "28,430 subscribers", category: "Marketing", categoryColor: "marketing", assignees: [{ initials: "JR", color: "orangeRed" }] },
+  ]},
+  { dayNumber: "16", dayLabel: "Mon", tasks: [
+    { status: "pending", time: "8 AM", title: "Press embargo lifts", category: "PR", categoryColor: "pr", assignees: [{ initials: "MK", color: "pinkViolet" }] },
+    { status: "pending", time: "12 PM", title: "Radio plugger follow-up", category: "Radio", categoryColor: "radio", assignees: [{ initials: "RV", color: "skyCyan" }] },
+    { status: "pending", time: "3 PM", title: "Merch store go-live", category: "Commerce", categoryColor: "commerce", assignees: [{ initials: "EO", color: "lime" }] },
+  ]},
+  { dayNumber: "17", dayLabel: "Tue", badge: "RELEASE", badgeStyle: "release", tasks: [
+    { status: "pending", time: "10 AM", title: "Lyric video premiere", category: "Video", categoryColor: "video", assignees: [{ initials: "NL", color: "purplePink" }] },
+    { status: "pending", time: "7 PM", title: "Launch party · Brooklyn", subtitle: "Baby's All Right · 180 RSVPs", category: "Events", categoryColor: "events", assignees: [{ initials: "AK", color: "cyanBlue" }, { initials: "JR", color: "orangeRed" }] },
+  ]},
+];
+const sourceDays = data?.timelineDays && data.timelineDays.length > 0 ? data.timelineDays : DEFAULT_DAYS;
+const days: TimelineDay[] = sourceDays.slice(0, 7);
+
+function statusDot(s: string | undefined): string {
+  if (s === "done") return "#10b981";
+  if (s === "late") return "#ef4444";
+  if (s === "active") return "#F56002";
+  return "#94a3b8";
+}
+function statusText(s: string | undefined): string {
+  if (s === "done") return "Done";
+  if (s === "late") return "LATE";
+  if (s === "active") return "Active";
+  return "Pending";
+}
+function cardBorder(s: string | undefined): string {
+  if (s === "done") return "rgba(16,185,129,0.25)";
+  if (s === "late") return "rgba(239,68,68,0.4)";
+  if (s === "active") return "rgba(245,96,2,0.25)";
+  return "rgba(0,0,0,0.08)";
+}
+function cardAccent(s: string | undefined): string {
+  if (s === "done") return "#10b981";
+  if (s === "late") return "#ef4444";
+  if (s === "active") return "#F56002";
+  return "#94a3b8";
+}
+function categoryStyle(c: string | undefined): string {
+  switch (c) {
+    case "marketing": return "background:rgba(245,96,2,0.1);color:#c2410c";
+    case "social": return "background:rgba(236,72,153,0.1);color:#be185d";
+    case "distribution": return "background:rgba(59,130,246,0.1);color:#1d4ed8";
+    case "pr": return "background:rgba(239,68,68,0.1);color:#b91c1c";
+    case "ar": return "background:rgba(16,185,129,0.12);color:#047857";
+    case "content": return "background:rgba(139,92,246,0.12);color:#6d28d9";
+    case "radio": return "background:rgba(14,165,233,0.12);color:#0369a1";
+    case "commerce": return "background:rgba(132,204,22,0.18);color:#4d7c0f";
+    case "video": return "background:rgba(139,92,246,0.12);color:#6d28d9";
+    case "events": return "background:rgba(245,96,2,0.12);color:#c2410c";
+    default: return "background:rgba(0,0,0,0.06);color:var(--text-secondary)";
+  }
+}
+function assigneeBg(c: string | undefined): string {
+  switch (c) {
+    case "blueIndigo": return "linear-gradient(135deg,#3b82f6,#6366f1)";
+    case "pinkViolet": return "linear-gradient(135deg,#ec4899,#8b5cf6)";
+    case "cyanBlue": return "linear-gradient(135deg,#06b6d4,#3b82f6)";
+    case "orangeBurst": return "linear-gradient(135deg,#f97316,#ef4444)";
+    case "greenEmerald": return "linear-gradient(135deg,#10b981,#059669)";
+    case "skyCyan": return "linear-gradient(135deg,#0ea5e9,#06b6d4)";
+    case "lime": return "linear-gradient(135deg,#84cc16,#65a30d)";
+    case "purplePink": return "linear-gradient(135deg,#a855f7,#ec4899)";
+    case "orangeRed":
+    default: return "linear-gradient(135deg,#f59e0b,#ef4444)";
+  }
+}
+---
+
+{showIntro && (
+  <div class="container container--center" style="padding-top:6rem">
+    <div class="section-intro">
+      <h2 class="headline-lg">
+        {headlineTop}
+        {headlineBottom && <><br /><span class="nyght">{headlineBottom}</span></>}
+      </h2>
+      {subhead && <p class="body-lg">{subhead}</p>}
+    </div>
+  </div>
+)}
+
+<section class="guidelines-section" id="guidelinesSection">
+  <div id="assistantTrigger" class="guidelines-trigger" style="width:100%">
+    <div class="guidelines-w" id="guidelinesWrap">
+      <!-- Sidebar -->
+      <div class="guidelines-nav">
+        <div class="guidelines-nav__header" style="justify-content:flex-start">
+          <img src="/assets/logo-gradient.svg" alt="Team" style="height:1.5rem;width:auto" />
+        </div>
+        <div style="position:relative;margin-bottom:0.75rem">
+          <svg style="position:absolute;left:0.625rem;top:50%;transform:translateY(-50%);opacity:0.35" width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7" cy="7" r="5" /><path d="M11 11l3.5 3.5" /></svg>
+          <input type="text" placeholder={sidebar.searchPlaceholder} disabled style="width:100%;padding:0.4rem 0.5rem 0.4rem 1.75rem;border:1px solid rgba(0,0,0,0.08);border-radius:0.375rem;font-size:0.75rem;font-family:inherit;background:transparent;color:var(--text-secondary);outline:none" />
+        </div>
+        <div class="platform-nav-item is-active" style="display:flex;align-items:center;gap:0.5rem;padding:0.5rem 0.75rem;border-radius:0.375rem;font-size:0.8125rem;font-weight:500;background:var(--black);color:#fff;margin-bottom:0.125rem">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6" rx="1" /><rect x="9" y="1" width="6" height="6" rx="1" /><rect x="1" y="9" width="6" height="6" rx="1" /><rect x="9" y="9" width="6" height="6" rx="1" /></svg>
+          {sidebar.navCommandCenter}
+        </div>
+        <div style="display:flex;align-items:center;gap:0.5rem;padding:0.5rem 0.75rem;font-size:0.8125rem;color:var(--text-secondary);margin-bottom:0.125rem">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6" /><path d="M8 5v3l2 2" /></svg>
+          {sidebar.navRecents}
+        </div>
+        <div style="display:flex;align-items:center;gap:0.5rem;padding:0.5rem 0.75rem;font-size:0.8125rem;color:var(--text-secondary);margin-bottom:0.125rem">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="6" r="3" /><path d="M2 14c0-3.3 2.7-5 6-5s6 1.7 6 5" /></svg>
+          {sidebar.navArtists}
+        </div>
+        <div style="display:flex;align-items:center;gap:0.5rem;padding:0.5rem 0.75rem;font-size:0.8125rem;color:var(--text-secondary);margin-bottom:0.125rem">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h12M2 8h12M2 13h8" /></svg>
+          {sidebar.navPressRuns}
+        </div>
+        <div style="display:flex;align-items:center;gap:0.5rem;padding:0.5rem 0.75rem;font-size:0.8125rem;color:var(--text-secondary);margin-bottom:0.75rem">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6" /><path d="M5 8h6M8 5v6" /></svg>
+          {sidebar.navTouring}
+        </div>
+        <div style="font-size:0.625rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:rgba(0,0,0,0.3);padding:0.25rem 0.75rem 0.5rem">{sidebar.yourReleasesLabel}</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:0.375rem 0.75rem;font-size:0.8125rem;color:var(--text-secondary)">
+          <span>{sidebar.allReleasesLabel}</span><span style="font-size:0.75rem;opacity:0.5">{sidebar.allReleasesCount}</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:0.375rem 0.75rem;font-size:0.8125rem;color:var(--text-secondary)">
+          <span>{sidebar.inProgressLabel}</span><span style="font-size:0.75rem;opacity:0.5">{sidebar.inProgressCount}</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:0.375rem 0.75rem;font-size:0.8125rem;color:var(--text-secondary)">
+          <span>{sidebar.releasedLabel}</span><span style="font-size:0.75rem;opacity:0.5">{sidebar.releasedCount}</span>
+        </div>
+
+        <!-- TeamMate chat panel (fades in with timeline) -->
+        <div id="teammateChat" style="margin-top:auto;padding-top:0.75rem;opacity:0;pointer-events:none;display:flex;flex-direction:column;gap:0.5rem">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:0 0.5rem 0.5rem;border-bottom:1px solid rgba(0,0,0,0.06);margin-bottom:0.25rem">
+            <div style="display:flex;align-items:center;gap:0.375rem">
+              <img src="/assets/teammate-avatar-round.png" alt="" style="width:1.25rem;height:1.25rem;border-radius:50%;flex-shrink:0;object-fit:cover" />
+              <span style="font-size:0.75rem;font-weight:700;color:var(--black)">TeamMate</span>
+              <span style="font-size:0.5rem;padding:0.0625rem 0.3125rem;border-radius:100px;background:rgba(16,185,129,0.12);color:#047857;font-weight:700;letter-spacing:0.04em">{chatCopy.online}</span>
+            </div>
+            <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="rgba(0,0,0,0.4)" stroke-width="2"><path d="M12 4L4 12M4 4l8 8" /></svg>
+          </div>
+
+          <div id="chatUserMsg" style="display:flex;gap:0.4375rem;align-items:flex-start;opacity:0">
+            <div style="flex:1;min-width:0">
+              <div style="font-size:0.5625rem;font-weight:700;color:rgba(0,0,0,0.5);margin-bottom:0.125rem;text-align:right">{chatCopy.userTimestamp}</div>
+              <div style="background:#111;color:#fff;padding:0.4375rem 0.625rem;border-radius:0.75rem 0.75rem 0.125rem 0.75rem;font-size:0.6875rem;line-height:1.4">{chatCopy.userMessage}</div>
+            </div>
+            <div style="width:1.25rem;height:1.25rem;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#6366f1);flex-shrink:0;font-size:0.5rem;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700">SL</div>
+          </div>
+
+          <div id="chatAiMsg" style="display:flex;gap:0.4375rem;align-items:flex-start;opacity:0">
+            <img src="/assets/teammate-avatar-round.png" alt="" style="width:1.25rem;height:1.25rem;border-radius:50%;flex-shrink:0;object-fit:cover" />
+            <div style="flex:1;min-width:0">
+              <div style="font-size:0.5625rem;font-weight:700;color:rgba(0,0,0,0.5);margin-bottom:0.125rem">{chatCopy.aiTimestamp}</div>
+              <div style="background:#fff;border:1px solid rgba(0,0,0,0.06);padding:0.4375rem 0.625rem;border-radius:0.75rem 0.75rem 0.75rem 0.125rem;font-size:0.6875rem;line-height:1.45;color:var(--black)">
+                {chatCopy.aiPrefix} <strong>{chatCopy.aiTaskCount}</strong> {chatCopy.aiSuffix}
+                <div style="display:flex;flex-wrap:wrap;gap:0.1875rem;margin-top:0.375rem">
+                  {pills.map((p) => (
+                    <span style={`font-size:0.5rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;padding:0.125rem 0.3125rem;border-radius:100px;background:${pillBg(p.color)};color:${pillFg(p.color)}`}>{p.label}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:0.25rem;display:flex;align-items:center;gap:0.375rem;padding:0.375rem 0.5rem;border:1px solid rgba(0,0,0,0.08);border-radius:100px;background:#fff">
+            <input type="text" placeholder={chatCopy.replyPlaceholder} disabled style="flex:1;border:none;outline:none;font-size:0.6875rem;font-family:inherit;background:transparent;color:var(--text-secondary);min-width:0" />
+            <button style="width:1.125rem;height:1.125rem;border-radius:50%;background:var(--accent);border:none;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer">
+              <svg width="8" height="8" viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M1 6h10M7 2l4 4-4 4" /></svg>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Content area — Release cards grid -->
+      <div class="guidelines-content" style="padding:1.25rem;position:relative;overflow:hidden">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem">
+          <div style="font-size:1.25rem;font-weight:700;color:var(--black)">{header.title}</div>
+          <div style="display:flex;gap:0.5rem">
+            <div style="font-size:0.75rem;font-weight:600;padding:0.375rem 0.875rem;border-radius:0.375rem;border:1px solid rgba(0,0,0,0.1);color:var(--text-secondary)">{header.addArtistLabel}</div>
+            <div style="font-size:0.75rem;font-weight:600;padding:0.375rem 0.875rem;border-radius:0.375rem;background:var(--accent);color:#fff">{header.newReleaseLabel}</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:0;margin-bottom:1.25rem;border-bottom:1px solid rgba(0,0,0,0.06)">
+          <div style="font-size:0.8125rem;font-weight:600;padding:0.5rem 1rem;border-bottom:2px solid var(--black);color:var(--black)">{header.tabAll}</div>
+          <div style="font-size:0.8125rem;padding:0.5rem 1rem;color:var(--text-secondary)">{header.tabInProgress}</div>
+          <div style="font-size:0.8125rem;padding:0.5rem 1rem;color:var(--text-secondary)">{header.tabReleased}</div>
+        </div>
+
+        <div class="releases-grid-wrap" id="releasesGridWrap" style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;will-change:opacity">
+          {releases.map((r, i) => {
+            const layout = cardLayout[i] === "bottom" ? "align-items:flex-end" : "align-items:center";
+            return (
+              <div style="background:#fff;border:1px solid rgba(0,0,0,0.06);border-radius:0.5rem;overflow:hidden">
+                <div style={`height:6rem;background:${r.artworkUrl ? `url(${r.artworkUrl}) center/cover` : cardBg[i]};display:flex;${layout};justify-content:center;position:relative;overflow:hidden`}>
+                  <span style={`font-size:0.625rem;font-weight:600;padding:0.25rem 0.5rem;border-radius:100px;${statusPillStyle(r.status, cardLightBg[i])};position:absolute;top:0.5rem;left:0.5rem;z-index:2`}>{r.status}</span>
+                  {!r.artworkUrl && <Fragment set:html={cardArtSvg[i]} />}
+                </div>
+                <div style="padding:0.75rem">
+                  <div style="font-size:0.8125rem;font-weight:600">{r.title}</div>
+                  <div style="font-size:0.75rem;color:var(--accent)">{r.artist}</div>
+                  <div style="font-size:0.6875rem;color:var(--text-secondary);margin-top:0.375rem">{r.releaseDate}</div>
+                  <div style="height:3px;background:rgba(0,0,0,0.06);border-radius:2px;margin-top:0.5rem">
+                    <div style={`width:${r.progressPercent}%;height:100%;background:${r.status === "Released" ? "#1a1a1a" : "var(--accent)"};border-radius:2px`}></div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div id="showcaseLoading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.25rem;opacity:0;pointer-events:none">
+          <div style="font-size:0.6875rem;color:rgba(0,0,0,0.35);letter-spacing:0.06em;text-transform:uppercase;font-weight:700">Opening release</div>
+          <div id="showcaseLoadingLabel" style="font-size:0.9375rem;font-weight:500;color:#111;letter-spacing:-0.01em">Release loading...</div>
+          <div style="width:min(22rem,60%);height:4px;background:rgba(0,0,0,0.06);border-radius:100px;overflow:hidden">
+            <div id="showcaseLoadingFill" style="height:100%;width:0%;background:linear-gradient(90deg,#F56002,#111);border-radius:inherit"></div>
+          </div>
+        </div>
+
+        <!-- Timeline view (shown after loading) -->
+        <div id="showcaseTimeline" style="position:absolute;inset:0;padding:1.25rem;opacity:0;pointer-events:none;display:flex;flex-direction:column;gap:1rem;background:#fafaf7;z-index:5">
+          <!-- Header: release meta + filters -->
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div style="display:flex;align-items:center;gap:0.75rem">
+              <div style={`width:2.25rem;height:2.25rem;border-radius:0.375rem;flex-shrink:0;overflow:hidden;position:relative;${timelineArtworkUrl ? `background:url(${timelineArtworkUrl}) center/cover` : "background:linear-gradient(180deg,#2a2a2a 0%,#1a1a1a 100%)"}`}>
+                {!timelineArtworkUrl && (
+                  <svg width="100%" height="100%" viewBox="0 0 36 36" style="position:absolute;inset:0">
+                    <circle cx="27" cy="11" r="3.5" fill="#f5f5f5" opacity="0.9" />
+                    <path d="M0 36 L7 20 L14 25 L20 13 L27 22 L34 17 L36 30 L36 36 Z" fill="#f5f5f5" opacity="0.2" />
+                  </svg>
+                )}
+              </div>
+              <div>
+                <div style="font-size:1.0625rem;font-weight:700;color:#111;letter-spacing:-0.01em">{timelineTitle}</div>
+                <div style="font-size:0.75rem;color:rgba(0,0,0,0.5)">{timelineMeta}</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:0.375rem;align-items:center">
+              {filters.map((f) => (
+                f.active
+                  ? <div style="font-size:0.75rem;font-weight:600;padding:0.375rem 0.75rem;border-radius:100px;background:#111;color:#fff">{f.label}</div>
+                  : <div style="font-size:0.75rem;padding:0.375rem 0.75rem;border-radius:100px;border:1px solid rgba(0,0,0,0.08);color:var(--text-secondary);background:#fff">{f.label}</div>
+              ))}
+            </div>
+          </div>
+
+          <!-- Week indicator -->
+          <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.6875rem;color:rgba(0,0,0,0.4);padding:0 0.25rem">
+            <span style="font-weight:700;text-transform:uppercase;letter-spacing:0.06em">{weekLabel}</span>
+            <div style="flex:1;height:1px;background:rgba(0,0,0,0.08)"></div>
+            <span>{weekSummary}</span>
+          </div>
+
+          <div style={`display:grid;grid-template-columns:repeat(${days.length},1fr);gap:0.625rem;flex:1;min-height:0`}>
+            {days.map((d) => {
+              const isToday = d.badgeStyle === "today";
+              const isRelease = d.badgeStyle === "release";
+              const headerStyle = isToday
+                ? "padding:0.625rem 0.75rem;border-radius:0.5rem;background:#111;color:#fff;display:flex;align-items:center;justify-content:space-between"
+                : isRelease
+                ? "padding:0.625rem 0.75rem;border-radius:0.5rem;background:#fff;border:1px solid rgba(245,96,2,0.3);display:flex;align-items:center;justify-content:space-between"
+                : "padding:0.625rem 0.75rem;border-radius:0.5rem;background:#fff;border:1px solid rgba(0,0,0,0.06);display:flex;align-items:baseline;gap:0.375rem";
+              return (
+                <div style="display:flex;flex-direction:column;gap:0.5rem;min-width:0">
+                  <div style={headerStyle}>
+                    {d.badge ? (
+                      <>
+                        <span style="display:flex;align-items:baseline;gap:0.375rem">
+                          <strong style={`color:${isToday ? "#fff" : "#111"};font-weight:700;font-size:1.125rem`}>{d.dayNumber}</strong>
+                          <span style={`font-size:0.75rem;color:${isToday ? "rgba(255,255,255,0.65)" : "rgba(0,0,0,0.5)"}`}>{d.dayLabel}</span>
+                        </span>
+                        <span style={isToday
+                          ? "font-size:0.5625rem;background:#F56002;color:#fff;padding:0.1875rem 0.5rem;border-radius:100px;font-weight:700;letter-spacing:0.04em"
+                          : "font-size:0.5625rem;background:rgba(245,96,2,0.12);color:#c2410c;padding:0.1875rem 0.4375rem;border-radius:100px;font-weight:700;letter-spacing:0.04em"
+                        }>{d.badge}</span>
+                      </>
+                    ) : (
+                      <>
+                        <strong style="color:#111;font-weight:700;font-size:1.125rem">{d.dayNumber}</strong>
+                        <span style="font-size:0.75rem;color:rgba(0,0,0,0.5)">{d.dayLabel}</span>
+                      </>
+                    )}
+                  </div>
+                  {(d.tasks ?? []).map((t) => {
+                    const statusLabelText = t.statusLabel ?? statusText(t.status);
+                    const isLate = t.status === "late";
+                    return (
+                      <div style={`background:#fff;border:${isLate ? "1.5px" : "1px"} solid ${cardBorder(t.status)};border-radius:0.625rem;overflow:hidden${t.status === "done" ? ";opacity:0.75" : ""}`}>
+                        <div style={`height:3px;background:${cardAccent(t.status)}`}></div>
+                        <div style="padding:0.625rem 0.75rem">
+                          <div style={`display:flex;align-items:center;justify-content:space-between;font-size:0.625rem;color:${isLate ? "#b91c1c" : "rgba(0,0,0,0.55)"};margin-bottom:0.375rem`}>
+                            <span style={`display:flex;align-items:center;gap:0.3125rem;font-weight:${isLate ? "700" : "600"}`}>
+                              <span style={`width:6px;height:6px;border-radius:50%;background:${statusDot(t.status)}`}></span>
+                              {statusLabelText}
+                            </span>
+                            {t.time && <span>{t.time}</span>}
+                          </div>
+                          <div style={`font-size:0.8125rem;font-weight:600;color:#111;line-height:1.35;margin-bottom:${t.subtitle ? "0.25rem" : "0.5rem"}`}>{t.title}</div>
+                          {t.subtitle && <div style="font-size:0.6875rem;color:rgba(0,0,0,0.55);margin-bottom:0.5rem">{t.subtitle}</div>}
+                          <div style="display:flex;align-items:center;justify-content:space-between">
+                            {t.category && <span style={`font-size:0.5625rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;padding:0.1875rem 0.4375rem;border-radius:100px;${categoryStyle(t.categoryColor)}`}>{t.category}</span>}
+                            {(t.assignees && t.assignees.length > 0) && (
+                              <div style="display:flex">
+                                {t.assignees.map((a, ai) => (
+                                  <div style={`width:1.25rem;height:1.25rem;border-radius:50%;background:${assigneeBg(a.color)};border:1.5px solid #fff;font-size:0.5625rem;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700${(t.assignees && t.assignees.length > 1 && ai < t.assignees.length - 1) ? ";margin-right:-5px;z-index:2" : ""}`}>{a.initials}</div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
