@@ -32,6 +32,21 @@ const interestOptions: InterestOption[] =
         { label: "Team for Labels", value: "labels" },
         { label: "Team for Enterprise", value: "enterprise" },
       ];
+
+// Per-input copy. Fallbacks keep the page identical when the formCopy
+// block hasn't been authored. Editing in Studio overrides per-field.
+const fc = page?.formCopy ?? {};
+const firstNameLabel       = fc.firstName?.label         ?? "First name";
+const firstNamePlaceholder = fc.firstName?.placeholder   ?? "Jane";
+const lastNameLabel        = fc.lastName?.label          ?? "Last name";
+const lastNamePlaceholder  = fc.lastName?.placeholder    ?? "Doe";
+const emailLabel           = fc.email?.label             ?? "Email address";
+const emailPlaceholder     = fc.email?.placeholder       ?? "you@yourlabel.com";
+const orgLabel             = fc.organization?.label      ?? "Organization / Label name";
+const orgPlaceholder       = fc.organization?.placeholder ?? "Your label, company, or team name";
+const interestGroupLabel   = fc.interest?.label          ?? "I'm interested in";
+const messageLabel         = fc.message?.label           ?? "Message";
+const messagePlaceholder   = fc.message?.placeholder     ?? "Tell us what you're looking for...";
 ---
 
 <BaseLayout
@@ -55,27 +70,27 @@ const interestOptions: InterestOption[] =
     <form class="auth-card" id="contactForm" action="#" method="POST" data-hubspot-form="contact">
       <div class="form-row">
         <div class="form-group">
-          <label for="firstName">First name</label>
-          <input type="text" id="firstName" name="first_name" placeholder="Jane" required />
+          <label for="firstName">{firstNameLabel}</label>
+          <input type="text" id="firstName" name="first_name" placeholder={firstNamePlaceholder} required />
         </div>
         <div class="form-group">
-          <label for="lastName">Last name</label>
-          <input type="text" id="lastName" name="last_name" placeholder="Doe" required />
+          <label for="lastName">{lastNameLabel}</label>
+          <input type="text" id="lastName" name="last_name" placeholder={lastNamePlaceholder} required />
         </div>
       </div>
 
       <div class="form-group">
-        <label for="email">Email address</label>
-        <input type="email" id="email" name="email" placeholder="you@yourlabel.com" required />
+        <label for="email">{emailLabel}</label>
+        <input type="email" id="email" name="email" placeholder={emailPlaceholder} required />
       </div>
 
       <div class="form-group">
-        <label for="orgName">Organization / Label name</label>
-        <input type="text" id="orgName" name="organization" placeholder="Your label, company, or team name" />
+        <label for="orgName">{orgLabel}</label>
+        <input type="text" id="orgName" name="organization" placeholder={orgPlaceholder} />
       </div>
 
       <div class="interest-group">
-        <label class="interest-label">I'm interested in</label>
+        <label class="interest-label">{interestGroupLabel}</label>
         <div class="interest-options">
           {interestOptions.map((opt) => (
             <label class="interest-option">
@@ -87,8 +102,8 @@ const interestOptions: InterestOption[] =
       </div>
 
       <div class="form-group">
-        <label for="message">Message</label>
-        <textarea id="message" name="message" rows="4" placeholder="Tell us what you're looking for..."></textarea>
+        <label for="message">{messageLabel}</label>
+        <textarea id="message" name="message" rows="4" placeholder={messagePlaceholder}></textarea>
       </div>
 
       <button type="submit" class="btn-submit" id="submitBtn">{submitLabel}</button>

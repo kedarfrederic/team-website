@@ -15,6 +15,24 @@ const formHint =
   page?.formHint ?? "You'll be redirected to our calendar to choose a time slot.";
 const emailFallbackText = page?.emailFallbackText ?? "Or email us directly at";
 
+// Per-input copy. Fallbacks keep the page identical when the formCopy
+// block hasn't been authored. Editing in Studio overrides per-field.
+const fc = page?.formCopy ?? {};
+const firstNameLabel         = fc.firstName?.label         ?? "First name";
+const firstNamePlaceholder   = fc.firstName?.placeholder   ?? "Jane";
+const lastNameLabel          = fc.lastName?.label          ?? "Last name";
+const lastNamePlaceholder    = fc.lastName?.placeholder    ?? "Doe";
+const emailLabel             = fc.email?.label             ?? "Email address";
+const emailPlaceholder       = fc.email?.placeholder       ?? "you@yourlabel.com";
+const orgLabel               = fc.organization?.label      ?? "Organization / Label name";
+const orgPlaceholder         = fc.organization?.placeholder ?? "Your label, company, or team name";
+const roleLabel              = fc.role?.label              ?? "Role";
+const rolePlaceholder        = fc.role?.placeholder        ?? "Select your role";
+const artistCountLabel       = fc.artistCount?.label       ?? "Number of artists you manage";
+const artistCountPlaceholder = fc.artistCount?.placeholder ?? "Select a range";
+const interestLabel          = fc.interest?.label          ?? "What are you most interested in?";
+const interestPlaceholder    = fc.interest?.placeholder    ?? "Tell us about your workflow or what you'd like to see...";
+
 const videoSrc = page?.backgroundVideo?.src ?? "/assets/brain-1-web.mp4";
 const posterUrl = page?.backgroundVideo?.poster?.asset
   ? urlFor(page.backgroundVideo.poster).width(1920).quality(85).format("webp").url()
@@ -44,29 +62,29 @@ const posterUrl = page?.backgroundVideo?.poster?.asset
     <form class="auth-card" id="demoForm" action="#" method="POST" data-hubspot-form="demo">
       <div class="form-row">
         <div class="form-group">
-          <label for="firstName">First name</label>
-          <input type="text" id="firstName" name="first_name" placeholder="Jane" required />
+          <label for="firstName">{firstNameLabel}</label>
+          <input type="text" id="firstName" name="first_name" placeholder={firstNamePlaceholder} required />
         </div>
         <div class="form-group">
-          <label for="lastName">Last name</label>
-          <input type="text" id="lastName" name="last_name" placeholder="Doe" required />
+          <label for="lastName">{lastNameLabel}</label>
+          <input type="text" id="lastName" name="last_name" placeholder={lastNamePlaceholder} required />
         </div>
       </div>
 
       <div class="form-group">
-        <label for="email">Email address</label>
-        <input type="email" id="email" name="email" placeholder="you@yourlabel.com" required />
+        <label for="email">{emailLabel}</label>
+        <input type="email" id="email" name="email" placeholder={emailPlaceholder} required />
       </div>
 
       <div class="form-group">
-        <label for="orgName">Organization / Label name</label>
-        <input type="text" id="orgName" name="organization" placeholder="Your label, company, or team name" />
+        <label for="orgName">{orgLabel}</label>
+        <input type="text" id="orgName" name="organization" placeholder={orgPlaceholder} />
       </div>
 
       <div class="form-group">
-        <label for="role">Role</label>
+        <label for="role">{roleLabel}</label>
         <select id="role" name="role" required>
-          <option value="" disabled selected hidden>Select your role</option>
+          <option value="" disabled selected hidden>{rolePlaceholder}</option>
           <option value="Artist">Artist</option>
           <option value="Manager">Manager</option>
           <option value="Label">Label</option>
@@ -77,9 +95,9 @@ const posterUrl = page?.backgroundVideo?.poster?.asset
       </div>
 
       <div class="form-group">
-        <label for="artistCount">Number of artists you manage</label>
+        <label for="artistCount">{artistCountLabel}</label>
         <select id="artistCount" name="artist_count" required>
-          <option value="" disabled selected hidden>Select a range</option>
+          <option value="" disabled selected hidden>{artistCountPlaceholder}</option>
           <option value="1">1</option>
           <option value="2-5">2-5</option>
           <option value="6-20">6-20</option>
@@ -89,8 +107,8 @@ const posterUrl = page?.backgroundVideo?.poster?.asset
       </div>
 
       <div class="form-group">
-        <label for="interest">What are you most interested in?</label>
-        <textarea id="interest" name="interest" rows="3" placeholder="Tell us about your workflow or what you'd like to see..."></textarea>
+        <label for="interest">{interestLabel}</label>
+        <textarea id="interest" name="interest" rows="3" placeholder={interestPlaceholder}></textarea>
       </div>
 
       <button type="submit" class="btn-submit" id="submitBtn">{submitLabel}</button>

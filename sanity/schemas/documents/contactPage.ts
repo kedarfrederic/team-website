@@ -70,6 +70,27 @@ export const contactPage = defineType({
       type: "string",
       group: "form",
     }),
+    /**
+     * Per-input labels and placeholders. The `name=` attribute the
+     * website-leads CRM endpoint reads stays hardcoded — only visible
+     * copy is editable here. The interest checkboxes are managed
+     * separately via `interestOptions` above.
+     */
+    defineField({
+      name: "formCopy",
+      title: "Form labels & placeholders",
+      type: "object",
+      group: "form",
+      options: { collapsible: true, collapsed: false },
+      fields: [
+        defineField({ name: "firstName",    title: "First name",      type: "formFieldCopy" }),
+        defineField({ name: "lastName",     title: "Last name",       type: "formFieldCopy" }),
+        defineField({ name: "email",        title: "Email address",   type: "formFieldCopy" }),
+        defineField({ name: "organization", title: "Organization",    type: "formFieldCopy" }),
+        defineField({ name: "interest",     title: "Interest group",  type: "formFieldCopy", description: "Just the question label above the checkboxes." }),
+        defineField({ name: "message",      title: "Message",         type: "formFieldCopy" }),
+      ],
+    }),
     defineField({ name: "seo", type: "seoBlock", group: "seo" }),
   ],
   preview: { prepare: () => ({ title: "Contact", subtitle: "/contact" }) },
