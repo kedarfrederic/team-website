@@ -136,30 +136,30 @@
 })();
 
 (function() {
-  // Compliance cards — show all stacked, fade each in as it enters view.
-  // Replaces the original 250vh sticky carousel which felt broken in our
-  // setup (cards 2-3 sometimes never appeared on fast scroll).
+  // Compliance cards — horizontal 3-column grid (CSS layout). JS just
+  // fades each card in as it enters viewport.
   var section = document.getElementById('complianceSection');
   if (!section) return;
   var cards = section.querySelectorAll('.compliance-card');
   var dots = section.querySelectorAll('.compliance-dots__dot');
 
-  // Make all cards visible in stacked layout
-  cards.forEach(function(card, i) {
-    card.style.position = 'relative';
+  // Initial state for fade-in (don't override position — CSS owns layout)
+  cards.forEach(function(card) {
     card.style.opacity = '0';
-    card.style.transform = 'translateY(40px)';
+    card.style.transform = 'translateY(24px)';
     card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-    card.style.marginBottom = '1.5rem';
   });
 
-  // Reveal each card when it enters viewport
   if ('IntersectionObserver' in window) {
     var obs = new IntersectionObserver(function(entries) {
-      entries.forEach(function(e) {
+      entries.forEach(function(e, i) {
         if (e.isIntersecting) {
-          e.target.style.opacity = '1';
-          e.target.style.transform = 'translateY(0)';
+          // Stagger each card by 100ms
+          var idx = Array.prototype.indexOf.call(cards, e.target);
+          setTimeout(function() {
+            e.target.style.opacity = '1';
+            e.target.style.transform = 'translateY(0)';
+          }, idx * 100);
           obs.unobserve(e.target);
         }
       });
@@ -172,7 +172,7 @@
     });
   }
 
-  // Hide the cycling dots — no longer relevant in stacked layout
+  // Hide the cycling dots — meaningless in static grid
   dots.forEach(function(dot) { dot.style.display = 'none'; });
 })();
 

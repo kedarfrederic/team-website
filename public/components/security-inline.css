@@ -527,23 +527,25 @@ a.nav__cta:hover{color:#111 !important;background:rgba(255,255,255,0.75);backdro
 /* Card area wrapper */
 .compliance-card-area{
   position:relative;
-  width:100%;max-width:48rem;
-  flex:1;
-  display:flex;align-items:center;justify-content:center;
+  width:100%;max-width:64rem;
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:1.25rem;
+  align-items:stretch;
+}
+@media (max-width: 768px){
+  .compliance-card-area{ grid-template-columns:1fr; gap:1rem; }
 }
 /* Individual compliance cards */
 .compliance-card{
-  position:absolute;
-  width:100%;max-width:48rem;
+  position:relative;
   background:#fff;
   border:1px solid rgba(0,0,0,0.06);
   border-radius:1.25rem;
-  padding:4rem 3.5rem;
+  padding:2.5rem 1.75rem;
   box-shadow:0 8px 40px rgba(0,0,0,0.04);
   display:flex;flex-direction:column;align-items:center;
   text-align:center;
-  will-change:transform,opacity;
-  transition:none; /* JS controls this */
 }
 .compliance-card__num{
   font-size:4rem;font-weight:800;
