@@ -1,22 +1,274 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import SplitHeadline from "../components/SplitHeadline.astro";
 import { getEnterprisePage } from "../lib/queries";
-import { getClient } from "../lib/sanity";
-// @ts-expect-error — ?raw modifier returns string at build time
-import bodyHtml from "../lib/enterprise-body.html?raw";
+import { getClient, urlFor } from "../lib/sanity";
 
 const page = await getEnterprisePage(getClient(Astro));
+
+// ── Hero ────────────────────────────────────────────────────
+const hero = page?.hero ?? {};
+const heroPill = hero.pillLabel ?? "Enterprise";
+const heroTop = hero.headlineTop ?? "Scale without compromise.";
+const heroBottom = hero.headlineBottom ?? "Security without sacrifice.";
+const heroSubhead =
+  hero.subhead ??
+  "For major labels, distributors, and music companies that need enterprise-grade controls, dedicated support, and the confidence that their IP is protected at every level.";
+const heroBgUrl = hero.backgroundImage?.asset
+  ? urlFor(hero.backgroundImage).width(2400).quality(85).format("webp").url()
+  : "/assets/hero-bg-new.png";
+const primaryCta = hero.primaryCta ?? { label: "Book a demo", href: "/demo" };
+const secondaryCta = hero.secondaryCta ?? { label: "Talk to us", href: "/contact?interest=enterprise" };
+
+// ── Why Enterprise ──────────────────────────────────────────
+const why = page?.whySection ?? {};
+const whyTop = why.headlineTop ?? "Built for the complexity";
+const whyBottom = why.headlineBottom ?? "of scale";
+const whyBody = why.body ?? "When you're managing hundreds of releases across dozens of artists, you need more than a project management tool. You need infrastructure that scales with your operation and doesn't slow you down.";
+
+// ── Pain section (mocks are enterprise-specific fixtures) ──
+const pain = page?.painSection ?? {};
+const painHeadline = pain.headline ?? "Unlock your releases with Enterprise";
+interface PainRow {
+  metadataPill?: string;
+  headline?: string;
+  body?: string;
+  mockKind: "dashboard" | "audit" | "templates";
+}
+const painRows: PainRow[] = Array.isArray(pain.rows) && pain.rows.length > 0
+  ? pain.rows.map((r: any, i: number) => ({
+      metadataPill: r.metadataPill,
+      headline: r.headline,
+      body: r.body,
+      mockKind: (["dashboard", "audit", "templates"][i] ?? "dashboard") as PainRow["mockKind"],
+    }))
+  : [
+      { metadataPill: "Authentication", headline: "Single sign-on that works with your existing systems", body: "SAML 2.0 SSO integration with your identity provider. SCIM provisioning for automated user management. Your IT team controls access — Team handles the rest.", mockKind: "dashboard" },
+      { metadataPill: "Governance", headline: "Complete visibility and control over every action", body: "Comprehensive audit logs, role-based access controls with granular permissions per release, and multi-tiered approval workflows. Know who did what, when, and on which release.", mockKind: "audit" },
+      { metadataPill: "Flexibility", headline: "Configure Team to match how your organization works", body: "Custom approval flows, release templates per team or department, configurable notification rules, and flexible billing. Enterprise that's flexible and customized to you.", mockKind: "templates" },
+    ];
+
+// ── Security callout ───────────────────────────────────────
+const sec = page?.securityCallout ?? {};
+const secTop = sec.headlineTop ?? "Enterprise-grade";
+const secBottom = sec.headlineBottom ?? "security";
+const secBody = sec.body ?? "AES-256 encryption and per-account data isolation. TeamMate AI learns your context to get smarter for you — but your data is never shared across accounts or used to train models for anyone else. Your unreleased content is protected by design.";
+const secCtaLabel = sec.ctaLabel ?? "Read more about our security";
+const secCtaHref = sec.ctaHref ?? "/security";
+
+// ── Included blocks ────────────────────────────────────────
+const inc = page?.includedSection ?? {};
+const incTop = inc.headlineTop ?? "Everything in Team";
+const incBottom = inc.headlineBottom ?? "plus so much more";
+interface IncludedBlock { title: string; description?: string }
+const incBlocks: IncludedBlock[] = Array.isArray(inc.blocks) && inc.blocks.length > 0
+  ? inc.blocks
+  : [
+      { title: "Dedicated Support", description: "A named account manager who knows your operation. Priority response times and quarterly business reviews." },
+      { title: "Custom Onboarding", description: "White-glove setup for your team. Data migration, workflow configuration, and training sessions." },
+      { title: "SLA Guarantee", description: "99.9% uptime SLA with proactive monitoring and incident response." },
+      { title: "Custom Billing", description: "Annual contracts, volume pricing, and flexible payment terms. We'll build a plan that works for your organization." },
+      { title: "API Access", description: "Connect Team to your existing tools and data pipelines. RESTful API with comprehensive documentation." },
+      { title: "Priority Features", description: "Influence the roadmap. Enterprise customers get early access to new features and direct input on development priorities." },
+    ];
+
+// ── Bridge ──────────────────────────────────────────────────
+const bridge = page?.bridgeSection ?? {};
+const bridgeTop = bridge.headlineTop ?? "Ready to see Team";
+const bridgeBottom = bridge.headlineBottom ?? "in action?";
+const bridgeBody = bridge.body ?? "Explore how Release Orchestration and Release Intelligence work together to power your entire operation.";
+interface BridgeLink { label: string; href: string }
+const bridgeLinks: BridgeLink[] = Array.isArray(bridge.links) && bridge.links.length > 0
+  ? bridge.links
+  : [
+      { label: "Explore Release Orchestration", href: "/orchestration" },
+      { label: "Explore Release Intelligence", href: "/intelligence" },
+    ];
+
+// ── Final CTA ───────────────────────────────────────────────
+const finalCta = page?.finalCta ?? {};
+const finalHeadlineTop = "Let's build a plan";
+const finalHeadlineBottom = "that works for you";
+const finalSub = finalCta.body ?? "Customized setup, dedicated support, and security protocols that meets your unique requirements.";
+const finalPrimary = finalCta.primaryCta ?? { label: "Book a demo", href: "/demo" };
+const finalSecondary = finalCta.secondaryCta ?? { label: "Contact us", href: "/contact?interest=enterprise" };
+const finalFootnote = finalCta.footnote ?? "Talk to a founder, not a sales rep.";
+
+// ── Roles ──────────────────────────────────────────────────
+const rolesGrid = page?.rolesGrid ?? {};
+const rolesTop = rolesGrid.eyebrow ?? "Designed for";
+const rolesBottom = rolesGrid.headline ?? "how you work";
+const rolesCards = Array.isArray(rolesGrid.cards) && rolesGrid.cards.length > 0
+  ? rolesGrid.cards
+  : [
+      { title: "For Artists", description: "Your release, structured. No more winging it.", href: "/for-artists" },
+      { title: "For Managers", description: "Every artist's rollout. One dashboard.", href: "/for-managers" },
+      { title: "For Labels", description: "Scale your release process. Not your headcount.", href: "/for-labels" },
+      { title: "For Partners", description: "See your deliverables. Hit your deadlines.", href: "/for-partners" },
+    ];
 ---
 
 <BaseLayout
-  title={page?.hero?.headline ?? "Enterprise"}
-  description="Scale without compromise. Security without sacrifice."
+  title="Enterprise"
+  description={heroSubhead}
   seo={page?.seo}
   navTheme="dark"
 >
   <link slot="head" rel="stylesheet" href="/components/enterprise-inline.css" />
 
-  <Fragment set:html={bodyHtml} />
+  <section class="icp-hero" id="heroSection">
+    <div class="icp-hero__bg"><img src={heroBgUrl} alt="" loading="eager" /></div>
+    <div class="icp-hero__overlay"></div>
+    <div class="icp-hero__inner">
+      <span class="hero-pill">{heroPill}</span>
+      <SplitHeadline as="h1" top={heroTop} bottom={heroBottom} />
+      <p>{heroSubhead}</p>
+      <div class="icp-hero__buttons">
+        <a href={primaryCta.href} class="btn btn--green">{primaryCta.label}</a>
+        <a href={secondaryCta.href} class="btn btn--outline">{secondaryCta.label}</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="why-enterprise">
+    <div class="why-enterprise__inner">
+      <SplitHeadline as="h2" top={whyTop} bottom={whyBottom} />
+      <p>{whyBody}</p>
+    </div>
+  </section>
+
+  <section class="pain-section pain-section--alt">
+    <div class="pain-section__inner">
+      <div class="pain-section__header">
+        <h2>{painHeadline}</h2>
+      </div>
+
+      {painRows.map((row, i) => (
+        <div class={`pain-row ${i % 2 === 1 ? "pain-row--flipped" : ""}`}>
+          <div class="pain-row__text">
+            {row.metadataPill && <span class="metadata-pill">{row.metadataPill}</span>}
+            {row.headline && <h3>{row.headline}</h3>}
+            {row.body && <p>{row.body}</p>}
+          </div>
+          <div class="pain-row__panel">
+            {row.mockKind === "dashboard" && (
+              <div class="mock-dashboard">
+                <div class="mock-dashboard__row">
+                  <div class="mock-dashboard__card"><div class="mock-dashboard__card-title">SSO</div><div class="mock-dashboard__card-value">Connected</div><div class="mock-dashboard__pill mock-dashboard__pill--green">Active</div></div>
+                  <div class="mock-dashboard__card"><div class="mock-dashboard__card-title">SCIM</div><div class="mock-dashboard__card-value">Active</div><div class="mock-dashboard__pill mock-dashboard__pill--green">Syncing</div></div>
+                </div>
+                <div class="mock-dashboard__row">
+                  <div class="mock-dashboard__card"><div class="mock-dashboard__card-title">Users</div><div class="mock-dashboard__card-value">342</div><div class="mock-dashboard__pill mock-dashboard__pill--blue">Synced</div></div>
+                  <div class="mock-dashboard__card"><div class="mock-dashboard__card-title">Providers</div><div class="mock-dashboard__card-value">Okta</div><div class="mock-dashboard__pill mock-dashboard__pill--green">Connected</div></div>
+                </div>
+              </div>
+            )}
+            {row.mockKind === "audit" && (
+              <div class="mock-audit">
+                <div class="mock-audit__row"><div class="mock-audit__check"></div><div class="mock-audit__content"><div class="mock-audit__action">Sarah M. approved artwork</div><div class="mock-audit__meta">Mara / Golden Hour</div></div><div class="mock-audit__time">2m ago</div></div>
+                <div class="mock-audit__row"><div class="mock-audit__check"></div><div class="mock-audit__content"><div class="mock-audit__action">Jake R. submitted to DSPs</div><div class="mock-audit__meta">Ash Velo / First Light EP</div></div><div class="mock-audit__time">15m ago</div></div>
+                <div class="mock-audit__row"><div class="mock-audit__check"></div><div class="mock-audit__content"><div class="mock-audit__action">Admin updated permissions</div><div class="mock-audit__meta">Marketing team</div></div><div class="mock-audit__time">1h ago</div></div>
+                <div class="mock-audit__row"><div class="mock-audit__check"></div><div class="mock-audit__content"><div class="mock-audit__action">System backup completed</div><div class="mock-audit__meta">All accounts</div></div><div class="mock-audit__time">3h ago</div></div>
+              </div>
+            )}
+            {row.mockKind === "templates" && (
+              <div class="mock-templates">
+                <div class="mock-templates__card"><div><div class="mock-templates__card-title">Single Release Template</div><div class="mock-templates__card-meta">14 tasks · 6 weeks</div></div></div>
+                <div class="mock-templates__card"><div><div class="mock-templates__card-title">EP Campaign</div><div class="mock-templates__card-meta">22 tasks · 10 weeks</div></div></div>
+                <div class="mock-templates__card"><div><div class="mock-templates__card-title">Album Launch</div><div class="mock-templates__card-meta">35 tasks · 16 weeks</div></div></div>
+              </div>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="security-callout">
+    <div class="security-callout__inner">
+      <div class="security-callout__headline">
+        <SplitHeadline as="h2" top={secTop} bottom={secBottom} />
+      </div>
+      <div class="security-callout__copy">
+        <p>{secBody}</p>
+        <a href={secCtaHref} class="security-callout__link">
+          {secCtaLabel} <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="included-section">
+    <div class="included-section__inner">
+      <div class="included-section__header">
+        <SplitHeadline as="h2" top={incTop} bottom={incBottom} />
+      </div>
+      <div class="feature-grid">
+        {incBlocks.map((b) => (
+          <div class="feature-block">
+            <div class="feature-block__accent"></div>
+            <div class="feature-block__title">{b.title}</div>
+            {b.description && <div class="feature-block__desc">{b.description}</div>}
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="final-cta">
+    <div class="final-cta__card">
+      <h2>{finalHeadlineTop}<br /><span class="nyght">{finalHeadlineBottom}</span></h2>
+      {finalSub && <p class="final-cta__sub">{finalSub}</p>}
+      <div class="final-cta__buttons">
+        <a href={finalPrimary.href} class="btn btn--green">{finalPrimary.label}</a>
+        {finalSecondary?.href && finalSecondary?.label && (
+          <a href={finalSecondary.href} class="btn btn--ghost">{finalSecondary.label}</a>
+        )}
+      </div>
+      {finalFootnote && <p class="final-cta__note">{finalFootnote}</p>}
+    </div>
+  </section>
+
+  <section class="bridge-section">
+    <div class="bridge-section__inner">
+      <div class="bridge-section__headline">
+        <SplitHeadline as="h2" top={bridgeTop} bottom={bridgeBottom} />
+      </div>
+      <div class="bridge-section__copy">
+        {bridgeBody && <p>{bridgeBody}</p>}
+        <div class="bridge-section__links">
+          {bridgeLinks.map((link) => (
+            <a href={link.href} class="bridge-section__link">
+              <span class="bridge-link-text">{link.label}</span>
+              <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="roles-section">
+    <div class="roles-section__inner">
+      <div class="roles-section__header">
+        <SplitHeadline as="h2" top={rolesTop} bottom={rolesBottom} />
+      </div>
+      <div class="roles-grid">
+        {rolesCards.map((card: { title: string; description: string; href: string }, i: number) => (
+          <>
+            {i > 0 && <div class="roles-divider"></div>}
+            <a href={card.href} class="role-item">
+              <div class="role-item__title">{card.title}</div>
+              <div class="role-item__desc">{card.description}</div>
+              <div class="role-item__link">
+                Learn more <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+              </div>
+            </a>
+          </>
+        ))}
+      </div>
+    </div>
+  </section>
 
   <script is:inline src="/components/enterprise-inline.js"></script>
 </BaseLayout>

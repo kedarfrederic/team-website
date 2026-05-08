@@ -17,7 +17,18 @@ export const securityPage = defineType({
       group: "hero",
       fields: [
         defineField({ name: "pillLabel", type: "string", initialValue: "Security" }),
-        defineField({ name: "headline", type: "string", validation: (R) => R.required() }),
+        defineField({
+          name: "headlineTop",
+          type: "string",
+          description: "First line — sans font.",
+          initialValue: "Your releases. Your data.",
+        }),
+        defineField({
+          name: "headlineBottom",
+          type: "string",
+          description: "Second line — serif italic (Nyght).",
+          initialValue: "Your rules.",
+        }),
         defineField({ name: "subhead", type: "text", rows: 3 }),
         defineField({
           name: "primaryCta",
@@ -35,10 +46,14 @@ export const securityPage = defineType({
             defineField({ name: "href", type: "string" }),
           ],
         }),
+        defineField({
+          name: "backgroundImage",
+          type: "image",
+          options: { hotspot: true },
+        }),
       ],
     }),
 
-    // ── 4 pillars ────────────────────────────────────────────
     defineField({
       name: "pillarsSection",
       type: "object",
@@ -69,14 +84,22 @@ export const securityPage = defineType({
       ],
     }),
 
-    // ── AI privacy section ───────────────────────────────────
     defineField({
       name: "aiPrivacySection",
       type: "object",
       group: "sections",
       fields: [
-        defineField({ name: "metadataPill", type: "string" }),
-        defineField({ name: "headline", type: "string" }),
+        defineField({ name: "metadataPill", type: "string", initialValue: "AI & Data Privacy" }),
+        defineField({
+          name: "headlineTop",
+          type: "string",
+          initialValue: "TeamMate AI works for you.",
+        }),
+        defineField({
+          name: "headlineBottom",
+          type: "string",
+          initialValue: "Only you.",
+        }),
         defineField({
           name: "paragraphs",
           type: "array",
@@ -87,19 +110,19 @@ export const securityPage = defineType({
           name: "trustPills",
           type: "array",
           of: [{ type: "string" }],
-          description: "Small text pills shown under the body (e.g. \"No model training\", \"Data isolated by tenant\").",
+          description: "Small text pills shown under the body.",
           validation: (Rule) => Rule.max(8),
         }),
       ],
     }),
 
-    // ── Enterprise blocks ────────────────────────────────────
     defineField({
       name: "enterpriseSection",
       type: "object",
       group: "sections",
       fields: [
         defineField({ name: "headline", type: "string" }),
+        defineField({ name: "subhead", type: "text", rows: 2 }),
         defineField({
           name: "blocks",
           type: "array",
@@ -130,14 +153,14 @@ export const securityPage = defineType({
       ],
     }),
 
-    // ── Compliance ────────────────────────────────────────────
     defineField({
       name: "complianceSection",
       type: "object",
       group: "sections",
-      description: "Scroll-driven card stack of certifications.",
+      description: "3-column compliance grid.",
       fields: [
-        defineField({ name: "headline", type: "string" }),
+        defineField({ name: "headlineTop", type: "string", initialValue: "Compliance" }),
+        defineField({ name: "headlineBottom", type: "string", initialValue: "& certifications" }),
         defineField({
           name: "cards",
           type: "array",
@@ -172,10 +195,8 @@ export const securityPage = defineType({
 
     defineField({ name: "faq", type: "faqBlock", group: "sections" }),
 
-    // ── Bottom of page ────────────────────────────────────────
     defineField({ name: "finalCta", type: "ctaBlock", group: "footer" }),
 
-    // ── SEO ───────────────────────────────────────────────────
     defineField({ name: "seo", type: "seoBlock", group: "seo" }),
   ],
   preview: { prepare: () => ({ title: "Security", subtitle: "/security" }) },

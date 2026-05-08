@@ -1,22 +1,305 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import SplitHeadline from "../components/SplitHeadline.astro";
 import { getSecurityPage } from "../lib/queries";
-import { getClient } from "../lib/sanity";
-// @ts-expect-error — ?raw modifier returns string at build time
-import bodyHtml from "../lib/security-body.html?raw";
+import { getClient, urlFor } from "../lib/sanity";
+import { toHTML } from "@portabletext/to-html";
 
 const page = await getSecurityPage(getClient(Astro));
+
+// ── Hero ────────────────────────────────────────────────────
+const hero = page?.hero ?? {};
+const heroPill = hero.pillLabel ?? "Security";
+const heroTop = hero.headlineTop ?? "Your releases. Your data.";
+const heroBottom = hero.headlineBottom ?? "Your rules.";
+const heroSubhead =
+  hero.subhead ??
+  "Team is built with security at its core. Your release, content, data, strategy, and execution are protected by design, not as an afterthought.";
+const heroBgUrl = hero.backgroundImage?.asset
+  ? urlFor(hero.backgroundImage).width(2400).quality(85).format("webp").url()
+  : "/assets/hero-bg-new.png";
+const primaryCta = hero.primaryCta ?? { label: "Start your free trial", href: "https://www.teamrollouts.com/sign-up?plan=pro&period=yearly" };
+const secondaryCta = hero.secondaryCta ?? { label: "Talk to us", href: "/demo" };
+
+// ── Pillars ─────────────────────────────────────────────────
+interface Pillar { title: string; body: string; tag?: string }
+const pillarsHeadline = page?.pillarsSection?.headline ?? "Security you can trust";
+const pillars: Pillar[] =
+  Array.isArray(page?.pillarsSection?.pillars) && page.pillarsSection.pillars.length > 0
+    ? page.pillarsSection.pillars
+    : [
+        { title: "Encrypted at rest and in transit", body: "All data is encrypted using AES-256 at rest and TLS 1.3 in transit. Your unreleased masters, contracts, and business data are protected at every stage.", tag: "AES-256 + TLS 1.3" },
+        { title: "Role-based access and 2FA", body: "Control exactly who sees what with granular permissions per release, per artist, per team. Two-factor authentication adds an extra layer of protection.", tag: "Granular permissions" },
+        { title: "Enterprise-grade infrastructure", body: "Hosted on industry-leading cloud infrastructure with 99.9% uptime SLA, automated backups, and geo-redundant data storage.", tag: "99.9% uptime SLA" },
+        { title: "Your data is yours. Always.", body: "Export your data at any time in standard formats. No lock-in, no hostage-taking. If you leave, your data leaves with you.", tag: "Full data export" },
+      ];
+
+// ── AI Privacy ──────────────────────────────────────────────
+const ai = page?.aiPrivacySection ?? {};
+const aiPill = ai.metadataPill ?? "AI & Data Privacy";
+const aiTop = ai.headlineTop ?? "TeamMate AI works for you.";
+const aiBottom = ai.headlineBottom ?? "Only you.";
+const aiParas: string[] = Array.isArray(ai.paragraphs) && ai.paragraphs.length > 0
+  ? ai.paragraphs
+  : [
+      "TeamMate AI learns about your artists, releases, and workflows to give you smarter, more context-aware recommendations. But that knowledge is strictly yours.",
+      "Your data is never used to train our models. It is never shared with other users or companies. It is never accessible to anyone outside your account.",
+      "Every Team account operates in its own isolated environment. TeamMate's intelligence about your roster, your release history, and your strategies stays within your account boundary — always.",
+    ];
+const aiPills: string[] = Array.isArray(ai.trustPills) && ai.trustPills.length > 0
+  ? ai.trustPills
+  : [
+      "Your data never trains our AI",
+      "Zero cross-account data sharing",
+      "Per-account data isolation",
+      "Full data export anytime",
+      "No third-party data access",
+    ];
+
+// ── Enterprise ──────────────────────────────────────────────
+interface EnterpriseBlock { tag?: string; title: string; body?: string }
+const ent = page?.enterpriseSection ?? {};
+const entHeadline = ent.headline ?? "Enterprise-grade controls";
+const entSubhead = ent.subhead ?? "For teams that need advanced security and compliance.";
+const entBlocks: EnterpriseBlock[] = Array.isArray(ent.blocks) && ent.blocks.length > 0
+  ? ent.blocks
+  : [
+      { tag: "Authentication", title: "SSO & SAML", body: "Single sign-on integration with your existing identity provider. SAML 2.0 supported." },
+      { tag: "Visibility", title: "Audit Logs", body: "Full activity history across your account. See who did what, when, and on which release." },
+      { tag: "Automation", title: "SCIM Provisioning", body: "Automate user management at scale. Add, remove, and update team members from your identity provider." },
+    ];
+const entCta = ent.enterpriseCta ?? {};
+const entCtaHeadline = entCta.headline ?? "Need specific security measures?";
+const entCtaBody = entCta.body ?? "Talk to the team to see how we can meet your unique security needs.";
+const entCtaLabel = entCta.ctaLabel ?? "Book a demo";
+const entCtaHref = entCta.ctaHref ?? "/demo";
+
+// ── Compliance ──────────────────────────────────────────────
+interface ComplianceCard { title: string; body?: string; status?: "active" | "on_request" | "coming_soon" }
+const comp = page?.complianceSection ?? {};
+const compTop = comp.headlineTop ?? "Compliance";
+const compBottom = comp.headlineBottom ?? "& certifications";
+const compCards: ComplianceCard[] = Array.isArray(comp.cards) && comp.cards.length > 0
+  ? comp.cards
+  : [
+      { title: "SOC 2 Type II", body: "SOC 2 Type II certified for security, availability, and confidentiality trust service criteria. Independently audited and verified.", status: "active" },
+      { title: "Data Processing Agreement", body: "Custom DPA available for enterprise customers covering data handling, sub-processors, and breach notification procedures.", status: "on_request" },
+      { title: "GDPR Compliant", body: "Full compliance with the EU General Data Protection Regulation. Data subject rights, lawful processing, and privacy by design built into every layer of the platform.", status: "coming_soon" },
+    ];
+const statusLabel = (s?: string) =>
+  s === "on_request" ? "Available on request" : s === "coming_soon" ? "Coming soon" : "Active";
+
+// ── FAQ ─────────────────────────────────────────────────────
+interface FaqItem { question: string; answer: any }
+const faq = page?.faq ?? {};
+const faqEyebrow = faq.eyebrow ?? "Security";
+const faqHeadlineTop = "Questions about security?";
+const faqHeadlineBottom = "We've got answers.";
+const faqSubhead = faq.subhead ?? "Your unreleased music and business data deserve the highest level of protection.";
+const faqCtaLabel = faq.footerCta?.label ?? "Talk to a founder →";
+const faqCtaHref = faq.footerCta?.href ?? "/demo";
+
+const faqFallback: { q: string; a: string }[] = [
+  { q: "Is my unreleased music safe on Team?", a: "Yes. All files are encrypted at rest (AES-256) and in transit (TLS 1.3). Access is controlled by role-based permissions, and you can restrict who sees what at the release level." },
+  { q: "Does TeamMate AI use my data to train its models?", a: "No. Your data is never used for model training. TeamMate learns your context to give better recommendations, but that knowledge stays strictly within your account and is never shared." },
+  { q: "Can other companies see my data?", a: "Absolutely not. Every Team account operates in complete isolation. There is no cross-account data sharing, no shared intelligence, and no way for another user to access your information." },
+  { q: "What happens to my data if I cancel?", a: "Your data remains accessible for 30 days after cancellation, during which you can export everything. After that, it's permanently deleted from our systems. We don't hold your data hostage." },
+  { q: "Do you support SSO and enterprise security?", a: "Yes. We support SAML-based SSO, SCIM provisioning for automated user management, and comprehensive audit logs. Contact us for enterprise security requirements." },
+];
+
+const faqItems: { q: string; aHtml: string }[] =
+  Array.isArray(faq.items) && faq.items.length > 0
+    ? faq.items.map((it: FaqItem) => ({
+        q: it.question,
+        aHtml: Array.isArray(it.answer) ? toHTML(it.answer) : "",
+      }))
+    : faqFallback.map((it) => ({ q: it.q, aHtml: `<p>${it.a}</p>` }));
+
+// ── Final CTA ───────────────────────────────────────────────
+const finalCta = page?.finalCta ?? {};
+const finalHeadlineTop = "Ready to protect your releases";
+const finalHeadlineBottom = "from day one?";
+const finalPrimary = finalCta.primaryCta ?? { label: "Start your free trial", href: "https://www.teamrollouts.com/sign-up?plan=pro&period=yearly" };
+const finalSecondary = finalCta.secondaryCta ?? { label: "Book a demo", href: "/demo" };
+const finalFootnote = finalCta.footnote ?? "30-day free trial. No credit card required.";
 ---
 
 <BaseLayout
-  title={page?.hero?.headline ?? "Security"}
-  description="Your releases. Your data. Your rules."
+  title="Security"
+  description={heroSubhead}
   seo={page?.seo}
   navTheme="dark"
 >
   <link slot="head" rel="stylesheet" href="/components/security-inline.css" />
 
-  <Fragment set:html={bodyHtml} />
+  <section class="icp-hero" id="heroSection">
+    <div class="icp-hero__bg"><img src={heroBgUrl} alt="" loading="eager" /></div>
+    <div class="icp-hero__overlay"></div>
+    <div class="icp-hero__inner">
+      <span class="hero-pill">{heroPill}</span>
+      <SplitHeadline as="h1" top={heroTop} bottom={heroBottom} />
+      <p>{heroSubhead}</p>
+      <div class="icp-hero__buttons">
+        <a href={primaryCta.href} class="btn btn--green">{primaryCta.label}</a>
+        <a href={secondaryCta.href} class="btn btn--outline">{secondaryCta.label}</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="pillars-section">
+    <div class="pillars-section__inner">
+      <div class="pillars-section__header">
+        <h2>{pillarsHeadline}</h2>
+      </div>
+      <div class="pillars-grid">
+        {pillars.map((p) => (
+          <div class="pillar-card">
+            <div class="pillar-card__accent"></div>
+            <h3>{p.title}</h3>
+            <p>{p.body}</p>
+            {p.tag && <span class="pillar-card__tag">{p.tag}</span>}
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="ai-privacy-section">
+    <div class="ai-privacy-section__inner">
+      <div class="ai-privacy__text">
+        <span class="metadata-pill metadata-pill--neutral">{aiPill}</span>
+        <h2>{aiTop} <span class="nyght">{aiBottom}</span></h2>
+        {aiParas.map((para) => <p>{para}</p>)}
+        <div class="ai-privacy__pills">
+          {aiPills.map((pill) => <span class="metadata-pill">{pill}</span>)}
+        </div>
+      </div>
+
+      <div class="ai-privacy__panel" id="isoPanel">
+        <div class="iso-center">
+          <div class="iso-center__icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <div class="iso-center__label">Your Account</div>
+          <div class="iso-center__sub">Protected</div>
+        </div>
+        <svg class="iso-lines" id="isoLinesSvg"></svg>
+        <div class="iso-pulse" id="isoPulse1"></div>
+        <div class="iso-pulse" id="isoPulse1r"></div>
+        <div class="iso-pulse" id="isoPulse2"></div>
+        <div class="iso-pulse" id="isoPulse2r"></div>
+        <div class="iso-pulse" id="isoPulse3"></div>
+        <div class="iso-pulse" id="isoPulse3r"></div>
+        <div class="iso-connected iso-conn-1">Your Artists</div>
+        <div class="iso-connected iso-conn-2">Your Marketing</div>
+        <div class="iso-connected iso-conn-3">Your Sub-Label</div>
+        <div class="iso-external iso-ext-1">Label</div>
+        <div class="iso-external iso-ext-2">Studio</div>
+        <div class="iso-external iso-ext-3">Agency</div>
+        <div class="iso-external iso-ext-4">Mgmt</div>
+        <div class="iso-external iso-ext-5">Dist</div>
+        <div class="iso-external iso-ext-6">PR</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="enterprise-section">
+    <div class="enterprise-section__inner">
+      <div class="enterprise-section__header">
+        <h2>{entHeadline}</h2>
+        <p>{entSubhead}</p>
+      </div>
+      <div class="enterprise-grid">
+        {entBlocks.map((b) => (
+          <div class="enterprise-block">
+            <div class="enterprise-block__accent"></div>
+            {b.tag && <span class="enterprise-block__tag">{b.tag}</span>}
+            <h3>{b.title}</h3>
+            {b.body && <p>{b.body}</p>}
+          </div>
+        ))}
+      </div>
+
+      <div class="enterprise-cta">
+        <h3>{entCtaHeadline}</h3>
+        <p>{entCtaBody}</p>
+        <a href={entCtaHref}>{entCtaLabel} <span>→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="compliance-section" id="complianceSection">
+    <div class="compliance-scroll">
+      <div class="compliance-viewport">
+        <div class="compliance-section__header">
+          <SplitHeadline as="h2" top={compTop} bottom={compBottom} />
+        </div>
+
+        <div class="compliance-card-area">
+          {compCards.map((c, i) => (
+            <div class="compliance-card" data-compliance={i}>
+              <div class="compliance-card__accent"></div>
+              <div class="compliance-card__status">{statusLabel(c.status)}</div>
+              <h3>{c.title}</h3>
+              {c.body && <p>{c.body}</p>}
+            </div>
+          ))}
+        </div>
+
+        <div class="compliance-dots">
+          {compCards.map((_, i) => (
+            <div class={`compliance-dots__dot ${i === 0 ? "is-active" : ""}`} data-dot={i}>
+              {String(i + 1).padStart(2, "0")}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="faq-section" id="faqSection">
+    <div class="faq-section__inner">
+      <div class="faq-section__intro">
+        <span class="metadata-pill--neutral" style="display:inline-block;font-size:0.6875rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;padding:0.375rem 0.875rem;border-radius:0.375rem;background:rgba(0,0,0,0.06);color:var(--text-secondary);margin-bottom:1rem">{faqEyebrow}</span>
+        <h2 class="faq-section__headline">{faqHeadlineTop} <span class="nyght">{faqHeadlineBottom}</span></h2>
+        <p class="faq-section__sub">{faqSubhead}</p>
+        <a href={faqCtaHref} class="faq-section__cta" style="border-bottom:none">{faqCtaLabel}</a>
+      </div>
+
+      <div class="faq-list" id="faqList">
+        {faqItems.map((item, i) => (
+          <div class="faq-item">
+            <button class="faq-item__trigger" aria-expanded="false">
+              <span class="faq-item__num">{String(i + 1).padStart(2, "0")}</span>
+              <span class="faq-item__q">{item.q}</span>
+              <span class="faq-item__toggle">
+                <svg viewBox="0 0 16 16">
+                  <line x1="3" y1="8" x2="13" y2="8" />
+                  <line class="v" x1="8" y1="3" x2="8" y2="13" />
+                </svg>
+              </span>
+            </button>
+            <div class="faq-item__answer">
+              <div class="faq-item__answer-inner">
+                <div class="faq-item__answer-content" set:html={item.aHtml} />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="final-cta">
+    <div class="final-cta__card">
+      <h2>{finalHeadlineTop} <span class="nyght">{finalHeadlineBottom}</span></h2>
+      <div class="final-cta__buttons">
+        <a href={finalPrimary.href} class="btn btn--green">{finalPrimary.label}</a>
+        {finalSecondary?.href && finalSecondary?.label && (
+          <a href={finalSecondary.href} class="btn btn--ghost">{finalSecondary.label}</a>
+        )}
+      </div>
+      {finalFootnote && <p class="final-cta__note">{finalFootnote}</p>}
+    </div>
+  </section>
 
   <script is:inline src="/components/security-inline.js"></script>
 </BaseLayout>
