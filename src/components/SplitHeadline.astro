@@ -1,0 +1,28 @@
+---
+/**
+ * Two-line headline pattern shared across every page —
+ * top line in the sans default, bottom line in `.nyght` (serif italic).
+ *
+ * Renders as:
+ *   <hN class={class}>{top}<br /><span class="nyght">{bottom}</span></hN>
+ *
+ * Both halves are output as separate text nodes so stega-encoded values
+ * read out of Sanity bring their own document path + field path with them
+ * — Visual Editing then paints individual edit pencils per line.
+ */
+type Tag = "h1" | "h2" | "h3" | "h4";
+
+interface Props {
+  top?: string | null;
+  bottom?: string | null;
+  as?: Tag;
+  class?: string;
+}
+
+const { top, bottom, as: Tag = "h2", class: className } = Astro.props;
+---
+
+<Tag class={className}>
+  {top}
+  {bottom && <><br /><span class="nyght">{bottom}</span></>}
+</Tag>

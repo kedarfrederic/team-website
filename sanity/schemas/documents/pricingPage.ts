@@ -88,6 +88,24 @@ export const pricingPage = defineType({
               description: "Display price when billed yearly.",
             }),
             defineField({
+              name: "priceMonthlyValue",
+              type: "string",
+              description:
+                "Numeric monthly value used by the toggle JS (e.g. \"24.99\"). Powers data-monthly on the card.",
+            }),
+            defineField({
+              name: "priceYearlyValue",
+              type: "string",
+              description:
+                "Numeric yearly value used by the toggle JS (e.g. \"19.99\"). Powers data-yearly on the card.",
+            }),
+            defineField({
+              name: "priceUnit",
+              type: "string",
+              description:
+                "Unit for toggle pricing (e.g. \"seat\"). Powers data-unit on the card; controls how the \"Then $X/...\" line reads.",
+            }),
+            defineField({
               name: "period",
               type: "string",
               description: "Period label (e.g. \"/mo\", \"per seat\").",

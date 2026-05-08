@@ -1,20 +1,366 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import SplitHeadline from "../components/SplitHeadline.astro";
 import { getPricingPage } from "../lib/queries";
-// @ts-expect-error — ?raw modifier returns string at build time
-import bodyHtml from "../lib/pricing-body.html?raw";
+import { getClient } from "../lib/sanity";
+import { toHTML } from "@portabletext/to-html";
 
-const page = await getPricingPage();
+const page = await getPricingPage(getClient(Astro));
+
+const hero = page?.hero ?? {};
+const heroHeadline = hero.headline ?? "Start free.";
+const heroNyght = "Upgrade when you're ready.";
+const heroSubhead =
+  hero.subhead ??
+  "Start using it with no commitment. Free forever for one artist, or unlock the full platform with Pro — 30 days free.";
+const heroCtaLabel = hero.cta?.label ?? "Try Pro free for 30 days";
+const heroCtaShort = "Try Pro free";
+const heroCtaHref = hero.cta?.href ?? "https://www.teamrollouts.com/sign-up?plan=pro&period=yearly";
+
+const billingToggle = page?.billingToggle ?? {};
+const yearlyLabel = billingToggle.yearlyLabel ?? "Yearly";
+const monthlyLabel = billingToggle.monthlyLabel ?? "Monthly";
+const yearlySaveTag = billingToggle.yearlySaveTag ?? "Save ~20%";
+
+interface Tier {
+  tierKey: string;
+  name: string;
+  who?: string;
+  monthlyPrice?: string;
+  yearlyPrice?: string;
+  priceMonthlyValue?: string;
+  priceYearlyValue?: string;
+  priceUnit?: string;
+  period?: string;
+  trialNote?: string;
+  thenText?: string;
+  billingNote?: string;
+  ctaLabel: string;
+  ctaHref: string;
+  includesLabel?: string;
+  features?: string[];
+  badge?: string;
+  compareLink?: string;
+}
+
+const tiers: Tier[] =
+  Array.isArray(page?.tiers) && page.tiers.length > 0
+    ? page.tiers
+    : [
+        {
+          tierKey: "free",
+          name: "Free",
+          who: "For solo artists getting started",
+          monthlyPrice: "$0",
+          yearlyPrice: "$0",
+          period: "forever",
+          thenText: "No catch. That's a promise.",
+          ctaLabel: "Get started free",
+          ctaHref: "https://www.teamrollouts.com/sign-up?plan=free&period=yearly",
+          includesLabel: "Includes:",
+          features: [
+            "1 artist",
+            "Unlimited releases",
+            "1 seat",
+            "1 collaborator",
+            "1 workspace",
+            "Unlimited stacks",
+            "TeamMate AI included",
+            "Intelligence (Basic)",
+            "Rollout Plan",
+            "Budget Management",
+          ],
+          compareLink: "#compare",
+        },
+        {
+          tierKey: "pro",
+          name: "Pro",
+          who: "For artists, managers, indie labels & teams",
+          monthlyPrice: "$0",
+          yearlyPrice: "$0",
+          priceMonthlyValue: "24.99",
+          priceYearlyValue: "19.99",
+          priceUnit: "seat",
+          period: "/month per seat",
+          trialNote: "for 30 days",
+          thenText: "Then $19.99/month per seat",
+          billingNote: "billed yearly",
+          ctaLabel: "Start your free trial",
+          ctaHref: "https://www.teamrollouts.com/sign-up?plan=pro&period=yearly",
+          includesLabel: "Everything in Free, plus:",
+          badge: "Limited time pricing",
+          features: [
+            "Unlimited artists",
+            "2 premium seats",
+            "Unlimited collaborators (Timeline access)",
+            "Unlimited workspaces",
+            "TeamMate AI included",
+            "Intelligence (Comprehensive)",
+            "TeamMate Email & Text",
+            "Press Tour",
+            "Tour Management",
+            "Document Ingestion",
+            "Team Chat",
+            "Reports & Sharing",
+            "Command Center",
+            "Priority support",
+          ],
+          compareLink: "#compare",
+        },
+      ];
+
+interface ComparisonCell {
+  type: "check" | "dash" | "text";
+  text?: string;
+}
+interface ComparisonRow {
+  label: string;
+  tooltip?: string;
+  valueByColumn: ComparisonCell[];
+}
+
+const comparisonTable = page?.comparisonTable ?? {};
+const compareHeading = comparisonTable.heading ?? "Compare plans";
+const compareColumns: string[] =
+  Array.isArray(comparisonTable.columns) && comparisonTable.columns.length > 0
+    ? comparisonTable.columns
+    : ["Free", "Pro"];
+
+const compareRows: ComparisonRow[] =
+  Array.isArray(comparisonTable.rows) && comparisonTable.rows.length > 0
+    ? comparisonTable.rows
+    : [
+        { label: "# of artists", valueByColumn: [{ type: "text", text: "1" }, { type: "text", text: "Unlimited" }] },
+        { label: "# of releases per year", valueByColumn: [{ type: "text", text: "Unlimited" }, { type: "text", text: "Unlimited" }] },
+        { label: "TeamMate AI", tooltip: "An AI built for music releases — understands the industry, learns your patterns, works 24/7.", valueByColumn: [{ type: "check" }, { type: "check" }] },
+        { label: "Intelligence", tooltip: "Pro gets full reasoning against your timeline, proactive insights, and a memory that learns your release.", valueByColumn: [{ type: "text", text: "Basic" }, { type: "text", text: "Comprehensive" }] },
+        { label: "# of seats", valueByColumn: [{ type: "text", text: "1" }, { type: "text", text: "2 (premium)" }] },
+        { label: "Collaborator type", valueByColumn: [{ type: "text", text: "1" }, { type: "text", text: "Unlimited (Timeline access)" }] },
+        { label: "# of workspaces", valueByColumn: [{ type: "text", text: "1" }, { type: "text", text: "Unlimited" }] },
+        { label: "# of stacks", valueByColumn: [{ type: "text", text: "Unlimited" }, { type: "text", text: "Unlimited" }] },
+        { label: "TeamMate Email", valueByColumn: [{ type: "dash" }, { type: "check" }] },
+        { label: "TeamMate Text", valueByColumn: [{ type: "dash" }, { type: "check" }] },
+        { label: "Rollout Plan", valueByColumn: [{ type: "check" }, { type: "check" }] },
+        { label: "Press Tour", valueByColumn: [{ type: "dash" }, { type: "check" }] },
+        { label: "Tour Management", valueByColumn: [{ type: "dash" }, { type: "check" }] },
+        { label: "Budget Management", valueByColumn: [{ type: "check" }, { type: "check" }] },
+        { label: "Document Ingestion", valueByColumn: [{ type: "dash" }, { type: "check" }] },
+        { label: "Team Chat", valueByColumn: [{ type: "dash" }, { type: "check" }] },
+        { label: "Reports & Sharing", valueByColumn: [{ type: "dash" }, { type: "check" }] },
+        { label: "Command Center", valueByColumn: [{ type: "dash" }, { type: "check" }] },
+        { label: "Customer support", tooltip: "Pro accounts get a dedicated email channel with priority response. Free uses our standard help centre and community.", valueByColumn: [{ type: "text", text: "Standard" }, { type: "text", text: "Priority (dedicated email)" }] },
+      ];
+
+interface FaqItem {
+  question: string;
+  answer: any;
+}
+
+const faq = page?.faq ?? {};
+const faqHeadline = faq.headline ?? "Questions?";
+const faqHeadlineNyght = "We've got answers.";
+const faqSubhead =
+  faq.subhead ??
+  "Everything you need to know about plans, billing, and what happens when your trial ends.";
+const faqEyebrow = faq.eyebrow ?? "Pricing";
+const faqCtaLabel = faq.footerCta?.label ?? "Talk to a founder →";
+const faqCtaHref = faq.footerCta?.href ?? "/demo";
+
+const faqFallback = [
+  { q: "What happens after my 30-day trial?", a: "You choose a plan. All your data is preserved. If you downgrade, excess items become read-only — nothing is ever deleted." },
+  { q: "What happens to my data if I downgrade?", a: "Nothing is deleted. Items beyond your plan's limits become read-only. You can still view and export them. You choose which items stay active." },
+  { q: "Can I change plans anytime?", a: "Yes. Upgrade or downgrade at any time. Changes take effect on your next billing cycle." },
+  { q: "Is there an annual discount?", a: "Yes. The prices shown are annual billing. Monthly billing is also available at a slightly higher rate." },
+];
+
+const faqItems: { q: string; aHtml: string }[] =
+  Array.isArray(faq.items) && faq.items.length > 0
+    ? faq.items.map((it: FaqItem) => ({
+        q: it.question,
+        aHtml: Array.isArray(it.answer) ? toHTML(it.answer) : "",
+      }))
+    : faqFallback.map((it) => ({ q: it.q, aHtml: `<p>${it.a}</p>` }));
+
+const finalCta = page?.finalCta ?? {};
+const finalHeadline = finalCta.headline ?? "Ready to run";
+const finalHeadlineNyght = "your next release?";
+const finalPrimary = finalCta.primaryCta ?? { label: "Start your free trial", href: "https://www.teamrollouts.com/sign-up" };
+const finalSecondary = finalCta.secondaryCta ?? { label: "Book a demo", href: "/demo" };
+const finalFootnote = finalCta.footnote ?? "30-day free trial.";
 ---
 
 <BaseLayout
-  title={page?.hero?.headline ?? "Pricing"}
-  description="Start free. Upgrade when you're ready."
+  title={hero.headline ?? "Pricing"}
+  description={heroSubhead}
   seo={page?.seo}
 >
   <link slot="head" rel="stylesheet" href="/components/pricing-inline.css" />
 
-  <Fragment set:html={bodyHtml} />
+  <section class="pricing-hero">
+    <SplitHeadline as="h1" top={heroHeadline} bottom={heroNyght} />
+    <p>{heroSubhead}</p>
+    <a href={heroCtaHref} class="btn btn--primary-light pricing-hero__cta">
+      <span class="pricing-hero__cta-full">{heroCtaLabel}</span>
+      <span class="pricing-hero__cta-short">{heroCtaShort}</span>
+    </a>
+  </section>
+
+  <div class="billing-toggle">
+    <span class="billing-toggle__label is-active" data-period="yearly">{yearlyLabel}</span>
+    <div class="billing-toggle__switch" id="billingSwitch" role="switch" aria-checked="true" tabindex="0"></div>
+    <span class="billing-toggle__label" data-period="monthly">{monthlyLabel}</span>
+    <span class="billing-toggle__save">{yearlySaveTag}</span>
+  </div>
+
+  <section class={`pricing-cards ${tiers.length === 2 ? "pricing-cards--two" : ""}`}>
+    {tiers.map((tier, i) => {
+      const isHighlight = i === tiers.length - 1 && tiers.length > 1;
+      const cardClass = isHighlight ? "pricing-card pricing-card--team" : "pricing-card";
+      return (
+        <div
+          class={cardClass}
+          data-plan={tier.tierKey}
+          data-yearly={tier.priceYearlyValue}
+          data-monthly={tier.priceMonthlyValue}
+          data-unit={tier.priceUnit}
+        >
+          <div class="pricing-card__tier">{tier.name}</div>
+          <div class="pricing-card__who">{tier.who}</div>
+          {tier.badge && <div class="pricing-card__limited">{tier.badge}</div>}
+          <div class="pricing-card__price-row">
+            <span class="pricing-card__amount">{tier.yearlyPrice ?? tier.monthlyPrice ?? "$0"}</span>
+            <span class="pricing-card__period">{tier.period ?? "/mo"}</span>
+          </div>
+          <div class="pricing-card__trial-note" style={!tier.trialNote ? "visibility:hidden" : undefined}>
+            {tier.trialNote ?? "for 30 days"}
+          </div>
+          {tier.thenText && <div class="pricing-card__then" data-then>{tier.thenText}</div>}
+          <div class="pricing-card__billing" data-billing style={!tier.billingNote ? "visibility:hidden" : undefined}>
+            {tier.billingNote ?? "billed annually"}
+          </div>
+          <a href={tier.ctaHref} class="pricing-card__cta" data-cta>
+            <span class="cta-full">{tier.ctaLabel}</span>
+            <span class="cta-short">{tier.ctaLabel.split(" ").slice(0, 2).join(" ")}</span>
+          </a>
+          <div class="pricing-card__divider"></div>
+          <div class="pricing-card__includes-label">{tier.includesLabel ?? "Includes:"}</div>
+          <ul class="pricing-card__features">
+            {(tier.features ?? []).map((feat) => <li>{feat}</li>)}
+          </ul>
+          {tier.compareLink && (
+            <div class="pricing-card__compare"><a href={tier.compareLink}>What's included</a></div>
+          )}
+        </div>
+      );
+    })}
+  </section>
+
+  <section class="comparison-section" id="compare">
+    <h2>{compareHeading}</h2>
+    <div class="comparison-scroll">
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th></th>
+            {compareColumns.map((col, i) => {
+              const tier = tiers[i];
+              const colClass = i === compareColumns.length - 1 && compareColumns.length > 1 ? "th-team" : undefined;
+              return (
+                <th class={colClass}>
+                  {col}
+                  {tier && (
+                    <a href={tier.ctaHref} class="compare-cta">Get started</a>
+                  )}
+                </th>
+              );
+            })}
+          </tr>
+        </thead>
+        <tbody>
+          {compareRows.map((row) => (
+            <tr>
+              <td>
+                <span>{row.label}</span>
+                {row.tooltip && <span class="feat-info" data-tip={row.tooltip}>i</span>}
+              </td>
+              {row.valueByColumn.map((cell, ci) => {
+                const isLast = ci === row.valueByColumn.length - 1 && row.valueByColumn.length > 1;
+                const tdClass = [
+                  isLast ? "td-team" : undefined,
+                  cell.type === "check" || (cell.type === "text" && isLast) ? "check" : undefined,
+                ].filter(Boolean).join(" ");
+                if (cell.type === "check") {
+                  return (
+                    <td class={tdClass}>
+                      <span class="check-icon">
+                        <svg viewBox="0 0 16 16"><polyline points="3 8 6.5 11.5 13 5"/></svg>
+                      </span>
+                    </td>
+                  );
+                }
+                if (cell.type === "dash") {
+                  return (
+                    <td class={tdClass}>
+                      <span class="dash-icon">
+                        <svg viewBox="0 0 12 2"><line x1="2" y1="1" x2="10" y2="1" stroke="rgba(0,0,0,0.2)" stroke-width="2" stroke-linecap="round"/></svg>
+                      </span>
+                    </td>
+                  );
+                }
+                return <td class={tdClass}>{cell.text}</td>;
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="faq-section" id="faqSection">
+    <div class="faq-section__inner">
+      <div class="faq-section__intro">
+        <div class="faq-section__label">{faqEyebrow}</div>
+        <h2 class="faq-section__headline">{faqHeadline} <span class="nyght">{faqHeadlineNyght}</span></h2>
+        <p class="faq-section__sub">{faqSubhead}</p>
+        <a href={faqCtaHref} class="faq-section__cta">{faqCtaLabel}</a>
+      </div>
+
+      <div class="faq-list" id="faqList">
+        {faqItems.map((item, i) => (
+          <div class="faq-item">
+            <button class="faq-item__trigger" aria-expanded="false">
+              <span class="faq-item__num">{String(i + 1).padStart(2, "0")}</span>
+              <span class="faq-item__q">{item.q}</span>
+              <span class="faq-item__toggle">
+                <svg viewBox="0 0 16 16">
+                  <line x1="3" y1="8" x2="13" y2="8"/>
+                  <line class="v" x1="8" y1="3" x2="8" y2="13"/>
+                </svg>
+              </span>
+            </button>
+            <div class="faq-item__answer">
+              <div class="faq-item__answer-inner">
+                <div class="faq-item__answer-content" set:html={item.aHtml} />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="final-cta">
+    <div class="final-cta__card">
+      <h2>{finalHeadline} <span class="nyght">{finalHeadlineNyght}</span></h2>
+      <div class="final-cta__buttons">
+        <a href={finalPrimary.href} class="btn btn--primary-light">{finalPrimary.label}</a>
+        {finalSecondary?.label && finalSecondary?.href && (
+          <a href={finalSecondary.href} class="btn btn--ghost">{finalSecondary.label}</a>
+        )}
+      </div>
+      {finalFootnote && <p class="final-cta__note">{finalFootnote}</p>}
+    </div>
+  </section>
 
   <script is:inline src="/components/pricing-inline.js"></script>
 </BaseLayout>

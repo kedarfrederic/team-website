@@ -1,21 +1,102 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import Wordmark from "../components/Wordmark.astro";
 import { getContactPage } from "../lib/queries";
-// @ts-expect-error — ?raw modifier returns string at build time
-import bodyHtml from "../lib/contact-body.html?raw";
+import { getClient, urlFor } from "../lib/sanity";
 
-const page = await getContactPage();
+const page = await getContactPage(getClient(Astro));
+
+// ── Fallback copy keeps the page identical when the doc is empty ─────
+const headline = page?.headline ?? "Get in touch";
+const subhead =
+  page?.subhead ??
+  "Have a question, want to learn more, or just want to say hello?\nWe'd love to hear from you.";
+const submitLabel = page?.submitLabel ?? "Send message";
+const emailFallbackText =
+  page?.emailFallbackText ?? "Or email us directly at";
+const bgUrl = page?.backgroundImage?.asset
+  ? urlFor(page.backgroundImage).width(2400).quality(85).format("webp").url()
+  : "/assets/hero-bg-option-1.jpeg";
+
+interface InterestOption {
+  label: string;
+  value: string;
+}
+
+const interestOptions: InterestOption[] =
+  Array.isArray(page?.interestOptions) && page.interestOptions.length > 0
+    ? page.interestOptions
+    : [
+        { label: "Team for Artists", value: "artists" },
+        { label: "Team for Managers", value: "managers" },
+        { label: "Team for Labels", value: "labels" },
+        { label: "Team for Enterprise", value: "enterprise" },
+      ];
 ---
 
 <BaseLayout
-  title={page?.headline ?? "Get in touch"}
-  description={page?.subhead ?? "Have a question, want to learn more, or just want to say hello? We'd love to hear from you."}
+  title={headline}
+  description={subhead.replace(/\n/g, " ")}
   seo={page?.seo}
   navTheme="dark"
 >
   <link slot="head" rel="stylesheet" href="/components/contact-inline.css" />
 
-  <Fragment set:html={bodyHtml} />
+  <div class="contact-bg">
+    <img src={bgUrl} alt="" loading="eager" />
+  </div>
+
+  <div class="auth-page">
+    <div class="auth-header">
+      <h1>{headline}</h1>
+      <p set:html={subhead.replace(/\n/g, "<br>")} />
+    </div>
+
+    <form class="auth-card" id="contactForm" action="#" method="POST" data-hubspot-form="contact">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="firstName">First name</label>
+          <input type="text" id="firstName" name="first_name" placeholder="Jane" required />
+        </div>
+        <div class="form-group">
+          <label for="lastName">Last name</label>
+          <input type="text" id="lastName" name="last_name" placeholder="Doe" required />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email address</label>
+        <input type="email" id="email" name="email" placeholder="you@yourlabel.com" required />
+      </div>
+
+      <div class="form-group">
+        <label for="orgName">Organization / Label name</label>
+        <input type="text" id="orgName" name="organization" placeholder="Your label, company, or team name" />
+      </div>
+
+      <div class="interest-group">
+        <label class="interest-label">I'm interested in</label>
+        <div class="interest-options">
+          {interestOptions.map((opt) => (
+            <label class="interest-option">
+              <input type="checkbox" name="interest" value={opt.value} />
+              <span>{opt.label}</span>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="message">Message</label>
+        <textarea id="message" name="message" rows="4" placeholder="Tell us what you're looking for..."></textarea>
+      </div>
+
+      <button type="submit" class="btn-submit" id="submitBtn">{submitLabel}</button>
+      <p class="auth-email">{emailFallbackText} <a href="mailto:hello@teamrollouts.com">hello@teamrollouts.com</a></p>
+    </form>
+
+    <Wordmark href="/" />
+  </div>
 
   <script is:inline src="/components/contact-inline.js"></script>
 </BaseLayout>
