@@ -23,24 +23,24 @@
 })();
 
 (function() {
-  // Word-by-word reveal across stacked paragraphs.
+  // Word-by-word ripple reveal triggered by IntersectionObserver.
   //
-  // Treat all words across all paragraphs as a single ordered list.
-  // As the user scrolls through the pinned 200vh section, words become
-  // visible left-to-right, top-to-bottom — and STAY visible (no
-  // paragraph carousel that swaps them out). This matches the user
-  // expectation: words appear, then remain.
+  // Section flows in normal document order (no 400vh sticky scroll
+  // pin) — when it scrolls into view, all words across all paragraphs
+  // ripple in left-to-right, top-to-bottom over ~1.5s and stay visible
+  // forever. Smooth + intuitive, no scroll dead-zone.
   var section = document.getElementById('problemSection');
   if (!section) return;
-  var scroll = section.querySelector('.problem-scroll');
   var paras = section.querySelectorAll('.problem-para');
-  if (!scroll || paras.length === 0) return;
+  if (paras.length === 0) return;
 
   // Make all paragraphs flow normally (legacy CSS positions them absolute)
-  // and let the wrapper expand to fit all of them stacked.
+  // and let the wrapper expand to fit them stacked.
   var wrapper = paras[0].parentElement;
   if (wrapper) wrapper.style.height = 'auto';
-  var allWords = [];
+
+  // Split each paragraph into word spans with staggered transition delays
+  var wordIndex = 0;
   paras.forEach(function(p) {
     p.style.position = 'relative';
     p.style.opacity = '1';
@@ -52,51 +52,32 @@
       var span = document.createElement('span');
       span.className = 'word';
       span.textContent = w;
+      // 35ms per word stagger — gentle ripple
+      span.style.transitionDelay = (wordIndex * 35) + 'ms';
       p.appendChild(span);
-      allWords.push(span);
+      wordIndex++;
     });
   });
 
-  function update() {
-    var rect = scroll.getBoundingClientRect();
-    var scrollH = scroll.offsetHeight;
-    var viewH = window.innerHeight;
-    var scrolled = -rect.top;
-    var totalRange = scrollH - viewH;
-    if (totalRange <= 0) return;
-    var progress = Math.max(0, Math.min(1, scrolled / totalRange));
-    var wordsToShow = Math.floor(progress * allWords.length);
-    allWords.forEach(function(w, i) {
-      if (i <= wordsToShow) w.classList.add('is-visible');
-      else w.classList.remove('is-visible');
-    });
-  }
-
-  // rAF loop while in viewport — keeps the reveal smooth on fast scrolls
-  var inView = false;
-  var rafId = null;
-  function loop() {
-    update();
-    if (inView) rafId = requestAnimationFrame(loop);
-    else rafId = null;
-  }
+  // Reveal once when section is meaningfully in view, stay revealed
   if ('IntersectionObserver' in window) {
-    var obs = new IntersectionObserver(function(entries) {
+    var obs = new IntersectionObserver(function(entries, observer) {
       entries.forEach(function(e) {
-        inView = e.isIntersecting;
-        if (inView && rafId === null) {
-          rafId = requestAnimationFrame(loop);
-        } else if (!inView && rafId !== null) {
-          cancelAnimationFrame(rafId);
-          rafId = null;
+        if (e.isIntersecting) {
+          section.querySelectorAll('.word').forEach(function(w) {
+            w.classList.add('is-visible');
+          });
+          observer.unobserve(section);
         }
       });
-    }, { threshold: 0 });
+    }, { threshold: 0.2 });
     obs.observe(section);
   } else {
-    window.addEventListener('scroll', update, { passive: true });
+    // Fallback: reveal everything immediately
+    section.querySelectorAll('.word').forEach(function(w) {
+      w.classList.add('is-visible');
+    });
   }
-  update();
 })();
 
 (function initFeatures() {
