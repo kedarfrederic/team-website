@@ -19,6 +19,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import HomeRoles from "../components/homepage/HomeRoles.astro";
 import HomeEngine from "../components/homepage/HomeEngine.astro";
+import HomeFeatures from "../components/homepage/HomeFeatures.astro";
 import HomeBrain from "../components/homepage/HomeBrain.astro";
 import HomeIntegrations from "../components/homepage/HomeIntegrations.astro";
 import HomeFaq from "../components/homepage/HomeFaq.astro";
@@ -190,6 +191,7 @@ const uploadCtaIsVideo = uploadCta?.type === "video";
   <HomeRoles data={page?.rolesTabs} />
   <HomeEngine data={page?.engineSection} />
   <Fragment set:html={restAHtml} />
+  <HomeFeatures data={page?.featureSpotlight} />
   <HomeBrain data={page?.brainSection} />
   <HomeIntegrations data={page?.integrationsMarquee} />
   <Fragment set:html={restBHtml} />

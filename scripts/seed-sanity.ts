@@ -317,6 +317,20 @@ docs.push({
       "Social_post.png",
     ],
   },
+  featureSpotlight: {
+    headlineTop: "The all-in-one",
+    headlineBottom: "release platform",
+    headline: "The all-in-one release platform",
+    subhead: "Every tool your team needs to plan, coordinate, and launch — in one place.",
+    cards: [
+      feat("Intuitive Timeline", "Plan and visualize your entire release schedule with a drag-and-drop timeline that keeps everyone aligned."),
+      feat("AI TeamMate", "Your AI assistant that understands your artist, drafts marketing copy, and handles repetitive rollout tasks."),
+      feat("Artist Intelligence", "Deep research on your artist's market position, audience demographics, and competitive landscape."),
+      feat("Rollout Plans", "Pre-built and customizable rollout templates that adapt to your release type and team workflow."),
+      feat("Budget Tracking", "Track spend across marketing, production, and promotion with real-time budget dashboards."),
+      feat("Team Collaboration", "Built-in chat, file sharing, and task assignments keep your entire team connected and productive."),
+    ],
+  },
   brainSection: {
     headlineTop: "Every rollout",
     headlineBottom: "builds a brain",

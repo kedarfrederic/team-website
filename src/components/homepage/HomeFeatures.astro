@@ -1,0 +1,170 @@
+---
+/**
+ * Homepage features spotlight ("The all-in-one release platform").
+ *
+ * 6 feature cards — title + description bound to homepage.featureSpotlight.cards.
+ * Preview panels (timeline / chat / intel / rollout / budget / collab) are
+ * hardcoded product illustrations, identical to the legacy markup, keyed by
+ * card index 0..5 and selected via data-feature attributes that the
+ * legacy inline JS in /components/homepage-inline-1.js targets verbatim.
+ *
+ * DOM structure preserved exactly — section.features-section#featuresSection,
+ * .features-spotlight#featuresSpotlight, .features-list, .feature-card with
+ * data-feature, .features-preview, .features-preview__panel — so the existing
+ * tab-switch JS keeps working without modification.
+ */
+
+interface FeatureCard {
+  title?: string;
+  description?: string;
+}
+
+interface Props {
+  data?: {
+    headlineTop?: string;
+    headlineBottom?: string;
+    headline?: string;
+    subhead?: string;
+    cards?: FeatureCard[];
+  };
+}
+
+const { data } = Astro.props;
+const headlineTop = data?.headlineTop ?? data?.headline ?? "The all-in-one";
+const headlineBottom = data?.headlineBottom ?? "release platform";
+const subhead = data?.subhead ?? "Every tool your team needs to plan, coordinate, and launch — in one place.";
+
+const FEATURE_KEYS = ["timeline", "ai", "intel", "rollout", "budget", "collab"] as const;
+const FEATURE_PANEL_LABELS = ["Timeline", "TeamMate AI", "Intelligence", "Rollout Plans", "Budget", "Collaboration"];
+
+const DEFAULT_CARDS: Required<FeatureCard>[] = [
+  { title: "Intuitive Timeline", description: "Plan and visualize your entire release schedule with a drag-and-drop timeline that keeps everyone aligned." },
+  { title: "AI TeamMate", description: "Your AI assistant that understands your artist, drafts marketing copy, and handles repetitive rollout tasks." },
+  { title: "Artist Intelligence", description: "Deep research on your artist's market position, audience demographics, and competitive landscape." },
+  { title: "Rollout Plans", description: "Pre-built and customizable rollout templates that adapt to your release type and team workflow." },
+  { title: "Budget Tracking", description: "Track spend across marketing, production, and promotion with real-time budget dashboards." },
+  { title: "Team Collaboration", description: "Built-in chat, file sharing, and task assignments keep your entire team connected and productive." },
+];
+
+const sourceCards = Array.isArray(data?.cards) && data.cards.length > 0 ? data.cards : DEFAULT_CARDS;
+const cards: Required<FeatureCard>[] = [];
+for (let i = 0; i < 6; i++) {
+  cards.push({
+    title: sourceCards[i]?.title ?? DEFAULT_CARDS[i].title,
+    description: sourceCards[i]?.description ?? DEFAULT_CARDS[i].description,
+  });
+}
+
+function previewHtml(key: string): string {
+  if (key === "timeline") {
+    return (
+      `<div class="ph-timeline">` +
+      `<div class="ph-timeline__row"><div class="ph-timeline__label">Artwork</div><div class="ph-timeline__track"><div class="ph-timeline__bar" style="left:5%;right:55%;background:linear-gradient(90deg,#F56002,#ff8533)"></div></div></div>` +
+      `<div class="ph-timeline__row"><div class="ph-timeline__label">Pre-save</div><div class="ph-timeline__track"><div class="ph-timeline__bar" style="left:20%;right:35%;background:linear-gradient(90deg,#3B82F6,#60a5fa)"></div></div></div>` +
+      `<div class="ph-timeline__row"><div class="ph-timeline__label">Press</div><div class="ph-timeline__track"><div class="ph-timeline__bar" style="left:40%;right:15%;background:linear-gradient(90deg,#8B5CF6,#a78bfa)"></div></div></div>` +
+      `<div class="ph-timeline__row"><div class="ph-timeline__label">Socials</div><div class="ph-timeline__track"><div class="ph-timeline__bar" style="left:55%;right:10%;background:linear-gradient(90deg,#EC4899,#f472b6)"></div></div></div>` +
+      `<div class="ph-timeline__row"><div class="ph-timeline__label">Release</div><div class="ph-timeline__track"><div class="ph-timeline__bar" style="left:70%;right:5%;background:linear-gradient(90deg,#FAD604,#fbe046)"></div></div></div>` +
+      `</div>`
+    );
+  }
+  if (key === "ai") {
+    return (
+      `<div class="ph-chat">` +
+      `<div class="ph-chat__user-row"><div class="ph-chat__avatar ph-chat__avatar--user">SL</div><div class="ph-chat__bubble ph-chat__bubble--user">Draft launch day social posts</div></div>` +
+      `<div class="ph-chat__ai-row"><div class="ph-chat__avatar ph-chat__avatar--ai"><img src="/assets/teammate-avatar-round.png" alt="TeamMate"></div><div class="ph-chat__bubble ph-chat__bubble--ai">I've drafted three variants for Instagram, TikTok, and X — each tuned to your artist's voice. Want me to schedule them?</div></div>` +
+      `<div class="ph-chat__input">Ask TeamMate anything...<div class="ph-chat__input-send"></div></div>` +
+      `</div>`
+    );
+  }
+  if (key === "intel") {
+    return (
+      `<div class="ph-intel">` +
+      `<div class="ph-intel__stat"><div class="ph-intel__stat-label">Monthly Listeners</div><div class="ph-intel__stat-value">2.4M</div><div class="ph-intel__stat-change">+12.3%</div></div>` +
+      `<div class="ph-intel__stat"><div class="ph-intel__stat-label">Save Rate</div><div class="ph-intel__stat-value">34%</div><div class="ph-intel__stat-change">+4.1%</div></div>` +
+      `<div class="ph-intel__chart"><svg viewBox="0 0 200 60" preserveAspectRatio="none"><path d="M0 50 Q30 35 50 32 T100 18 T150 12 T200 5" fill="none" stroke="var(--accent)" stroke-width="2"/><path d="M0 50 Q30 35 50 32 T100 18 T150 12 T200 5 L200 60 L0 60 Z" fill="url(#hf-grad-intel)" opacity="0.2"/><defs><linearGradient id="hf-grad-intel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F56002"/><stop offset="1" stop-color="#F56002" stop-opacity="0"/></linearGradient></defs></svg></div>` +
+      `</div>`
+    );
+  }
+  if (key === "rollout") {
+    return (
+      `<div class="ph-rollout">` +
+      `<div class="ph-rollout__row is-done"><div class="ph-rollout__check is-done"></div><div class="ph-rollout__label">Finalize artwork</div></div>` +
+      `<div class="ph-rollout__row is-done"><div class="ph-rollout__check is-done"></div><div class="ph-rollout__label">Submit to DSPs</div></div>` +
+      `<div class="ph-rollout__row is-done"><div class="ph-rollout__check is-done"></div><div class="ph-rollout__label">Set up pre-save</div></div>` +
+      `<div class="ph-rollout__row"><div class="ph-rollout__check"></div><div class="ph-rollout__label">Pitch for playlisting</div></div>` +
+      `<div class="ph-rollout__row"><div class="ph-rollout__check"></div><div class="ph-rollout__label">Schedule social posts</div></div>` +
+      `<div class="ph-rollout__row"><div class="ph-rollout__check"></div><div class="ph-rollout__label">Coordinate press</div></div>` +
+      `</div>`
+    );
+  }
+  if (key === "budget") {
+    return (
+      `<div class="ph-budget">` +
+      `<div class="ph-budget__donut"><div class="ph-budget__total"><div class="ph-budget__total-label">Spent</div><div class="ph-budget__total-value">$48k</div></div></div>` +
+      `<div class="ph-budget__legend">` +
+      `<div class="ph-budget__legend-row"><span class="ph-budget__legend-dot" style="background:#F56002"></span>Marketing · 38%</div>` +
+      `<div class="ph-budget__legend-row"><span class="ph-budget__legend-dot" style="background:#ffb37a"></span>Production · 22%</div>` +
+      `<div class="ph-budget__legend-row"><span class="ph-budget__legend-dot" style="background:#1f1f1f"></span>Promo · 22%</div>` +
+      `<div class="ph-budget__legend-row"><span class="ph-budget__legend-dot" style="background:#e5e5e0"></span>Other · 18%</div>` +
+      `</div></div>`
+    );
+  }
+  // collab
+  return (
+    `<div class="ph-collab">` +
+    `<div class="ph-collab__row"><div class="ph-collab__avatar" style="background:#F56002">KF</div><div class="ph-collab__content"><strong>Kedar</strong> assigned you a task</div><div class="ph-collab__time">2m</div></div>` +
+    `<div class="ph-collab__row"><div class="ph-collab__avatar" style="background:#3B82F6">JK</div><div class="ph-collab__content"><strong>Jake</strong> uploaded final master</div><div class="ph-collab__time">1h</div></div>` +
+    `<div class="ph-collab__row"><div class="ph-collab__avatar" style="background:#8B5CF6">AR</div><div class="ph-collab__content"><strong>Aaron</strong> approved campaign brief</div><div class="ph-collab__time">3h</div></div>` +
+    `<div class="ph-collab__row"><div class="ph-collab__avatar" style="background:#10B981">SL</div><div class="ph-collab__content"><strong>Simon</strong> commented on timeline</div><div class="ph-collab__time">5h</div></div>` +
+    `</div>`
+  );
+}
+---
+
+<section class="features-section" id="featuresSection">
+  <div class="container container--center">
+    <div class="section-intro">
+      <h2 class="headline-lg">{headlineTop}<br /><span class="nyght" style="color:#111">{headlineBottom}</span></h2>
+      <p class="body-lg">{subhead}</p>
+    </div>
+  </div>
+
+  <div class="features-spotlight" id="featuresSpotlight">
+    <div class="features-list" role="tablist">
+      {cards.map((card, i) => {
+        const key = FEATURE_KEYS[i];
+        return (
+          <button
+            class={`feature-card ${i === 0 ? "is-active" : ""}`}
+            data-feature={key}
+            role="tab"
+            aria-selected={i === 0 ? "true" : "false"}
+          >
+            <div class="feature-card__title"><span class="feature-card__marker"></span>{card.title}</div>
+            <div class="feature-card__desc">{card.description}</div>
+            <div class="feature-card__preview-mobile">
+              <div class="features-preview">
+                <div class="features-preview__panel is-active">
+                  <Fragment set:html={previewHtml(key)} />
+                  <div class="features-preview__panel-label">{FEATURE_PANEL_LABELS[i]}</div>
+                </div>
+              </div>
+            </div>
+          </button>
+        );
+      })}
+    </div>
+
+    <div class="features-preview" aria-hidden="true">
+      {cards.map((card, i) => {
+        const key = FEATURE_KEYS[i];
+        return (
+          <div class={`features-preview__panel ${i === 0 ? "is-active" : ""}`} data-feature={key}>
+            <Fragment set:html={previewHtml(key)} />
+            <div class="features-preview__panel-label">{FEATURE_PANEL_LABELS[i]}</div>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+</section>
