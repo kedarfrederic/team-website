@@ -39,7 +39,13 @@ export default defineConfig({
       projectId: "g1olb5am",
       dataset: "production",
       apiVersion: "2024-12-01",
-      useCdn: true,
+      // useCdn MUST be false for stega encoding to be applied. The CDN
+      // serves pre-cached responses without the runtime stega injection
+      // that Visual Editing's overlay needs to anchor pencils against.
+      // We're already SSR'd through a Worker so the small latency hit is
+      // negligible — Cloudflare's edge cache holds the Worker response
+      // for cookie-less visitors.
+      useCdn: false,
       stega: {
         // Studio runs at https://team-cms.sanity.studio — overlay clicks on
         // a marketing page open the matching document there. Override at
