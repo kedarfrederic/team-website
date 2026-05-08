@@ -23,81 +23,52 @@
 })();
 
 (function() {
+  // Per-paragraph reveal via IntersectionObserver. Replaces the original
+  // scroll-driven 400vh sticky reveal: that approach left a huge blank
+  // scroll area when the per-frame scroll math was off in this Astro
+  // setup. Cleaner UX: paragraphs fade in word-by-word when scrolled
+  // into view, no giant pinned scroll dead-zone.
   var section = document.getElementById('problemSection');
   if (!section) return;
-  var scroll = section.querySelector('.problem-scroll');
   var paras = section.querySelectorAll('.problem-para');
-  var numParas = paras.length;
 
-  // Split each paragraph into word spans
+  // Split each paragraph into word spans (same as before)
   paras.forEach(function(p) {
     var text = p.textContent.trim();
+    if (!text) return;
     var words = text.split(/\s+/);
     p.innerHTML = '';
-    words.forEach(function(w) {
+    words.forEach(function(w, i) {
       var span = document.createElement('span');
       span.className = 'word';
       span.textContent = w;
+      // Staggered transition delay so words ripple in
+      span.style.transitionDelay = (i * 30) + 'ms';
       p.appendChild(span);
     });
+    // Make paragraph visible (CSS hides individual words via opacity)
+    p.style.position = 'relative';
+    p.style.opacity = '1';
   });
 
-  function update() {
-    var rect = scroll.getBoundingClientRect();
-    var scrollH = scroll.offsetHeight;
-    var viewH = window.innerHeight;
-    var scrolled = -rect.top;
-    var totalRange = scrollH - viewH;
-    if (totalRange <= 0) return;
-    var progress = Math.max(0, Math.min(1, scrolled / totalRange));
-
-    // Divide progress into segments
-    var segSize = 1 / numParas;
-
-    paras.forEach(function(p, i) {
-      var segStart = i * segSize;
-      var segEnd = segStart + segSize;
-      var words = p.querySelectorAll('.word');
-
-      if (progress >= segStart && progress < segEnd) {
-        // Active paragraph
-        p.style.opacity = '1';
-        p.style.position = 'relative';
-        var subProgress = (progress - segStart) / segSize;
-        var totalWords = words.length;
-        var wordsToShow = Math.floor(subProgress * totalWords);
-        words.forEach(function(w, wi) {
-          if (wi <= wordsToShow) {
+  // Reveal all words when paragraph enters viewport
+  if ('IntersectionObserver' in window) {
+    var obs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        if (e.isIntersecting) {
+          e.target.querySelectorAll('.word').forEach(function(w) {
             w.classList.add('is-visible');
-          } else {
-            w.classList.remove('is-visible');
-          }
-        });
-      } else if (progress >= segEnd) {
-        // Completed paragraph — show all words
-        p.style.opacity = '1';
-        p.style.position = 'relative';
-        words.forEach(function(w) { w.classList.add('is-visible'); });
-        // But hide if a later paragraph is active
-        if (i < numParas - 1) {
-          // Find which para is active
-          var activeIdx = Math.min(numParas - 1, Math.floor(progress / segSize));
-          if (i < activeIdx) {
-            p.style.opacity = '0';
-            p.style.position = 'absolute';
-          }
+          });
         }
-      } else {
-        // Not yet reached
-        p.style.opacity = '0';
-        p.style.position = 'absolute';
-        words.forEach(function(w) { w.classList.remove('is-visible'); });
-      }
+      });
+    }, { threshold: 0.15 });
+    paras.forEach(function(p) { obs.observe(p); });
+  } else {
+    // Fallback: just reveal everything
+    paras.forEach(function(p) {
+      p.querySelectorAll('.word').forEach(function(w) { w.classList.add('is-visible'); });
     });
   }
-
-  window.addEventListener('scroll', update, { passive: true });
-  update();
 })();
 
 (function() {
