@@ -56,6 +56,29 @@ export const demoPage = defineType({
       group: "form",
       description: "Shown after a successful submit (e.g. \"We'll email you at <email>...\").",
     }),
+    /**
+     * Per-input labels and placeholders. The technical `name=` attribute
+     * the website-leads CRM endpoint reads stays hardcoded in the Astro
+     * template — only the visible copy is editable here.
+     * For role / artistCount (dropdowns), `placeholder` is the disabled
+     * prompt option (e.g. "Select your role").
+     */
+    defineField({
+      name: "formCopy",
+      title: "Form labels & placeholders",
+      type: "object",
+      group: "form",
+      options: { collapsible: true, collapsed: false },
+      fields: [
+        defineField({ name: "firstName",    title: "First name",      type: "formFieldCopy" }),
+        defineField({ name: "lastName",     title: "Last name",       type: "formFieldCopy" }),
+        defineField({ name: "email",        title: "Email address",   type: "formFieldCopy" }),
+        defineField({ name: "organization", title: "Organization",    type: "formFieldCopy" }),
+        defineField({ name: "role",         title: "Role (dropdown)", type: "formFieldCopy" }),
+        defineField({ name: "artistCount",  title: "Artist count (dropdown)", type: "formFieldCopy" }),
+        defineField({ name: "interest",     title: "Interest (textarea)",     type: "formFieldCopy" }),
+      ],
+    }),
     defineField({ name: "seo", type: "seoBlock", group: "seo" }),
   ],
   preview: { prepare: () => ({ title: "Demo", subtitle: "/demo" }) },
