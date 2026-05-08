@@ -1,17 +1,18 @@
 ---
 /**
- * Sanity Visual Editing overlay — uses the canonical component from
- * `@sanity/astro/visual-editing`. It's a React component under the hood
- * (rendered with `client:only="react"` so it never SSRs) that handles
- * iframe detection, comlink handshake with Studio's Presentation tool,
- * and click-to-edit pencil rendering.
+ * Sanity Visual Editing overlay — uses the canonical Astro component from
+ * `@sanity/astro/visual-editing`. That component is itself an .astro file
+ * (NOT a React component) which internally mounts a React child with
+ * `client:only="react"` — so we just render it like any other Astro
+ * component. Adding our own `client:` directive breaks it (the Astro
+ * component definition gets passed to React's renderer, which throws #130).
  *
  * Toggle via the `PUBLIC_SANITY_VISUAL_EDITING_ENABLED` env var:
- *   - "true"  → mount the overlay on every request
- *   - else    → no overlay code ships
+ *   - "true" or unset → mount the overlay on every request
+ *   - "false"          → no overlay code ships
  *
- * The component itself is also iframe-aware — even when enabled, it stays
- * inert outside an iframe — so we leave it on by default in production.
+ * The overlay is iframe-aware — even when enabled, it stays inert outside
+ * an iframe — so we leave it on by default.
  */
 import { VisualEditing } from "@sanity/astro/visual-editing";
 
@@ -19,4 +20,4 @@ const enabled =
   import.meta.env.PUBLIC_SANITY_VISUAL_EDITING_ENABLED !== "false";
 ---
 
-<VisualEditing client:only="react" enabled={enabled} zIndex={1000} />
+<VisualEditing enabled={enabled} zIndex={1000} />
