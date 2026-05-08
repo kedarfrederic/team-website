@@ -152,15 +152,20 @@ body {
   color: #111;
 }
 
+/* Default to dark-hero variant (white text on transparent + white border).
+   Matches the legacy site's btn--outline. Per-page CSS can override for
+   light-background contexts. */
 .btn--outline {
   background: transparent;
-  color: #111;
-  border: 1px solid #111;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
 .btn--outline:hover {
-  background: #111;
-  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 /* Layout helpers */
