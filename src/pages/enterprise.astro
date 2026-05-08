@@ -1,136 +1,21 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import PainSection from "../components/blocks/PainSection.astro";
-import RolesGrid from "../components/blocks/RolesGrid.astro";
-import CtaBlock from "../components/blocks/CtaBlock.astro";
 import { getEnterprisePage } from "../lib/queries";
+// @ts-expect-error — ?raw modifier returns string at build time
+import bodyHtml from "../lib/enterprise-body.html?raw";
 
 const page = await getEnterprisePage();
-const hero = page?.hero;
-const why = page?.whySection;
-const securityCallout = page?.securityCallout;
-const included = page?.includedSection;
 ---
 
-<BaseLayout title="Enterprise" description="Scale without compromise. Security without sacrifice." seo={page?.seo}>
-  {/* Hero */}
-  <section class="enterprise-hero">
-    <div class="container container--center">
-      {hero?.pillLabel && <span class="label-sm pill">{hero.pillLabel}</span>}
-      <h1 class="headline-xl">{hero?.headline ?? "Enterprise"}</h1>
-      {hero?.subhead && <p class="body-lg">{hero.subhead}</p>}
-      {(hero?.primaryCta?.label || hero?.secondaryCta?.label) && (
-        <div class="enterprise-hero__ctas">
-          {hero.primaryCta?.label && hero.primaryCta?.href && (
-            <a href={hero.primaryCta.href} class="btn btn--primary">{hero.primaryCta.label}</a>
-          )}
-          {hero.secondaryCta?.label && hero.secondaryCta?.href && (
-            <a href={hero.secondaryCta.href} class="btn btn--outline">{hero.secondaryCta.label}</a>
-          )}
-        </div>
-      )}
-    </div>
-  </section>
+<BaseLayout
+  title={page?.hero?.headline ?? "Enterprise"}
+  description="Scale without compromise. Security without sacrifice."
+  seo={page?.seo}
+  navTheme="dark"
+>
+  <link slot="head" rel="stylesheet" href="/components/enterprise-inline.css" />
 
-  {/* Why-enterprise */}
-  {why && (
-    <section class="enterprise-why">
-      <div class="container">
-        {why.headline && <h2 class="headline-lg">{why.headline}</h2>}
-        {why.body && <p class="body-lg">{why.body}</p>}
-      </div>
-    </section>
-  )}
+  <Fragment set:html={bodyHtml} />
 
-  <PainSection value={page?.painSection} />
-
-  {/* Security callout */}
-  {securityCallout && (
-    <section class="enterprise-security">
-      <div class="container container--center">
-        {securityCallout.headline && <h2 class="headline-lg">{securityCallout.headline}</h2>}
-        {securityCallout.body && <p class="body-lg">{securityCallout.body}</p>}
-        {securityCallout.ctaLabel && securityCallout.ctaHref && (
-          <a href={securityCallout.ctaHref} class="btn btn--outline">{securityCallout.ctaLabel}</a>
-        )}
-      </div>
-    </section>
-  )}
-
-  {/* Included grid */}
-  {included?.blocks && included.blocks.length > 0 && (
-    <section class="enterprise-included">
-      <div class="container">
-        {included.headline && <h2 class="headline-lg">{included.headline}</h2>}
-        <div class="enterprise-included__grid">
-          {included.blocks.map((b: any) => (
-            <article class="enterprise-included__card">
-              <h3>{b.title}</h3>
-              <p>{b.description}</p>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  )}
-
-  <RolesGrid value={page?.rolesGrid} />
-  <CtaBlock value={page?.finalCta} />
-
-  {!page && (
-    <section class="empty-state container container--center">
-      <p class="body-lg">This page hasn't been authored in Sanity yet.</p>
-    </section>
-  )}
+  <script is:inline src="/components/enterprise-inline.js"></script>
 </BaseLayout>
-
-<style>
-  .enterprise-hero,
-  .enterprise-why,
-  .enterprise-security,
-  .enterprise-included,
-  .empty-state {
-    padding: 6rem 0;
-  }
-  .pill {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
-    border: 1px solid var(--grey);
-    border-radius: 999px;
-    margin-bottom: 1.5rem;
-  }
-  .enterprise-hero__ctas {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-    margin-top: 2.5rem;
-  }
-  .enterprise-why .body-lg {
-    max-width: 38rem;
-    margin-top: 1.25rem;
-    line-height: 1.7;
-  }
-  .enterprise-security {
-    background: var(--bg);
-  }
-  .enterprise-security .body-lg {
-    max-width: 38rem;
-    margin: 1rem auto 2rem;
-  }
-  .enterprise-included__grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 2rem;
-    margin-top: 3rem;
-  }
-  .enterprise-included__card h3 {
-    font-size: 1.125rem;
-    font-weight: 600;
-    margin-bottom: 0.75rem;
-  }
-  .enterprise-included__card p {
-    color: var(--text-secondary);
-    line-height: 1.6;
-  }
-</style>
