@@ -3,9 +3,9 @@ import { defineType, defineField } from "sanity";
 /**
  * For-partners page singleton.
  *
- * Same shape as icpPage EXCEPT the feature section uses tabbed layout:
- * 4 tabs (Marketing & PR / Distribution / A&R / Creative Services), each
- * with 4 feature items + a separate preview panel per tab.
+ * Same general shape as icpPage EXCEPT the feature section uses a tabbed
+ * layout: 4 tabs (Marketing & PR / Distribution / A&R / Creative Services),
+ * each with 4 features + a separate preview panel per tab.
  */
 export const partnerPage = defineType({
   name: "partnerPage",
@@ -18,14 +18,22 @@ export const partnerPage = defineType({
     { name: "seo", title: "SEO" },
   ],
   fields: [
-    // ── Hero ──────────────────────────────────────────────────
     defineField({
       name: "hero",
       type: "object",
       group: "hero",
       fields: [
         defineField({ name: "pillLabel", type: "string" }),
-        defineField({ name: "headline", type: "string", validation: (R) => R.required() }),
+        defineField({
+          name: "headlineTop",
+          type: "string",
+          initialValue: "Your clients are already on Team.",
+        }),
+        defineField({
+          name: "headlineBottom",
+          type: "string",
+          initialValue: "Now you can be too.",
+        }),
         defineField({ name: "subhead", type: "text", rows: 3 }),
         defineField({
           name: "primaryCta",
@@ -47,7 +55,6 @@ export const partnerPage = defineType({
       ],
     }),
 
-    // ── Sections ──────────────────────────────────────────────
     defineField({ name: "painSection", type: "painSection", group: "sections" }),
 
     defineField({
@@ -58,7 +65,7 @@ export const partnerPage = defineType({
       description: "4-tab feature spotlight unique to /for-partners.",
       fields: [
         defineField({ name: "eyebrow", type: "string" }),
-        defineField({ name: "headline", type: "string", validation: (R) => R.required() }),
+        defineField({ name: "headline", type: "string", initialValue: "Built for every kind of partner" }),
         defineField({ name: "subhead", type: "text", rows: 2 }),
         defineField({
           name: "tabs",
@@ -69,6 +76,11 @@ export const partnerPage = defineType({
               name: "partnerTab",
               fields: [
                 defineField({ name: "label", type: "string", validation: (R) => R.required() }),
+                defineField({
+                  name: "tabKey",
+                  type: "string",
+                  description: "Stable id for the tab — use \"marketing\", \"distribution\", \"ar\", or \"creative\" to match the corresponding mock previews.",
+                }),
                 defineField({
                   name: "features",
                   type: "array",
@@ -85,20 +97,8 @@ export const partnerPage = defineType({
                   ],
                   validation: (Rule) => Rule.min(1).max(6),
                 }),
-                defineField({
-                  name: "previewMock",
-                  title: "Tab preview mock",
-                  type: "array",
-                  of: [
-                    { type: "mockGantt" },
-                    { type: "mockBudget" },
-                    { type: "mockChat" },
-                    { type: "mockTimeline" },
-                  ],
-                  validation: (Rule) => Rule.max(1),
-                }),
               ],
-              preview: { select: { title: "label" } },
+              preview: { select: { title: "label", subtitle: "tabKey" } },
             },
           ],
           validation: (Rule) => Rule.min(2).max(6),
@@ -109,10 +109,8 @@ export const partnerPage = defineType({
     defineField({ name: "stepsBlock", type: "stepsBlock", group: "sections" }),
     defineField({ name: "rolesGrid", title: "Cross-link to other ICPs", type: "rolesGrid", group: "sections" }),
 
-    // ── Bottom of page ────────────────────────────────────────
     defineField({ name: "finalCta", type: "ctaBlock", group: "footer" }),
 
-    // ── SEO ───────────────────────────────────────────────────
     defineField({ name: "seo", type: "seoBlock", group: "seo" }),
   ],
   preview: { prepare: () => ({ title: "For Partners", subtitle: "/for-partners" }) },

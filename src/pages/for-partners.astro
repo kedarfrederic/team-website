@@ -1,23 +1,309 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import SplitHeadline from "../components/SplitHeadline.astro";
+import PartnerTabMocks from "../components/pages/PartnerTabMocks.astro";
 import { getPartnerPage } from "../lib/queries";
-import { getClient } from "../lib/sanity";
-// @ts-expect-error — ?raw modifier returns string at build time
-import bodyHtml from "../lib/for-partners-body.html?raw";
+import { getClient, urlFor } from "../lib/sanity";
 
 const page = await getPartnerPage(getClient(Astro));
-const hero = page?.hero;
+
+// ── Hero ────────────────────────────────────────────────────
+const hero = page?.hero ?? {};
+const heroPill = hero.pillLabel;
+const heroTop = hero.headlineTop ?? "Your clients are already on Team.";
+const heroBottom = hero.headlineBottom ?? "Now you can be too.";
+const heroSubhead =
+  hero.subhead ??
+  "Whether you run PR campaigns, manage distribution, or handle marketing — Team gives you a seat at the table on every release you're part of.";
+const heroBgUrl = hero.backgroundImage?.asset
+  ? urlFor(hero.backgroundImage).width(2400).quality(85).format("webp").url()
+  : "/assets/hero-bg-new.png";
+const primaryCta = hero.primaryCta ?? { label: "Start your free trial", href: "https://www.teamrollouts.com/sign-up?plan=pro&period=yearly" };
+const secondaryCta = hero.secondaryCta ?? { label: "Book a demo", href: "/demo" };
+
+// ── Pain section ───────────────────────────────────────────
+interface PainRow {
+  metadataPill?: string;
+  headline?: string;
+  body?: string;
+  mockKind: "command" | "tasks" | "dashboard";
+}
+const pain = page?.painSection ?? {};
+const painHeadline = pain.headline ?? "Working across clients is messy.";
+const painHeadlineNyght = "Team cleans it up.";
+const painRows: PainRow[] = Array.isArray(pain.rows) && pain.rows.length > 0
+  ? pain.rows.map((r: any, i: number) => ({
+      metadataPill: r.metadataPill,
+      headline: r.headline,
+      body: r.body,
+      mockKind: (["command", "tasks", "dashboard"][i] ?? "dashboard") as PainRow["mockKind"],
+    }))
+  : [
+      { metadataPill: "One login, every client", headline: "See every release you're involved in from one dashboard", body: "No more logging into separate tools for each client. Team gives you a single view of every release you're contributing to — with the context you need to do your job.", mockKind: "command" },
+      { metadataPill: "Context, not chaos", headline: "Get briefs, assets, and deadlines without the email chain", body: "When a client invites you into a release, you see the timeline, the assets, and exactly what's expected of you. No more digging through inboxes for that brief they sent last Tuesday.", mockKind: "tasks" },
+      { metadataPill: "Deliver on time", headline: "Track your deliverables across every client", body: "See what's due, what's done, and what's at risk — across all your clients. Team keeps you accountable without the micromanagement.", mockKind: "dashboard" },
+    ];
+
+// ── Tabbed features ────────────────────────────────────────
+interface TabFeature { title: string; description?: string }
+interface PartnerTab { label: string; tabKey: string; features: TabFeature[] }
+const tabs = page?.tabbedFeatures ?? {};
+const tabHeadline = tabs.headline ?? "Built for every kind of partner";
+const tabSubhead = tabs.subhead ?? "Whatever your role in the release, Team has you covered";
+const tabList: PartnerTab[] = Array.isArray(tabs.tabs) && tabs.tabs.length > 0
+  ? tabs.tabs
+  : [
+      {
+        label: "Marketing & PR",
+        tabKey: "marketing",
+        features: [
+          { title: "Campaign Scheduling", description: "Sync your campaigns to release milestones" },
+          { title: "Press Outreach", description: "Track pitches, coverage, and media relationships" },
+          { title: "Social Planning", description: "Plan content across platforms, aligned to the rollout" },
+          { title: "Budget Visibility", description: "See what's allocated and what's been spent" },
+        ],
+      },
+      {
+        label: "Distribution",
+        tabKey: "distribution",
+        features: [
+          { title: "DSP Submissions", description: "Track delivery status across every platform" },
+          { title: "Metadata Check", description: "Validate metadata before submission" },
+          { title: "Status Updates", description: "Real-time delivery status for every release" },
+          { title: "Asset Ingestion", description: "Bulk upload and organise release assets" },
+        ],
+      },
+      {
+        label: "A&R",
+        tabKey: "ar",
+        features: [
+          { title: "Demo Pipeline", description: "Review and rate incoming demos in one place" },
+          { title: "Artist Development", description: "Track development milestones for each artist" },
+          { title: "Release Analytics", description: "Understand performance across your roster" },
+          { title: "Market Intelligence", description: "Discover trends and competitive positioning" },
+        ],
+      },
+      {
+        label: "Creative Services",
+        tabKey: "creative",
+        features: [
+          { title: "Asset Briefs", description: "Get clear specs and creative direction for every deliverable" },
+          { title: "Version Tracking", description: "Upload revisions and track approval history" },
+          { title: "Approval Workflows", description: "Submit work and get sign-off without the email thread" },
+          { title: "Deadline Reminders", description: "Never miss a delivery date" },
+        ],
+      },
+    ];
+
+// ── Steps ───────────────────────────────────────────────────
+const steps = page?.stepsBlock ?? {};
+const stepsTop = steps.headlineTop ?? "Up and running";
+const stepsBottom = steps.headlineBottom ?? "in minutes";
+const stepItems = Array.isArray(steps.steps) && steps.steps.length > 0
+  ? steps.steps.map((s: any, i: number) => ({
+      num: s.number ?? String(i + 1),
+      t: s.title,
+      d: s.description,
+    }))
+  : [
+      { num: "1", t: "Get invited", d: "A client adds you to their release on Team. You get an email with instant access." },
+      { num: "2", t: "See what's needed", d: "Your dashboard shows every release you're involved in, with your tasks and deadlines." },
+      { num: "3", t: "Deliver and track", d: "Complete your work, upload assets, and track progress — all in one place." },
+    ];
+
+// ── Final CTA ──────────────────────────────────────────────
+const finalCta = page?.finalCta ?? {};
+const finalHeadlineTop = "Ready to work smarter";
+const finalHeadlineBottom = "with your clients?";
+const finalPrimary = finalCta.primaryCta ?? { label: "Start your free trial", href: "https://www.teamrollouts.com/sign-up?plan=pro&period=yearly" };
+const finalSecondary = finalCta.secondaryCta ?? { label: "Book a demo", href: "/demo" };
+const finalFootnote = finalCta.footnote ?? "30-day free trial. No credit card required.";
+
+// ── Other ICPs ─────────────────────────────────────────────
+const rolesGrid = page?.rolesGrid ?? {};
+const others = Array.isArray(rolesGrid.cards) && rolesGrid.cards.length > 0
+  ? rolesGrid.cards.map((c: any) => ({ title: c.title, desc: c.description, href: c.href }))
+  : [
+      { title: "For Artists", desc: "Tools for independent artists to plan and execute releases on their own terms.", href: "/for-artists" },
+      { title: "For Managers", desc: "A single command center for every rollout across your entire roster.", href: "/for-managers" },
+      { title: "For Labels", desc: "Manage every release across your entire catalog from one central hub.", href: "/for-labels" },
+    ];
 ---
 
 <BaseLayout
-  title={hero?.headline ?? "For Partners"}
-  description="Your clients are already on Team. Now you can be too."
+  title="For Partners"
+  description={heroSubhead}
   seo={page?.seo}
   navTheme="dark"
 >
   <link slot="head" rel="stylesheet" href="/components/for-partners-inline.css" />
 
-  <Fragment set:html={bodyHtml} />
+  <section class="icp-hero" id="heroSection">
+    <div class="icp-hero__bg"><img src={heroBgUrl} alt="" loading="eager" /></div>
+    <div class="icp-hero__overlay"></div>
+    <div class="icp-hero__inner">
+      <div class="icp-nav">
+        <a href="/for-artists" class="icp-nav__pill">For Artists</a>
+        <a href="/for-managers" class="icp-nav__pill">For Managers</a>
+        <a href="/for-labels" class="icp-nav__pill">For Labels</a>
+        <a href="/for-partners" class="icp-nav__pill icp-nav__pill--active">For Partners</a>
+      </div>
+      {heroPill && <span class="hero-pill">{heroPill}</span>}
+      <h1>{heroTop} <span class="nyght">{heroBottom}</span></h1>
+      <p>{heroSubhead}</p>
+      <div class="icp-hero__buttons">
+        <a href={primaryCta.href} class="btn btn--green">{primaryCta.label}</a>
+        <a href={secondaryCta.href} class="btn btn--outline">{secondaryCta.label}</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="pain-section">
+    <div class="pain-section__inner">
+      <div class="pain-section__header">
+        <h2>{painHeadline} <span class="nyght">{painHeadlineNyght}</span></h2>
+      </div>
+
+      {painRows.map((row, i) => (
+        <div class={`pain-row ${i % 2 === 1 ? "pain-row--flipped" : ""}`}>
+          <div class="pain-row__text">
+            {row.metadataPill && <span class="metadata-pill">{row.metadataPill}</span>}
+            {row.headline && <h3>{row.headline}</h3>}
+            {row.body && <p>{row.body}</p>}
+          </div>
+          <div class="pain-row__panel">
+            {row.mockKind === "command" && (
+              <div class="fp-command">
+                <div class="fp-command__row">
+                  <div class="fp-command__card"><div class="fp-command__card-artist">Mara</div><div class="fp-command__card-release">Golden Hour</div><div class="fp-command__card-status mock-dashboard__pill--green">On Track</div></div>
+                  <div class="fp-command__card"><div class="fp-command__card-artist">Ash Velo</div><div class="fp-command__card-release">First Light EP</div><div class="fp-command__card-status mock-dashboard__pill--amber">At Risk</div></div>
+                </div>
+                <div class="fp-command__row">
+                  <div class="fp-command__card"><div class="fp-command__card-artist">Phoebe K</div><div class="fp-command__card-release">Neon Skyline</div><div class="fp-command__card-status mock-dashboard__pill--green">On Track</div></div>
+                  <div class="fp-command__card"><div class="fp-command__card-artist">Kira</div><div class="fp-command__card-release">Late Bloom</div><div class="fp-command__card-status mock-dashboard__pill--green">On Track</div></div>
+                </div>
+                <div class="fp-command__row">
+                  <div class="fp-command__card"><div class="fp-command__card-artist">Zara Lin</div><div class="fp-command__card-release">Quiet Rooms</div><div class="fp-command__card-status mock-dashboard__pill--green">On Track</div></div>
+                  <div class="fp-command__card"><div class="fp-command__card-artist">Theo Park</div><div class="fp-command__card-release">After Dark</div><div class="fp-command__card-status mock-dashboard__pill--amber">At Risk</div></div>
+                </div>
+              </div>
+            )}
+            {row.mockKind === "tasks" && (
+              <div class="fp-tasks">
+                <div class="fp-tasks__row"><div class="fp-tasks__check fp-tasks__check--done"></div><div class="fp-tasks__label fp-tasks__label--done">Review campaign brief</div><div class="fp-tasks__assignee" style="background:#8B5CF6">You</div></div>
+                <div class="fp-tasks__row"><div class="fp-tasks__check fp-tasks__check--done"></div><div class="fp-tasks__label fp-tasks__label--done">Upload press assets</div><div class="fp-tasks__assignee" style="background:#8B5CF6">You</div></div>
+                <div class="fp-tasks__row"><div class="fp-tasks__check"></div><div class="fp-tasks__label">Draft playlist pitch</div><div class="fp-tasks__assignee" style="background:#8B5CF6">You</div></div>
+                <div class="fp-tasks__row"><div class="fp-tasks__check"></div><div class="fp-tasks__label">Submit social content</div><div class="fp-tasks__assignee" style="background:#8B5CF6">You</div></div>
+              </div>
+            )}
+            {row.mockKind === "dashboard" && (
+              <div class="mock-dashboard">
+                <div class="mock-dashboard__row">
+                  <div class="mock-dashboard__card"><div class="mock-dashboard__card-title">Active Clients</div><div class="mock-dashboard__card-value">8</div><div class="mock-dashboard__pill mock-dashboard__pill--green">On Track</div></div>
+                  <div class="mock-dashboard__card"><div class="mock-dashboard__card-title">Tasks Due</div><div class="mock-dashboard__card-value">5</div><div class="mock-dashboard__pill mock-dashboard__pill--amber">This Week</div></div>
+                </div>
+                <div class="mock-dashboard__row">
+                  <div class="mock-dashboard__card"><div class="mock-dashboard__card-title">Completed</div><div class="mock-dashboard__card-value">23</div><div class="mock-dashboard__pill mock-dashboard__pill--green">This Month</div></div>
+                  <div class="mock-dashboard__card"><div class="mock-dashboard__card-title">At Risk</div><div class="mock-dashboard__card-value">2</div><div class="mock-dashboard__pill mock-dashboard__pill--amber">Needs Attention</div></div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="features-section" id="featuresSection">
+    <div class="features-section__inner">
+      <div class="features-section__header">
+        <h2>{tabHeadline}</h2>
+      </div>
+      <p class="features-section__sub">{tabSubhead}</p>
+
+      <div class="partner-tabs" role="tablist">
+        {tabList.map((tab, i) => (
+          <button
+            class={`partner-tab ${i === 0 ? "is-active" : ""}`}
+            data-tab={tab.tabKey}
+            role="tab"
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {tabList.map((tab, ti) => (
+        <div
+          class={`partner-panel ${ti === 0 ? "is-active" : ""}`}
+          data-tab={tab.tabKey}
+        >
+          <div class="partner-panel__features">
+            {tab.features.map((feat, fi) => (
+              <div
+                class={`partner-panel__feature ${fi === 0 ? "is-active" : ""}`}
+                data-preview={`${tab.tabKey}-${fi + 1}`}
+              >
+                <h4>{feat.title}</h4>
+                {feat.description && <p>{feat.description}</p>}
+              </div>
+            ))}
+          </div>
+          <div class="partner-panel__preview">
+            {/* Mock previews are rendered once for ALL tabs and switched via JS */}
+            {ti === 0 && <PartnerTabMocks />}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="steps-section">
+    <div class="steps-section__inner">
+      <div class="steps-section__header">
+        <SplitHeadline as="h2" top={stepsTop} bottom={stepsBottom} />
+      </div>
+      <div class="steps-timeline">
+        {stepItems.map((s) => (
+          <div class="step">
+            <div class="step__circle">{s.num}</div>
+            <div class="step__card">
+              <h3>{s.t}</h3>
+              <p>{s.d}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="final-cta">
+    <div class="final-cta__card">
+      <h2>{finalHeadlineTop}<br /><span class="nyght">{finalHeadlineBottom}</span></h2>
+      <div class="final-cta__buttons">
+        <a href={finalPrimary.href} class="btn btn--primary-light">{finalPrimary.label}</a>
+        {finalSecondary?.href && finalSecondary?.label && (
+          <a href={finalSecondary.href} class="btn btn--ghost">{finalSecondary.label}</a>
+        )}
+      </div>
+      {finalFootnote && <p class="final-cta__note">{finalFootnote}</p>}
+    </div>
+  </section>
+
+  <section class="other-icps">
+    <div class="other-icps__inner">
+      {others.map((o, i) => (
+        <>
+          {i > 0 && <div class="other-icps__divider"></div>}
+          <a href={o.href} class="other-icp">
+            <div class="other-icp__title">{o.title}</div>
+            <div class="other-icp__desc">{o.desc}</div>
+            <div class="other-icp__link">Learn more <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></div>
+          </a>
+        </>
+      ))}
+    </div>
+  </section>
 
   <script is:inline src="/components/for-partners-inline.js"></script>
 </BaseLayout>
