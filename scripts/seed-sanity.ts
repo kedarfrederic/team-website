@@ -219,6 +219,68 @@ docs.push({
     body: "Whether you're rolling out a single, EP, or Album, every task, every asset, and every conversation needs a single home.",
     cta: { ...cta("See how it works", "#"), type: "video" },
   },
+  brainSection: {
+    headline: "Every rollout",
+    body: "Each contact, task, observation, and decision becomes a living memory — only ever accessible to you and your team.",
+    video: { src: "/assets/brain-1-web.mp4" },
+  },
+  faq: {
+    headline: "Straight answers",
+    subhead: "Everything you need to know about Team before you give it a try. Still stuck? Our founders answer demos personally.",
+    footerCta: { label: "Talk to a founder", href: "/demo" },
+    items: [
+      { _key: "q1", _type: "faqItem", question: "What exactly is Team?", answer: [
+        block("Team is the operating system for music releases. It replaces the patchwork of spreadsheets, Slack threads, and Notion docs that most release teams stitch together with one connected workspace — timelines, tasks, budgets, assets, comms, and AI, all in a single view."),
+        block("Whether you're an independent artist shipping your first single or a major label managing hundreds of releases a year, Team adapts to how you actually work."),
+      ]},
+      { _key: "q2", _type: "faqItem", question: "Who is Team built for?", answer: [
+        block("Three tiers, three workflows: Artists — solo artists and small teams shipping singles and EPs (free tier, built for you). Team — independent labels, managers, and mid-sized operations running multiple active rollouts. Enterprise — major labels and large management companies with hundreds of releases, multiple rosters, and complex approval flows."),
+        block("Every plan is free for 30 days, no credit card required."),
+      ]},
+      { _key: "q3", _type: "faqItem", question: "How is this different from Notion, Asana, or Monday?", answer: [
+        block("Generic project tools don't know what a playlist pitch is, what a DSP window is, or how a release cycle flows. You end up customising templates and rebuilding the same workflows every time."),
+        block("Team is built exclusively for music. Every timeline template, every AI prompt, every integration, every metric — all shaped by how labels, managers, and artists actually ship music."),
+      ]},
+      { _key: "q4", _type: "faqItem", question: "What does TeamMate (the AI) actually do?", answer: [
+        block("TeamMate is your release co-pilot. It plans rollouts from a brief, drafts social copy in your artist's voice, flags overdue tasks and risk before they become fires, generates status updates for stakeholders, and answers questions about any release in plain language."),
+        block("It learns from your team's patterns over time, so the longer you use it, the sharper its suggestions become."),
+      ]},
+      { _key: "q5", _type: "faqItem", question: "Can I connect Team to tools I already use?", answer: [
+        block("Yes. Team connects to Spotify for Artists, Apple Music for Artists, distributors, social platforms, Slack, Google Workspace, Dropbox, and more. Pull streaming data, push release updates, sync calendars, bring assets in — all without leaving Team."),
+        block("Enterprise plans include custom integrations and API access."),
+      ]},
+      { _key: "q6", _type: "faqItem", question: "What's the 30-day free trial catch?", answer: [
+        block("None. No credit card required, full feature access on every plan for 30 days. Most teams decide within the first week — we give you 30 days because we know release cycles can take time to coordinate, and we want you to ship one on Team before you pay a cent."),
+        block("At the end of the trial, you pick the plan that fits — or walk away with your data exportable in a single click."),
+      ]},
+      { _key: "q7", _type: "faqItem", question: "How long does onboarding take?", answer: [
+        block("Artists and small teams are usually up and running within 15 minutes. Mid-sized teams import their existing workflows and roster in a day. Enterprise rollouts come with dedicated onboarding — typically 1–2 weeks to migrate data, configure approvals, and train the team."),
+      ]},
+      { _key: "q8", _type: "faqItem", question: "Is my data secure?", answer: [
+        block("Yes. SOC 2 Type II compliant, end-to-end encryption in transit and at rest, role-based access controls, and full audit logs. Enterprise customers get SSO, custom data residency, and dedicated support."),
+        block("Unreleased music and assets are protected — watermarking, access logs, and expirable share links come standard."),
+      ]},
+      { _key: "q9", _type: "faqItem", question: "Can I talk to a real person?", answer: [
+        block("Always. Book a demo and you'll meet one of the founders — not a sales rep. We want to understand your workflow, show you exactly where Team fits, and answer anything this FAQ didn't cover."),
+        block("Or email us directly at hello@teamrollouts.com."),
+      ]},
+    ],
+  },
+  stories: {
+    headline: "Ready to transform your next release?",
+    slides: [
+      { _key: "s1", _type: "testimonialSlide", tier: "enterprise", name: "Amara Johnson", role: "Head of Marketing · Major Label", quote: "Team gave our A&R and marketing teams a shared view we never had before." },
+      { _key: "s2", _type: "testimonialSlide", tier: "artist", name: "Marcus Okafor", role: "Independent Artist", quote: "Finally one place to plan my release instead of ten different apps." },
+      { _key: "s3", _type: "testimonialSlide", tier: "team", name: "Priya Sharma", role: "Artist Manager · Management Company", quote: "I manage six artists — Team is the only way I stay on top of it all." },
+      { _key: "s4", _type: "testimonialSlide", tier: "enterprise", name: "James Liu", role: "VP Operations · Major Label", quote: "Release planning across 40+ artists used to be chaos. Now it's visible." },
+      { _key: "s5", _type: "testimonialSlide", tier: "artist", name: "Emma Fontaine", role: "Singer-Songwriter", quote: "My whole release workflow in one place. Feels like having a tour manager in my pocket." },
+      { _key: "s6", _type: "testimonialSlide", tier: "team", name: "David Harlan", role: "Label Head · Indie Label", quote: "Our roster has doubled and our ops team is the same size. Team made that possible." },
+      { _key: "s7", _type: "testimonialSlide", tier: "enterprise", name: "Sofia Reyes", role: "A&R Director · Major Label", quote: "Artist Intelligence changed how we approach signings and release strategy." },
+      { _key: "s8", _type: "testimonialSlide", tier: "artist", name: "Theo Walsh", role: "Producer / Artist", quote: "The AI Teammate drafts my socials in my voice. I don't dread release week anymore." },
+      { _key: "s9", _type: "testimonialSlide", tier: "team", name: "Nadia Kim", role: "Day-to-Day Manager · Management Company", quote: "Stakeholder updates that used to take hours now generate in a click." },
+      { _key: "s10", _type: "testimonialSlide", tier: "enterprise", name: "Marcus Vaughn", role: "Head of Distribution · Major Label", quote: "Delivery tracking across our global catalogue — all in one dashboard." },
+    ],
+  },
 });
 
 // ─── about ──────────────────────────────────────────────────────────────

@@ -1,0 +1,100 @@
+---
+import { toHTML } from "@portabletext/to-html";
+
+interface FaqItem {
+  question: string;
+  answer: any;
+}
+
+interface Props {
+  data?: {
+    eyebrow?: string;
+    headline?: string;
+    subhead?: string;
+    items?: FaqItem[];
+    footerCta?: { label?: string; href?: string };
+  };
+}
+
+const FALLBACK: { q: string; a: string[] }[] = [
+  { q: "What exactly is Team?", a: [
+    "Team is the operating system for music releases. It replaces the patchwork of spreadsheets, Slack threads, and Notion docs that most release teams stitch together with one connected workspace — timelines, tasks, budgets, assets, comms, and AI, all in a single view.",
+    "Whether you're an independent artist shipping your first single or a major label managing hundreds of releases a year, Team adapts to how you actually work.",
+  ]},
+  { q: "Who is Team built for?", a: [
+    "Three tiers, three workflows: Artists — solo artists and small teams shipping singles and EPs (free tier, built for you). Team — independent labels, managers, and mid-sized operations running multiple active rollouts. Enterprise — major labels and large management companies with hundreds of releases, multiple rosters, and complex approval flows.",
+    "Every plan is free for 30 days, no credit card required.",
+  ]},
+  { q: "How is this different from Notion, Asana, or Monday?", a: [
+    "Generic project tools don't know what a playlist pitch is, what a DSP window is, or how a release cycle flows. You end up customising templates and rebuilding the same workflows every time.",
+    "Team is built exclusively for music. Every timeline template, every AI prompt, every integration, every metric — all shaped by how labels, managers, and artists actually ship music.",
+  ]},
+  { q: "What does TeamMate (the AI) actually do?", a: [
+    "TeamMate is your release co-pilot. It plans rollouts from a brief, drafts social copy in your artist's voice, flags overdue tasks and risk before they become fires, generates status updates for stakeholders, and answers questions about any release in plain language.",
+    "It learns from your team's patterns over time, so the longer you use it, the sharper its suggestions become.",
+  ]},
+  { q: "Can I connect Team to tools I already use?", a: [
+    "Yes. Team connects to Spotify for Artists, Apple Music for Artists, distributors, social platforms, Slack, Google Workspace, Dropbox, and more. Pull streaming data, push release updates, sync calendars, bring assets in — all without leaving Team.",
+    "Enterprise plans include custom integrations and API access.",
+  ]},
+  { q: "What's the 30-day free trial catch?", a: [
+    "None. No credit card required, full feature access on every plan for 30 days. Most teams decide within the first week — we give you 30 days because we know release cycles can take time to coordinate, and we want you to ship one on Team before you pay a cent.",
+    "At the end of the trial, you pick the plan that fits — or walk away with your data exportable in a single click.",
+  ]},
+  { q: "How long does onboarding take?", a: [
+    "Artists and small teams are usually up and running within 15 minutes. Mid-sized teams import their existing workflows and roster in a day. Enterprise rollouts come with dedicated onboarding — typically 1–2 weeks to migrate data, configure approvals, and train the team.",
+  ]},
+  { q: "Is my data secure?", a: [
+    "Yes. SOC 2 Type II compliant, end-to-end encryption in transit and at rest, role-based access controls, and full audit logs. Enterprise customers get SSO, custom data residency, and dedicated support.",
+    "Unreleased music and assets are protected — watermarking, access logs, and expirable share links come standard.",
+  ]},
+  { q: "Can I talk to a real person?", a: [
+    "Always. Book a demo and you'll meet one of the founders — not a sales rep. We want to understand your workflow, show you exactly where Team fits, and answer anything this FAQ didn't cover.",
+    "Or email us directly at hello@teamrollouts.com.",
+  ]},
+];
+
+const { data } = Astro.props;
+const headline = data?.headline ?? "Straight answers";
+const headlineNyght = "no spin.";
+const subhead = data?.subhead ?? "Everything you need to know about Team before you give it a try. Still stuck? Our founders answer demos personally.";
+const ctaLabel = data?.footerCta?.label ?? "Talk to a founder";
+const ctaHref = data?.footerCta?.href ?? "/demo";
+
+const items: { q: string; aHtml: string }[] =
+  Array.isArray(data?.items) && data.items.length > 0
+    ? data.items.map((it) => ({ q: it.question, aHtml: Array.isArray(it.answer) ? toHTML(it.answer) : "" }))
+    : FALLBACK.map((it) => ({ q: it.q, aHtml: it.a.map((p) => `<p>${p}</p>`).join("") }));
+---
+
+<section class="faq-section" id="faqSection">
+  <div class="faq-section__inner">
+    <div class="faq-section__intro">
+      <h2 class="faq-section__headline">{headline}<br /><span class="nyght">{headlineNyght}</span></h2>
+      <p class="faq-section__sub">{subhead}</p>
+      <a href={ctaHref} class="faq-section__cta"><span class="faq-cta-text">{ctaLabel}</span> →</a>
+    </div>
+
+    <div class="faq-list" id="faqList">
+      {items.map((item, i) => (
+        <div class="faq-item">
+          <button class="faq-item__trigger" aria-expanded="false">
+            <span class="faq-item__num">{String(i + 1).padStart(2, "0")}</span>
+            <span class="faq-item__q">{item.q}</span>
+            <span class="faq-item__toggle">
+              <svg viewBox="0 0 16 16">
+                <line x1="3" y1="8" x2="13" y2="8" />
+                <line class="v" x1="8" y1="3" x2="8" y2="13" />
+              </svg>
+            </span>
+          </button>
+          <div class="faq-item__answer">
+            <div class="faq-item__answer-inner">
+              <div class="faq-item__answer-content" set:html={item.aHtml} />
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

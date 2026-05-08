@@ -1,0 +1,91 @@
+---
+import { urlFor } from "../../lib/sanity";
+
+interface Slide {
+  tier: "enterprise" | "team" | "artist";
+  name: string;
+  role?: string;
+  quote: string;
+  photo?: any;
+}
+
+interface Props {
+  data?: {
+    headline?: string;
+    subhead?: string;
+    ctaLabel?: string;
+    ctaHref?: string;
+    note?: string;
+    slides?: Slide[];
+  };
+}
+
+const FALLBACK_SLIDES: { tier: Slide["tier"]; name: string; role: string; quote: string; photo: string }[] = [
+  { tier: "enterprise", name: "Amara Johnson", role: "Head of Marketing · Major Label", quote: "Team gave our A&R and marketing teams a shared view we never had before.", photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=600&q=80&auto=format&fit=crop" },
+  { tier: "artist", name: "Marcus Okafor", role: "Independent Artist", quote: "Finally one place to plan my release instead of ten different apps.", photo: "https://images.unsplash.com/photo-1504593811423-6dd665756598?w=600&q=80&auto=format&fit=crop" },
+  { tier: "team", name: "Priya Sharma", role: "Artist Manager · Management Company", quote: "I manage six artists — Team is the only way I stay on top of it all.", photo: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=600&q=80&auto=format&fit=crop" },
+  { tier: "enterprise", name: "James Liu", role: "VP Operations · Major Label", quote: "Release planning across 40+ artists used to be chaos. Now it's visible.", photo: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=600&q=80&auto=format&fit=crop" },
+  { tier: "artist", name: "Emma Fontaine", role: "Singer-Songwriter", quote: "My whole release workflow in one place. Feels like having a tour manager in my pocket.", photo: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=600&q=80&auto=format&fit=crop" },
+  { tier: "team", name: "David Harlan", role: "Label Head · Indie Label", quote: "Our roster has doubled and our ops team is the same size. Team made that possible.", photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=600&q=80&auto=format&fit=crop" },
+  { tier: "enterprise", name: "Sofia Reyes", role: "A&R Director · Major Label", quote: "Artist Intelligence changed how we approach signings and release strategy.", photo: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&q=80&auto=format&fit=crop" },
+  { tier: "artist", name: "Theo Walsh", role: "Producer / Artist", quote: "The AI Teammate drafts my socials in my voice. I don't dread release week anymore.", photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=600&q=80&auto=format&fit=crop" },
+  { tier: "team", name: "Nadia Kim", role: "Day-to-Day Manager · Management Company", quote: "Stakeholder updates that used to take hours now generate in a click.", photo: "https://images.unsplash.com/photo-1619895862022-09114b41f16f?w=600&q=80&auto=format&fit=crop" },
+  { tier: "enterprise", name: "Marcus Vaughn", role: "Head of Distribution · Major Label", quote: "Delivery tracking across our global catalogue — all in one dashboard.", photo: "https://images.unsplash.com/photo-1463453091185-61582044d556?w=600&q=80&auto=format&fit=crop" },
+];
+
+const { data } = Astro.props;
+const headline = data?.headline ?? "Ready to transform your next release?";
+const subhead = data?.subhead ?? "Experience first-hand how Team eliminates the chaos and brings clarity to your workflow.";
+const ctaLabel = data?.ctaLabel ?? "Start a free trial";
+const ctaHref = data?.ctaHref ?? "/pricing";
+const note = data?.note ?? "No credit card required.";
+
+const slides: { tier: string; name: string; role?: string; quote: string; photoUrl: string }[] =
+  Array.isArray(data?.slides) && data.slides.length > 0
+    ? data.slides.map((s) => ({
+        tier: s.tier,
+        name: s.name,
+        role: s.role,
+        quote: s.quote,
+        photoUrl: s.photo?.asset
+          ? urlFor(s.photo).width(600).quality(80).format("webp").url()
+          : "",
+      }))
+    : FALLBACK_SLIDES.map((s) => ({ tier: s.tier, name: s.name, role: s.role, quote: s.quote, photoUrl: s.photo }));
+---
+
+<section class="stories-section" id="storiesSection" data-module="carousel">
+  <div class="container container--center">
+    <div class="section-intro" style="max-width:none">
+      <h2 class="headline-lg" style="white-space:nowrap">{headline}</h2>
+      <p class="body-lg" style="white-space:nowrap">{subhead}</p>
+      <a href={ctaHref} class="btn btn--primary" style="margin-top:1.25rem">{ctaLabel}</a>
+      {note && <div style="font-size:0.8125rem;color:var(--text-secondary);margin-top:0.75rem">{note}</div>}
+    </div>
+  </div>
+
+  <div class="stories-carousel">
+    <div class="swiper" id="storiesSwiper">
+      <div class="swiper-wrapper">
+        {slides.map((slide) => (
+          <div class="swiper-slide">
+            <div class="story-card">
+              <div class="story-card__photo">
+                {slide.photoUrl && <img src={slide.photoUrl} alt="" />}
+              </div>
+              <div class={`story-card__tier story-card__tier--${slide.tier}`}>
+                {slide.tier === "enterprise" ? "Enterprise" : slide.tier === "artist" ? "Artist" : "Team"}
+              </div>
+              <div class="story-card__quote">"</div>
+              <div class="story-card__meta">
+                <div class="story-card__name">{slide.name}</div>
+                {slide.role && <div class="story-card__role">{slide.role}</div>}
+                <div class="story-card__quote-text">{slide.quote}</div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>

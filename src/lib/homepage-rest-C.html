@@ -1,0 +1,39 @@
+<!-- ═══════════════════════════════════════════
+     VIDEO MODAL — Demo player
+     ═══════════════════════════════════════════ -->
+<div class="video-modal" id="videoModal" aria-hidden="true">
+  <div class="video-modal__bg" data-modal-close></div>
+  <button class="video-modal__close" data-modal-close aria-label="Close video">
+    <svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
+  </button>
+  <div class="video-modal__content">
+    <video id="modalVideo" playsinline controls preload="metadata">
+      <source src="/assets/demo.mp4" type="video/mp4">
+    </video>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     SIDE NAV — Vertical section dots
+     ═══════════════════════════════════════════ -->
+<nav class="side-nav" id="sideNav" aria-label="Page sections">
+  <div class="side-nav__dot" data-target="uploadSection" data-label="Overview"></div>
+  <div class="side-nav__dot" data-target="engineSection" data-label="TeamMate"></div>
+  <div class="side-nav__dot" data-target="guidelinesSection" data-label="Dashboard"></div>
+  <div class="side-nav__dot" data-target="featuresSection" data-label="Features"></div>
+  <div class="side-nav__dot" data-target="brainSection" data-label="The Brain"></div>
+  <div class="side-nav__dot" data-target="faqSection" data-label="FAQ"></div>
+  <div class="side-nav__dot" data-target="storiesSection" data-label="Get started"></div>
+</nav>
+
+
+<!-- ═══════════════════════════════════════════
+     FLOATING CTA — persistent trial button
+     ═══════════════════════════════════════════ -->
+<div class="floating-cta" id="floatingCta">
+  <a href="/pricing" class="floating-cta__btn">Start a free trial &rarr;</a>
+</div>
+<div class="floating-bar" id="floatingBar">
+  <a href="/pricing" class="floating-bar__btn">Start a free trial</a>
+</div>

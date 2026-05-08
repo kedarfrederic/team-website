@@ -17,10 +17,17 @@
  */
 
 import BaseLayout from "../layouts/BaseLayout.astro";
+import HomeBrain from "../components/homepage/HomeBrain.astro";
+import HomeFaq from "../components/homepage/HomeFaq.astro";
+import HomeStories from "../components/homepage/HomeStories.astro";
 import { getHomepage } from "../lib/queries";
 import { getClient, urlFor } from "../lib/sanity";
 // @ts-expect-error — Astro's ?raw modifier returns a string at build time
-import restHtml from "../lib/homepage-rest.html?raw";
+import restAHtml from "../lib/homepage-rest-A.html?raw";
+// @ts-expect-error
+import restBHtml from "../lib/homepage-rest-B.html?raw";
+// @ts-expect-error
+import restCHtml from "../lib/homepage-rest-C.html?raw";
 
 const page = await getHomepage(getClient(Astro));
 
@@ -164,12 +171,22 @@ const uploadCtaIsVideo = uploadCta?.type === "video";
   </section>
 
   {/*
-    Mid-page sections (roles tabs → stories carousel + chrome) — kept as
-    legacy lift-and-import HTML to preserve the GSAP / Lenis / Swiper
-    animation choreography. Schemas exist for editors to deepen-bind these
-    section-by-section as follow-up.
+    Mid-page render order:
+      A: legacy lift-and-import for roles tabs → engine demo → guidelines
+         → features spotlight (heaviest GSAP / Lenis choreography; bind
+         section-by-section in v2).
+      → <HomeBrain /> bound from page.brainSection
+      B: legacy lift-and-import for the integrations marquee.
+      → <HomeFaq /> bound from page.faq
+      → <HomeStories /> bound from page.stories
+      C: legacy chrome — video modal, side nav, floating CTA.
   */}
-  <Fragment set:html={restHtml} />
+  <Fragment set:html={restAHtml} />
+  <HomeBrain data={page?.brainSection} />
+  <Fragment set:html={restBHtml} />
+  <HomeFaq data={page?.faq} />
+  <HomeStories data={page?.stories} />
+  <Fragment set:html={restCHtml} />
 
   <script is:inline src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
   <script is:inline src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>

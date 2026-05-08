@@ -1,0 +1,36 @@
+---
+import { urlFor } from "../../lib/sanity";
+
+interface Props {
+  data?: {
+    headline?: string;
+    body?: string;
+    video?: { src?: string; poster?: any };
+  };
+}
+
+const { data } = Astro.props;
+const headline = data?.headline ?? "Every rollout";
+const headlineNyght = "builds a brain";
+const body = data?.body ?? "Each contact, task, observation, and decision becomes a living memory — only ever accessible to you and your team.";
+const videoSrc = data?.video?.src ?? "/assets/brain-1-web.mp4";
+const posterUrl = data?.video?.poster?.asset
+  ? urlFor(data.video.poster).width(1920).quality(85).format("webp").url()
+  : "assets/brain-1-poster.jpg";
+---
+
+<section class="brain-section" id="brainSection">
+  <div class="container container--center">
+    <div class="section-intro">
+      <h2 class="headline-lg">{headline}<br /><span class="nyght">{headlineNyght}</span></h2>
+      <p class="body-lg">{body}</p>
+    </div>
+  </div>
+  <div class="brain-video-outer" id="brainVideoOuter">
+    <div class="brain-video-wrap" id="brainVideoWrap">
+      <video class="brain-video" autoplay loop muted playsinline preload="metadata" poster={posterUrl}>
+        <source src={videoSrc} type="video/mp4" />
+      </video>
+    </div>
+  </div>
+</section>
