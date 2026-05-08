@@ -9,6 +9,10 @@
   const overlay = document.getElementById('teamrun-overlay');
   const frame = document.getElementById('teamrun-frame');
   const exitBtn = document.getElementById('teamrun-exit');
+  // The Astro homepage no longer ships the teamrun idle game DOM. If any of
+  // these elements is missing, bail silently instead of throwing
+  // `null is not an object` and polluting the Studio iframe console.
+  if (!overlay || !frame || !exitBtn) return;
   let gameActive = false;
   let dismissed = false;
 
