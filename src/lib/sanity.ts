@@ -14,7 +14,6 @@
  * loads `.env` via Vite) keeps working.
  */
 
-import { sanityClient as baseClient } from "sanity:client";
 import { createClient, type ClientConfig, type SanityClient } from "@sanity/client";
 import imageUrlBuilder from "@sanity/image-url";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
@@ -26,9 +25,24 @@ export const SANITY_API_VERSION = "2024-12-01";
 export const SANITY_STUDIO_URL =
   import.meta.env.PUBLIC_SANITY_STUDIO_URL ?? "https://team-cms.sanity.studio";
 
-// Re-export the integration-managed published client. It already has stega
-// encoding turned on (configured in astro.config.mjs).
-export const sanityClient = baseClient;
+// Build our own published client with stega EXPLICITLY enabled. We
+// previously re-exported `sanity:client` from the @sanity/astro integration
+// (3.2.7), but its stega config didn't actually reach the rendered output —
+// curl'd HTML had zero stega-encoded chars. Creating the client ourselves
+// guarantees stega is applied on every fetch.
+//
+// useCdn must be false: the CDN serves cached responses without runtime
+// stega injection, so visual-editing overlays have nothing to anchor against.
+export const sanityClient: SanityClient = createClient({
+  projectId: SANITY_PROJECT_ID,
+  dataset: SANITY_DATASET,
+  apiVersion: SANITY_API_VERSION,
+  useCdn: false,
+  stega: {
+    enabled: true,
+    studioUrl: SANITY_STUDIO_URL,
+  },
+});
 
 const baseConfig: ClientConfig = {
   projectId: SANITY_PROJECT_ID,
