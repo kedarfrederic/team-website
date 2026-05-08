@@ -17,6 +17,7 @@
  */
 
 import BaseLayout from "../layouts/BaseLayout.astro";
+import HomeRoles from "../components/homepage/HomeRoles.astro";
 import HomeBrain from "../components/homepage/HomeBrain.astro";
 import HomeFaq from "../components/homepage/HomeFaq.astro";
 import HomeStories from "../components/homepage/HomeStories.astro";
@@ -172,7 +173,8 @@ const uploadCtaIsVideo = uploadCta?.type === "video";
 
   {/*
     Mid-page render order:
-      A: legacy lift-and-import for roles tabs → engine demo → guidelines
+      → <HomeRoles /> bound from page.rolesTabs
+      A: legacy lift-and-import for engine demo → guidelines transition
          → features spotlight (heaviest GSAP / Lenis choreography; bind
          section-by-section in v2).
       → <HomeBrain /> bound from page.brainSection
@@ -181,6 +183,7 @@ const uploadCtaIsVideo = uploadCta?.type === "video";
       → <HomeStories /> bound from page.stories
       C: legacy chrome — video modal, side nav, floating CTA.
   */}
+  <HomeRoles data={page?.rolesTabs} />
   <Fragment set:html={restAHtml} />
   <HomeBrain data={page?.brainSection} />
   <Fragment set:html={restBHtml} />
