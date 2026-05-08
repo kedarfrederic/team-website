@@ -17,6 +17,7 @@
     "@astrojs/check": "^0.9.4",
     "@astrojs/cloudflare": "^12.6.13",
     "@astrojs/react": "^5.0.4",
+    "@astrojs/sitemap": "^3.7.2",
     "@portabletext/to-html": "^5.0.2",
     "@sanity/astro": "^3.2.7",
     "@sanity/client": "^7.14.1",

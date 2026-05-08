@@ -2,6 +2,7 @@ import { defineConfig } from "astro/config";
 import sanity from "@sanity/astro";
 import cloudflare from "@astrojs/cloudflare";
 import react from "@astrojs/react";
+import sitemap from "@astrojs/sitemap";
 
 /**
  * Astro config — Sanity-fed marketing site.
@@ -30,6 +31,10 @@ export default defineConfig({
   }),
   integrations: [
     react(),
+    sitemap({
+      // Skip the API + preview routes — they're not user-facing pages.
+      filter: (page) => !page.includes("/api/"),
+    }),
     sanity({
       projectId: "g1olb5am",
       dataset: "production",

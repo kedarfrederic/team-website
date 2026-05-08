@@ -88,6 +88,15 @@ const canonicalUrl =
     in the legacy files for now; future work could migrate nav links into
     Sanity's siteSettings.navGroups but the legacy scripts are battle-tested.
   */}
+  {/*
+    Inject siteSettings as a global before nav.js / footer.js execute.
+    `defer` runs scripts in document order after parsing, so the inline
+    JSON below is guaranteed to be set before nav.js reads it. Each
+    component falls back to its hardcoded structure when the global is
+    absent or empty (rendering with `__TEAM_SITE__ = null` is a no-op).
+  */}
+  <script is:inline set:html={`window.__TEAM_SITE__ = ${JSON.stringify(settings ?? null)};`} />
+
   <div id="team-nav" data-theme={navTheme}></div>
 
   <main>
