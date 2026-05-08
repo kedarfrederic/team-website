@@ -23,22 +23,28 @@
 })();
 
 (function() {
-  // Word-by-word reveal driven by scroll progress through a 400vh-tall
-  // pinned section. Restored from the legacy approach but tightened up:
-  //   - calculation re-runs on requestAnimationFrame while the section is
-  //     in view (some browsers drop scroll events under fast scrolling +
-  //     trackpad inertia, leaving words stuck mid-paragraph)
-  //   - rAF loop is gated by IntersectionObserver so it sleeps when the
-  //     section is offscreen
+  // Word-by-word reveal across stacked paragraphs.
+  //
+  // Treat all words across all paragraphs as a single ordered list.
+  // As the user scrolls through the pinned 200vh section, words become
+  // visible left-to-right, top-to-bottom — and STAY visible (no
+  // paragraph carousel that swaps them out). This matches the user
+  // expectation: words appear, then remain.
   var section = document.getElementById('problemSection');
   if (!section) return;
   var scroll = section.querySelector('.problem-scroll');
   var paras = section.querySelectorAll('.problem-para');
-  var numParas = paras.length;
-  if (!scroll || numParas === 0) return;
+  if (!scroll || paras.length === 0) return;
 
-  // Split each paragraph into word spans
+  // Make all paragraphs flow normally (legacy CSS positions them absolute)
+  // and let the wrapper expand to fit all of them stacked.
+  var wrapper = paras[0].parentElement;
+  if (wrapper) wrapper.style.height = 'auto';
+  var allWords = [];
   paras.forEach(function(p) {
+    p.style.position = 'relative';
+    p.style.opacity = '1';
+    p.style.marginBottom = '1.25rem';
     var text = p.textContent.trim();
     var words = text.split(/\s+/);
     p.innerHTML = '';
@@ -47,6 +53,7 @@
       span.className = 'word';
       span.textContent = w;
       p.appendChild(span);
+      allWords.push(span);
     });
   });
 
@@ -58,46 +65,20 @@
     var totalRange = scrollH - viewH;
     if (totalRange <= 0) return;
     var progress = Math.max(0, Math.min(1, scrolled / totalRange));
-    var segSize = 1 / numParas;
-
-    paras.forEach(function(p, i) {
-      var segStart = i * segSize;
-      var segEnd = segStart + segSize;
-      var words = p.querySelectorAll('.word');
-
-      if (progress >= segStart && progress < segEnd) {
-        p.style.opacity = '1';
-        p.style.position = 'relative';
-        var subProgress = (progress - segStart) / segSize;
-        var wordsToShow = Math.floor(subProgress * words.length);
-        words.forEach(function(w, wi) {
-          if (wi <= wordsToShow) w.classList.add('is-visible');
-          else w.classList.remove('is-visible');
-        });
-      } else if (progress >= segEnd) {
-        var activeIdx = Math.min(numParas - 1, Math.floor(progress / segSize));
-        if (i < activeIdx) {
-          p.style.opacity = '0';
-          p.style.position = 'absolute';
-        } else {
-          p.style.opacity = '1';
-          p.style.position = 'relative';
-          words.forEach(function(w) { w.classList.add('is-visible'); });
-        }
-      } else {
-        p.style.opacity = '0';
-        p.style.position = 'absolute';
-        words.forEach(function(w) { w.classList.remove('is-visible'); });
-      }
+    var wordsToShow = Math.floor(progress * allWords.length);
+    allWords.forEach(function(w, i) {
+      if (i <= wordsToShow) w.classList.add('is-visible');
+      else w.classList.remove('is-visible');
     });
   }
 
-  // rAF loop — runs only while section is in viewport
+  // rAF loop while in viewport — keeps the reveal smooth on fast scrolls
   var inView = false;
   var rafId = null;
   function loop() {
     update();
     if (inView) rafId = requestAnimationFrame(loop);
+    else rafId = null;
   }
   if ('IntersectionObserver' in window) {
     var obs = new IntersectionObserver(function(entries) {
@@ -113,7 +94,6 @@
     }, { threshold: 0 });
     obs.observe(section);
   } else {
-    // Fallback: plain scroll listener
     window.addEventListener('scroll', update, { passive: true });
   }
   update();
