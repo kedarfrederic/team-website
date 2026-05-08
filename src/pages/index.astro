@@ -1,54 +1,176 @@
 ---
 /**
- * Homepage — Phase 5.2 visual port.
+ * Homepage.
  *
- * Strategy: the legacy homepage.html has ~1850 lines of unique inline CSS,
- * ~1400 lines of body HTML with intricate scroll-pinned sections, and
- * ~1400 lines of inline JS for animations (typewriter, scroll-pin tiles,
- * role tabs, search demo, releases→timeline transition, marquee, swiper,
- * stories carousel). Rather than transcribing all of that into Astro
- * components (lossy + slow + error-prone), we:
+ * Hybrid render: the hero + upload sections are Sanity-driven (every
+ * editor-meaningful surface — typewriter words, headline suffix, subhead,
+ * CTAs, hero bg image, tile labels, upload section copy + CTA — bound to
+ * the homepage singleton). The mid-page heavy-animation sections (roles
+ * tabs, engine search demo, guidelines releases→timeline transition,
+ * features spotlight, brain video, integrations marquee, FAQ, stories
+ * carousel) stay as legacy lift-and-import HTML so the GSAP / Lenis /
+ * Swiper choreography keeps working untouched.
  *
- *   1. Extract the inline CSS to public/components/homepage-inline.css
- *   2. Extract the inline JS to public/components/homepage-inline-{1,2}.js
- *   3. Extract the body HTML to src/lib/homepage-body.html
- *   4. Import the body as a raw string at build time and inject via set:html
- *   5. Reference the CSS and JS files in <head> + before </body>
- *
- * Result: visually identical to the legacy site, every interaction works,
- * and we keep the Sanity-driven structure available to layer in later
- * (the BaseLayout still owns nav/footer/SEO and accepts navTheme).
+ * Editor priorities are covered: hero copy + assets, upload positioning,
+ * page SEO. Mid-page sections can be deeper-bound section-by-section as
+ * follow-up work — schemas already exist for all of them.
  */
 
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getHomepage } from "../lib/queries";
-import { getClient } from "../lib/sanity";
+import { getClient, urlFor } from "../lib/sanity";
 // @ts-expect-error — Astro's ?raw modifier returns a string at build time
-import bodyHtml from "../lib/homepage-body.html?raw";
+import restHtml from "../lib/homepage-rest.html?raw";
 
 const page = await getHomepage(getClient(Astro));
-const hero = page?.hero;
-const heroBg = !!hero?.backgroundImage?.asset?._ref;
+
+// ── Hero ────────────────────────────────────────────────────
+const hero = page?.hero ?? {};
+const typewriterWords: string[] =
+  Array.isArray(hero.typewriterWords) && hero.typewriterWords.length > 0
+    ? hero.typewriterWords
+    : ["Command Center", "Strategy hub", "Single source of truth"];
+const headlineSuffix = hero.headlineSuffix ?? "for your music releases";
+const heroSubhead = hero.subhead ?? "Stop juggling spreadsheets, Slack threads, and email chains.\nOne platform for your entire rollout.";
+const primaryCta = hero.primaryCta ?? { label: "Book demo", href: "/demo" };
+const secondaryCta = hero.secondaryCta ?? { label: "See the platform", href: "#", type: "video" };
+const heroBgUrl = hero.backgroundImage?.asset
+  ? urlFor(hero.backgroundImage).width(2400).quality(85).format("webp").url()
+  : "/assets/hero-bg-option-1.jpeg";
+const heroBg = !!hero.backgroundImage?.asset;
+const tileLabels = hero.tileLabels ?? {};
+const tileLeft = tileLabels.left ?? "Single";
+const tileCenter = tileLabels.center ?? "EP";
+const tileRight = tileLabels.right ?? "Album";
+
+// ── Upload section ──────────────────────────────────────────
+const upload = page?.uploadSection ?? {};
+const uploadHeadline = upload.headline ?? "One platform. One team.";
+const uploadBody = upload.body ?? "Whether you're rolling out a single, EP, or Album, every task, every asset, and every conversation needs a single home.";
+const uploadCta = upload.cta ?? { label: "See how it works", type: "video", href: "#" };
+const uploadCtaIsVideo = uploadCta?.type === "video";
 ---
 
 <BaseLayout
-  title={hero?.headline ?? "Team — The Operating System for Music Releases"}
-  description="Stop juggling spreadsheets, Slack threads, and email chains. One platform for your entire rollout."
+  title={typewriterWords[0] + " " + headlineSuffix}
+  description={heroSubhead.replace(/\n/g, " ")}
   seo={page?.seo}
   navTheme={heroBg ? "dark" : "light"}
 >
-  {/* Page-specific stylesheets — order matters: team-home (base) → homepage (component) → inline (page-specific overrides) */}
   <link slot="head" rel="stylesheet" href="/components/team-home.css" />
   <link slot="head" rel="stylesheet" href="/components/homepage.css" />
   <link slot="head" rel="stylesheet" href="/components/homepage-inline.css" />
-
-  {/* External libs the legacy JS depends on */}
   <link slot="head" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
-  {/* Body content from legacy homepage.html — injected as-is at build time */}
-  <Fragment set:html={bodyHtml} />
+  {/*
+    Hero — every editor-meaningful surface is bound. The typewriter cycles
+    through the array; the inline JS reads `data-typer-words` from the
+    `<span class="typer">` element to drive the animation. Words[0] is the
+    initial render so non-JS / pre-hydration users see real content.
+  */}
+  <section class="hero-section" id="heroSection">
+    <div class="hero-img-w" id="heroImgW">
+      <img src={heroBgUrl} alt="" class="hero-img" loading="eager" />
+    </div>
 
-  {/* External libs for animations */}
+    <div class="cover-w" id="coverW">
+      <div class="cover__intro" id="coverIntro">
+        <h1 class="headline-xl">
+          The <span class="typer" id="heroTyper" data-typer-words={JSON.stringify(typewriterWords)}>{typewriterWords[0]}</span><span class="typer__caret" aria-hidden="true"></span><br />
+          <span class="nyght">{headlineSuffix}</span>
+        </h1>
+        <p set:html={heroSubhead.replace(/\n/g, "<br />")} />
+        <div class="cover__buttons">
+          <a href={primaryCta.href} class="btn btn--primary btn--demo">
+            <svg class="btn--demo__icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="3" width="12" height="11" rx="2" />
+              <line x1="2" y1="7" x2="14" y2="7" />
+              <line x1="5" y1="1" x2="5" y2="4" />
+              <line x1="11" y1="1" x2="11" y2="4" />
+            </svg>
+            {primaryCta.label}
+          </a>
+          <a
+            href={secondaryCta?.type === "video" ? "#" : (secondaryCta?.href ?? "#")}
+            class="btn btn--outline"
+            data-video-trigger={secondaryCta?.type === "video" ? "" : undefined}
+          >
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><polygon points="3,1 13,8 3,15" /></svg>
+            {secondaryCta?.label ?? "See the platform"}
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-excerpts" id="heroExcerpts">
+      <div class="hero-excerpt__flank hero-excerpt__flank--left" id="heroExcerptLeft"></div>
+      <div class="hero-excerpt__flank hero-excerpt__flank--right" id="heroExcerptRight"></div>
+      <div class="hero-excerpt" id="heroExcerpt"><div class="hero-excerpt__img" id="heroExcerptImg"></div></div>
+
+      <div class="tile-label tile-label--left" id="tileLabelLeft">
+        <div class="tile-label__arrow">
+          <svg viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M48 52 C 44 32, 28 18, 10 12" />
+            <path d="M16 6 L 10 12 L 16 18" />
+          </svg>
+        </div>
+        <div class="tile-label__text">{tileLeft}</div>
+      </div>
+      <div class="tile-label tile-label--center" id="tileLabelCenter">
+        <div class="tile-label__arrow">
+          <svg viewBox="0 0 40 60" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 52 C 12 40, 28 30, 20 14" />
+            <path d="M14 20 L 20 14 L 26 20" />
+          </svg>
+        </div>
+        <div class="tile-label__text">{tileCenter}</div>
+      </div>
+      <div class="tile-label tile-label--right" id="tileLabelRight">
+        <div class="tile-label__arrow">
+          <svg viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M48 52 C 44 32, 28 18, 10 12" />
+            <path d="M16 6 L 10 12 L 16 18" />
+          </svg>
+        </div>
+        <div class="tile-label__text">{tileRight}</div>
+      </div>
+    </div>
+  </section>
+
+  {/* Upload section — Sanity-driven copy + CTA */}
+  <section class="section" id="uploadSection">
+    <div class="container container--center">
+      <div class="section-intro">
+        <h2 class="headline-lg">{uploadHeadline}</h2>
+        <p class="body-lg">{uploadBody}</p>
+        {uploadCta?.label && (
+          <a
+            href={uploadCtaIsVideo ? "#" : (uploadCta.href ?? "#")}
+            class="btn btn--primary"
+            style="margin-top:1.25rem"
+            data-video-trigger={uploadCtaIsVideo ? "" : undefined}
+          >
+            {uploadCta.label}
+          </a>
+        )}
+      </div>
+      <div id="tileLandingZone" style="height:18rem"></div>
+      <div class="excerpt-landing">
+        <div class="excerpt-target" id="excerptTargetLeft"></div>
+        <div class="excerpt-target" id="excerptTargetCenter"></div>
+        <div class="excerpt-target" id="excerptTargetRight"></div>
+      </div>
+    </div>
+  </section>
+
+  {/*
+    Mid-page sections (roles tabs → stories carousel + chrome) — kept as
+    legacy lift-and-import HTML to preserve the GSAP / Lenis / Swiper
+    animation choreography. Schemas exist for editors to deepen-bind these
+    section-by-section as follow-up.
+  */}
+  <Fragment set:html={restHtml} />
+
   <script is:inline src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
   <script is:inline src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
   <script is:inline src="https://cdn.jsdelivr.net/npm/gsap@3/dist/Flip.min.js"></script>
@@ -58,15 +180,6 @@ const heroBg = !!hero?.backgroundImage?.asset?._ref;
   <script is:inline src="https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js"></script>
   <script is:inline src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
-  {/*
-    Page-specific JS — must run after libs above.
-
-    Deliberately NOT loading /components/homepage.js: it duplicates the
-    inline JS, and legacy homepage.html only loaded the inline block.
-    Loading both spins up two Lenis smooth-scroll instances and
-    double-binds ScrollTriggers, which breaks the scroll-pinned hero
-    tiles and lets the testimonial swiper render unconstrained.
-  */}
   <script is:inline src="/components/homepage-inline-1.js"></script>
   <script is:inline src="/components/homepage-inline-2.js"></script>
 </BaseLayout>
