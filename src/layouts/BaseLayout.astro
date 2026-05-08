@@ -77,6 +77,11 @@ const canonicalUrl =
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
+  <!-- Nav + footer CSS hoisted to head to prevent FOUC of large unstyled
+       logo + plain-text link list when navigating between pages. -->
+  <link rel="stylesheet" href="/components/nav.css" />
+  <link rel="stylesheet" href="/components/footer.css" />
+
   <slot name="head" />
 </head>
 <body>
