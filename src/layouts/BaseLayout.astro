@@ -125,11 +125,14 @@ const canonicalUrl =
   <script src="/components/nav.js" defer></script>
 
   {/*
-    Visual Editing overlay — only mount when the preview cookie is set, so
-    public-site visitors never receive the overlay code or the click-to-edit
-    pencils. Server is SSR (output: "server") so the cookie is readable at
-    request time.
+    Visual Editing overlay — always mount so Studio's Presentation tool
+    can establish its postMessage connection with the iframe. Without
+    stega encoding on public pages (sanityClient has stega disabled),
+    the overlay has nothing to attach to outside Studio, so public
+    visitors never see hover pencils or "Failed to decode stega"
+    errors. Inside the iframe, the preview client emits stega and the
+    overlay attaches pencils as expected.
   */}
-  {previewMode && <VisualEditing />}
+  <VisualEditing />
 </body>
 </html>
