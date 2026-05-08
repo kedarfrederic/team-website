@@ -57,8 +57,15 @@ const heroBg = !!hero?.backgroundImage?.asset?._ref;
   <script is:inline src="https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js"></script>
   <script is:inline src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
-  {/* Page-specific JS — must run after libs above. */}
-  <script is:inline src="/components/homepage.js"></script>
+  {/*
+    Page-specific JS — must run after libs above.
+
+    Deliberately NOT loading /components/homepage.js: it duplicates the
+    inline JS, and legacy homepage.html only loaded the inline block.
+    Loading both spins up two Lenis smooth-scroll instances and
+    double-binds ScrollTriggers, which breaks the scroll-pinned hero
+    tiles and lets the testimonial swiper render unconstrained.
+  */}
   <script is:inline src="/components/homepage-inline-1.js"></script>
   <script is:inline src="/components/homepage-inline-2.js"></script>
 </BaseLayout>
