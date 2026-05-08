@@ -180,7 +180,7 @@ a.nav__cta:hover{color:#111 !important;background:rgba(255,255,255,0.75);backdro
   background:#fff;
 }
 .problem-scroll{
-  height:400vh;
+  height:200vh;
   position:relative;
 }
 .problem-viewport{
@@ -821,7 +821,7 @@ a.nav__cta:hover{color:#111 !important;background:rgba(255,255,255,0.75);backdro
   .icp-hero__buttons{flex-direction:column;align-items:center}
   .icp-hero__buttons .btn{width:100%;max-width:18rem;justify-content:center}
 
-  .problem-scroll{height:300vh}
+  .problem-scroll{height:160vh}
 
   .pain-row{grid-template-columns:1fr;gap:2rem}
   .pain-row--flipped .pain-row__text{order:1}
