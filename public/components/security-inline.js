@@ -136,92 +136,44 @@
 })();
 
 (function() {
+  // Compliance cards — show all stacked, fade each in as it enters view.
+  // Replaces the original 250vh sticky carousel which felt broken in our
+  // setup (cards 2-3 sometimes never appeared on fast scroll).
   var section = document.getElementById('complianceSection');
   if (!section) return;
-  var scrollContainer = section.querySelector('.compliance-scroll');
   var cards = section.querySelectorAll('.compliance-card');
   var dots = section.querySelectorAll('.compliance-dots__dot');
-  var numCards = cards.length;
 
-  // First card starts visible and centered
-  cards[0].style.opacity = '1';
-  cards[0].style.transform = 'translateY(0)';
+  // Make all cards visible in stacked layout
+  cards.forEach(function(card, i) {
+    card.style.position = 'relative';
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(40px)';
+    card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    card.style.marginBottom = '1.5rem';
+  });
 
-  function update() {
-    var rect = scrollContainer.getBoundingClientRect();
-    var scrollH = scrollContainer.offsetHeight;
-    var viewH = window.innerHeight;
-
-    var scrolled = -rect.top;
-    var totalScroll = scrollH - viewH;
-    if (totalScroll <= 0) return;
-    var progress = Math.max(0, Math.min(1, scrolled / totalScroll));
-
-    // First 10% = hold first card, then carousel transitions
-    var holdEnd = 0.1;
-
-    cards.forEach(function(card, i) {
-      if (progress <= holdEnd) {
-        // Hold phase — first card stays, others hidden
-        if (i === 0) {
-          card.style.opacity = '1';
-          card.style.transform = 'translateY(0)';
-        } else {
-          card.style.opacity = '0';
-          card.style.transform = 'translateY(80px)';
+  // Reveal each card when it enters viewport
+  if ('IntersectionObserver' in window) {
+    var obs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        if (e.isIntersecting) {
+          e.target.style.opacity = '1';
+          e.target.style.transform = 'translateY(0)';
+          obs.unobserve(e.target);
         }
-      } else {
-        // Carousel phase
-        var carouselP = (progress - holdEnd) / (1 - holdEnd); // 0 to 1
-        var slice = 1 / numCards;
-        var cardStart = i * slice;
-        var cardEnd = (i + 1) * slice;
-        var cardHoldIn = cardStart + slice * 0.3;
-        var cardHoldOut = cardStart + slice * 0.7;
-
-        if (carouselP < cardStart) {
-          card.style.transform = 'translateY(80px)';
-          card.style.opacity = '0';
-        } else if (carouselP < cardHoldIn) {
-          // Entering — skip for first card (already visible from hold phase)
-          if (i === 0) {
-            card.style.transform = 'translateY(0)';
-            card.style.opacity = '1';
-          } else {
-            var p = (carouselP - cardStart) / (cardHoldIn - cardStart);
-            card.style.transform = 'translateY(' + (80 * (1 - p)) + 'px)';
-            card.style.opacity = String(Math.min(1, p * 1.5));
-          }
-        } else if (carouselP < cardHoldOut) {
-          // Holding
-          card.style.transform = 'translateY(0)';
-          card.style.opacity = '1';
-        } else if (carouselP < cardEnd && i < numCards - 1) {
-          // Exiting (not last card)
-          var p = (carouselP - cardHoldOut) / (cardEnd - cardHoldOut);
-          card.style.transform = 'translateY(' + (-80 * p) + 'px)';
-          card.style.opacity = String(Math.max(0, 1 - p));
-        } else if (i === numCards - 1) {
-          // Last card stays
-          card.style.transform = 'translateY(0)';
-          card.style.opacity = '1';
-        } else {
-          card.style.transform = 'translateY(-80px)';
-          card.style.opacity = '0';
-        }
-      }
-    });
-
-    // Update dots
-    var activeIdx = Math.min(numCards - 1, Math.floor(progress * numCards));
-    dots.forEach(function(dot, i) {
-      dot.classList.toggle('is-active', i === activeIdx);
+      });
+    }, { threshold: 0.2 });
+    cards.forEach(function(card) { obs.observe(card); });
+  } else {
+    cards.forEach(function(card) {
+      card.style.opacity = '1';
+      card.style.transform = 'translateY(0)';
     });
   }
 
-  window.addEventListener('scroll', update, { passive: true });
-  window.addEventListener('resize', update);
-  update();
+  // Hide the cycling dots — no longer relevant in stacked layout
+  dots.forEach(function(dot) { dot.style.display = 'none'; });
 })();
 
 (function initFaq() {

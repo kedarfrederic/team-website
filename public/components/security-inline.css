@@ -509,17 +509,14 @@ a.nav__cta:hover{color:#111 !important;background:rgba(255,255,255,0.75);backdro
 }
 /* Scroll container */
 .compliance-scroll{
-  height:250vh;
   position:relative;
+  /* No fixed height — cards stack and reveal individually via IntersectionObserver */
 }
 /* Sticky viewport */
 .compliance-viewport{
-  position:sticky;
-  top:0;
-  height:100vh;
+  position:relative;
   display:flex;flex-direction:column;align-items:center;
   padding:6rem 2rem 3rem;
-  overflow:hidden;
 }
 .compliance-section__header{
   position:relative;z-index:10;
@@ -830,7 +827,7 @@ a.nav__cta:hover{color:#111 !important;background:rgba(255,255,255,0.75);backdro
   .compliance-card{padding:2.5rem 1.5rem}
   .compliance-card h3{font-size:1.25rem}
   .compliance-card p{font-size:0.9375rem}
-  .compliance-scroll{height:220vh}
+  /* compliance-scroll auto-height */
   .compliance-dots{bottom:1.5rem}
 
   /* FAQ */
@@ -859,6 +856,6 @@ a.nav__cta:hover{color:#111 !important;background:rgba(255,255,255,0.75);backdro
   .iso-ext-3,.iso-ext-4{display:none}
   .iso-conn-2,.iso-conn-3{font-size:0.45rem}
   .compliance-card{padding:2rem 1.25rem}
-  .compliance-scroll{height:200vh}
+  /* compliance-scroll auto-height */
   .enterprise-cta{padding:2.5rem 1.25rem}
 }
