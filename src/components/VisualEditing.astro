@@ -1,61 +1,22 @@
 ---
 /**
- * Sanity Visual Editing overlay.
+ * Sanity Visual Editing overlay — uses the canonical component from
+ * `@sanity/astro/visual-editing`. It's a React component under the hood
+ * (rendered with `client:only="react"` so it never SSRs) that handles
+ * iframe detection, comlink handshake with Studio's Presentation tool,
+ * and click-to-edit pencil rendering.
  *
- * Mounted on every page (incl. prerendered ones). At runtime the script
- * only fetches the overlay package when the page is loaded inside an iframe
- * — `enableOverlays()` then auto-detects Studio's parent origin and stays
- * inert if it can't talk to a Studio. So real visitors never download the
- * overlay code; only editors viewing the page through Studio's Presentation
- * tool pay the ~150kb cost.
+ * Toggle via the `PUBLIC_SANITY_VISUAL_EDITING_ENABLED` env var:
+ *   - "true"  → mount the overlay on every request
+ *   - else    → no overlay code ships
  *
- * Why iframe-detect rather than cookie-detect: the marketing site is fully
- * prerendered, so the `sanity-preview` cookie can't influence the static
- * HTML at build time. Iframe-presence is a runtime signal, perfect for a
- * static site.
- *
- * The overlay is loaded from esm.sh rather than bundled because the
- * `@sanity/visual-editing` root entry imports React + react-compiler-runtime,
- * which Vite tries to resolve through our bundle and breaks the build.
+ * The component itself is also iframe-aware — even when enabled, it stays
+ * inert outside an iframe — so we leave it on by default in production.
  */
-import { SANITY_STUDIO_URL } from "../lib/sanity";
+import { VisualEditing } from "@sanity/astro/visual-editing";
+
+const enabled =
+  import.meta.env.PUBLIC_SANITY_VISUAL_EDITING_ENABLED !== "false";
 ---
 
-<script is:inline define:vars={{ studioUrl: SANITY_STUDIO_URL }}>
-  (async function () {
-    // Only run inside an iframe — the overlay is inert otherwise.
-    if (window.self === window.top) return;
-    try {
-      // ?bundle (vs ?bundle-deps) inlines ALL chunks including the
-       // dynamic `renderVisualEditing` chunk the package lazy-loads.
-       // Without this the comlink handshake silently never completes.
-      const mod = await import(
-        "https://esm.sh/@sanity/visual-editing@2.15.4?bundle"
-      );
-      console.log("[sanity] visual-editing module loaded, exports:", Object.keys(mod));
-      // The v2 package exports the activation function as
-      // `enableVisualEditing`; older docs reference it as `enableOverlays`,
-      // and newer 4.x/5.x bundles tend to export both. Try whichever exists
-      // so we work across versions if we ever bump esm.sh.
-      const enable = mod.enableOverlays ?? mod.enableVisualEditing ?? mod.default;
-      if (typeof enable !== "function") {
-        console.error(
-          "[sanity] visual editing module has no recognized entrypoint. exports:",
-          Object.keys(mod)
-        );
-        return;
-      }
-      const cleanup = enable({
-        studioUrl,
-        refresh: (payload) => {
-          if (payload.source === "mutation") {
-            window.location.reload();
-          }
-        },
-      });
-      console.log("[sanity] visual editing handshake initiated", { cleanup });
-    } catch (err) {
-      console.error("[sanity] failed to load visual editing overlay", err);
-    }
-  })();
-</script>
+<VisualEditing client:only="react" enabled={enabled} zIndex={1000} />

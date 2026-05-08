@@ -5,6 +5,11 @@ import CtaBlock from "../../components/blocks/CtaBlock.astro";
 import { getInsightPostSlugs, getInsightPostBySlug, getInsightsIndexPage } from "../../lib/queries";
 import { getClient, urlFor } from "../../lib/sanity";
 
+// Prerender every insight post at build time. Output is "server" by
+// default for visual editing on the rest of the site, but blog posts
+// don't need cookie-aware preview — keeping them static = faster + cheaper.
+export const prerender = true;
+
 export async function getStaticPaths() {
   // Build-time only — no request context, so the published client is fine.
   const slugs = await getInsightPostSlugs();

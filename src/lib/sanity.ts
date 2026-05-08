@@ -1,22 +1,20 @@
 /**
  * Sanity client + image URL builder.
  *
- * One client at build time, two modes at request time:
- *   - Published (default): public CDN, no token, no drafts. Used by every
- *     prerendered page; emits stega-encoded strings so Studio's overlay can
- *     paint click-to-edit pencils on the live HTML.
- *   - Preview (cookie set): same dataset but `previewDrafts` perspective so
- *     unpublished edits surface in the iframe. Requires SANITY_API_READ_TOKEN.
+ * The `@sanity/astro` integration owns the published client (configured in
+ * astro.config.mjs with stega enabled). We re-export it as `sanityClient`
+ * so query helpers and components have one canonical import, and provide
+ * `getClient(Astro)` which returns a draft-aware client when the
+ * `sanity-preview` cookie is set on the current request.
  *
- * Why stega in production: the marketing site is statically prerendered, so
- * Cloudflare's edge serves the same HTML to every visitor. Stega encoding
- * embeds Sanity field metadata as zero-width unicode chars inside text
- * strings — invisible to visitors, but the Studio Presentation iframe reads
- * them to know which Sanity field each chunk of text came from. Without
- * stega, click-to-edit overlays have nothing to anchor against on a
- * static-rendered site.
+ * Cloudflare quirk: encrypted env vars (read token + preview secret) are
+ * NOT exposed via `import.meta.env`. They reach the Worker only through
+ * `Astro.locals.runtime.env` at request time. We try the runtime binding
+ * first, then fall back to `import.meta.env` so local `astro dev` (which
+ * loads `.env` via Vite) keeps working.
  */
 
+import { sanityClient as baseClient } from "sanity:client";
 import { createClient, type ClientConfig, type SanityClient } from "@sanity/client";
 import imageUrlBuilder from "@sanity/image-url";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
@@ -25,14 +23,12 @@ import type { AstroGlobal } from "astro";
 export const SANITY_PROJECT_ID = "g1olb5am";
 export const SANITY_DATASET = "production";
 export const SANITY_API_VERSION = "2024-12-01";
-
-/**
- * Studio URL used for stega encoding — clicks on an overlay open the matching
- * document at this origin. Defaults to the deployed Studio so production
- * pages link to the live editor; override locally with PUBLIC_SANITY_STUDIO_URL.
- */
 export const SANITY_STUDIO_URL =
   import.meta.env.PUBLIC_SANITY_STUDIO_URL ?? "https://team-cms.sanity.studio";
+
+// Re-export the integration-managed published client. It already has stega
+// encoding turned on (configured in astro.config.mjs).
+export const sanityClient = baseClient;
 
 const baseConfig: ClientConfig = {
   projectId: SANITY_PROJECT_ID,
@@ -40,31 +36,19 @@ const baseConfig: ClientConfig = {
   apiVersion: SANITY_API_VERSION,
 };
 
-/**
- * Cached published client — reads the published dataset, with stega
- * encoding turned on so Studio's Visual Editing overlay can paint
- * click-to-edit pencils on every Sanity-bound string in the static HTML.
- */
-export const sanityClient = createClient({
-  ...baseConfig,
-  useCdn: true,
-  stega: {
-    enabled: true,
-    studioUrl: SANITY_STUDIO_URL,
-  },
-});
+/** Read an env var from Cloudflare's runtime binding first, then build-time. */
+function readEnv(astro: Pick<AstroGlobal, "locals"> | undefined, name: string): string | undefined {
+  const runtime = (astro?.locals as any)?.runtime?.env ?? {};
+  return runtime[name] ?? (import.meta.env as any)[name];
+}
 
 /**
- * Build a preview-aware client. Requires `SANITY_API_READ_TOKEN` (a
- * Viewer-role token from manage.sanity.io) to read drafts. Falls back to the
- * published client when the token is missing so the site still renders
- * without secrets configured locally.
+ * Build a draft-aware client. Requires `SANITY_API_READ_TOKEN` (a Viewer
+ * token from manage.sanity.io). Falls back to the published client when
+ * the token isn't reachable so the site keeps rendering.
  */
-function createPreviewClient(): SanityClient {
-  const token =
-    import.meta.env.SANITY_API_READ_TOKEN ??
-    import.meta.env.PUBLIC_SANITY_API_READ_TOKEN;
-
+function createPreviewClient(astro?: Pick<AstroGlobal, "locals">): SanityClient {
+  const token = readEnv(astro, "SANITY_API_READ_TOKEN");
   if (!token) return sanityClient;
 
   return createClient({
@@ -79,21 +63,9 @@ function createPreviewClient(): SanityClient {
   });
 }
 
-let _previewClient: SanityClient | null = null;
-function getPreviewClient(): SanityClient {
-  if (!_previewClient) _previewClient = createPreviewClient();
-  return _previewClient;
-}
-
 /**
- * Detect preview mode for the current request. We use a cookie set by
- * `/api/preview/enable` because the cookie survives client-side navigation
- * inside the Presentation iframe — query params alone don't.
- *
- * Wrapped in try/catch because Astro emits a noisy warning when cookies
- * are read on a prerendered route at build time. At build time the request
- * doesn't exist yet — the correct answer is always `false`, and we never
- * want to fail the build over a missing header.
+ * Detect preview mode for the current request via the `sanity-preview`
+ * cookie set by `/api/preview/enable`.
  */
 export function isPreviewRequest(astro?: Pick<AstroGlobal, "cookies">): boolean {
   if (!astro) return false;
@@ -106,23 +78,25 @@ export function isPreviewRequest(astro?: Pick<AstroGlobal, "cookies">): boolean 
 
 /**
  * Return the right client for the current request. Pages call this via
- * `getClient(Astro)` and pass the result into the query helpers.
+ * `getClient(Astro)`. Cached per-request via `Astro.locals` so repeated
+ * calls in the same request (e.g. layout + page) only build the preview
+ * client once.
  */
-export function getClient(astro?: Pick<AstroGlobal, "cookies">): SanityClient {
-  return isPreviewRequest(astro) ? getPreviewClient() : sanityClient;
+export function getClient(astro?: Pick<AstroGlobal, "cookies" | "locals">): SanityClient {
+  if (!isPreviewRequest(astro)) return sanityClient;
+  const cache = (astro?.locals as any) ?? {};
+  if (cache.__sanityPreviewClient) return cache.__sanityPreviewClient;
+  const client = createPreviewClient(astro);
+  cache.__sanityPreviewClient = client;
+  return client;
 }
 
-// Image URL builder: stega settings on the source client are stripped here,
-// so generated image URLs stay clean (no encoded metadata in src attrs).
+// Image URL builder: use a clean, non-stega client so generated img src
+// attributes don't carry encoded metadata.
 const builder = imageUrlBuilder(
   createClient({ ...baseConfig, useCdn: true })
 );
 
-/**
- * Generate a Sanity image URL with optional transformations.
- * Pass the raw image field from a query (it has the asset reference);
- * chain transformations like `.width(800).format("webp").url()`.
- */
 export function urlFor(source: SanityImageSource) {
   return builder.image(source);
 }
