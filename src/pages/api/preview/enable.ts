@@ -32,14 +32,27 @@ export const GET: APIRoute = async ({ url, cookies, redirect, locals }) => {
     return new Response("Invalid preview secret", { status: 401 });
   }
 
-  cookies.set("sanity-preview", "1", {
-    httpOnly: false, // visible to client JS so the overlay can read it
-    sameSite: "none",
-    secure: true,
-    path: "/",
-    maxAge: 60 * 60 * 8, // 8h editing session
-  });
+  // Cookie set with SameSite=None; Secure so it's sent in cross-site
+  // requests (the iframe is third-party from Cloudflare's POV). Firefox now
+  // requires the Partitioned attribute for any cross-site cookie — Astro's
+  // typed cookies API doesn't expose `partitioned` yet, so we fall through
+  // to the response Set-Cookie header directly.
+  const cookieValue = [
+    "sanity-preview=1",
+    "Path=/",
+    `Max-Age=${60 * 60 * 8}`, // 8h editing session
+    "Secure",
+    "SameSite=None",
+    "Partitioned",
+  ].join("; ");
 
   const target = url.searchParams.get("redirect") ?? "/";
-  return redirect(target, 307);
+  // Build a redirect manually so we can attach the Partitioned cookie.
+  return new Response(null, {
+    status: 307,
+    headers: {
+      Location: target,
+      "Set-Cookie": cookieValue,
+    },
+  });
 };

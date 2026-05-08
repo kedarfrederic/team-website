@@ -2,24 +2,29 @@
 /**
  * Sanity Visual Editing overlay.
  *
- * Only mounted when the `sanity-preview` cookie is set (see BaseLayout).
- * Loads `@sanity/visual-editing` from esm.sh at runtime instead of bundling
- * — the package's root entry imports React + react-compiler-runtime which
- * we don't otherwise need on the marketing site, and bundling those
- * unnecessarily breaks the static build.
+ * Mounted on every page (incl. prerendered ones). At runtime the script
+ * only fetches the overlay package when the page is loaded inside an iframe
+ * — `enableOverlays()` then auto-detects Studio's parent origin and stays
+ * inert if it can't talk to a Studio. So real visitors never download the
+ * overlay code; only editors viewing the page through Studio's Presentation
+ * tool pay the ~150kb cost.
  *
- * `enableOverlays()` paints click-to-edit pencils on every stega-encoded
- * string in the rendered HTML and opens the matching Studio document on
- * click. The Studio Presentation tool dispatches a postMessage when a doc
- * changes, and our `refresh` handler triggers a full reload so Astro
- * re-renders against fresh draft content (a soft refetch would leave the
- * legacy nav/footer/inline scripts in stale state).
+ * Why iframe-detect rather than cookie-detect: the marketing site is fully
+ * prerendered, so the `sanity-preview` cookie can't influence the static
+ * HTML at build time. Iframe-presence is a runtime signal, perfect for a
+ * static site.
+ *
+ * The overlay is loaded from esm.sh rather than bundled because the
+ * `@sanity/visual-editing` root entry imports React + react-compiler-runtime,
+ * which Vite tries to resolve through our bundle and breaks the build.
  */
 import { SANITY_STUDIO_URL } from "../lib/sanity";
 ---
 
 <script is:inline define:vars={{ studioUrl: SANITY_STUDIO_URL }}>
   (async function () {
+    // Only run inside an iframe — the overlay is inert otherwise.
+    if (window.self === window.top) return;
     try {
       const mod = await import(
         "https://esm.sh/@sanity/visual-editing@2.15.4?bundle-deps"
