@@ -1306,13 +1306,29 @@ INTEGRATIONS.forEach((i, idx) => {
 });
 
 // ─── push everything ───────────────────────────────────────────────────
+//
+// Sanity stores documents in two states: the published version (id =
+// "forArtistsPage") and the draft (id = "drafts.forArtistsPage"). Studio's
+// Structure view shows the DRAFT by default. When an editor opens a doc
+// before the seed has run, Studio auto-creates an empty draft. After we
+// `createOrReplace` the published version, the empty draft still wins in
+// Studio's view — making the page look empty even though the seed
+// succeeded.
+//
+// Fix: every seed operation is a single transaction that replaces the
+// published version AND deletes any existing draft. Studio then has only
+// the seeded published content to show.
 async function seed() {
   console.log(`Seeding ${docs.length} documents to ${PROJECT_ID}/${DATASET}...`);
   let success = 0;
   let failed = 0;
   for (const doc of docs) {
     try {
-      await client.createOrReplace(doc);
+      await client
+        .transaction()
+        .createOrReplace(doc)
+        .delete(`drafts.${doc._id}`)
+        .commit();
       success++;
       process.stdout.write(`  ✓ ${doc._id} (${doc._type})\n`);
     } catch (err: any) {
