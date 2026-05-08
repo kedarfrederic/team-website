@@ -1,0 +1,293 @@
+---
+/**
+ * Shared body renderer for /intelligence and /orchestration. Each route
+ * passes its page document, its verticalKey, plus per-page fallback copy
+ * (the two pages share structure but every word is different). The 4-tab
+ * mock fixtures are page-specific and rendered via the `tabMocks` slot.
+ */
+import SplitHeadline from "../SplitHeadline.astro";
+import { urlFor } from "../../lib/sanity";
+
+type VerticalKey = "intelligence" | "orchestration";
+
+interface Defaults {
+  hero: { top: string; bottom: string; subhead: string };
+  problem: { top: string; bottom: string; paragraphs: string[] };
+  pain: { headline: string; rows: { pill?: string; h: string; p: string; mock: string }[] };
+  tabs: { top: string; bottom: string; subhead: string; tabs: { label: string; tabKey: string; features: { t: string; d: string }[] }[] };
+  trust: { top: string; bottom: string; body: string; ctaLabel: string; ctaHref: string };
+  bridge: { top: string; bottom: string; body: string; ctaLabel: string; ctaHref: string };
+  finalCta: { top: string; bottom: string; note: string };
+}
+
+interface Props {
+  page: any;
+  verticalKey: VerticalKey;
+  defaults: Defaults;
+}
+
+const { page, verticalKey, defaults } = Astro.props;
+
+// ── Hero ────────────────────────────────────────────────────
+const hero = page?.hero ?? {};
+const heroPill = hero.pillLabel;
+const heroTop = hero.headlineTop ?? defaults.hero.top;
+const heroBottom = hero.headlineBottom ?? defaults.hero.bottom;
+const heroSubhead = hero.subhead ?? defaults.hero.subhead;
+const heroBgUrl = hero.backgroundImage?.asset
+  ? urlFor(hero.backgroundImage).width(2400).quality(85).format("webp").url()
+  : "/assets/hero-bg-new.png";
+const primaryCta = hero.primaryCta ?? { label: "Start your free trial", href: "https://www.teamrollouts.com/sign-up?plan=pro&period=yearly" };
+const secondaryCta = hero.secondaryCta ?? { label: "Book a demo", href: "/demo" };
+
+// ── Problem ─────────────────────────────────────────────────
+const problem = page?.problemSection ?? {};
+const problemTop = problem.headlineTop ?? defaults.problem.top;
+const problemBottom = problem.headlineBottom ?? defaults.problem.bottom;
+const problemParas: string[] = Array.isArray(problem.paragraphs) && problem.paragraphs.length > 0
+  ? problem.paragraphs
+  : defaults.problem.paragraphs;
+
+// ── Pain ────────────────────────────────────────────────────
+const pain = page?.painSection ?? {};
+const painHeadline = pain.headline ?? defaults.pain.headline;
+interface PainRow { pill?: string; h: string; p: string; mock: string }
+const painRows: PainRow[] = Array.isArray(pain.rows) && pain.rows.length > 0
+  ? pain.rows.map((r: any, i: number) => ({
+      pill: r.metadataPill,
+      h: r.headline ?? "",
+      p: r.body ?? "",
+      mock: defaults.pain.rows[i]?.mock ?? "dashboard",
+    }))
+  : defaults.pain.rows;
+
+// ── Tabbed spotlight ───────────────────────────────────────
+interface TabFeature { t: string; d: string }
+interface SpotlightTab { label: string; tabKey: string; features: TabFeature[] }
+const tabs = page?.tabbedSpotlight ?? {};
+const tabsTop = tabs.headlineTop ?? defaults.tabs.top;
+const tabsBottom = tabs.headlineBottom ?? defaults.tabs.bottom;
+const tabsSubhead = tabs.subhead ?? defaults.tabs.subhead;
+const tabList: SpotlightTab[] = Array.isArray(tabs.tabs) && tabs.tabs.length > 0
+  ? tabs.tabs.map((tab: any) => ({
+      label: tab.label,
+      tabKey: tab.tabKey ?? tab.label?.toLowerCase().replace(/\s+/g, "-"),
+      features: Array.isArray(tab.features) ? tab.features.map((f: any) => ({ t: f.title, d: f.description })) : [],
+    }))
+  : defaults.tabs.tabs;
+
+// ── Trust callout ──────────────────────────────────────────
+const trust = page?.trustCallout ?? {};
+const trustTop = trust.headlineTop ?? defaults.trust.top;
+const trustBottom = trust.headlineBottom ?? defaults.trust.bottom;
+const trustBody = trust.body ?? defaults.trust.body;
+const trustCtaLabel = trust.ctaLabel ?? defaults.trust.ctaLabel;
+const trustCtaHref = trust.ctaHref ?? defaults.trust.ctaHref;
+
+// ── Bridge ─────────────────────────────────────────────────
+const bridge = page?.bridgeSection ?? {};
+const bridgeTop = bridge.headlineTop ?? defaults.bridge.top;
+const bridgeBottom = bridge.headlineBottom ?? defaults.bridge.bottom;
+const bridgeBody = bridge.body ?? defaults.bridge.body;
+const bridgeCtaLabel = bridge.ctaLabel ?? defaults.bridge.ctaLabel;
+const bridgeCtaHref = bridge.ctaHref ?? defaults.bridge.ctaHref;
+
+// ── Final CTA ──────────────────────────────────────────────
+const finalCta = page?.finalCta ?? {};
+const finalTop = defaults.finalCta.top;
+const finalBottom = defaults.finalCta.bottom;
+const finalPrimary = finalCta.primaryCta ?? primaryCta;
+const finalSecondary = finalCta.secondaryCta ?? secondaryCta;
+const finalFootnote = finalCta.footnote ?? defaults.finalCta.note;
+
+// ── Roles ──────────────────────────────────────────────────
+const rolesGrid = page?.rolesGrid ?? {};
+const rolesTop = rolesGrid.eyebrow ?? "Designed for";
+const rolesBottom = rolesGrid.headline ?? "how you work";
+const rolesCards = Array.isArray(rolesGrid.cards) && rolesGrid.cards.length > 0
+  ? rolesGrid.cards
+  : [
+      { title: "For Artists", description: "Your release, structured. No more winging it.", href: "/for-artists" },
+      { title: "For Managers", description: "Every artist's rollout. One dashboard.", href: "/for-managers" },
+      { title: "For Labels", description: "Scale your release process. Not your headcount.", href: "/for-labels" },
+      { title: "For Partners", description: "See your deliverables. Hit your deadlines.", href: "/for-partners" },
+    ];
+---
+
+<section class="icp-hero" id="heroSection">
+  <div class="icp-hero__bg"><img src={heroBgUrl} alt="" loading="eager" /></div>
+  <div class="icp-hero__overlay"></div>
+  <div class="icp-hero__inner">
+    <div class="icp-nav">
+      <a href="/orchestration" class={`icp-nav__pill ${verticalKey === "orchestration" ? "icp-nav__pill--active" : ""}`}>Release Orchestration</a>
+      <a href="/intelligence" class={`icp-nav__pill ${verticalKey === "intelligence" ? "icp-nav__pill--active" : ""}`}>Release Intelligence</a>
+    </div>
+    {heroPill && <span class="hero-pill">{heroPill}</span>}
+    <SplitHeadline as="h1" top={heroTop} bottom={heroBottom} />
+    <p>{heroSubhead}</p>
+    <div class="icp-hero__buttons">
+      <a href={primaryCta.href} class="btn btn--green">{primaryCta.label}</a>
+      <a href={secondaryCta.href} class="btn btn--outline">{secondaryCta.label}</a>
+    </div>
+  </div>
+</section>
+
+<section class="problem-section" id="problemSection">
+  <div class="problem-gradient" id="problemGradient">
+    <div class="problem-gradient__wash"></div>
+    <div class="problem-gradient__blob problem-gradient__blob--1" id="problemBlob1"></div>
+    <div class="problem-gradient__blob problem-gradient__blob--2" id="problemBlob2"></div>
+    <div class="problem-gradient__blob problem-gradient__blob--3" id="problemBlob3"></div>
+  </div>
+  <div class="problem-scroll">
+    <div class="problem-viewport">
+      <div class="problem-section__inner" style="position:relative;z-index:1">
+        <SplitHeadline as="h2" top={problemTop} bottom={problemBottom} />
+        <div style="position:relative;min-height:6rem">
+          {problemParas.map((para, i) => (
+            <p class="problem-para" data-para={i}>{para}</p>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pain-section pain-section--alt">
+  <div class="pain-section__inner">
+    <div class="pain-section__header">
+      <h2>{painHeadline}</h2>
+    </div>
+    {painRows[0] && (
+      <div class="pain-row">
+        <div class="pain-row__text">
+          {painRows[0].pill && <span class="metadata-pill">{painRows[0].pill}</span>}
+          <h3>{painRows[0].h}</h3>
+          <p>{painRows[0].p}</p>
+        </div>
+        <div class="pain-row__panel"><slot name="pain-0" /></div>
+      </div>
+    )}
+    {painRows[1] && (
+      <div class="pain-row pain-row--flipped">
+        <div class="pain-row__text">
+          {painRows[1].pill && <span class="metadata-pill">{painRows[1].pill}</span>}
+          <h3>{painRows[1].h}</h3>
+          <p>{painRows[1].p}</p>
+        </div>
+        <div class="pain-row__panel"><slot name="pain-1" /></div>
+      </div>
+    )}
+    {painRows[2] && (
+      <div class="pain-row">
+        <div class="pain-row__text">
+          {painRows[2].pill && <span class="metadata-pill">{painRows[2].pill}</span>}
+          <h3>{painRows[2].h}</h3>
+          <p>{painRows[2].p}</p>
+        </div>
+        <div class="pain-row__panel"><slot name="pain-2" /></div>
+      </div>
+    )}
+  </div>
+</section>
+
+<section class="tabs-section" id="tabsSection">
+  <div class="tabs-section__inner">
+    <div class="tabs-section__header">
+      <SplitHeadline as="h2" top={tabsTop} bottom={tabsBottom} />
+    </div>
+    <p class="tabs-section__sub">{tabsSubhead}</p>
+
+    <div class="partner-tabs" role="tablist">
+      {tabList.map((tab, i) => (
+        <button class={`partner-tab ${i === 0 ? "is-active" : ""}`} data-tab={tab.tabKey} role="tab">
+          {tab.label}
+        </button>
+      ))}
+    </div>
+
+    {tabList.map((tab, ti) => (
+      <div class={`partner-panel ${ti === 0 ? "is-active" : ""}`} data-tab={tab.tabKey}>
+        <div class="partner-panel__features">
+          {tab.features.map((feat, fi) => (
+            <div
+              class={`partner-panel__feature ${fi === 0 ? "is-active" : ""}`}
+              data-preview={`${tab.tabKey}-${fi + 1}`}
+            >
+              <h4>{feat.t}</h4>
+              {feat.d && <p>{feat.d}</p>}
+            </div>
+          ))}
+        </div>
+        <div class="partner-panel__preview">
+          {ti === 0 && <slot name="tab-mocks" />}
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+
+<section class="trust-section">
+  <div class="trust-section__inner">
+    <div class="trust-section__headline">
+      <SplitHeadline as="h2" top={trustTop} bottom={trustBottom} />
+    </div>
+    <div class="trust-section__copy">
+      <p>{trustBody}</p>
+      <a href={trustCtaHref} class="trust-section__link">
+        <span>{trustCtaLabel}</span>
+        <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="final-cta">
+  <div class="final-cta__card">
+    <h2>{finalTop}<br /><span class="nyght">{finalBottom}</span></h2>
+    <div class="final-cta__buttons">
+      <a href={finalPrimary.href} class="btn btn--green">{finalPrimary.label}</a>
+      {finalSecondary?.href && finalSecondary?.label && (
+        <a href={finalSecondary.href} class="btn btn--ghost">{finalSecondary.label}</a>
+      )}
+    </div>
+    {finalFootnote && <p class="final-cta__note">{finalFootnote}</p>}
+  </div>
+</section>
+
+<section class="bridge-section">
+  <div class="bridge-section__inner">
+    <div class="bridge-section__headline">
+      <SplitHeadline as="h2" top={bridgeTop} bottom={bridgeBottom} />
+    </div>
+    <div class="bridge-section__copy">
+      {bridgeBody && <p>{bridgeBody}</p>}
+      <a href={bridgeCtaHref} class="bridge-section__link">
+        <span class="bridge-link-text">{bridgeCtaLabel}</span>
+        <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="roles-section">
+  <div class="roles-section__inner">
+    <div class="roles-section__header">
+      <SplitHeadline as="h2" top={rolesTop} bottom={rolesBottom} />
+    </div>
+    <div class="roles-grid">
+      {rolesCards.map((card: { title: string; description: string; href: string }, i: number) => (
+        <>
+          {i > 0 && <div class="roles-divider"></div>}
+          <a href={card.href} class="role-item">
+            <div class="role-item__title">{card.title}</div>
+            <div class="role-item__desc">{card.description}</div>
+            <div class="role-item__link">
+              Learn more <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+            </div>
+          </a>
+        </>
+      ))}
+    </div>
+  </div>
+</section>

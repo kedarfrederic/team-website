@@ -1,22 +1,363 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import SplitHeadline from "../components/SplitHeadline.astro";
 import { getVerticalProductPage } from "../lib/queries";
-import { getClient } from "../lib/sanity";
-// @ts-expect-error — ?raw modifier returns string at build time
-import bodyHtml from "../lib/orchestration-body.html?raw";
+import { getClient, urlFor } from "../lib/sanity";
 
 const page = await getVerticalProductPage("orchestrationPage", getClient(Astro));
+
+// ── Hero ────────────────────────────────────────────────────
+const hero = page?.hero ?? {};
+const heroPill = hero.pillLabel;
+const heroTop = hero.headlineTop ?? "No more";
+const heroBottom = hero.headlineBottom ?? "square pegs, round holes";
+const heroSubhead =
+  hero.subhead ??
+  "Every tool used to manage releases today was created for something else. Team was designed specifically for rollouts. Every feature, every workflow, every view, built from the ground up for the way music actually ships.";
+const heroBgUrl = hero.backgroundImage?.asset
+  ? urlFor(hero.backgroundImage).width(2400).quality(85).format("webp").url()
+  : "/assets/hero-bg-new.png";
+const primaryCta = hero.primaryCta ?? { label: "Start your free trial", href: "https://www.teamrollouts.com/sign-up?plan=pro&period=yearly" };
+const secondaryCta = hero.secondaryCta ?? { label: "Book a demo", href: "/demo" };
+
+// ── Problem ─────────────────────────────────────────────────
+const problem = page?.problemSection ?? {};
+const problemTop = problem.headlineTop ?? "You've been using";
+const problemBottom = problem.headlineBottom ?? "the wrong tools";
+const problemParas: string[] = Array.isArray(problem.paragraphs) && problem.paragraphs.length > 0
+  ? problem.paragraphs
+  : [
+      "Spreadsheets weren't built for release timelines. Notion wasn't built for DSP submissions. Monday.com doesn't know what a rollout plan is. You've spent years forcing general-purpose tools to do a music-specific job.",
+      "The result? Missed deadlines. Lost assets. Release day panic. And a whole lot of time wasted on tool management instead of release management.",
+      "Team is different. Not because we bolted music features onto a project management tool. But because we started with the release and built everything around it.",
+    ];
+
+// ── Pain section ───────────────────────────────────────────
+const pain = page?.painSection ?? {};
+const painEyebrow = pain.eyebrow ?? "The Release Lifecycle";
+const painHeadlineTop = "One platform.";
+const painHeadlineBottom = "Every phase.";
+const painSubhead = "From first demo to post-release analytics — every step lives in Team";
+interface PainRow {
+  pill?: string;
+  h: string;
+  p: string;
+  mock: "timeline" | "command" | "report";
+}
+const painRows: PainRow[] = Array.isArray(pain.rows) && pain.rows.length > 0
+  ? pain.rows.map((r: any, i: number) => ({
+      pill: r.metadataPill,
+      h: r.headline ?? "",
+      p: r.body ?? "",
+      mock: (["timeline", "command", "report"][i] ?? "timeline") as PainRow["mock"],
+    }))
+  : [
+      { pill: "Pre-Release", h: "Set your release date. Team builds your plan", p: "Team generates your timeline, assigns tasks, and tracks every deliverable. Templates built for singles, EPs, and albums. No more wondering what needs to happen next.", mock: "timeline" },
+      { pill: "Release Week", h: "The most critical 7 days. Fully coordinated", p: "DSPs, social, press, ads — every channel running in sync. Team keeps the chaos organised so your launch day is a launch, not a scramble.", mock: "command" },
+      { pill: "Post-Release", h: "The release is live. Now learn from it", p: "Track performance, generate reports for your team or your label, and feed insights into your next release. Every campaign makes the next one smarter.", mock: "report" },
+    ];
+
+// ── Features (6-card spotlight) ─────────────────────────────
+interface Feature { key: string; title: string; description: string }
+const FEATURES: Feature[] = [
+  { key: "timeline", title: "Release Timeline", description: "Your entire rollout mapped visually. Drag, drop, adjust. See every deadline across every phase." },
+  { key: "tasks", title: "Task Management", description: "Not generic tasks. Release tasks. Pre-populated templates, role-based assignments, and deadline tracking that knows the difference between a playlist pitch and a press release." },
+  { key: "rollout", title: "Rollout Plan", description: "AI-generated strategy documents tailored to your genre, audience, and goals. Not a blank page — a blueprint." },
+  { key: "budget", title: "Budget Tracking", description: "Track spend across production, marketing, PR, and distribution. Per-release, per-artist, or across your entire roster." },
+  { key: "assets", title: "Asset Library", description: "Every file, every version, every approval — in one place. AI-parsed contracts, searchable metadata, version history." },
+  { key: "collab", title: "Collaboration", description: "Invite anyone into a release. They see what they need — their tasks, their deadlines, their assets. Nothing more, nothing less." },
+];
+
+const featuresHeadlineTop = "Built for releases.";
+const featuresHeadlineBottom = "Nothing else.";
+const featuresSubhead = "Every feature exists because a release needs it";
+
+// ── Bridge ──────────────────────────────────────────────────
+const bridge = page?.bridgeSection ?? {};
+const bridgeTop = bridge.headlineTop ?? "A plan is only as good as";
+const bridgeBottom = bridge.headlineBottom ?? "the thinking behind it";
+const bridgeBody = bridge.body ?? "Release Orchestration gives you the tools to execute. Release Intelligence gives you the context to execute brilliantly. Together, they're the complete operating system for music releases.";
+const bridgeCtaLabel = bridge.ctaLabel ?? "Explore Release Intelligence";
+const bridgeCtaHref = bridge.ctaHref ?? "/intelligence";
+
+// ── Final CTA ──────────────────────────────────────────────
+const finalCta = page?.finalCta ?? {};
+const finalHeadlineTop = "Ready to run your releases";
+const finalHeadlineBottom = "the right way?";
+const finalPrimary = finalCta.primaryCta ?? primaryCta;
+const finalSecondary = finalCta.secondaryCta ?? secondaryCta;
+const finalFootnote = finalCta.footnote ?? "30-day free trial. No credit card required.";
+
+// ── Roles ──────────────────────────────────────────────────
+const rolesGrid = page?.rolesGrid ?? {};
+const rolesTop = rolesGrid.eyebrow ?? "Designed for";
+const rolesBottom = rolesGrid.headline ?? "how you work";
+const rolesCards = Array.isArray(rolesGrid.cards) && rolesGrid.cards.length > 0
+  ? rolesGrid.cards
+  : [
+      { title: "For Artists", description: "Your release, structured. No more winging it.", href: "/for-artists" },
+      { title: "For Managers", description: "Every artist's rollout. One dashboard.", href: "/for-managers" },
+      { title: "For Labels", description: "Scale your release process. Not your headcount.", href: "/for-labels" },
+      { title: "For Partners", description: "See your deliverables. Hit your deadlines.", href: "/for-partners" },
+    ];
 ---
 
 <BaseLayout
-  title={page?.hero?.headline ?? "Orchestration"}
-  description="No more square pegs, round holes."
+  title={hero.headlineTop ?? "Orchestration"}
+  description={heroSubhead}
   seo={page?.seo}
   navTheme="dark"
 >
   <link slot="head" rel="stylesheet" href="/components/orchestration-inline.css" />
 
-  <Fragment set:html={bodyHtml} />
+  <section class="icp-hero" id="heroSection">
+    <div class="icp-hero__bg"><img src={heroBgUrl} alt="" loading="eager" /></div>
+    <div class="icp-hero__overlay"></div>
+    <div class="icp-hero__inner">
+      <div class="icp-nav">
+        <a href="/orchestration" class="icp-nav__pill icp-nav__pill--active">Release Orchestration</a>
+        <a href="/intelligence" class="icp-nav__pill">Release Intelligence</a>
+      </div>
+      {heroPill && <span class="hero-pill">{heroPill}</span>}
+      <SplitHeadline as="h1" top={heroTop} bottom={heroBottom} />
+      <p>{heroSubhead}</p>
+      <div class="icp-hero__buttons">
+        <a href={primaryCta.href} class="btn btn--green">{primaryCta.label}</a>
+        <a href={secondaryCta.href} class="btn btn--outline">{secondaryCta.label}</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="problem-section" id="problemSection">
+    <div class="problem-gradient" id="problemGradient">
+      <div class="problem-gradient__wash"></div>
+      <div class="problem-gradient__blob problem-gradient__blob--1" id="problemBlob1"></div>
+      <div class="problem-gradient__blob problem-gradient__blob--2" id="problemBlob2"></div>
+      <div class="problem-gradient__blob problem-gradient__blob--3" id="problemBlob3"></div>
+    </div>
+    <div class="problem-scroll">
+      <div class="problem-viewport">
+        <div class="problem-section__inner" style="position:relative;z-index:1">
+          <SplitHeadline as="h2" top={problemTop} bottom={problemBottom} />
+          <div style="position:relative;min-height:6rem">
+            {problemParas.map((para, i) => (
+              <p class="problem-para" data-para={i}>{para}</p>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pain-section pain-section--alt">
+    <div class="pain-section__inner">
+      <div class="pain-section__header">
+        {painEyebrow && <span class="metadata-pill">{painEyebrow}</span>}
+        <h2>{painHeadlineTop} <span class="nyght">{painHeadlineBottom}</span></h2>
+        <p>{painSubhead}</p>
+      </div>
+
+      {painRows.map((row, i) => (
+        <div class={`pain-row ${i % 2 === 1 ? "pain-row--flipped" : ""}`}>
+          <div class="pain-row__text">
+            {row.pill && <span class="metadata-pill">{row.pill}</span>}
+            <h3>{row.h}</h3>
+            <p>{row.p}</p>
+          </div>
+          <div class="pain-row__panel">
+            {row.mock === "timeline" && (
+              <div class="fp-timeline">
+                <div class="fp-timeline__row"><div class="fp-timeline__label">Metadata</div><div class="fp-timeline__track"><div class="fp-timeline__bar" style="left:0%;width:30%;background:linear-gradient(90deg,#F56002,#ff8533)"></div></div></div>
+                <div class="fp-timeline__row"><div class="fp-timeline__label">Artwork</div><div class="fp-timeline__track"><div class="fp-timeline__bar" style="left:5%;width:35%;background:linear-gradient(90deg,#3B82F6,#60a5fa)"></div></div></div>
+                <div class="fp-timeline__row"><div class="fp-timeline__label">Pre-save</div><div class="fp-timeline__track"><div class="fp-timeline__bar" style="left:25%;width:40%;background:linear-gradient(90deg,#8B5CF6,#a78bfa)"></div></div></div>
+                <div class="fp-timeline__row"><div class="fp-timeline__label">Press</div><div class="fp-timeline__track"><div class="fp-timeline__bar" style="left:35%;width:45%;background:linear-gradient(90deg,#EC4899,#f472b6)"></div></div></div>
+                <div class="fp-timeline__row"><div class="fp-timeline__label">Social</div><div class="fp-timeline__track"><div class="fp-timeline__bar" style="left:50%;width:35%;background:linear-gradient(90deg,#10B981,#34d399)"></div></div></div>
+                <div class="fp-timeline__row"><div class="fp-timeline__label">DSP Pitch</div><div class="fp-timeline__track"><div class="fp-timeline__bar" style="left:15%;width:50%;background:linear-gradient(90deg,#FAD604,#fbe046)"></div></div></div>
+              </div>
+            )}
+            {row.mock === "command" && (
+              <div class="fp-command">
+                <div class="fp-command__row">
+                  <div class="fp-command__card"><div class="fp-command__card-artist">Active Release</div><div class="fp-command__card-release">Golden Hour — Mara</div><div class="fp-command__card-status mock-dashboard__pill--green">On Track</div></div>
+                  <div class="fp-command__card"><div class="fp-command__card-artist">DSP Status</div><div class="fp-command__card-release">All platforms</div><div class="fp-command__card-status mock-dashboard__pill--green">Live</div></div>
+                </div>
+                <div class="fp-command__row">
+                  <div class="fp-command__card"><div class="fp-command__card-artist">Social Campaign</div><div class="fp-command__card-release">12 posts queued</div><div class="fp-command__card-status mock-dashboard__pill--blue">Scheduled</div></div>
+                  <div class="fp-command__card"><div class="fp-command__card-artist">Press Outreach</div><div class="fp-command__card-release">8 outlets contacted</div><div class="fp-command__card-status mock-dashboard__pill--amber">In Progress</div></div>
+                </div>
+                <div class="fp-command__row">
+                  <div class="fp-command__card"><div class="fp-command__card-artist">Ad Spend</div><div class="fp-command__card-release">Meta + TikTok</div><div class="fp-command__card-status mock-dashboard__pill--green">On Track</div></div>
+                  <div class="fp-command__card"><div class="fp-command__card-artist">Playlist Pitches</div><div class="fp-command__card-release">5 editorial lists</div><div class="fp-command__card-status mock-dashboard__pill--amber">Pending</div></div>
+                </div>
+              </div>
+            )}
+            {row.mock === "report" && (
+              <div class="fp-report">
+                <div class="fp-report__header"><div class="fp-report__header-title">Post-Release Report</div><div class="fp-report__header-date">Week 1</div></div>
+                <div class="fp-report__stats">
+                  <div class="fp-report__stat"><div class="fp-report__stat-value">248k</div><div class="fp-report__stat-label">Streams</div></div>
+                  <div class="fp-report__stat"><div class="fp-report__stat-value">12.4k</div><div class="fp-report__stat-label">Saves</div></div>
+                  <div class="fp-report__stat"><div class="fp-report__stat-value">34</div><div class="fp-report__stat-label">Playlist Adds</div></div>
+                  <div class="fp-report__stat"><div class="fp-report__stat-value">$4.2k</div><div class="fp-report__stat-label">Campaign Spend</div></div>
+                </div>
+                <div class="fp-report__body">
+                  <div class="fp-report__line"></div>
+                  <div class="fp-report__line fp-report__line--med"></div>
+                  <div class="fp-report__line fp-report__line--short"></div>
+                  <div class="fp-report__line"></div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="features-section" id="featuresSection">
+    <div class="features-section__inner">
+      <div class="features-section__header">
+        <h2>{featuresHeadlineTop} <span class="nyght">{featuresHeadlineBottom}</span></h2>
+      </div>
+      <p class="features-section__sub">{featuresSubhead}</p>
+
+      <div class="features-spotlight">
+        <div class="features-list" role="tablist">
+          {FEATURES.map((feat, i) => (
+            <button
+              class={`feature-card ${i === 0 ? "is-active" : ""}`}
+              data-feature={feat.key}
+              role="tab"
+              aria-selected={i === 0 ? "true" : "false"}
+            >
+              <div class="feature-card__title"><span class="feature-card__marker"></span>{feat.title}</div>
+              <div class="feature-card__desc">{feat.description}</div>
+              <div class="feature-card__preview-mobile">
+                <div class="features-preview">
+                  <div class="features-preview__panel is-active">
+                    <Fragment set:html={`<!-- mobile preview placeholder -->`} />
+                  </div>
+                </div>
+              </div>
+            </button>
+          ))}
+        </div>
+
+        <div class="features-preview desktop-preview" aria-hidden="true">
+          <div class="features-preview__panel is-active" data-feature="timeline">
+            <div class="fp-timeline">
+              <div class="fp-timeline__row"><div class="fp-timeline__label">Artwork</div><div class="fp-timeline__track"><div class="fp-timeline__bar" style="left:5%;width:40%;background:linear-gradient(90deg,#F56002,#ff8533)"></div></div></div>
+              <div class="fp-timeline__row"><div class="fp-timeline__label">Pre-save</div><div class="fp-timeline__track"><div class="fp-timeline__bar" style="left:20%;width:45%;background:linear-gradient(90deg,#3B82F6,#60a5fa)"></div></div></div>
+              <div class="fp-timeline__row"><div class="fp-timeline__label">Press</div><div class="fp-timeline__track"><div class="fp-timeline__bar" style="left:40%;width:45%;background:linear-gradient(90deg,#8B5CF6,#a78bfa)"></div></div></div>
+              <div class="fp-timeline__row"><div class="fp-timeline__label">Socials</div><div class="fp-timeline__track"><div class="fp-timeline__bar" style="left:55%;width:35%;background:linear-gradient(90deg,#EC4899,#f472b6)"></div></div></div>
+              <div class="fp-timeline__row"><div class="fp-timeline__label">Release</div><div class="fp-timeline__track"><div class="fp-timeline__bar" style="left:70%;width:25%;background:linear-gradient(90deg,#FAD604,#fbe046)"></div></div></div>
+            </div>
+            <div class="features-preview__panel-label">Timeline</div>
+          </div>
+          <div class="features-preview__panel" data-feature="tasks">
+            <div class="fp-tasks">
+              <div class="fp-tasks__row"><div class="fp-tasks__check fp-tasks__check--done"></div><div class="fp-tasks__label fp-tasks__label--done">Submit to DSPs</div><div class="fp-tasks__assignee" style="background:#F56002">KF</div></div>
+              <div class="fp-tasks__row"><div class="fp-tasks__check fp-tasks__check--done"></div><div class="fp-tasks__label fp-tasks__label--done">Pitch editorial playlists</div><div class="fp-tasks__assignee" style="background:#3B82F6">JK</div></div>
+              <div class="fp-tasks__row"><div class="fp-tasks__check"></div><div class="fp-tasks__label">Schedule social content</div><div class="fp-tasks__assignee" style="background:#8B5CF6">AR</div></div>
+              <div class="fp-tasks__row"><div class="fp-tasks__check"></div><div class="fp-tasks__label">Upload press assets</div><div class="fp-tasks__assignee" style="background:#10B981">SL</div></div>
+            </div>
+            <div class="features-preview__panel-label">Tasks</div>
+          </div>
+          <div class="features-preview__panel" data-feature="rollout">
+            <div class="fp-tasks">
+              <div class="fp-tasks__row"><div class="fp-tasks__check" style="border-color:#D9FA87;background:#D9FA87;position:relative;display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 12 12" style="width:8px;height:8px;stroke:#191919;stroke-width:2.5;fill:none"><polyline points="2 6 5 9 10 3"/></svg></div><div class="fp-tasks__label" style="text-decoration:line-through;opacity:0.5">Set up pre-save campaign</div></div>
+              <div class="fp-tasks__row"><div class="fp-tasks__check" style="border-color:#D9FA87;background:#D9FA87;position:relative;display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 12 12" style="width:8px;height:8px;stroke:#191919;stroke-width:2.5;fill:none"><polyline points="2 6 5 9 10 3"/></svg></div><div class="fp-tasks__label" style="text-decoration:line-through;opacity:0.5">Draft press release</div></div>
+              <div class="fp-tasks__row"><div class="fp-tasks__check" style="border-color:#D9FA87;background:#D9FA87;position:relative;display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 12 12" style="width:8px;height:8px;stroke:#191919;stroke-width:2.5;fill:none"><polyline points="2 6 5 9 10 3"/></svg></div><div class="fp-tasks__label" style="text-decoration:line-through;opacity:0.5">Submit to editorial playlists</div></div>
+              <div class="fp-tasks__row"><div class="fp-tasks__check"></div><div class="fp-tasks__label">Create social content calendar</div></div>
+              <div class="fp-tasks__row"><div class="fp-tasks__check"></div><div class="fp-tasks__label">Schedule release day posts</div></div>
+              <div class="fp-tasks__row"><div class="fp-tasks__check"></div><div class="fp-tasks__label">Plan post-release follow-up</div></div>
+            </div>
+            <div class="features-preview__panel-label">Rollout Plan</div>
+          </div>
+          <div class="features-preview__panel" data-feature="budget">
+            <div class="fp-budget">
+              <div class="fp-budget__bar-group">
+                <div class="fp-budget__bar-row"><div class="fp-budget__bar-label">Production</div><div class="fp-budget__bar-track"><div class="fp-budget__bar-fill" style="width:65%;background:linear-gradient(90deg,#F56002,#ff8533)"></div></div><div class="fp-budget__bar-value">$12k</div></div>
+                <div class="fp-budget__bar-row"><div class="fp-budget__bar-label">Marketing</div><div class="fp-budget__bar-track"><div class="fp-budget__bar-fill" style="width:45%;background:linear-gradient(90deg,#3B82F6,#60a5fa)"></div></div><div class="fp-budget__bar-value">$8k</div></div>
+                <div class="fp-budget__bar-row"><div class="fp-budget__bar-label">PR</div><div class="fp-budget__bar-track"><div class="fp-budget__bar-fill" style="width:28%;background:linear-gradient(90deg,#8B5CF6,#a78bfa)"></div></div><div class="fp-budget__bar-value">$5k</div></div>
+                <div class="fp-budget__bar-row"><div class="fp-budget__bar-label">Distribution</div><div class="fp-budget__bar-track"><div class="fp-budget__bar-fill" style="width:16%;background:linear-gradient(90deg,#10B981,#34d399)"></div></div><div class="fp-budget__bar-value">$3k</div></div>
+              </div>
+              <div class="fp-budget__total"><span>Total</span><span>$28k</span></div>
+            </div>
+            <div class="features-preview__panel-label">Budget</div>
+          </div>
+          <div class="features-preview__panel" data-feature="assets">
+            <div class="fp-files">
+              <div class="fp-files__row"><div class="fp-files__icon" style="background:#EC4899">PNG</div><div class="fp-files__info"><div class="fp-files__name">Album Artwork v3.png</div><div class="fp-files__meta">4.2 MB</div></div></div>
+              <div class="fp-files__row"><div class="fp-files__icon" style="background:#3B82F6">DOC</div><div class="fp-files__info"><div class="fp-files__name">Press Release.docx</div><div class="fp-files__meta">128 KB</div></div></div>
+              <div class="fp-files__row"><div class="fp-files__icon" style="background:#F56002">PDF</div><div class="fp-files__info"><div class="fp-files__name">EPK.pdf</div><div class="fp-files__meta">2.1 MB</div></div></div>
+              <div class="fp-files__row"><div class="fp-files__icon" style="background:#8B5CF6">ZIP</div><div class="fp-files__info"><div class="fp-files__name">Social Kit.zip</div><div class="fp-files__meta">18 MB</div></div></div>
+            </div>
+            <div class="features-preview__panel-label">Assets</div>
+          </div>
+          <div class="features-preview__panel" data-feature="collab">
+            <div class="mock-collab">
+              <div class="mock-collab__row"><div class="mock-collab__avatar" style="background:#F56002">MG</div><div class="mock-collab__task">Review campaign brief</div><div class="mock-collab__check mock-collab__check--done"></div></div>
+              <div class="mock-collab__row"><div class="mock-collab__avatar" style="background:#3B82F6">AR</div><div class="mock-collab__task">Upload press assets</div><div class="mock-collab__check mock-collab__check--done"></div></div>
+              <div class="mock-collab__row"><div class="mock-collab__avatar" style="background:#8B5CF6">PR</div><div class="mock-collab__task">Draft playlist pitch</div><div class="mock-collab__check"></div></div>
+              <div class="mock-collab__row"><div class="mock-collab__avatar" style="background:#10B981">CR</div><div class="mock-collab__task">Submit artwork</div><div class="mock-collab__check"></div></div>
+            </div>
+            <div class="features-preview__panel-label">Collaboration</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="final-cta">
+    <div class="final-cta__card">
+      <h2>{finalHeadlineTop}<br /><span class="nyght">{finalHeadlineBottom}</span></h2>
+      <div class="final-cta__buttons">
+        <a href={finalPrimary.href} class="btn btn--green">{finalPrimary.label}</a>
+        {finalSecondary?.href && finalSecondary?.label && (
+          <a href={finalSecondary.href} class="btn btn--ghost">{finalSecondary.label}</a>
+        )}
+      </div>
+      {finalFootnote && <p class="final-cta__note">{finalFootnote}</p>}
+    </div>
+  </section>
+
+  <section class="bridge-section">
+    <div class="bridge-section__inner">
+      <div class="bridge-section__headline">
+        <SplitHeadline as="h2" top={bridgeTop} bottom={bridgeBottom} />
+      </div>
+      <div class="bridge-section__copy">
+        {bridgeBody && <p>{bridgeBody}</p>}
+        <a href={bridgeCtaHref} class="bridge-section__link">
+          <span class="bridge-link-text">{bridgeCtaLabel}</span>
+          <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="roles-section">
+    <div class="roles-section__inner">
+      <div class="roles-section__header">
+        <SplitHeadline as="h2" top={rolesTop} bottom={rolesBottom} />
+      </div>
+      <div class="roles-grid">
+        {rolesCards.map((card: { title: string; description: string; href: string }, i: number) => (
+          <>
+            {i > 0 && <div class="roles-divider"></div>}
+            <a href={card.href} class="role-item">
+              <div class="role-item__title">{card.title}</div>
+              <div class="role-item__desc">{card.description}</div>
+              <div class="role-item__link">
+                Learn more <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+              </div>
+            </a>
+          </>
+        ))}
+      </div>
+    </div>
+  </section>
 
   <script is:inline src="/components/orchestration-inline.js"></script>
 </BaseLayout>

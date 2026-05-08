@@ -3,12 +3,8 @@ import { defineType, defineField } from "sanity";
 /**
  * Vertical product page template — used by /intelligence and /orchestration.
  *
- * Same shape with two singleton instances (documentId = "intelligencePage"
- * or "orchestrationPage"). The `verticalKey` field picks which one this
- * document represents and drives URL routing in Astro.
- *
- * Sections: hero · scroll-reveal problem section · pain rows · 4-tab
- * spotlight (16 mocks) · trust callout · final CTA · roles grid.
+ * Same shape with two singleton instances. The `verticalKey` field picks
+ * which one this document represents.
  */
 export const verticalProductPage = defineType({
   name: "verticalProductPage",
@@ -34,14 +30,14 @@ export const verticalProductPage = defineType({
       readOnly: true,
     }),
 
-    // ── Hero ──────────────────────────────────────────────────
     defineField({
       name: "hero",
       type: "object",
       group: "hero",
       fields: [
         defineField({ name: "pillLabel", type: "string" }),
-        defineField({ name: "headline", type: "string", validation: (R) => R.required() }),
+        defineField({ name: "headlineTop", type: "string", description: "First line — sans font." }),
+        defineField({ name: "headlineBottom", type: "string", description: "Second line — serif italic (Nyght)." }),
         defineField({ name: "subhead", type: "text", rows: 3 }),
         defineField({
           name: "primaryCta",
@@ -59,10 +55,10 @@ export const verticalProductPage = defineType({
             defineField({ name: "href", type: "string" }),
           ],
         }),
+        defineField({ name: "backgroundImage", type: "image", options: { hotspot: true } }),
       ],
     }),
 
-    // ── Scroll-reveal problem section ─────────────────────────
     defineField({
       name: "problemSection",
       title: "Scroll-reveal problem section",
@@ -70,7 +66,8 @@ export const verticalProductPage = defineType({
       group: "sections",
       description: "3 paragraphs animated word-by-word as the user scrolls.",
       fields: [
-        defineField({ name: "headline", type: "string" }),
+        defineField({ name: "headlineTop", type: "string" }),
+        defineField({ name: "headlineBottom", type: "string" }),
         defineField({
           name: "paragraphs",
           type: "array",
@@ -82,16 +79,16 @@ export const verticalProductPage = defineType({
 
     defineField({ name: "painSection", type: "painSection", group: "sections" }),
 
-    // ── 4-tab spotlight ──────────────────────────────────────
     defineField({
       name: "tabbedSpotlight",
       title: "4-tab feature spotlight",
       type: "object",
       group: "sections",
       description:
-        "4 tabs (Planning / Mid-Campaign / Post-Release / At Scale on Intelligence; or your equivalent for Orchestration), each with 4 features + a preview mock.",
+        "4 tabs (Planning / Mid-Campaign / Post-Release / At Scale on Intelligence; Build / Coordinate / Track / Optimize on Orchestration), each with 4 features.",
       fields: [
-        defineField({ name: "headline", type: "string", validation: (R) => R.required() }),
+        defineField({ name: "headlineTop", type: "string" }),
+        defineField({ name: "headlineBottom", type: "string" }),
         defineField({ name: "subhead", type: "text", rows: 2 }),
         defineField({
           name: "tabs",
@@ -102,6 +99,12 @@ export const verticalProductPage = defineType({
               name: "spotlightTab",
               fields: [
                 defineField({ name: "label", type: "string", validation: (R) => R.required() }),
+                defineField({
+                  name: "tabKey",
+                  type: "string",
+                  description:
+                    "Stable id matching the mock fixtures (e.g. plan, mid, post, scale on intelligence).",
+                }),
                 defineField({
                   name: "features",
                   type: "array",
@@ -117,19 +120,8 @@ export const verticalProductPage = defineType({
                   ],
                   validation: (Rule) => Rule.min(1).max(6),
                 }),
-                defineField({
-                  name: "previewMock",
-                  type: "array",
-                  of: [
-                    { type: "mockGantt" },
-                    { type: "mockBudget" },
-                    { type: "mockChat" },
-                    { type: "mockTimeline" },
-                  ],
-                  validation: (Rule) => Rule.max(1),
-                }),
               ],
-              preview: { select: { title: "label" } },
+              preview: { select: { title: "label", subtitle: "tabKey" } },
             },
           ],
           validation: (Rule) => Rule.min(2).max(6),
@@ -137,32 +129,44 @@ export const verticalProductPage = defineType({
       ],
     }),
 
-    // ── Trust callout ────────────────────────────────────────
     defineField({
       name: "trustCallout",
       type: "object",
       group: "sections",
       fields: [
-        defineField({ name: "headline", type: "string" }),
+        defineField({ name: "headlineTop", type: "string" }),
+        defineField({ name: "headlineBottom", type: "string" }),
         defineField({ name: "body", type: "text", rows: 3 }),
         defineField({ name: "ctaLabel", type: "string", initialValue: "Read security overview" }),
         defineField({ name: "ctaHref", type: "string", initialValue: "/security" }),
       ],
     }),
 
+    defineField({
+      name: "bridgeSection",
+      title: "Bridge to other product",
+      type: "object",
+      group: "sections",
+      fields: [
+        defineField({ name: "headlineTop", type: "string" }),
+        defineField({ name: "headlineBottom", type: "string" }),
+        defineField({ name: "body", type: "text", rows: 3 }),
+        defineField({ name: "ctaLabel", type: "string" }),
+        defineField({ name: "ctaHref", type: "string" }),
+      ],
+    }),
+
     defineField({ name: "rolesGrid", type: "rolesGrid", group: "sections" }),
 
-    // ── Bottom of page ────────────────────────────────────────
     defineField({ name: "finalCta", type: "ctaBlock", group: "footer" }),
 
-    // ── SEO ───────────────────────────────────────────────────
     defineField({ name: "seo", type: "seoBlock", group: "seo" }),
   ],
   preview: {
-    select: { verticalKey: "verticalKey", headline: "hero.headline" },
-    prepare: ({ verticalKey, headline }) => ({
+    select: { verticalKey: "verticalKey", headlineTop: "hero.headlineTop" },
+    prepare: ({ verticalKey, headlineTop }) => ({
       title: verticalKey === "intelligence" ? "Intelligence" : verticalKey === "orchestration" ? "Orchestration" : "Vertical page",
-      subtitle: headline,
+      subtitle: headlineTop,
     }),
   },
 });
