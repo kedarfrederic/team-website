@@ -31,6 +31,26 @@ const gridBottom = grid.headlineBottom ?? "your tech stack";
 const gridSubhead = grid.subhead ?? "Team integrates with the platforms that power the music industry";
 const searchPlaceholder = grid.searchPlaceholder ?? "Search integrations...";
 
+interface FilterPill { label: string; filterKey: string }
+const DEFAULT_FILTERS: FilterPill[] = [
+  { label: "All", filterKey: "all" },
+  { label: "Distribution", filterKey: "distribution" },
+  { label: "Social & Marketing", filterKey: "social" },
+  { label: "Analytics", filterKey: "analytics" },
+  { label: "Productivity", filterKey: "productivity" },
+  { label: "Coming Soon", filterKey: "coming-soon" },
+];
+const filters: FilterPill[] = (Array.isArray(grid.filters) && grid.filters.length > 0)
+  ? grid.filters.map((f: any) => ({ label: f?.label ?? "", filterKey: f?.filterKey ?? "all" }))
+  : DEFAULT_FILTERS;
+
+const emptyState = grid.emptyState ?? {};
+const emptyLead = emptyState.lead ?? "Looks like we don't have that one yet.";
+const emptyQuestion = emptyState.ctaQuestion ?? "Need something custom?";
+const emptyCtaLabel = emptyState.ctaLabel ?? "Build your own integration";
+const emptyCtaSuffix = emptyState.ctaSuffix ?? "with our API.";
+const emptyCtaHref = emptyState.ctaHref ?? "#apiSection";
+
 // ── Integration cards: bind to the Sanity collection, fall back to legacy fixtures ──
 interface IntegrationDoc {
   _id: string;
@@ -128,12 +148,9 @@ const rolesCards =
       </div>
 
       <div class="int-filters">
-        <button class="int-filter is-active" data-filter="all">All</button>
-        <button class="int-filter" data-filter="distribution">Distribution</button>
-        <button class="int-filter" data-filter="social">Social & Marketing</button>
-        <button class="int-filter" data-filter="analytics">Analytics</button>
-        <button class="int-filter" data-filter="productivity">Productivity</button>
-        <button class="int-filter" data-filter="coming-soon">Coming Soon</button>
+        {filters.map((f, i) => (
+          <button class={`int-filter ${i === 0 ? "is-active" : ""}`} data-filter={f.filterKey}>{f.label}</button>
+        ))}
       </div>
 
       <div class="int-grid" id="intGrid">
@@ -158,7 +175,7 @@ const rolesCards =
         })}
 
         <div class="int-empty" id="intEmpty">
-          <p class="int-empty__text">Looks like we don't have that one yet. Need something custom? <a href="#apiSection">Build your own integration</a> with our API.</p>
+          <p class="int-empty__text">{emptyLead} {emptyQuestion} <a href={emptyCtaHref}>{emptyCtaLabel}</a> {emptyCtaSuffix}</p>
         </div>
       </div>
     </div>

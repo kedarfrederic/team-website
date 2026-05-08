@@ -1390,6 +1390,21 @@ docs.push({
     headlineBottom: "your tech stack",
     subhead: "Team integrates with the platforms that power the music industry",
     searchPlaceholder: "Search integrations...",
+    filters: [
+      { _key: "f-all", _type: "integrationFilter", label: "All", filterKey: "all" },
+      { _key: "f-dist", _type: "integrationFilter", label: "Distribution", filterKey: "distribution" },
+      { _key: "f-soc", _type: "integrationFilter", label: "Social & Marketing", filterKey: "social" },
+      { _key: "f-an", _type: "integrationFilter", label: "Analytics", filterKey: "analytics" },
+      { _key: "f-prod", _type: "integrationFilter", label: "Productivity", filterKey: "productivity" },
+      { _key: "f-soon", _type: "integrationFilter", label: "Coming Soon", filterKey: "coming-soon" },
+    ],
+    emptyState: {
+      lead: "Looks like we don't have that one yet.",
+      ctaQuestion: "Need something custom?",
+      ctaLabel: "Build your own integration",
+      ctaSuffix: "with our API.",
+      ctaHref: "#apiSection",
+    },
   },
   apiSection: {
     headlineTop: "Build your own",

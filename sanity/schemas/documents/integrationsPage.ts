@@ -70,6 +70,40 @@ export const integrationsPage = defineType({
           type: "string",
           initialValue: "Search integrations…",
         }),
+        defineField({
+          name: "filters",
+          title: "Filter pills (above the grid)",
+          type: "array",
+          of: [
+            {
+              type: "object",
+              name: "integrationFilter",
+              fields: [
+                defineField({ name: "label", type: "string", validation: (R) => R.required() }),
+                defineField({
+                  name: "filterKey",
+                  type: "string",
+                  description: "Stable filter id (e.g. \"all\", \"distribution\", \"social\", \"analytics\", \"productivity\", \"coming-soon\"). Must match the data-category on integration cards.",
+                  validation: (R) => R.required(),
+                }),
+              ],
+              preview: { select: { title: "label", subtitle: "filterKey" } },
+            },
+          ],
+          validation: (Rule) => Rule.max(10),
+        }),
+        defineField({
+          name: "emptyState",
+          title: "Empty state (when search has no matches)",
+          type: "object",
+          fields: [
+            defineField({ name: "lead", type: "string", description: "First sentence (e.g. \"Looks like we don't have that one yet.\")." }),
+            defineField({ name: "ctaQuestion", type: "string", description: "Tail question (e.g. \"Need something custom?\")." }),
+            defineField({ name: "ctaLabel", type: "string", description: "Inline link label (e.g. \"Build your own integration\")." }),
+            defineField({ name: "ctaSuffix", type: "string", description: "Trailing text after the link (e.g. \"with our API.\")." }),
+            defineField({ name: "ctaHref", type: "string", description: "Where the inline link points (e.g. \"#apiSection\").", initialValue: "#apiSection" }),
+          ],
+        }),
       ],
     }),
 
