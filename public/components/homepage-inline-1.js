@@ -1358,10 +1358,3 @@ gsap.ticker.lagSmoothing(0);
   });
 })();
 
-</script>
-
-<!-- TEAM RUN Easter Egg — loads after 60s of inactivity -->
-<div id="teamrun-overlay" style="display:none;position:fixed;inset:0;z-index:999999;background:#0a0a1a;opacity:0;transition:opacity 1.2s ease-in;">
-  <iframe id="teamrun-frame" style="width:100%;height:100%;border:none;" tabindex="0"></iframe>
-  <button id="teamrun-exit" style="position:absolute;top:16px;right:16px;z-index:1000000;background:#6C5CE7;color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;padding:8px 18px;border-radius:6px;cursor:pointer;border:2px solid #A29BFE;opacity:0.85;transition:opacity .2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.85'">EXIT GAME</button>
-</div>

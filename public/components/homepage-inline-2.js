@@ -1,3 +1,5 @@
+(function(){
+  // Only run on homepage
   if(window.location.pathname !== '/' && !window.location.pathname.endsWith('homepage.html')) return;
   // Only once per session
   if(sessionStorage.getItem('teamrun_dismissed')) return;
