@@ -91,14 +91,16 @@ gsap.ticker.lagSmoothing(0);
    NAV — Hide on scroll down, show on scroll up
    ============================================= */
 (function initNav() {
-  const nav = document.getElementById('nav');
+  // nav.js (loaded with defer from BaseLayout) injects #nav after this
+  // script runs. Re-resolve on every callback so we hit the real element.
+  const getNav = () => document.getElementById('nav');
   let lastScroll = 0;
 
   ScrollTrigger.create({
     onUpdate: (self) => {
       const s = self.scroll();
-      if (s > lastScroll && s > 100) nav.classList.add('nav--hidden');
-      else nav.classList.remove('nav--hidden');
+      if (s > lastScroll && s > 100) getNav()?.classList.add('nav--hidden');
+      else getNav()?.classList.remove('nav--hidden');
       lastScroll = s;
     }
   });
@@ -107,8 +109,8 @@ gsap.ticker.lagSmoothing(0);
   ScrollTrigger.create({
     trigger: document.getElementById('heroSection'),
     start: 'bottom 60px',
-    onEnter: () => nav.classList.add('nav--solid'),
-    onLeaveBack: () => nav.classList.remove('nav--solid'),
+    onEnter: () => getNav()?.classList.add('nav--solid'),
+    onLeaveBack: () => getNav()?.classList.remove('nav--solid'),
   });
 
   // Dropdown hover open/close + background blur
@@ -1265,8 +1267,8 @@ gsap.ticker.lagSmoothing(0);
   ScrollTrigger.create({
     trigger: hero,
     start: 'bottom 80%',
-    onEnter: () => nav.classList.add('is-visible'),
-    onLeaveBack: () => nav.classList.remove('is-visible'),
+    onEnter: () => getNav()?.classList.add('is-visible'),
+    onLeaveBack: () => getNav()?.classList.remove('is-visible'),
   });
 
   var footer = document.querySelector('footer');
@@ -1274,8 +1276,8 @@ gsap.ticker.lagSmoothing(0);
     ScrollTrigger.create({
       trigger: footer,
       start: 'top 90%',
-      onEnter: () => nav.classList.remove('is-visible'),
-      onLeaveBack: () => nav.classList.add('is-visible'),
+      onEnter: () => getNav()?.classList.remove('is-visible'),
+      onLeaveBack: () => getNav()?.classList.add('is-visible'),
     });
   }
 

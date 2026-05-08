@@ -2,7 +2,7 @@
   const nav = document.getElementById('nav');
   const hero = document.getElementById('heroSection');
   const heroInner = hero ? hero.querySelector('.icp-hero__inner') : null;
-  if (!nav || !hero) return;
+  if (!hero) return;
 
   function check() {
     const heroBottom = hero.getBoundingClientRect().bottom;
@@ -10,8 +10,8 @@
     const scrolled = window.scrollY;
 
     // Nav solid transition
-    if (heroBottom < 60) nav.classList.add('nav--solid');
-    else nav.classList.remove('nav--solid');
+    if (heroBottom < 60) document.getElementById('nav')?.classList.add('nav--solid');
+    else document.getElementById('nav')?.classList.remove('nav--solid');
 
     // Hero content fade on scroll
     if (heroInner) {
