@@ -22,7 +22,7 @@ export const siteSettings = defineType({
       type: "array",
       group: "nav",
       description:
-        "Top-level nav dropdowns (e.g. Platform, Extend, By Role, Ecosystem, Learn, Connect). Each group contains links shown when hovered.",
+        "Top-level nav dropdowns (Product / Solutions / Resources). Each has 2 column groups + a right-side promo card.",
       of: [
         {
           type: "object",
@@ -30,26 +30,72 @@ export const siteSettings = defineType({
           fields: [
             defineField({ name: "label", type: "string", validation: (R) => R.required() }),
             defineField({
-              name: "links",
+              name: "columns",
+              title: "Column groups",
               type: "array",
+              description: "2 columns inside the dropdown — each has an uppercase label and 2-3 links.",
+              of: [
+                {
+                  type: "object",
+                  name: "navColumn",
+                  fields: [
+                    defineField({ name: "label", type: "string", description: "Small uppercase label above the links (e.g. \"Platform\", \"Extend\", \"By role\")." }),
+                    defineField({
+                      name: "links",
+                      type: "array",
+                      of: [
+                        {
+                          type: "object",
+                          name: "navLink",
+                          fields: [
+                            defineField({ name: "label", type: "string", validation: (R) => R.required() }),
+                            defineField({ name: "description", type: "string" }),
+                            defineField({ name: "href", type: "string", validation: (R) => R.required() }),
+                          ],
+                          preview: { select: { title: "label", subtitle: "href" } },
+                        },
+                      ],
+                    }),
+                  ],
+                  preview: { select: { title: "label" } },
+                },
+              ],
+              validation: (Rule) => Rule.max(4),
+            }),
+            defineField({
+              name: "links",
+              title: "Legacy flat links",
+              type: "array",
+              hidden: true,
               of: [
                 {
                   type: "object",
                   name: "navLink",
                   fields: [
-                    defineField({ name: "label", type: "string", validation: (R) => R.required() }),
+                    defineField({ name: "label", type: "string" }),
                     defineField({ name: "description", type: "string" }),
-                    defineField({ name: "href", type: "string", validation: (R) => R.required() }),
+                    defineField({ name: "href", type: "string" }),
                   ],
-                  preview: { select: { title: "label", subtitle: "href" } },
                 },
               ],
             }),
             defineField({
-              name: "featuredCard",
-              title: "Featured card (optional)",
+              name: "promoCard",
+              title: "Promo card (right side of dropdown)",
               type: "object",
-              description: "Right-side highlighted card in the dropdown.",
+              fields: [
+                defineField({ name: "kicker", type: "string", description: "Small uppercase label (e.g. \"Get started\")." }),
+                defineField({ name: "headline", type: "string" }),
+                defineField({ name: "body", type: "text", rows: 2 }),
+                defineField({ name: "ctaLabel", type: "string" }),
+                defineField({ name: "ctaHref", type: "string" }),
+              ],
+            }),
+            defineField({
+              name: "featuredCard",
+              title: "Legacy featured card",
+              type: "object",
+              hidden: true,
               fields: [
                 defineField({ name: "label", type: "string" }),
                 defineField({ name: "body", type: "text", rows: 2 }),
@@ -60,6 +106,37 @@ export const siteSettings = defineType({
           ],
           preview: { select: { title: "label" } },
         },
+      ],
+    }),
+    defineField({
+      name: "navStatus",
+      title: "Nav status indicator",
+      type: "object",
+      group: "nav",
+      description: "Small dot + label on the left side of the nav (e.g. \"Operational\").",
+      fields: [
+        defineField({ name: "label", type: "string", initialValue: "Operational" }),
+        defineField({ name: "href", type: "string", initialValue: "#status" }),
+      ],
+    }),
+    defineField({
+      name: "navPricingLink",
+      title: "Nav pricing link (right side)",
+      type: "object",
+      group: "nav",
+      fields: [
+        defineField({ name: "label", type: "string", initialValue: "Pricing" }),
+        defineField({ name: "href", type: "string", initialValue: "/pricing" }),
+      ],
+    }),
+    defineField({
+      name: "navLogin",
+      title: "Nav login link (right side)",
+      type: "object",
+      group: "nav",
+      fields: [
+        defineField({ name: "label", type: "string", initialValue: "Login" }),
+        defineField({ name: "href", type: "string" }),
       ],
     }),
     defineField({

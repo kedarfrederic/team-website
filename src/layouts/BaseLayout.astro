@@ -4,6 +4,7 @@ import { getSiteSettings } from "../lib/queries";
 import { getClient, isPreviewRequest, urlFor } from "../lib/sanity";
 import VisualEditing from "../components/VisualEditing.astro";
 import Footer from "../components/Footer.astro";
+import Nav from "../components/Nav.astro";
 
 interface SeoBlock {
   metaTitle?: string;
@@ -98,7 +99,9 @@ const canonicalUrl =
   */}
   <script is:inline set:html={`window.__TEAM_SITE__ = ${JSON.stringify(settings ?? null)};`} />
 
-  <div id="team-nav" data-theme={navTheme}></div>
+  <div id="team-nav" data-theme={navTheme}>
+    <Nav settings={settings} theme={navTheme} />
+  </div>
 
   <main>
     <slot />

@@ -650,12 +650,19 @@ body.nav-mobile-lock{overflow:hidden}
 </div>
 `;
 
-  // ─── Inject nav ───
+  // ─── Inject nav (skip if Astro already rendered one server-side) ───
+  // Astro's Nav.astro renders the <nav id="nav"> server-side so stega-encoded
+  // labels are picked up by the Visual Editing overlay. When that's already
+  // in the page we keep all of this script's interaction logic but skip
+  // overwriting the DOM (which would strip stega encoding).
   const container = document.getElementById('team-nav');
-  if (container) {
-    container.innerHTML = navHTML;
-  } else {
-    document.body.insertAdjacentHTML('afterbegin', navHTML);
+  const existingNav = document.getElementById('nav');
+  if (!existingNav) {
+    if (container) {
+      container.innerHTML = navHTML;
+    } else {
+      document.body.insertAdjacentHTML('afterbegin', navHTML);
+    }
   }
 
   // If theme is "light", start with nav--solid — UNLESS the page has

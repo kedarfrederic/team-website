@@ -112,56 +112,78 @@ docs.push({
   _type: "siteSettings",
   navGroups: [
     {
-      _key: "platform",
+      _key: "product",
       _type: "navGroup",
-      label: "Platform",
-      links: [
-        { _key: "orchestration", _type: "navLink", label: "Release Orchestration", description: "Plan, coordinate, ship every release", href: "/orchestration" },
-        { _key: "intelligence", _type: "navLink", label: "Release Intelligence", description: "AI-powered context for every decision", href: "/intelligence" },
-        { _key: "enterprise", _type: "navLink", label: "Enterprise", description: "For labels and music companies at scale", href: "/enterprise" },
-        { _key: "security", _type: "navLink", label: "Security", description: "How we protect your IP", href: "/security" },
+      label: "Product",
+      columns: [
+        { _key: "platform", _type: "navColumn", label: "Platform", links: [
+          { _key: "orchestration", _type: "navLink", label: "Release Orchestration", description: "Plan, coordinate, and execute every release.", href: "/orchestration" },
+          { _key: "intelligence", _type: "navLink", label: "Release Intelligence", description: "AI-powered insights across your release cycle.", href: "/intelligence" },
+        ]},
+        { _key: "extend", _type: "navColumn", label: "Extend", links: [
+          { _key: "integrations", _type: "navLink", label: "Integrations", description: "Connect Team to your existing tools.", href: "/integrations" },
+          { _key: "security", _type: "navLink", label: "Security", description: "Your data protected. Your music safe.", href: "/security" },
+        ]},
       ],
+      promoCard: {
+        kicker: "Get started",
+        headline: "See Team in action.",
+        body: "Watch a guided walkthrough with one of our specialists — tailored to your workflow.",
+        ctaLabel: "Book a demo",
+        ctaHref: "/demo",
+      },
     },
     {
-      _key: "extend",
+      _key: "solutions",
       _type: "navGroup",
-      label: "Extend",
-      links: [
-        { _key: "integrations", _type: "navLink", label: "Integrations", description: "Connect Team to your existing tools", href: "/integrations" },
+      label: "Solutions",
+      columns: [
+        { _key: "byrole", _type: "navColumn", label: "By role", links: [
+          { _key: "labels", _type: "navLink", label: "For Labels", description: "Manage every release across your roster.", href: "/for-labels" },
+          { _key: "managers", _type: "navLink", label: "For Managers", description: "One view of every artist's rollout.", href: "/for-managers" },
+          { _key: "artists", _type: "navLink", label: "For Artists", description: "Stay in the loop on your release.", href: "/for-artists" },
+        ]},
+        { _key: "ecosystem", _type: "navColumn", label: "Ecosystem", links: [
+          { _key: "partners", _type: "navLink", label: "For Partners", description: "Marketing, distributors, and service providers.", href: "/for-partners" },
+          { _key: "enterprise", _type: "navLink", label: "For Enterprise", description: "Custom deployments for major labels and large rosters.", href: "/enterprise" },
+        ]},
       ],
+      promoCard: {
+        kicker: "Try it free",
+        headline: "Start free for 30 days.",
+        body: "No credit card required. Full access to Team on your first three releases.",
+        ctaLabel: "Start free",
+        ctaHref: "/onboarding",
+      },
     },
     {
-      _key: "byrole",
+      _key: "resources",
       _type: "navGroup",
-      label: "By Role",
-      links: [
-        { _key: "artists", _type: "navLink", label: "For Artists", description: "Solo artists shipping their own releases", href: "/for-artists" },
-        { _key: "managers", _type: "navLink", label: "For Managers", description: "Roster-wide rollout coordination", href: "/for-managers" },
-        { _key: "labels", _type: "navLink", label: "For Labels", description: "Scale your catalog without scaling headcount", href: "/for-labels" },
-        { _key: "partners", _type: "navLink", label: "For Partners", description: "PR, distribution, marketing agencies", href: "/for-partners" },
+      label: "Resources",
+      columns: [
+        { _key: "learn", _type: "navColumn", label: "Learn", links: [
+          { _key: "insights", _type: "navLink", label: "Insights", description: "Release strategy, playbooks, and deep dives.", href: "/insights" },
+          { _key: "changelog", _type: "navLink", label: "Changelog", description: "What's new and shipping in Team.", href: "/changelog" },
+          { _key: "about", _type: "navLink", label: "About Team", description: "Why we built the OS for music releases.", href: "/about" },
+        ]},
+        { _key: "connect", _type: "navColumn", label: "Connect", links: [
+          { _key: "demo", _type: "navLink", label: "Book a Demo", description: "Walk through Team with a specialist.", href: "/demo" },
+          { _key: "contact", _type: "navLink", label: "Contact Us", description: "Talk to sales, support, or partnerships.", href: "/contact" },
+        ]},
       ],
-    },
-    {
-      _key: "learn",
-      _type: "navGroup",
-      label: "Learn",
-      links: [
-        { _key: "insights", _type: "navLink", label: "Insights", description: "Strategy, product, industry takes", href: "/insights" },
-        { _key: "changelog", _type: "navLink", label: "Changelog", description: "What's new in Team", href: "/changelog" },
-        { _key: "about", _type: "navLink", label: "About", description: "The team behind Team", href: "/about" },
-      ],
-    },
-    {
-      _key: "connect",
-      _type: "navGroup",
-      label: "Connect",
-      links: [
-        { _key: "demo", _type: "navLink", label: "Book a demo", description: "See Team in action", href: "/demo" },
-        { _key: "contact", _type: "navLink", label: "Contact", description: "Talk to the team", href: "/contact" },
-      ],
+      promoCard: {
+        kicker: "Questions?",
+        headline: "Talk to the team.",
+        body: "We reply to every message personally — usually within a few hours during business days.",
+        ctaLabel: "Get in touch",
+        ctaHref: "/contact",
+      },
     },
   ],
-  navPrimaryCta: cta("Start free", "https://www.teamrollouts.com/sign-up?plan=pro&period=yearly"),
+  navStatus: { label: "Operational", href: "#status" },
+  navPricingLink: { label: "Pricing", href: "/pricing" },
+  navLogin: { label: "Login", href: "https://www.teamrollouts.com/sign-in" },
+  navPrimaryCta: cta("Start free", "/onboarding"),
   navSecondaryCta: cta("Login", "https://www.teamrollouts.com/sign-in"),
 
   footerNewsletter: {

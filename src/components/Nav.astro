@@ -1,0 +1,238 @@
+---
+/**
+ * Server-rendered navigation. Replaces the legacy
+ * /components/nav.js client-side innerHTML injection so every label,
+ * link description, promo card, status indicator, CTA, and mobile-menu
+ * label gets stega encoding for click-to-edit pencils.
+ *
+ * DOM ids and class names match nav.js verbatim (nav, navBurger,
+ * navMobile, navMobileOverlay, navMobileMain, navMobileSub-*, etc.)
+ * so the existing nav.js script — which still runs to drive the
+ * dropdown/mobile interactions — keeps working untouched.
+ */
+
+interface NavLink { label?: string; description?: string; href?: string }
+interface NavColumn { label?: string; links?: NavLink[] }
+interface NavPromo { kicker?: string; headline?: string; body?: string; ctaLabel?: string; ctaHref?: string }
+interface NavGroup {
+  label?: string;
+  columns?: NavColumn[];
+  links?: NavLink[]; // legacy
+  promoCard?: NavPromo;
+}
+interface Props {
+  settings?: {
+    navGroups?: NavGroup[];
+    navStatus?: { label?: string; href?: string };
+    navPricingLink?: { label?: string; href?: string };
+    navLogin?: { label?: string; href?: string };
+    navPrimaryCta?: { label?: string; href?: string };
+  };
+  theme?: "dark" | "light";
+}
+
+const { settings, theme = "light" } = Astro.props;
+
+const DEFAULT_GROUPS: NavGroup[] = [
+  {
+    label: "Product",
+    columns: [
+      { label: "Platform", links: [
+        { label: "Release Orchestration", description: "Plan, coordinate, and execute every release.", href: "/orchestration" },
+        { label: "Release Intelligence", description: "AI-powered insights across your release cycle.", href: "/intelligence" },
+      ]},
+      { label: "Extend", links: [
+        { label: "Integrations", description: "Connect Team to your existing tools.", href: "/integrations" },
+        { label: "Security", description: "Your data protected. Your music safe.", href: "/security" },
+      ]},
+    ],
+    promoCard: { kicker: "Get started", headline: "See Team in action.", body: "Watch a guided walkthrough with one of our specialists — tailored to your workflow.", ctaLabel: "Book a demo", ctaHref: "/demo" },
+  },
+  {
+    label: "Solutions",
+    columns: [
+      { label: "By role", links: [
+        { label: "For Labels", description: "Manage every release across your roster.", href: "/for-labels" },
+        { label: "For Managers", description: "One view of every artist's rollout.", href: "/for-managers" },
+        { label: "For Artists", description: "Stay in the loop on your release.", href: "/for-artists" },
+      ]},
+      { label: "Ecosystem", links: [
+        { label: "For Partners", description: "Marketing, distributors, and service providers.", href: "/for-partners" },
+        { label: "For Enterprise", description: "Custom deployments for major labels and large rosters.", href: "/enterprise" },
+      ]},
+    ],
+    promoCard: { kicker: "Try it free", headline: "Start free for 30 days.", body: "No credit card required. Full access to Team on your first three releases.", ctaLabel: "Start free", ctaHref: "/onboarding" },
+  },
+  {
+    label: "Resources",
+    columns: [
+      { label: "Learn", links: [
+        { label: "Insights", description: "Release strategy, playbooks, and deep dives.", href: "/insights" },
+        { label: "Changelog", description: "What's new and shipping in Team.", href: "/changelog" },
+        { label: "About Team", description: "Why we built the OS for music releases.", href: "/about" },
+      ]},
+      { label: "Connect", links: [
+        { label: "Book a Demo", description: "Walk through Team with a specialist.", href: "/demo" },
+        { label: "Contact Us", description: "Talk to sales, support, or partnerships.", href: "/contact" },
+      ]},
+    ],
+    promoCard: { kicker: "Questions?", headline: "Talk to the team.", body: "We reply to every message personally — usually within a few hours during business days.", ctaLabel: "Get in touch", ctaHref: "/contact" },
+  },
+];
+
+const groups = (settings?.navGroups && settings.navGroups.length > 0) ? settings.navGroups : DEFAULT_GROUPS;
+const status = settings?.navStatus ?? { label: "Operational", href: "#status" };
+const pricingLink = settings?.navPricingLink ?? { label: "Pricing", href: "/pricing" };
+const loginLink = settings?.navLogin ?? { label: "Login", href: "https://www.teamrollouts.com/sign-in" };
+const primaryCta = settings?.navPrimaryCta ?? { label: "Start free", href: "/onboarding" };
+
+const TEAM_LOGO = "https://www.teamrollouts.com/Team%20Logo%20Graident%2002%20+%20Black.svg";
+
+function getCols(g: NavGroup): NavColumn[] {
+  if (g.columns && g.columns.length > 0) return g.columns;
+  // Legacy fallback: flat links list → render as one column
+  if (g.links && g.links.length > 0) return [{ label: g.label ?? "", links: g.links }];
+  return [];
+}
+---
+
+<nav class="nav" id="nav" data-theme={theme}>
+  <div class="nav__pill nav__pill--left">
+    <a href="/" class="nav__logo" style="position:relative">
+      <img class="logo-light" src={TEAM_LOGO} alt="Team" style="height:1.125rem;filter:brightness(0) invert(1)" />
+      <img class="logo-dark" src={TEAM_LOGO} alt="Team" style="height:1.125rem" />
+    </a>
+    <div class="nav__divider"></div>
+
+    {groups.map((g) => {
+      const cols = getCols(g);
+      const promo = g.promoCard ?? {};
+      return (
+        <div class="nav__dropdown" data-dropdown>
+          <a class="nav__link">
+            {g.label} <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 4.5L6 7.5L9 4.5" /></svg>
+          </a>
+          <div class="nav__dropdown-panel">
+            <div class="nav__mega">
+              <div class="nav__mega-cols">
+                {cols.map((c) => (
+                  <div class="nav__mega-col">
+                    {c.label && <div class="nav__mega-col-label">{c.label}</div>}
+                    {(c.links ?? []).map((l) => (
+                      <a href={l.href} class="nav__mega-link">
+                        <div class="nav__mega-link-title">{l.label}</div>
+                        {l.description && <div class="nav__mega-link-desc">{l.description}</div>}
+                      </a>
+                    ))}
+                  </div>
+                ))}
+              </div>
+              {(promo.headline || promo.ctaLabel) && (
+                <div class="nav__mega-promo">
+                  {promo.kicker && <div class="nav__mega-promo-label">{promo.kicker}</div>}
+                  {promo.headline && <h4>{promo.headline}</h4>}
+                  {promo.body && <p>{promo.body}</p>}
+                  {promo.ctaLabel && promo.ctaHref && (
+                    <a href={promo.ctaHref} class="nav__mega-promo-btn">{promo.ctaLabel} →</a>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    })}
+
+    <div class="nav__divider"></div>
+    <a href={status.href} class="nav__status" aria-label="All systems operational">
+      <span class="nav__status-dot"></span>
+      <span>{status.label}</span>
+    </a>
+  </div>
+  <div class="nav__pill nav__pill--right">
+    <a href={pricingLink.href} class="nav__link">{pricingLink.label}</a>
+    <div class="nav__divider"></div>
+    <a href={loginLink.href} class="nav__login">{loginLink.label}</a>
+    <a href={primaryCta.href} class="nav__cta">{primaryCta.label}</a>
+    <button class="nav__burger" id="navBurger" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="nav-blur-overlay" id="navBlurOverlay"></div>
+
+<!-- Mobile menu -->
+<div class="nav-mobile-overlay" id="navMobileOverlay"></div>
+<div class="nav-mobile" id="navMobile" aria-hidden="true" role="dialog" aria-label="Site menu">
+  <div class="nav-mobile__header">
+    <a href="/" class="nav-mobile__logo">
+      <img src={TEAM_LOGO} alt="Team" />
+    </a>
+    <button class="nav-mobile__close" id="navMobileClose" aria-label="Close menu">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18" /><path d="M6 6l12 12" /></svg>
+    </button>
+  </div>
+  <div class="nav-mobile__panels">
+    <div class="nav-mobile__panel nav-mobile__panel--main" id="navMobileMain">
+      <div class="nav-mobile__list">
+        {groups.map((g, i) => (
+          <button class="nav-mobile__item" data-mobile-open={`g${i}`}>
+            {g.label}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6" /></svg>
+          </button>
+        ))}
+        <a href={pricingLink.href} class="nav-mobile__item">{pricingLink.label}</a>
+      </div>
+      <a href={status.href} class="nav-mobile__status" style="text-decoration:none">
+        <span class="nav__status-dot"></span>
+        <span>All systems operational</span>
+      </a>
+    </div>
+    {groups.map((g, i) => {
+      const cols = getCols(g);
+      const promo = g.promoCard ?? {};
+      return (
+        <div class="nav-mobile__panel nav-mobile__panel--sub" id={`navMobileSub-g${i}`}>
+          <div class="nav-mobile__sub-header">
+            <button class="nav-mobile__back" data-mobile-back aria-label="Back">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 18l-6-6 6-6" /></svg>
+            </button>
+            <span class="nav-mobile__sub-title">{g.label}</span>
+          </div>
+          <div class="nav-mobile__sub-content">
+            {cols.map((c, ci) => (
+              <>
+                {ci > 0 && <div class="nav-mobile__divider"></div>}
+                <div class="nav-mobile__section">
+                  {c.label && <div class="nav-mobile__section-label">{c.label}</div>}
+                  {(c.links ?? []).map((l) => (
+                    <a href={l.href}>
+                      {l.label}
+                      {l.description && <span class="nav-mobile__link-desc">{l.description}</span>}
+                    </a>
+                  ))}
+                </div>
+              </>
+            ))}
+            {(promo.headline || promo.ctaLabel) && (
+              <div class="nav-mobile__promo">
+                {promo.kicker && <div class="nav-mobile__promo-label">{promo.kicker}</div>}
+                {promo.headline && <h4>{promo.headline}</h4>}
+                {promo.body && <p>{promo.body}</p>}
+                {promo.ctaLabel && promo.ctaHref && (
+                  <a href={promo.ctaHref} class="nav-mobile__promo-btn">{promo.ctaLabel} →</a>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    })}
+  </div>
+  <div class="nav-mobile__footer">
+    <a href={loginLink.href} class="nav-mobile__btn nav-mobile__btn--ghost">{loginLink.label}</a>
+    <a href={primaryCta.href} class="nav-mobile__btn nav-mobile__btn--primary">{primaryCta.label}</a>
+  </div>
+</div>
+
+<link rel="stylesheet" href="/components/nav.css" />
