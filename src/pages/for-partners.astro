@@ -20,7 +20,7 @@ const bgImageUrl = hero?.backgroundImage?.asset?._ref
   title={hero?.headline ?? "For Partners"}
   description="Your clients are already on Team. Now you can be too."
   seo={page?.seo}
-  navTheme="dark"
+  navTheme={bgImageUrl ? "dark" : "light"}
 >
   {/* Hero — same template as ICP */}
   <section class="partner-hero" style={bgImageUrl ? `background-image:linear-gradient(180deg,rgba(0,0,0,0.45),rgba(0,0,0,0.55)),url(${bgImageUrl});` : undefined}>

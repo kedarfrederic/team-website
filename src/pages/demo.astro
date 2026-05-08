@@ -11,7 +11,7 @@ const fallback = page?.emailFallbackText;
 const videoSrc = page?.backgroundVideo?.src;
 ---
 
-<BaseLayout title={headline} description={subhead} seo={page?.seo} navTheme="dark">
+<BaseLayout title={headline} description={subhead} seo={page?.seo} navTheme={videoSrc ? "dark" : "light"}>
   <section class="demo">
     {videoSrc && (
       <video class="demo__bg-video" autoplay loop muted playsinline preload="metadata">

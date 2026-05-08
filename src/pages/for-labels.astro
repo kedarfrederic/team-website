@@ -4,13 +4,14 @@ import IcpPageContent from "../components/pages/IcpPageContent.astro";
 import { getIcpPage } from "../lib/queries";
 
 const page = await getIcpPage("forLabelsPage");
+const hasHeroBg = !!page?.hero?.backgroundImage?.asset?._ref;
 ---
 
 <BaseLayout
   title={page?.hero?.headline ?? "For Labels"}
   description="Scale your roster. Not your headcount."
   seo={page?.seo}
-  navTheme="dark"
+  navTheme={hasHeroBg ? "dark" : "light"}
 >
   <IcpPageContent page={page} fallbackTitle="For Labels" />
 </BaseLayout>

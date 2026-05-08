@@ -4,13 +4,14 @@ import IcpPageContent from "../components/pages/IcpPageContent.astro";
 import { getIcpPage } from "../lib/queries";
 
 const page = await getIcpPage("forArtistsPage");
+const hasHeroBg = !!page?.hero?.backgroundImage?.asset?._ref;
 ---
 
 <BaseLayout
   title={page?.hero?.headline ?? "For Artists"}
   description="Focus on your music. Team handles the rest."
   seo={page?.seo}
-  navTheme="dark"
+  navTheme={hasHeroBg ? "dark" : "light"}
 >
   <IcpPageContent page={page} fallbackTitle="For Artists" />
 </BaseLayout>
