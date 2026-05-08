@@ -1,21 +1,21 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import IcpPage from "../components/pages/IcpPage.astro";
 import { getIcpPage } from "../lib/queries";
-// @ts-expect-error — ?raw modifier returns string at build time
-import bodyHtml from "../lib/for-labels-body.html?raw";
+import { getClient } from "../lib/sanity";
 
-const page = await getIcpPage("forLabelsPage");
+const page = await getIcpPage("forLabelsPage", getClient(Astro));
 ---
 
 <BaseLayout
-  title={page?.hero?.headline ?? "For Labels"}
-  description="Scale your roster. Not your headcount."
+  title={page?.hero?.headlineTop ?? page?.hero?.headline ?? "For Labels"}
+  description={page?.hero?.subhead ?? "Scale your roster. Not your headcount."}
   seo={page?.seo}
   navTheme="dark"
 >
   <link slot="head" rel="stylesheet" href="/components/for-labels-inline.css" />
 
-  <Fragment set:html={bodyHtml} />
+  <IcpPage page={page} icpKey="labels" />
 
   <script is:inline src="/components/for-labels-inline.js"></script>
 </BaseLayout>

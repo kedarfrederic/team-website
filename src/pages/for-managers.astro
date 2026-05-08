@@ -1,21 +1,21 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import IcpPage from "../components/pages/IcpPage.astro";
 import { getIcpPage } from "../lib/queries";
-// @ts-expect-error — ?raw modifier returns string at build time
-import bodyHtml from "../lib/for-managers-body.html?raw";
+import { getClient } from "../lib/sanity";
 
-const page = await getIcpPage("forManagersPage");
+const page = await getIcpPage("forManagersPage", getClient(Astro));
 ---
 
 <BaseLayout
-  title={page?.hero?.headline ?? "For Managers"}
-  description="Every artist. Every release. One dashboard."
+  title={page?.hero?.headlineTop ?? page?.hero?.headline ?? "For Managers"}
+  description={page?.hero?.subhead ?? "Every artist. Every release. One dashboard."}
   seo={page?.seo}
   navTheme="dark"
 >
   <link slot="head" rel="stylesheet" href="/components/for-managers-inline.css" />
 
-  <Fragment set:html={bodyHtml} />
+  <IcpPage page={page} icpKey="managers" />
 
   <script is:inline src="/components/for-managers-inline.js"></script>
 </BaseLayout>

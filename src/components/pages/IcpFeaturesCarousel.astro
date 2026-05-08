@@ -1,0 +1,169 @@
+---
+/**
+ * Features carousel block shared by the three ICP pages.
+ *
+ * Each feature card has editable title + description in Sanity. The mock
+ * preview panels (timeline / tasks / ai / rollout / smart-links / collab)
+ * are hardcoded product illustrations — identical across all ICPs because
+ * they show what the product actually does, not ICP-specific copy.
+ */
+
+interface FeatureCard {
+  title: string;
+  description: string;
+}
+
+interface Props {
+  headline?: string;
+  subhead?: string;
+  cards?: FeatureCard[];
+}
+
+const DEFAULT_CARDS: FeatureCard[] = [
+  { title: "Release Timeline", description: "Plan your release step by step. See every deadline at a glance and adjust as things change." },
+  { title: "Task Management", description: "Know exactly what you need to do and when. Check off tasks as you go." },
+  { title: "TeamMate AI", description: "Ask questions about your release, get suggestions on timing, and let AI draft your press bio." },
+  { title: "Rollout Plan", description: "Auto-generate a release plan based on your genre, timeline, and goals." },
+  { title: "Pre-save & Smart Links", description: "Create pre-save campaigns and smart links that drive fans to your music everywhere." },
+  { title: "Collaboration", description: "Working with a manager or designer? Invite them in. They see what they need — nothing more, nothing less." },
+];
+
+const MOCK_KEYS = ["timeline", "tasks", "ai", "rollout", "links", "collab"] as const;
+
+function escapeHtml(s: string): string {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function mockHtmlFor(key: string, label: string): string {
+  const labelTag = `<div class="features-preview__panel-label">${escapeHtml(label)}</div>`;
+  if (key === "timeline") {
+    return (
+      `<div class="fp-timeline">` +
+      `<div class="fp-timeline__row"><div class="fp-timeline__label">Writing</div><div class="fp-timeline__track"><div class="fp-timeline__bar" style="left:0%;width:30%;background:linear-gradient(90deg,#F56002,#ff8533)"></div></div></div>` +
+      `<div class="fp-timeline__row"><div class="fp-timeline__label">Recording</div><div class="fp-timeline__track"><div class="fp-timeline__bar" style="left:20%;width:35%;background:linear-gradient(90deg,#3B82F6,#60a5fa)"></div></div></div>` +
+      `<div class="fp-timeline__row"><div class="fp-timeline__label">Mix</div><div class="fp-timeline__track"><div class="fp-timeline__bar" style="left:45%;width:20%;background:linear-gradient(90deg,#8B5CF6,#a78bfa)"></div></div></div>` +
+      `<div class="fp-timeline__row"><div class="fp-timeline__label">Promo</div><div class="fp-timeline__track"><div class="fp-timeline__bar" style="left:55%;width:30%;background:linear-gradient(90deg,#EC4899,#f472b6)"></div></div></div>` +
+      `<div class="fp-timeline__row"><div class="fp-timeline__label">Launch</div><div class="fp-timeline__track"><div class="fp-timeline__bar" style="left:80%;width:15%;background:linear-gradient(90deg,#FAD604,#fbe046)"></div></div></div>` +
+      `</div>${labelTag}`
+    );
+  }
+  if (key === "rollout") {
+    return (
+      `<div class="fp-tasks">` +
+      `<div class="fp-tasks__row"><div class="fp-tasks__check fp-tasks__check--done"></div><div class="fp-tasks__label fp-tasks__label--done">Pre-save campaign</div></div>` +
+      `<div class="fp-tasks__row"><div class="fp-tasks__check fp-tasks__check--done"></div><div class="fp-tasks__label fp-tasks__label--done">Press outreach</div></div>` +
+      `<div class="fp-tasks__row"><div class="fp-tasks__check"></div><div class="fp-tasks__label">Social content plan</div></div>` +
+      `<div class="fp-tasks__row"><div class="fp-tasks__check"></div><div class="fp-tasks__label">Playlist pitching</div></div>` +
+      `<div class="fp-tasks__row"><div class="fp-tasks__check"></div><div class="fp-tasks__label">Release day posts</div></div>` +
+      `</div>${labelTag}`
+    );
+  }
+  if (key === "tasks") {
+    return (
+      `<div class="fp-tasks">` +
+      `<div class="fp-tasks__row"><div class="fp-tasks__check fp-tasks__check--done"></div><div class="fp-tasks__label fp-tasks__label--done">Record final vocals</div><div class="fp-tasks__assignee" style="background:#8B5CF6">SR</div></div>` +
+      `<div class="fp-tasks__row"><div class="fp-tasks__check fp-tasks__check--done"></div><div class="fp-tasks__label fp-tasks__label--done">Approve album artwork</div><div class="fp-tasks__assignee" style="background:#3B82F6">TL</div></div>` +
+      `<div class="fp-tasks__row"><div class="fp-tasks__check"></div><div class="fp-tasks__label">Submit to distributor</div><div class="fp-tasks__assignee" style="background:#8B5CF6">SR</div></div>` +
+      `<div class="fp-tasks__row"><div class="fp-tasks__check"></div><div class="fp-tasks__label">Post teaser clip</div><div class="fp-tasks__assignee" style="background:#EC4899">AR</div></div>` +
+      `</div>${labelTag}`
+    );
+  }
+  if (key === "ai") {
+    return (
+      `<div class="fp-chat">` +
+      `<div class="fp-chat__row fp-chat__row--user"><div class="fp-chat__bubble fp-chat__bubble--user">When should I start promoting my single?</div></div>` +
+      `<div class="fp-chat__row"><div class="fp-chat__avatar" style="background:transparent;padding:0"><img src="/assets/teammate-avatar-round.png" alt="TeamMate" style="width:100%;height:100%;border-radius:50%;object-fit:cover"></div><div class="fp-chat__bubble fp-chat__bubble--ai">Based on your May 15 release date, I'd recommend starting your social rollout 3 weeks out — around April 24. Want me to create a content schedule?</div></div>` +
+      `<div class="fp-chat__input">Ask TeamMate anything...</div>` +
+      `</div>${labelTag}`
+    );
+  }
+  if (key === "links") {
+    return (
+      `<div class="fp-report">` +
+      `<div class="fp-report__header"><div class="fp-report__header-title">team.link/nova-golden</div><div class="fp-report__header-date">Smart Link</div></div>` +
+      `<div class="fp-report__stats">` +
+      `<div class="fp-report__stat"><div class="fp-report__stat-value">1,247</div><div class="fp-report__stat-label">Clicks</div></div>` +
+      `<div class="fp-report__stat"><div class="fp-report__stat-value">892</div><div class="fp-report__stat-label">Pre-saves</div></div>` +
+      `<div class="fp-report__stat"><div class="fp-report__stat-value">64%</div><div class="fp-report__stat-label">Spotify</div></div>` +
+      `</div></div>${labelTag}`
+    );
+  }
+  // collab
+  return (
+    `<div class="mock-collab">` +
+    `<div class="mock-collab__row"><div class="mock-collab__avatar" style="background:#8B5CF6">SR</div><div class="mock-collab__task">Review mix notes</div><div class="mock-collab__check mock-collab__check--done"></div></div>` +
+    `<div class="mock-collab__row"><div class="mock-collab__avatar" style="background:#3B82F6">TL</div><div class="mock-collab__task">Upload cover artwork</div><div class="mock-collab__check"></div></div>` +
+    `<div class="mock-collab__row"><div class="mock-collab__avatar" style="background:#EC4899">AR</div><div class="mock-collab__task">Draft social captions</div><div class="mock-collab__check"></div></div>` +
+    `</div>${labelTag}`
+  );
+}
+
+const { headline = "Everything you need to release with confidence", subhead = "From first idea to release day and beyond", cards } = Astro.props;
+const featureCards: FeatureCard[] =
+  Array.isArray(cards) && cards.length > 0 ? cards : DEFAULT_CARDS;
+const renderCards = featureCards.slice(0, 6);
+while (renderCards.length < 6) {
+  renderCards.push(DEFAULT_CARDS[renderCards.length]);
+}
+---
+
+<section class="features-section" id="featuresSection">
+  <div class="features-section__inner">
+    <div class="features-section__header">
+      <h2>{headline}</h2>
+    </div>
+    <p class="features-section__sub">{subhead}</p>
+
+    <div class="features-spotlight">
+      <div class="features-list" role="tablist">
+        {renderCards.map((card, i) => {
+          const key = MOCK_KEYS[i] ?? `feature${i}`;
+          return (
+            <button
+              class={`feature-card ${i === 0 ? "is-active" : ""}`}
+              data-feature={key}
+              role="tab"
+              aria-selected={i === 0 ? "true" : "false"}
+            >
+              <div class="feature-card__title"><span class="feature-card__marker"></span>{card.title}</div>
+              <div class="feature-card__desc">{card.description}</div>
+              <div class="feature-card__preview-mobile">
+                <div class="features-preview">
+                  <div class="features-preview__panel is-active" set:html={mockHtmlFor(key, card.title)} />
+                </div>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+
+      <div class="features-preview desktop-preview" aria-hidden="true">
+        {renderCards.map((card, i) => {
+          const key = MOCK_KEYS[i] ?? `feature${i}`;
+          return (
+            <div class={`features-preview__panel ${i === 0 ? "is-active" : ""}`} data-feature={key} set:html={mockHtmlFor(key, card.title)} />
+          );
+        })}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  document.querySelectorAll(".features-section .feature-card").forEach(function (card) {
+    card.addEventListener("click", function () {
+      var key = card.getAttribute("data-feature");
+      card.parentElement.querySelectorAll(".feature-card").forEach(function (c) {
+        c.classList.remove("is-active");
+        c.setAttribute("aria-selected", "false");
+      });
+      card.classList.add("is-active");
+      card.setAttribute("aria-selected", "true");
+      document
+        .querySelectorAll(".features-section .desktop-preview .features-preview__panel")
+        .forEach(function (p) {
+          p.classList.toggle("is-active", p.getAttribute("data-feature") === key);
+        });
+    });
+  });
+</script>

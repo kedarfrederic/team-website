@@ -1,0 +1,338 @@
+---
+/**
+ * Shared renderer for the three ICP pages (for-artists, for-labels,
+ * for-managers). Every text node, CTA, link, hero image, and pain-row
+ * piece is bound to the matching `icpPage` Sanity document. Mock product
+ * visualizations (Gantt charts, chat panels, smart-link reports) are
+ * hardcoded fixtures — they're product illustrations, not editable
+ * marketing assets, and are identical across all three ICPs.
+ *
+ * Per-ICP fallback copy is provided so each page renders fully even when
+ * the Sanity doc is empty. Authoring a real doc just overrides the
+ * fields that have been filled in.
+ */
+
+import SplitHeadline from "../SplitHeadline.astro";
+import IcpFeaturesCarousel from "./IcpFeaturesCarousel.astro";
+import { urlFor } from "../../lib/sanity";
+
+type IcpKey = "artists" | "labels" | "managers";
+
+interface IcpDefaults {
+  active: string;
+  hero: { top: string; bottom: string; subhead: string };
+  pain: { top: string; bottom: string; rows: { pill: string; h: string; p: string; mock: string }[] };
+  features: { headline: string; subhead: string };
+  steps: { top: string; bottom: string; items: { num: string; t: string; d: string }[] };
+  finalCta: { top: string; bottom: string; note: string };
+  others: { title: string; desc: string; href: string }[];
+}
+
+const DEFAULTS: Record<IcpKey, IcpDefaults> = {
+  artists: {
+    active: "/for-artists",
+    hero: {
+      top: "Focus on your music.",
+      bottom: "Team handles the rest.",
+      subhead:
+        "Releases are overwhelming. Between pitching playlists, managing socials, and hitting deadlines, it's easy to lose focus on what matters. Team keeps everything on track so you can create.",
+    },
+    pain: {
+      top: "Stop juggling everything.",
+      bottom: "Start releasing properly.",
+      rows: [
+        { pill: "Your release, simplified", h: "One place for everything instead of scattered notes and apps", p: "Stop juggling spreadsheets, notes apps, and calendar reminders. Team keeps your timeline, tasks, and assets in one place — so nothing gets forgotten.", mock: "gantt" },
+        { pill: "AI-powered guidance", h: "Not sure what to do next? Let AI guide you", p: "Not sure when to post, what to say, or how to pitch? TeamMate AI gives you data-driven recommendations and even writes your press bio, social captions, and rollout plan.", mock: "chat" },
+        { pill: "Never miss a deadline", h: "Automated reminders that keep you on track", p: "Submission deadlines, marketing milestones, release dates — Team reminds you before things slip. And if you do work with a manager or collaborators, they can see exactly what's needed too.", mock: "collab" },
+      ],
+    },
+    features: {
+      headline: "Everything you need to release with confidence",
+      subhead: "From first idea to release day and beyond",
+    },
+    steps: {
+      top: "Up and running",
+      bottom: "in minutes",
+      items: [
+        { num: "1", t: "Sign up for free", d: "Create your account in 30 seconds. No credit card, no commitment. Full access for 30 days." },
+        { num: "2", t: "Set up your release", d: "Add your track details, upload artwork, and set your release date." },
+        { num: "3", t: "Launch your rollout", d: "Follow the plan, check off tasks, and release with confidence." },
+      ],
+    },
+    finalCta: {
+      top: "Ready to take control of",
+      bottom: "your next release?",
+      note: "30-day free trial. No credit card required.",
+    },
+    others: [
+      { title: "For Managers", desc: "A single command center for every rollout across your entire roster.", href: "/for-managers" },
+      { title: "For Labels", desc: "Manage every release across your entire catalog from one central hub.", href: "/for-labels" },
+      { title: "For Partners", desc: "Marketing agencies, distributors, and service providers — connected to the releases that matter.", href: "/for-partners" },
+    ],
+  },
+  managers: {
+    active: "/for-managers",
+    hero: {
+      top: "One dashboard for every artist,",
+      bottom: "every release, every detail.",
+      subhead:
+        "Stop chasing your roster across spreadsheets, group chats, and email threads. Team gives you one command center for every artist, every rollout, and every deliverable.",
+    },
+    pain: {
+      top: "Stop juggling rosters.",
+      bottom: "Start running them.",
+      rows: [
+        { pill: "Roster overview", h: "See every artist, every release, every status — at a glance", p: "No more switching between tools to check who's where. Team gives you a unified view of every rollout your roster has in flight.", mock: "gantt" },
+        { pill: "Built-in collaboration", h: "Bring artists and partners into the same workspace", p: "No more forwarding spreadsheets and copy-pasting updates. Artists, designers, distributors, and labels work alongside you in the same place.", mock: "chat" },
+        { pill: "Reports made simple", h: "Performance summaries that write themselves", p: "Send labels and artists clean weekly digests with streaming, social, and rollout progress — automatically generated and ready to share.", mock: "collab" },
+      ],
+    },
+    features: {
+      headline: "Everything a manager needs to scale a roster",
+      subhead: "From day-of-release coordination to long-term roster strategy",
+    },
+    steps: {
+      top: "From chaos",
+      bottom: "to clarity in days",
+      items: [
+        { num: "1", t: "Add your artists", d: "Bring your full roster into one workspace. Each artist gets their own space; you stay in control." },
+        { num: "2", t: "Build their rollouts", d: "Set up release timelines, tasks, and budgets in minutes. Templates make it fast." },
+        { num: "3", t: "Run the show", d: "Coordinate every release, answer every question, deliver every report — all from one place." },
+      ],
+    },
+    finalCta: {
+      top: "Ready to manage your roster",
+      bottom: "without the chaos?",
+      note: "30-day free trial. No credit card required.",
+    },
+    others: [
+      { title: "For Artists", desc: "Your release, structured. No more winging it.", href: "/for-artists" },
+      { title: "For Labels", desc: "Manage every release across your entire catalog from one central hub.", href: "/for-labels" },
+      { title: "For Partners", desc: "Marketing agencies, distributors, and service providers — connected to the releases that matter.", href: "/for-partners" },
+    ],
+  },
+  labels: {
+    active: "/for-labels",
+    hero: {
+      top: "Scale your release process.",
+      bottom: "Not your headcount.",
+      subhead:
+        "Run every release across every artist on a single platform — with the controls, reporting, and integrations a label needs.",
+    },
+    pain: {
+      top: "Run more releases.",
+      bottom: "With less coordination tax.",
+      rows: [
+        { pill: "Full catalog visibility", h: "Every artist, every release, every status — in one view", p: "Stop reconciling spreadsheets across departments. Team gives you a live, filterable view of your entire pipeline.", mock: "gantt" },
+        { pill: "Department coordination", h: "A&R, marketing, finance — all on the same release", p: "Each team works in their own lane while staying aligned on what's shipping when. No more cross-department surprise.", mock: "chat" },
+        { pill: "Reports built for execs", h: "Roll-ups for leadership without the manual work", p: "Performance, budget burn, milestone status — Team rolls them up automatically into the dashboards your execs already expect.", mock: "collab" },
+      ],
+    },
+    features: {
+      headline: "Everything a label needs to run a roster at scale",
+      subhead: "From release planning to portfolio reporting, in one place",
+    },
+    steps: {
+      top: "From sprawl",
+      bottom: "to a single source of truth",
+      items: [
+        { num: "1", t: "Bring your catalog in", d: "Import your artists and active releases. We migrate from spreadsheets, Asana, Notion — whatever you're on today." },
+        { num: "2", t: "Set up your standards", d: "Templates for release types, departments, approvals. Every release ships on a consistent process." },
+        { num: "3", t: "Run the operation", d: "Coordinate across A&R, marketing, finance, and analytics — and report up to leadership effortlessly." },
+      ],
+    },
+    finalCta: {
+      top: "Ready to scale your label",
+      bottom: "without the chaos?",
+      note: "Talk to us about enterprise pricing.",
+    },
+    others: [
+      { title: "For Artists", desc: "Your release, structured. No more winging it.", href: "/for-artists" },
+      { title: "For Managers", desc: "A single command center for every rollout across your entire roster.", href: "/for-managers" },
+      { title: "For Partners", desc: "Marketing agencies, distributors, and service providers — connected to the releases that matter.", href: "/for-partners" },
+    ],
+  },
+};
+
+interface Props {
+  page: any;
+  icpKey: IcpKey;
+}
+
+const { page, icpKey } = Astro.props;
+const D = DEFAULTS[icpKey];
+
+const hero = page?.hero ?? {};
+function legacyHeadlineTop(s: string | undefined): string | undefined {
+  if (!s) return undefined;
+  const idx = s.indexOf(".");
+  return idx >= 0 ? s.slice(0, idx + 1) : s;
+}
+const heroTop = hero.headlineTop ?? legacyHeadlineTop(hero.headline) ?? D.hero.top;
+const heroBottom = hero.headlineBottom ?? D.hero.bottom;
+const heroSubhead = hero.subhead ?? D.hero.subhead;
+const heroBgUrl = hero.backgroundImage?.asset
+  ? urlFor(hero.backgroundImage).width(2400).quality(85).format("webp").url()
+  : "/assets/hero-bg-new.png";
+const primaryCta = hero.primaryCta ?? { label: "Start your free trial", href: "https://www.teamrollouts.com/sign-up?plan=free&period=yearly" };
+const secondaryCta = hero.secondaryCta ?? { label: "Book a demo", href: "/demo" };
+const pillLabel = hero.pillLabel;
+
+const painSection = page?.painSection ?? {};
+const painTop = painSection.headlineTop ?? D.pain.top;
+const painBottom = painSection.headlineBottom ?? D.pain.bottom;
+const painRows: { pill: string; h: string; p: string; mock: string }[] =
+  Array.isArray(painSection.rows) && painSection.rows.length > 0
+    ? painSection.rows.map((r: any, i: number) => ({
+        pill: r.metadataPill ?? D.pain.rows[i]?.pill ?? "",
+        h: r.headline ?? D.pain.rows[i]?.h ?? "",
+        p: r.body ?? D.pain.rows[i]?.p ?? "",
+        mock: D.pain.rows[i]?.mock ?? "gantt",
+      }))
+    : D.pain.rows;
+
+const features = page?.featureSpotlight ?? {};
+const featuresHeadline = features.headline ?? D.features.headline;
+const featuresSubhead = features.subhead ?? D.features.subhead;
+
+const steps = page?.stepsBlock ?? {};
+const stepsTop = steps.headlineTop ?? D.steps.top;
+const stepsBottom = steps.headlineBottom ?? D.steps.bottom;
+const stepItems =
+  Array.isArray(steps.steps) && steps.steps.length > 0
+    ? steps.steps.map((s: any, i: number) => ({
+        num: s.number ?? D.steps.items[i]?.num ?? String(i + 1),
+        t: s.title ?? D.steps.items[i]?.t ?? "",
+        d: s.description ?? D.steps.items[i]?.d ?? "",
+      }))
+    : D.steps.items;
+
+const finalCta = page?.finalCta ?? {};
+const finalTop = finalCta.headlineTop ?? D.finalCta.top;
+const finalBottom = finalCta.headlineBottom ?? D.finalCta.bottom;
+const finalPrimary = finalCta.primaryCta ?? primaryCta;
+const finalSecondary = finalCta.secondaryCta ?? secondaryCta;
+const finalFootnote = finalCta.footnote ?? D.finalCta.note;
+
+const rolesGrid = page?.rolesGrid ?? {};
+const others =
+  Array.isArray(rolesGrid.cards) && rolesGrid.cards.length > 0
+    ? rolesGrid.cards.map((c: any) => ({ title: c.title, desc: c.description, href: c.href }))
+    : D.others;
+---
+
+<section class="icp-hero" id="heroSection">
+  <div class="icp-hero__bg"><img src={heroBgUrl} alt="" loading="eager" /></div>
+  <div class="icp-hero__overlay"></div>
+  <div class="icp-hero__inner">
+    <div class="icp-nav">
+      <a href="/for-artists" class={`icp-nav__pill ${D.active === "/for-artists" ? "icp-nav__pill--active" : ""}`}>For Artists</a>
+      <a href="/for-managers" class={`icp-nav__pill ${D.active === "/for-managers" ? "icp-nav__pill--active" : ""}`}>For Managers</a>
+      <a href="/for-labels" class={`icp-nav__pill ${D.active === "/for-labels" ? "icp-nav__pill--active" : ""}`}>For Labels</a>
+      <a href="/for-partners" class="icp-nav__pill">For Partners</a>
+    </div>
+    {pillLabel && <span class="hero-pill">{pillLabel}</span>}
+    <SplitHeadline as="h1" top={heroTop} bottom={heroBottom} />
+    <p>{heroSubhead}</p>
+    <div class="icp-hero__buttons">
+      <a href={primaryCta.href} class="btn btn--green">{primaryCta.label}</a>
+      <a href={secondaryCta.href} class="btn btn--outline">{secondaryCta.label}</a>
+    </div>
+  </div>
+</section>
+
+<section class="pain-section">
+  <div class="pain-section__inner">
+    <div class="pain-section__header">
+      <SplitHeadline as="h2" top={painTop} bottom={painBottom} />
+    </div>
+    {painRows.map((row, i) => (
+      <div class={`pain-row ${i % 2 === 1 ? "pain-row--flipped" : ""}`}>
+        <div class="pain-row__text">
+          <span class="metadata-pill">{row.pill}</span>
+          <h3>{row.h}</h3>
+          <p>{row.p}</p>
+        </div>
+        <div class="pain-row__panel">
+          {row.mock === "gantt" && (
+            <div class="mock-gantt">
+              <div class="mock-gantt__row"><div class="mock-gantt__label">Writing</div><div class="mock-gantt__track"><div class="mock-gantt__bar" style="left:0%;width:30%;background:linear-gradient(90deg,#F56002,#ff8533)"></div></div></div>
+              <div class="mock-gantt__row"><div class="mock-gantt__label">Recording</div><div class="mock-gantt__track"><div class="mock-gantt__bar" style="left:20%;width:35%;background:linear-gradient(90deg,#3B82F6,#60a5fa)"></div></div></div>
+              <div class="mock-gantt__row"><div class="mock-gantt__label">Mix</div><div class="mock-gantt__track"><div class="mock-gantt__bar" style="left:45%;width:20%;background:linear-gradient(90deg,#8B5CF6,#a78bfa)"></div></div></div>
+              <div class="mock-gantt__row"><div class="mock-gantt__label">Promo</div><div class="mock-gantt__track"><div class="mock-gantt__bar" style="left:55%;width:30%;background:linear-gradient(90deg,#EC4899,#f472b6)"></div></div></div>
+              <div class="mock-gantt__row"><div class="mock-gantt__label">Launch</div><div class="mock-gantt__track"><div class="mock-gantt__bar" style="left:80%;width:15%;background:linear-gradient(90deg,#FAD604,#fbe046)"></div></div></div>
+            </div>
+          )}
+          {row.mock === "chat" && (
+            <div class="fp-chat">
+              <div class="fp-chat__row fp-chat__row--user"><div class="fp-chat__bubble fp-chat__bubble--user">When should I start promoting my single?</div></div>
+              <div class="fp-chat__row"><div class="fp-chat__avatar" style="background:transparent;padding:0"><img src="/assets/teammate-avatar-round.png" alt="TeamMate" style="width:100%;height:100%;border-radius:50%;object-fit:cover" /></div><div class="fp-chat__bubble fp-chat__bubble--ai">Based on your May 15 release date, I'd recommend starting 3 weeks out. I can create a social content schedule and draft your press bio — want me to?</div></div>
+              <div class="fp-chat__input">Ask TeamMate anything...</div>
+            </div>
+          )}
+          {row.mock === "collab" && (
+            <div class="mock-collab">
+              <div class="mock-collab__row"><div class="mock-collab__avatar" style="background:#D9FA87;color:var(--black)">!</div><div class="mock-collab__task">Submit to distributor — due tomorrow</div><div class="mock-collab__check"></div></div>
+              <div class="mock-collab__row"><div class="mock-collab__avatar" style="background:#D9FA87;color:var(--black)">!</div><div class="mock-collab__task">Pitch to editorial playlists — 3 days left</div><div class="mock-collab__check"></div></div>
+              <div class="mock-collab__row"><div class="mock-collab__avatar" style="background:rgba(0,0,0,0.08);color:var(--text-secondary)">&#10003;</div><div class="mock-collab__task" style="text-decoration:line-through;opacity:0.5">Schedule social content</div><div class="mock-collab__check mock-collab__check--done"></div></div>
+              <div class="mock-collab__row"><div class="mock-collab__avatar" style="background:rgba(0,0,0,0.08);color:var(--text-secondary)">&#10003;</div><div class="mock-collab__task" style="text-decoration:line-through;opacity:0.5">Finalise artwork</div><div class="mock-collab__check mock-collab__check--done"></div></div>
+            </div>
+          )}
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+
+<IcpFeaturesCarousel
+  headline={featuresHeadline}
+  subhead={featuresSubhead}
+  cards={Array.isArray(features.cards) ? features.cards.map((c: any) => ({ title: c.title, description: c.description })) : undefined}
+/>
+
+<section class="steps-section">
+  <div class="steps-section__inner">
+    <div class="steps-section__header">
+      <SplitHeadline as="h2" top={stepsTop} bottom={stepsBottom} />
+    </div>
+    <div class="steps-timeline">
+      {stepItems.map((s) => (
+        <div class="step">
+          <div class="step__circle">{s.num}</div>
+          <div class="step__card">
+            <h3>{s.t}</h3>
+            <p>{s.d}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<section class="final-cta">
+  <div class="final-cta__card">
+    <SplitHeadline as="h2" top={finalTop} bottom={finalBottom} />
+    <div class="final-cta__buttons">
+      <a href={finalPrimary.href} class="btn btn--primary-light">{finalPrimary.label}</a>
+      {finalSecondary?.href && finalSecondary?.label && (
+        <a href={finalSecondary.href} class="btn btn--ghost">{finalSecondary.label}</a>
+      )}
+    </div>
+    {finalFootnote && <p class="final-cta__note">{finalFootnote}</p>}
+  </div>
+</section>
+
+<section class="other-icps">
+  <div class="other-icps__inner">
+    {others.map((o, i) => (
+      <>
+        {i > 0 && <div class="other-icps__divider"></div>}
+        <a href={o.href} class="other-icp">
+          <div class="other-icp__title">{o.title}</div>
+          <div class="other-icp__desc">{o.desc}</div>
+          <div class="other-icp__link">Learn more <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></div>
+        </a>
+      </>
+    ))}
+  </div>
+</section>

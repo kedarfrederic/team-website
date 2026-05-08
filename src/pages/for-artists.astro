@@ -1,26 +1,21 @@
 ---
-/**
- * /for-artists — Phase 5.3 visual port.
- * Same lift-and-import strategy as the homepage: extracted body + CSS + JS
- * from the legacy for-artists.html, served as static files from public/.
- */
 import BaseLayout from "../layouts/BaseLayout.astro";
+import IcpPage from "../components/pages/IcpPage.astro";
 import { getIcpPage } from "../lib/queries";
-// @ts-expect-error — ?raw modifier returns string at build time
-import bodyHtml from "../lib/for-artists-body.html?raw";
+import { getClient } from "../lib/sanity";
 
-const page = await getIcpPage("forArtistsPage");
+const page = await getIcpPage("forArtistsPage", getClient(Astro));
 ---
 
 <BaseLayout
-  title={page?.hero?.headline ?? "For Artists"}
-  description="Focus on your music. Team handles the rest."
+  title={page?.hero?.headlineTop ?? page?.hero?.headline ?? "For Artists"}
+  description={page?.hero?.subhead ?? "Focus on your music. Team handles the rest."}
   seo={page?.seo}
   navTheme="dark"
 >
   <link slot="head" rel="stylesheet" href="/components/for-artists-inline.css" />
 
-  <Fragment set:html={bodyHtml} />
+  <IcpPage page={page} icpKey="artists" />
 
   <script is:inline src="/components/for-artists-inline.js"></script>
 </BaseLayout>
