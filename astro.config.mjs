@@ -32,8 +32,9 @@ export default defineConfig({
   integrations: [
     react(),
     sitemap({
-      // Skip the API + preview routes — they're not user-facing pages.
-      filter: (page) => !page.includes("/api/"),
+      // Skip API routes and internal playground routes — neither are
+      // user-facing pages we want indexed.
+      filter: (page) => !page.includes("/api/") && !page.includes("/playground/"),
     }),
     sanity({
       projectId: "g1olb5am",

@@ -1,0 +1,41 @@
+---
+/**
+ * Test page for the NotificationsHero component.
+ *
+ * Lives at /playground/notifications-hero so it's reachable on the
+ * Cloudflare preview deploy (team-website-6ur.pages.dev) but stays out
+ * of the public sitemap and is `noIndex` so it doesn't get crawled.
+ *
+ * The component itself is in src/components/hero/NotificationsHero.astro
+ * — the slot DOM, the styles at /components/notifications-hero.css, and
+ * the cycler logic at /components/notifications-hero.js. None of that
+ * touches the homepage; this is a sandbox to validate the look + the
+ * 7–12s per-slot random rotation before promoting it.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import NotificationsHero from "../../components/hero/NotificationsHero.astro";
+---
+
+<BaseLayout
+  title="Notifications hero — playground"
+  description="Internal preview page for the animated notifications hero."
+  seo={{ metaTitle: "Notifications hero — playground", noIndex: true }}
+  navTheme="dark"
+>
+  <NotificationsHero
+    eyebrow="The operating system for music releases"
+    headline="Release chaos"
+    headlineAlt="ends here."
+    body="Stop juggling spreadsheets, Slack threads, and email chains. One platform for your entire rollout."
+    primaryCta={{ label: "Book a demo", href: "/demo" }}
+    secondaryCta={{ label: "See how it works", href: "/intelligence" }}
+  />
+
+  <section style="padding: 80px 24px; background: #0a0a0a; color: rgba(255,255,255,0.55); text-align: center;">
+    <p style="max-width: 640px; margin: 0 auto; font-size: 14px; line-height: 1.6;">
+      <strong style="color:#fff">Playground page.</strong> Notifications swap on independent
+      random 7–12s timers — never all at once. Channel pool + copy lives in
+      <code style="color:#ff6a1a">/public/components/notifications-hero.js</code>.
+    </p>
+  </section>
+</BaseLayout>
