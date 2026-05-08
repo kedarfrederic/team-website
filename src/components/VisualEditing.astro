@@ -1,0 +1,39 @@
+---
+/**
+ * Sanity Visual Editing overlay.
+ *
+ * Only mounted when the `sanity-preview` cookie is set (see BaseLayout).
+ * Loads `@sanity/visual-editing` from esm.sh at runtime instead of bundling
+ * — the package's root entry imports React + react-compiler-runtime which
+ * we don't otherwise need on the marketing site, and bundling those
+ * unnecessarily breaks the static build.
+ *
+ * `enableOverlays()` paints click-to-edit pencils on every stega-encoded
+ * string in the rendered HTML and opens the matching Studio document on
+ * click. The Studio Presentation tool dispatches a postMessage when a doc
+ * changes, and our `refresh` handler triggers a full reload so Astro
+ * re-renders against fresh draft content (a soft refetch would leave the
+ * legacy nav/footer/inline scripts in stale state).
+ */
+import { SANITY_STUDIO_URL } from "../lib/sanity";
+---
+
+<script is:inline define:vars={{ studioUrl: SANITY_STUDIO_URL }}>
+  (async function () {
+    try {
+      const mod = await import(
+        "https://esm.sh/@sanity/visual-editing@2.15.4?bundle-deps"
+      );
+      mod.enableOverlays({
+        studioUrl,
+        refresh: (payload) => {
+          if (payload.source === "mutation") {
+            window.location.reload();
+          }
+        },
+      });
+    } catch (err) {
+      console.error("[sanity] failed to load visual editing overlay", err);
+    }
+  })();
+</script>

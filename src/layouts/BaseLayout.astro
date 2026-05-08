@@ -1,7 +1,8 @@
 ---
 import "../styles/global.css";
 import { getSiteSettings } from "../lib/queries";
-import { urlFor } from "../lib/sanity";
+import { getClient, isPreviewRequest, urlFor } from "../lib/sanity";
+import VisualEditing from "../components/VisualEditing.astro";
 
 interface SeoBlock {
   metaTitle?: string;
@@ -26,7 +27,8 @@ interface Props {
 }
 
 const { title, description, ogImage, seo, canonical, navTheme = "light" } = Astro.props;
-const settings = await getSiteSettings();
+const previewMode = isPreviewRequest(Astro);
+const settings = await getSiteSettings(getClient(Astro));
 
 // Compose final SEO values: page-specific seo block wins, then page-level
 // props, then site-wide defaults from settings.
@@ -41,7 +43,7 @@ const ogImageUrl = finalOgImage?.asset?._ref
   ? urlFor(finalOgImage).width(1200).height(630).fit("crop").url()
   : "https://teamrollouts.com/og-image.png";
 
-const noIndex = seo?.noIndex === true;
+const noIndex = seo?.noIndex === true || previewMode;
 const canonicalUrl =
   canonical ?? new URL(Astro.url.pathname, Astro.site ?? "https://teamrollouts.com").toString();
 ---
@@ -96,5 +98,7 @@ const canonicalUrl =
 
   <script src="/components/nav.js" defer></script>
   <script src="/components/footer.js" defer></script>
+
+  {previewMode && <VisualEditing />}
 </body>
 </html>
