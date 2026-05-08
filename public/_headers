@@ -1,0 +1,13 @@
+# Cloudflare Pages serves these headers alongside every matching response.
+# Format: path on first line, then `  Header-Name: value` (2-space indent).
+# `! Header-Name` removes a header that the platform would otherwise inject.
+
+# Allow Sanity Studio's Presentation tool to embed the marketing site in an
+# iframe. By default Cloudflare Pages sends X-Frame-Options: SAMEORIGIN, which
+# breaks click-to-edit. Drop X-Frame-Options entirely and use the modern
+# CSP frame-ancestors directive — same protection, but explicitly whitelists
+# the deployed Studio + the wildcard *.sanity.studio host so a future Studio
+# rename (e.g. previewing a non-prod deploy) doesn't lock the editor out.
+/*
+  ! X-Frame-Options
+  Content-Security-Policy: frame-ancestors 'self' https://team-cms.sanity.studio https://*.sanity.studio https://*.sanity.io
