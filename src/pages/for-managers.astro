@@ -1,17 +1,21 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import IcpPageContent from "../components/pages/IcpPageContent.astro";
 import { getIcpPage } from "../lib/queries";
+// @ts-expect-error — ?raw modifier returns string at build time
+import bodyHtml from "../lib/for-managers-body.html?raw";
 
 const page = await getIcpPage("forManagersPage");
-const hasHeroBg = !!page?.hero?.backgroundImage?.asset?._ref;
 ---
 
 <BaseLayout
   title={page?.hero?.headline ?? "For Managers"}
   description="Every artist. Every release. One dashboard."
   seo={page?.seo}
-  navTheme={hasHeroBg ? "dark" : "light"}
+  navTheme="dark"
 >
-  <IcpPageContent page={page} fallbackTitle="For Managers" />
+  <link slot="head" rel="stylesheet" href="/components/for-managers-inline.css" />
+
+  <Fragment set:html={bodyHtml} />
+
+  <script is:inline src="/components/for-managers-inline.js"></script>
 </BaseLayout>
