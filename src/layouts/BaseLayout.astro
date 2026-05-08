@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import { stegaClean } from "@sanity/client/stega";
 import { getSiteSettings } from "../lib/queries";
 import { getClient, isPreviewRequest, urlFor } from "../lib/sanity";
 import VisualEditing from "../components/VisualEditing.astro";
@@ -36,10 +37,17 @@ const settings = await getSiteSettings(getClient(Astro));
 // props, then site-wide defaults from settings.
 const defaultSeo: SeoBlock = settings?.defaultSeo ?? {};
 
-const finalTitle =
-  seo?.metaTitle ?? title ?? defaultSeo.metaTitle ?? "Team — The Operating System for Music Releases";
-const finalDescription =
-  seo?.metaDescription ?? description ?? defaultSeo.metaDescription ?? "Stop juggling spreadsheets, Slack threads, and email chains. One platform for your entire rollout.";
+// Strip stega zero-width characters from <title> and <meta> values. Stega
+// encoding is fine for visible text inside the Studio iframe (the visual-
+// editing overlay decodes it), but browsers display the zero-width chars
+// as raw text in <title> bars and search engines treat them as part of
+// the title. stegaClean is a no-op on plain strings.
+const finalTitle = stegaClean(
+  seo?.metaTitle ?? title ?? defaultSeo.metaTitle ?? "Team — The Operating System for Music Releases"
+);
+const finalDescription = stegaClean(
+  seo?.metaDescription ?? description ?? defaultSeo.metaDescription ?? "Stop juggling spreadsheets, Slack threads, and email chains. One platform for your entire rollout."
+);
 const finalOgImage = seo?.ogImage ?? ogImage ?? defaultSeo.ogImage;
 const ogImageUrl = finalOgImage?.asset?._ref
   ? urlFor(finalOgImage).width(1200).height(630).fit("crop").url()
@@ -117,12 +125,11 @@ const canonicalUrl =
   <script src="/components/nav.js" defer></script>
 
   {/*
-    Visual Editing overlay — always rendered, but the script self-gates on
-    iframe-presence at runtime so non-Studio visitors never download the
-    overlay package. Mounting it conditionally on the preview cookie didn't
-    work because our pages are prerendered (the cookie doesn't exist at
-    build time, so the conditional always evaluated false).
+    Visual Editing overlay — only mount when the preview cookie is set, so
+    public-site visitors never receive the overlay code or the click-to-edit
+    pencils. Server is SSR (output: "server") so the cookie is readable at
+    request time.
   */}
-  <VisualEditing />
+  {previewMode && <VisualEditing />}
 </body>
 </html>

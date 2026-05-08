@@ -25,23 +25,18 @@ export const SANITY_API_VERSION = "2024-12-01";
 export const SANITY_STUDIO_URL =
   import.meta.env.PUBLIC_SANITY_STUDIO_URL ?? "https://team-cms.sanity.studio";
 
-// Build our own published client with stega EXPLICITLY enabled. We
-// previously re-exported `sanity:client` from the @sanity/astro integration
-// (3.2.7), but its stega config didn't actually reach the rendered output —
-// curl'd HTML had zero stega-encoded chars. Creating the client ourselves
-// guarantees stega is applied on every fetch.
-//
-// useCdn must be false: the CDN serves cached responses without runtime
-// stega injection, so visual-editing overlays have nothing to anchor against.
+// Public client — NO stega encoding. Stega injects zero-width characters
+// into every text node so the visual-editing overlay can attach pencils;
+// that's perfect inside the Studio iframe but terrible on the public site
+// (zero-width chars in <title>/<meta>, console spam from the overlay
+// trying to decode random text nodes, and the overlay accidentally
+// attaching pencils for non-editor visitors). Use the CDN for the
+// public client — fewer reads against the live API, faster response.
 export const sanityClient: SanityClient = createClient({
   projectId: SANITY_PROJECT_ID,
   dataset: SANITY_DATASET,
   apiVersion: SANITY_API_VERSION,
-  useCdn: false,
-  stega: {
-    enabled: true,
-    studioUrl: SANITY_STUDIO_URL,
-  },
+  useCdn: true,
 });
 
 const baseConfig: ClientConfig = {
