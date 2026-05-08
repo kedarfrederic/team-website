@@ -1,22 +1,205 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { getIntegrationsPage } from "../lib/queries";
-import { getClient } from "../lib/sanity";
-// @ts-expect-error — ?raw modifier returns string at build time
-import bodyHtml from "../lib/integrations-body.html?raw";
+import SplitHeadline from "../components/SplitHeadline.astro";
+import { getIntegrationsPage, getIntegrations } from "../lib/queries";
+import { getClient, urlFor } from "../lib/sanity";
 
-const page = await getIntegrationsPage(getClient(Astro));
+const client = getClient(Astro);
+const [page, integrations] = await Promise.all([
+  getIntegrationsPage(client),
+  getIntegrations(client),
+]);
+
+// ── Hero ────────────────────────────────────────────────────
+const hero = page?.hero ?? {};
+const heroPill = hero.pillLabel ?? "Integrations";
+const heroTop = hero.headlineTop ?? "Connect Team to";
+const heroBottom = hero.headlineBottom ?? "the tools you already use";
+const heroSubhead =
+  hero.subhead ??
+  "Team works alongside your existing workflow. Plug in the tools your team relies on — from DSPs to social platforms to analytics — and keep everything in sync.";
+const heroBgUrl = hero.backgroundImage?.asset
+  ? urlFor(hero.backgroundImage).width(2400).quality(85).format("webp").url()
+  : "/assets/hero-bg-new.png";
+const primaryCta = hero.primaryCta ?? { label: "Start your free trial", href: "https://www.teamrollouts.com/sign-up?plan=pro&period=yearly" };
+const secondaryCta = hero.secondaryCta ?? { label: "Book a demo", href: "/demo" };
+
+// ── Grid section ────────────────────────────────────────────
+const grid = page?.gridSection ?? {};
+const gridTop = grid.headlineTop ?? "Built to fit";
+const gridBottom = grid.headlineBottom ?? "your tech stack";
+const gridSubhead = grid.subhead ?? "Team integrates with the platforms that power the music industry";
+const searchPlaceholder = grid.searchPlaceholder ?? "Search integrations...";
+
+// ── Integration cards: bind to the Sanity collection, fall back to legacy fixtures ──
+interface IntegrationDoc {
+  _id: string;
+  name: string;
+  description?: string;
+  logo?: any;
+  category: "distribution" | "social" | "analytics" | "productivity";
+  comingSoon?: boolean;
+  href?: string;
+}
+
+const FALLBACK: IntegrationDoc[] = [
+  { _id: "f1", name: "Spotify", description: "Deliver and track releases on the world's largest streaming platform", category: "distribution" },
+  { _id: "f2", name: "Apple Music", description: "Submit and manage releases across the Apple ecosystem", category: "distribution" },
+  { _id: "f3", name: "Amazon Music", description: "Reach listeners on Amazon's streaming platform", category: "distribution" },
+  { _id: "f4", name: "YouTube Music", description: "Distribute music and videos to YouTube's audience", category: "distribution" },
+  { _id: "f5", name: "Instagram", description: "Plan and schedule content aligned to your release timeline", category: "social" },
+  { _id: "f6", name: "TikTok", description: "Coordinate TikTok campaigns with your rollout", category: "social" },
+  { _id: "f7", name: "Meta Ads", description: "Run and track ad campaigns across Facebook and Instagram", category: "social" },
+  { _id: "f8", name: "X", description: "Schedule posts and track engagement around releases", category: "social" },
+  { _id: "f9", name: "Spotify for Artists", description: "Pull streaming data directly into your release dashboard", category: "analytics" },
+  { _id: "f10", name: "Chartmetric", description: "Track playlist adds, chart positions, and audience growth", category: "analytics" },
+  { _id: "f11", name: "Soundcharts", description: "Monitor cross-platform performance in real-time", category: "analytics" },
+  { _id: "f12", name: "Google Analytics", description: "Track smart link and pre-save campaign performance", category: "analytics" },
+  { _id: "f13", name: "Slack", description: "Get release notifications and updates in your team channels", category: "productivity" },
+  { _id: "f14", name: "Google Workspace", description: "Sync calendars, docs, and assets with your release timeline", category: "productivity" },
+  { _id: "f15", name: "Dropbox", description: "Connect your asset library for seamless file management", category: "productivity" },
+  { _id: "f16", name: "Zapier", description: "Build custom automations between Team and 5,000+ apps", category: "productivity" },
+  { _id: "f17", name: "Bandcamp", description: "Manage Bandcamp releases alongside your DSP strategy", category: "distribution", comingSoon: true },
+  { _id: "f18", name: "SoundCloud", description: "Coordinate SoundCloud uploads with your rollout", category: "distribution", comingSoon: true },
+  { _id: "f19", name: "Mailchimp", description: "Sync fan data and automate release email campaigns", category: "social", comingSoon: true },
+  { _id: "f20", name: "HubSpot", description: "Connect your CRM for deeper fan relationship management", category: "social", comingSoon: true },
+];
+
+const cards: IntegrationDoc[] =
+  Array.isArray(integrations) && integrations.length > 0 ? integrations : FALLBACK;
+
+// ── API section ─────────────────────────────────────────────
+const api = page?.apiSection ?? {};
+const apiTop = api.headlineTop ?? "Build your own";
+const apiBottom = api.headlineBottom ?? "integrations";
+const apiBody =
+  api.body ??
+  "Need something custom? Team's RESTful API gives you full access to releases, tasks, assets, and analytics. Comprehensive documentation, webhook support, and sandbox environments.";
+const apiCtaLabel = api.ctaLabel ?? "View API documentation";
+const apiCtaHref = api.ctaHref ?? "#";
+
+// ── Roles cross-link ────────────────────────────────────────
+const rolesGrid = page?.rolesGrid ?? {};
+const rolesTop = rolesGrid.eyebrow ?? "Designed for";
+const rolesBottom = rolesGrid.headline ?? "how you work";
+const rolesCards =
+  Array.isArray(rolesGrid.cards) && rolesGrid.cards.length > 0
+    ? rolesGrid.cards
+    : [
+        { title: "For Artists", description: "Your release, structured. No more winging it.", href: "/for-artists" },
+        { title: "For Managers", description: "Every artist's rollout. One dashboard.", href: "/for-managers" },
+        { title: "For Labels", description: "Scale your release process. Not your headcount.", href: "/for-labels" },
+        { title: "For Partners", description: "See your deliverables. Hit your deadlines.", href: "/for-partners" },
+      ];
 ---
 
 <BaseLayout
-  title={page?.hero?.headline ?? "Integrations"}
-  description="Connect Team to the tools you already use."
+  title={hero.headlineTop ?? "Integrations"}
+  description={heroSubhead}
   seo={page?.seo}
   navTheme="dark"
 >
   <link slot="head" rel="stylesheet" href="/components/integrations-inline.css" />
 
-  <Fragment set:html={bodyHtml} />
+  <section class="icp-hero" id="heroSection">
+    <div class="icp-hero__bg"><img src={heroBgUrl} alt="" loading="eager" /></div>
+    <div class="icp-hero__overlay"></div>
+    <div class="icp-hero__inner">
+      <span class="hero-pill">{heroPill}</span>
+      <SplitHeadline as="h1" top={heroTop} bottom={heroBottom} />
+      <p>{heroSubhead}</p>
+      <div class="icp-hero__buttons">
+        <a href={primaryCta.href} class="btn btn--green">{primaryCta.label}</a>
+        <a href={secondaryCta.href} class="btn btn--outline">{secondaryCta.label}</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="int-section" id="intSection">
+    <div class="int-section__inner">
+      <div class="int-section__header">
+        <SplitHeadline as="h2" top={gridTop} bottom={gridBottom} />
+        <p>{gridSubhead}</p>
+      </div>
+
+      <div class="int-search">
+        <svg class="int-search__icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" class="int-search__input" id="intSearch" placeholder={searchPlaceholder} />
+      </div>
+
+      <div class="int-filters">
+        <button class="int-filter is-active" data-filter="all">All</button>
+        <button class="int-filter" data-filter="distribution">Distribution</button>
+        <button class="int-filter" data-filter="social">Social & Marketing</button>
+        <button class="int-filter" data-filter="analytics">Analytics</button>
+        <button class="int-filter" data-filter="productivity">Productivity</button>
+        <button class="int-filter" data-filter="coming-soon">Coming Soon</button>
+      </div>
+
+      <div class="int-grid" id="intGrid">
+        {cards.map((card) => {
+          const isComingSoon = card.comingSoon === true;
+          // Cards filed under "coming-soon" data-category to match the legacy filter button.
+          const dataCategory = isComingSoon ? "coming-soon" : card.category;
+          const cardClass = isComingSoon ? "int-card int-card--soon" : "int-card";
+          const logoStyle = card.logo?.asset
+            ? `background-image:url(${urlFor(card.logo).width(96).format("webp").url()});background-size:contain;background-repeat:no-repeat;background-position:center;`
+            : undefined;
+          return (
+            <div class={cardClass} data-category={dataCategory} data-name={card.name}>
+              <div class="int-card__logo" style={logoStyle}></div>
+              <div class="int-card__info">
+                <div class="int-card__name">{card.name}</div>
+                <div class="int-card__desc">{card.description}</div>
+                {isComingSoon && <span class="int-card__badge">Coming soon</span>}
+              </div>
+            </div>
+          );
+        })}
+
+        <div class="int-empty" id="intEmpty">
+          <p class="int-empty__text">Looks like we don't have that one yet. Need something custom? <a href="#apiSection">Build your own integration</a> with our API.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="api-section" id="apiSection">
+    <div class="api-section__inner">
+      <div class="api-section__headline">
+        <SplitHeadline as="h2" top={apiTop} bottom={apiBottom} />
+      </div>
+      <div class="api-section__copy">
+        <p>{apiBody}</p>
+        <a href={apiCtaHref} class="api-section__link">
+          <span class="api-link-text">{apiCtaLabel}</span>
+          <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="roles-section">
+    <div class="roles-section__inner">
+      <div class="roles-section__header">
+        <SplitHeadline as="h2" top={rolesTop} bottom={rolesBottom} />
+      </div>
+      <div class="roles-grid">
+        {rolesCards.map((card: { title: string; description: string; href: string }, i: number) => (
+          <>
+            {i > 0 && <div class="roles-divider"></div>}
+            <a href={card.href} class="role-item">
+              <div class="role-item__title">{card.title}</div>
+              <div class="role-item__desc">{card.description}</div>
+              <div class="role-item__link">
+                Learn more <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+              </div>
+            </a>
+          </>
+        ))}
+      </div>
+    </div>
+  </section>
 
   <script is:inline src="/components/integrations-inline.js"></script>
 </BaseLayout>

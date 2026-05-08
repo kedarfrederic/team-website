@@ -1,21 +1,184 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { getChangelogPage } from "../lib/queries";
+import SplitHeadline from "../components/SplitHeadline.astro";
+import { getChangelogPage, getChangelogEntries } from "../lib/queries";
 import { getClient } from "../lib/sanity";
-// @ts-expect-error — ?raw modifier returns string at build time
-import bodyHtml from "../lib/changelog-body.html?raw";
 
-const page = await getChangelogPage(getClient(Astro));
+const client = getClient(Astro);
+const [page, entries] = await Promise.all([
+  getChangelogPage(client),
+  getChangelogEntries(client),
+]);
+
+const hero = page?.hero ?? {};
+const heroTop = hero.headlineTop ?? "What's";
+const heroBottom = hero.headlineBottom ?? "new in Team";
+const heroSubhead =
+  hero.subhead ??
+  "Every feature, improvement, and fix — shipped fast and built for music teams";
+const searchPlaceholder = page?.search?.placeholder ?? "Search updates...";
+
+interface Entry {
+  _id: string;
+  releaseDate: string;
+  groupHeadline?: string;
+  type: "new" | "improved" | "fixed" | "performance";
+  title: string;
+  description: string;
+  sortWithinDate?: number;
+}
+
+// Hardcoded fallback so the page renders fully when the collection is empty.
+const FALLBACK_ENTRIES: Entry[] = [
+  { _id: "f1", releaseDate: "2026-03-17", groupHeadline: "Public API, Intelligence Engine & Security Hardening", type: "new", title: "Public Data Ingestion API", description: "A fully documented REST API with CSV import, streaming, marketing, and touring endpoints." },
+  { _id: "f2", releaseDate: "2026-03-17", type: "new", title: "API Key Management", description: "Generate and manage API keys from Settings, powered by Unkey for enterprise-grade rate limiting." },
+  { _id: "f3", releaseDate: "2026-03-17", type: "new", title: "Music Industry Knowledge Graph", description: "Entity Resolution Engine and 300-term music glossary — your Teammate now understands industry terminology natively." },
+  { _id: "f4", releaseDate: "2026-03-17", type: "new", title: "Interactive Knowledge Base", description: "Redesigned knowledge base with live component demos rendered inline." },
+  { _id: "f5", releaseDate: "2026-03-17", type: "improved", title: "AI Teammate hardening", description: "Permission-gated context, tool filtering, auto-RAG, PII sanitization, and cross-tenant access checks." },
+  { _id: "f6", releaseDate: "2026-03-17", type: "fixed", title: "Voice note transcription", description: "Fixed Whisper transcription failing on Apple .caf format and relative R2 URLs." },
+  { _id: "f7", releaseDate: "2026-03-17", type: "fixed", title: "SEO improvements", description: "Added missing pages to sitemap.xml and robots.txt." },
+
+  { _id: "f8", releaseDate: "2026-03-16", groupHeadline: "Billing, Onboarding & SMS Groups", type: "new", title: "In-app Stripe billing", description: "Upgrade, downgrade, and manage your subscription directly inside Team with embedded Stripe checkout." },
+  { _id: "f9", releaseDate: "2026-03-16", type: "new", title: "Onboarding redesign", description: "New signup flow with 30-day free trial, no credit card required, and post-signup consultation booking." },
+  { _id: "f10", releaseDate: "2026-03-16", type: "new", title: "SMS group messaging", description: "Create groups via text, share updates, and receive daily briefings through conversational commands." },
+  { _id: "f11", releaseDate: "2026-03-16", type: "new", title: "Cross-release portfolio search", description: "Your Teammate can now search across all your releases at once." },
+  { _id: "f12", releaseDate: "2026-03-16", type: "improved", title: "Feature gating", description: "Comprehensive tier enforcement audit with new feature flags for every plan." },
+  { _id: "f13", releaseDate: "2026-03-16", type: "improved", title: "Marketing CTAs", description: "All feature and solution pages now use signup-first CTAs." },
+
+  { _id: "f14", releaseDate: "2026-03-13", groupHeadline: "Briefs v2 — Section Builder & AI Fields", type: "new", title: "AI-powered brief fields", description: "Generate field content with AI, import from documents, and animate step-by-step." },
+  { _id: "f15", releaseDate: "2026-03-13", type: "new", title: "Section-based brief builder", description: "A v2 builder with grouped collapsible sections, custom brief types, and QuickCreate dialog." },
+  { _id: "f16", releaseDate: "2026-03-13", type: "new", title: "Canva-style share modal", description: "Auto-generated passwords, per-recipient email delivery, and group-scoped portal visibility." },
+  { _id: "f17", releaseDate: "2026-03-13", type: "improved", title: "Brief card design", description: "Dark plum folder-style cards with hover animations, colored headers, and account dropdown." },
+  { _id: "f18", releaseDate: "2026-03-13", type: "fixed", title: "Enterprise hardening", description: "Security audit — input validation, rate limiting, encryption, and briefs-only user gating." },
+
+  { _id: "f19", releaseDate: "2026-03-12", groupHeadline: "Briefs Collaboration & Portal Polish", type: "new", title: "Two-way collaboration workspace", description: "Recipients can comment, upload files, and collaborate directly inside the brief portal." },
+  { _id: "f20", releaseDate: "2026-03-12", type: "new", title: "Per-recipient channels", description: "Each share link gets its own isolated channel for comments, uploads, and activity." },
+  { _id: "f21", releaseDate: "2026-03-12", type: "improved", title: "Portal media experience", description: "Waveform audio player, animations, image carousel, and YouTube embed support." },
+  { _id: "f22", releaseDate: "2026-03-12", type: "fixed", title: "Safari compatibility", description: "Auto-reload on chunk load errors after deploys, plus audio crossOrigin fixes." },
+
+  { _id: "f23", releaseDate: "2026-03-11", groupHeadline: "Briefs by Team & Show Discovery", type: "new", title: "Briefs by Team", description: "A complete standalone product for creating, sending, and tracking operational briefs." },
+  { _id: "f24", releaseDate: "2026-03-11", type: "new", title: "AI-powered show discovery", description: "Discover upcoming shows with venue geocoding and map integration in the touring module." },
+  { _id: "f25", releaseDate: "2026-03-11", type: "new", title: "Task departments", description: "Assign tasks to Marketing, A&R, Legal, Business Affairs, or Finance departments." },
+  { _id: "f26", releaseDate: "2026-03-11", type: "fixed", title: "Notification reliability", description: "Fixed phantom unread badges, double toast notifications, and subtask routing." },
+
+  { _id: "f27", releaseDate: "2026-03-10", groupHeadline: "Text Your Release & Demo Booking", type: "new", title: "Text Your Release (SMS)", description: "Manage releases via text message. Send updates, attach media, create tasks, and get proactive notifications." },
+  { _id: "f28", releaseDate: "2026-03-10", type: "new", title: "Book a Demo", description: "Streamlined demo booking flow so you can see Team in action before you commit." },
+  { _id: "f29", releaseDate: "2026-03-10", type: "improved", title: "Pricing overhaul", description: "Redesigned pricing page with a clear comparison matrix." },
+  { _id: "f30", releaseDate: "2026-03-10", type: "improved", title: "Social sharing previews", description: "Rich previews with correct image and description on Twitter, LinkedIn, and iMessage." },
+
+  { _id: "f31", releaseDate: "2026-03-09", groupHeadline: "Templates, Email Ingestion & Calendar Views", type: "new", title: "Release & Task Templates", description: "Save any release as a reusable template. Browse, edit, and apply with a single click." },
+  { _id: "f32", releaseDate: "2026-03-09", type: "new", title: "Email Ingestion", description: "Forward emails to your release — they appear in a dedicated Emails tab and your AI Teammate can reference them." },
+  { _id: "f33", releaseDate: "2026-03-09", type: "new", title: "Calendar & List view toggle", description: "Switch between Calendar and List views on your timeline with a single toggle." },
+  { _id: "f34", releaseDate: "2026-03-09", type: "improved", title: "AI Teammate context", description: "Access to rollout plans, email threads, and full release context for more accurate answers." },
+  { _id: "f35", releaseDate: "2026-03-09", type: "improved", title: "Mobile experience", description: "Major responsiveness improvements across dashboard, task panels, and rollout tabs." },
+
+  { _id: "f36", releaseDate: "2026-03-06", groupHeadline: "Task Library & Performance Boost", type: "new", title: "Task Library", description: "Browse pre-built task templates organized by category. Add them to any release to jumpstart your rollout." },
+  { _id: "f37", releaseDate: "2026-03-06", type: "improved", title: "Smarter AI intent routing", description: "LLM-based router that understands what you mean — no more rigid keyword matching." },
+  { _id: "f38", releaseDate: "2026-03-06", type: "performance", title: "Faster page loads", description: "Parallelized database queries and optimized asset loading for snappier navigation." },
+
+  { _id: "f39", releaseDate: "2026-03-01", groupHeadline: "Press Runs, Reports & Dark Mode", type: "new", title: "Press Runs", description: "Plan press runs with an interactive map, Google Places search, and per-stop detail modals." },
+  { _id: "f40", releaseDate: "2026-03-01", type: "new", title: "Release Reports", description: "Generate PDF reports with strategy overviews, DSP priorities, territories, and timeline." },
+  { _id: "f41", releaseDate: "2026-03-01", type: "new", title: "Dark mode", description: "ADA-compliant dark theme with a toggle in settings." },
+  { _id: "f42", releaseDate: "2026-03-01", type: "new", title: "Guided product tour", description: "Step-by-step interactive tour for new users. Restart anytime from the help menu." },
+  { _id: "f43", releaseDate: "2026-03-01", type: "improved", title: "Task list view", description: "Sortable, expandable task list with columns for status, assignee, dates, and subtasks." },
+
+  { _id: "f44", releaseDate: "2026-02-28", groupHeadline: "Market Intelligence & Smarter Dashboard", type: "new", title: "AI Market Intelligence", description: "Deep research-powered briefings on market position, competitor landscape, and audience insights." },
+  { _id: "f45", releaseDate: "2026-02-28", type: "new", title: "Specialized task cards", description: "Category-specific fields — social posts show platforms, playlisting shows curators, PR shows outlets." },
+  { _id: "f46", releaseDate: "2026-02-28", type: "improved", title: "Dashboard sorting", description: "Releases sort by recently viewed and newest created." },
+
+  { _id: "f47", releaseDate: "2026-02-26", groupHeadline: "AI Agent Power-Up & Artist Intelligence", type: "new", title: "Artist Intelligence", description: "Automatic artist research — market position, audience demographics, comparable artists, and detailed profile sections." },
+  { _id: "f48", releaseDate: "2026-02-26", type: "new", title: "AI rollout planning engine", description: "Generate full phased rollout plans, manage content and budgets, and remember preferences across releases." },
+  { _id: "f49", releaseDate: "2026-02-26", type: "improved", title: "Mobile experience", description: "Full mobile UX overhaul — unified navigation, compact release cards, and bottom tab bar." },
+
+  { _id: "f50", releaseDate: "2025-12-09", groupHeadline: "Team Pilot Launches", type: "new", title: "Team Pilot MVP", description: "The first version of Team — release management with timeline views, task management, authentication, and an AI-powered Teammate." },
+  { _id: "f51", releaseDate: "2025-12-09", type: "new", title: "Timeline & Canvas views", description: "Visual timeline for scheduling tasks and a canvas view for spatial release planning." },
+  { _id: "f52", releaseDate: "2025-12-09", type: "new", title: "Mobile-first design", description: "Responsive sidebar, timeline, bottom navigation, and touch-friendly interactions from day one." },
+];
+
+const allEntries: Entry[] =
+  Array.isArray(entries) && entries.length > 0 ? entries : FALLBACK_ENTRIES;
+
+// Group entries by releaseDate. Order is preserved from the query (newest first).
+const groupedByDate: { date: string; groupHeadline?: string; items: Entry[] }[] = [];
+const dateIndex = new Map<string, number>();
+for (const entry of allEntries) {
+  const idx = dateIndex.get(entry.releaseDate);
+  if (idx === undefined) {
+    dateIndex.set(entry.releaseDate, groupedByDate.length);
+    groupedByDate.push({
+      date: entry.releaseDate,
+      groupHeadline: entry.groupHeadline,
+      items: [entry],
+    });
+  } else {
+    const group = groupedByDate[idx];
+    if (!group.groupHeadline && entry.groupHeadline) {
+      group.groupHeadline = entry.groupHeadline;
+    }
+    group.items.push(entry);
+  }
+}
+
+function formatDate(iso: string): string {
+  if (!iso) return "";
+  const d = new Date(iso + "T00:00:00Z");
+  return d.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+}
 ---
 
 <BaseLayout
-  title={page?.hero?.headline ?? "Changelog"}
-  description="What's new in Team."
+  title={hero.headlineTop ? `${hero.headlineTop} ${hero.headlineBottom ?? ""}`.trim() : "Changelog"}
+  description={heroSubhead}
   seo={page?.seo}
 >
   <link slot="head" rel="stylesheet" href="/components/changelog-inline.css" />
 
-  <Fragment set:html={bodyHtml} />
+  <section class="cl-hero">
+    <SplitHeadline as="h1" top={heroTop} bottom={heroBottom} />
+    <p>{heroSubhead}</p>
+  </section>
+
+  <div class="cl-search">
+    <svg class="cl-search__icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" class="cl-search__input" id="clSearch" placeholder={searchPlaceholder} />
+  </div>
+
+  <div class="cl-filters">
+    <button class="cl-filter is-active" data-filter="all">All</button>
+    <button class="cl-filter" data-filter="new">New</button>
+    <button class="cl-filter" data-filter="improved">Improved</button>
+    <button class="cl-filter" data-filter="fixed">Fixed</button>
+    <button class="cl-filter" data-filter="performance">Performance</button>
+  </div>
+
+  <div class="cl-timeline" id="clTimeline">
+    {groupedByDate.map((group) => (
+      <div class="cl-date">
+        <div class="cl-date__label">{formatDate(group.date)}</div>
+        {group.groupHeadline && <div class="cl-date__title">{group.groupHeadline}</div>}
+        {group.items.map((entry) => (
+          <div class="cl-entry" data-type={entry.type}>
+            <div class="cl-entry__header">
+              <span class={`cl-entry__badge cl-entry__badge--${entry.type}`}>
+                {entry.type === "new" ? "New" :
+                 entry.type === "improved" ? "Improved" :
+                 entry.type === "fixed" ? "Fixed" : "Performance"}
+              </span>
+              <span class="cl-entry__title">{entry.title}</span>
+            </div>
+            <div class="cl-entry__desc">{entry.description}</div>
+          </div>
+        ))}
+      </div>
+    ))}
+
+    <div class="cl-empty" id="clEmpty">No updates found matching your search</div>
+  </div>
 
   <script is:inline src="/components/changelog-inline.js"></script>
 </BaseLayout>

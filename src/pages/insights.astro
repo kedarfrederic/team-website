@@ -1,21 +1,201 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { getInsightsIndexPage } from "../lib/queries";
-import { getClient } from "../lib/sanity";
-// @ts-expect-error — ?raw modifier returns string at build time
-import bodyHtml from "../lib/insights-body.html?raw";
+import SplitHeadline from "../components/SplitHeadline.astro";
+import { getInsightsIndexPage, getInsightPosts } from "../lib/queries";
+import { getClient, urlFor } from "../lib/sanity";
 
-const page = await getInsightsIndexPage(getClient(Astro));
+const client = getClient(Astro);
+const [page, posts] = await Promise.all([
+  getInsightsIndexPage(client),
+  getInsightPosts(client),
+]);
+
+const hero = page?.hero ?? {};
+const heroTop = hero.headlineTop ?? "Insights";
+const heroBottom = hero.headlineBottom ?? "& ideas";
+const heroSubhead =
+  hero.subhead ??
+  "Strategy, industry trends, and how the best teams ship releases";
+const searchPlaceholder = page?.search?.placeholder ?? "Search posts...";
+
+interface InsightPost {
+  _id: string;
+  title: string;
+  slug: { current: string };
+  excerpt?: string;
+  heroImage?: any;
+  publishDate?: string;
+  readMinutes?: number;
+  authorName?: string;
+  category?: { title?: string; slug?: { current?: string }; color?: string };
+}
+
+// Hardcoded fallback posts so the page renders fully when the collection is empty.
+const FALLBACK_POSTS: InsightPost[] = [
+  {
+    _id: "f1",
+    title: "The Ultimate Release Day Checklist for Independent Artists",
+    slug: { current: "release-day-checklist" },
+    excerpt:
+      "Release day is the most critical 24 hours of your campaign. Everything you've been building toward comes down to execution. Here's everything you need to do, broken down by timing.",
+    publishDate: "2026-02-25",
+    readMinutes: 10,
+    category: { title: "Guides", slug: { current: "guides" } },
+  },
+  {
+    _id: "f2",
+    title: "When to Pitch to DSPs: A Timeline Guide",
+    slug: { current: "dsp-pitch-timeline-guide" },
+    excerpt:
+      "Getting on an editorial playlist can transform a release. But timing your pitch wrong means your track never gets heard by the curators who matter. Here's exactly when and how to pitch.",
+    publishDate: "2026-02-20",
+    readMinutes: 8,
+    category: { title: "Guides", slug: { current: "guides" } },
+  },
+  {
+    _id: "f3",
+    title: "Why the music industry's relationship with AI is more nuanced than you think",
+    slug: { current: "ai-music-industry-nuanced" },
+    excerpt:
+      "AI isn't replacing A&R instincts. It's giving them context. Here's how the smartest teams are using AI without losing the human touch.",
+    publishDate: "2026-04-14",
+    readMinutes: 6,
+    category: { title: "Industry", slug: { current: "industry" } },
+  },
+  {
+    _id: "f4",
+    title: "Introducing TeamMate: your AI-powered release companion",
+    slug: { current: "introducing-teammate" },
+    excerpt:
+      "TeamMate is now live for all Team users. Here's what it does, how it works, and why we built it the way we did.",
+    publishDate: "2026-04-05",
+    readMinutes: 5,
+    category: { title: "Product", slug: { current: "product" } },
+  },
+  {
+    _id: "f5",
+    title: "Stop treating your release like a project",
+    slug: { current: "stop-treating-release-as-project" },
+    excerpt:
+      "Release management isn't project management with a music skin. Here's why the distinction matters and what to do about it.",
+    publishDate: "2026-03-28",
+    readMinutes: 7,
+    category: { title: "Strategy", slug: { current: "strategy" } },
+  },
+  {
+    _id: "f6",
+    title: "The independent label playbook for 2026",
+    slug: { current: "independent-label-playbook-2026" },
+    excerpt:
+      "What's changed for indie labels this year, and how the smartest operators are adapting their release strategies.",
+    publishDate: "2026-03-22",
+    readMinutes: 9,
+    category: { title: "Industry", slug: { current: "industry" } },
+  },
+  {
+    _id: "f7",
+    title: "Playlist pitching: what actually works in 2026",
+    slug: { current: "playlist-pitching-2026" },
+    excerpt:
+      "Editorial, algorithmic, and independent playlists each require different approaches. Here's what curators actually respond to.",
+    publishDate: "2026-03-15",
+    readMinutes: 8,
+    category: { title: "Guides", slug: { current: "guides" } },
+  },
+];
+
+const allPosts: InsightPost[] =
+  Array.isArray(posts) && posts.length > 0 ? posts : FALLBACK_POSTS;
+
+// Featured post = the most recent one, regular posts = the rest. (The query
+// already orders by publishDate desc, so allPosts[0] is the latest.)
+const [featured, ...regular] = allPosts;
+
+function formatDate(iso?: string): string {
+  if (!iso) return "";
+  const d = new Date(iso);
+  return d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+}
+
+function thumbStyle(post: InsightPost): string | undefined {
+  if (!post.heroImage?.asset) return undefined;
+  const url = urlFor(post.heroImage).width(960).format("webp").quality(80).url();
+  return `background-image:url(${url});background-size:cover;background-position:center;`;
+}
 ---
 
 <BaseLayout
-  title={page?.hero?.headline ?? "Insights"}
-  description="Strategy, product, and industry takes from the Team."
+  title={hero.headlineTop ? `${hero.headlineTop} ${hero.headlineBottom ?? ""}`.trim() : "Insights"}
+  description={heroSubhead}
   seo={page?.seo}
 >
   <link slot="head" rel="stylesheet" href="/components/insights-inline.css" />
 
-  <Fragment set:html={bodyHtml} />
+  <section class="insights-hero">
+    <SplitHeadline as="h1" top={heroTop} bottom={heroBottom} />
+    <p>{heroSubhead}</p>
+  </section>
+
+  <div class="insights-search">
+    <svg class="insights-search__icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" class="insights-search__input" id="insightsSearch" placeholder={searchPlaceholder} />
+  </div>
+
+  <div class="insights-filters">
+    <button class="insights-filter is-active" data-filter="all">All</button>
+    <button class="insights-filter" data-filter="strategy">Strategy</button>
+    <button class="insights-filter" data-filter="product">Product</button>
+    <button class="insights-filter" data-filter="industry">Industry</button>
+    <button class="insights-filter" data-filter="guides">Guides</button>
+  </div>
+
+  <section class="posts-section">
+    <div class="posts-grid" id="postsGrid">
+      {featured && (
+        <a
+          href={`/insights/${featured.slug?.current ?? ""}`}
+          class="post-featured post-item"
+          data-category={featured.category?.slug?.current ?? ""}
+        >
+          <div class="post-card__thumb" style={thumbStyle(featured)}></div>
+          <div class="post-card__body">
+            {featured.category?.title && (
+              <span class="post-card__category">{featured.category.title}</span>
+            )}
+            <div class="post-card__title">{featured.title}</div>
+            {featured.excerpt && <div class="post-card__excerpt">{featured.excerpt}</div>}
+            <div class="post-card__meta">
+              {formatDate(featured.publishDate)}
+              {featured.readMinutes && ` · ${featured.readMinutes} min read`}
+            </div>
+          </div>
+        </a>
+      )}
+
+      {regular.map((post) => (
+        <a
+          href={`/insights/${post.slug?.current ?? ""}`}
+          class="post-card post-item"
+          data-category={post.category?.slug?.current ?? ""}
+        >
+          <div class="post-card__thumb" style={thumbStyle(post)}></div>
+          <div class="post-card__body">
+            {post.category?.title && (
+              <span class="post-card__category">{post.category.title}</span>
+            )}
+            <div class="post-card__title">{post.title}</div>
+            {post.excerpt && <div class="post-card__excerpt">{post.excerpt}</div>}
+            <div class="post-card__meta">
+              {formatDate(post.publishDate)}
+              {post.readMinutes && ` · ${post.readMinutes} min read`}
+            </div>
+          </div>
+        </a>
+      ))}
+
+      <div class="posts-empty" id="postsEmpty">No posts found in this category yet</div>
+    </div>
+  </section>
 
   <script is:inline src="/components/insights-inline.js"></script>
 </BaseLayout>

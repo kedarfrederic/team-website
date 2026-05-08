@@ -22,8 +22,38 @@ export const integrationsPage = defineType({
       group: "hero",
       fields: [
         defineField({ name: "pillLabel", type: "string", initialValue: "Integrations" }),
-        defineField({ name: "headline", type: "string", validation: (R) => R.required() }),
+        defineField({
+          name: "headlineTop",
+          type: "string",
+          description: "First line — sans font.",
+        }),
+        defineField({
+          name: "headlineBottom",
+          type: "string",
+          description: "Second line — serif italic (Nyght).",
+        }),
         defineField({ name: "subhead", type: "text", rows: 3 }),
+        defineField({
+          name: "primaryCta",
+          type: "object",
+          fields: [
+            defineField({ name: "label", type: "string" }),
+            defineField({ name: "href", type: "string" }),
+          ],
+        }),
+        defineField({
+          name: "secondaryCta",
+          type: "object",
+          fields: [
+            defineField({ name: "label", type: "string" }),
+            defineField({ name: "href", type: "string" }),
+          ],
+        }),
+        defineField({
+          name: "backgroundImage",
+          type: "image",
+          options: { hotspot: true },
+        }),
       ],
     }),
 
@@ -32,7 +62,8 @@ export const integrationsPage = defineType({
       type: "object",
       group: "sections",
       fields: [
-        defineField({ name: "headline", type: "string" }),
+        defineField({ name: "headlineTop", type: "string" }),
+        defineField({ name: "headlineBottom", type: "string" }),
         defineField({ name: "subhead", type: "text", rows: 2 }),
         defineField({
           name: "searchPlaceholder",
@@ -48,9 +79,10 @@ export const integrationsPage = defineType({
       type: "object",
       group: "sections",
       fields: [
-        defineField({ name: "headline", type: "string", initialValue: "Build your own integrations" }),
+        defineField({ name: "headlineTop", type: "string", initialValue: "Build your own" }),
+        defineField({ name: "headlineBottom", type: "string", initialValue: "integrations" }),
         defineField({ name: "body", type: "text", rows: 3 }),
-        defineField({ name: "ctaLabel", type: "string", initialValue: "View API docs" }),
+        defineField({ name: "ctaLabel", type: "string", initialValue: "View API documentation" }),
         defineField({ name: "ctaHref", type: "string" }),
       ],
     }),

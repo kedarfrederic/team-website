@@ -2,7 +2,7 @@ import { defineType, defineField } from "sanity";
 
 /**
  * /changelog index page singleton. Entries themselves are `changelogEntry`
- * documents; this page just controls hero copy and filter UI.
+ * documents; this page just controls hero copy + filter UI.
  */
 export const changelogPage = defineType({
   name: "changelogPage",
@@ -18,7 +18,18 @@ export const changelogPage = defineType({
       type: "object",
       group: "hero",
       fields: [
-        defineField({ name: "headline", type: "string", validation: (R) => R.required() }),
+        defineField({
+          name: "headlineTop",
+          type: "string",
+          description: "First line — sans font.",
+          initialValue: "What's",
+        }),
+        defineField({
+          name: "headlineBottom",
+          type: "string",
+          description: "Second line — serif italic (Nyght).",
+          initialValue: "new in Team",
+        }),
         defineField({ name: "subhead", type: "text", rows: 2 }),
       ],
     }),
@@ -27,7 +38,7 @@ export const changelogPage = defineType({
       type: "object",
       group: "hero",
       fields: [
-        defineField({ name: "placeholder", type: "string", initialValue: "Search changelog…" }),
+        defineField({ name: "placeholder", type: "string", initialValue: "Search updates..." }),
       ],
     }),
     defineField({ name: "seo", type: "seoBlock", group: "seo" }),
