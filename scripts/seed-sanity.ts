@@ -44,26 +44,40 @@ const client = createClient({
 const docs: any[] = [];
 
 // ─── helpers ────────────────────────────────────────────────────────────
+//
+// CRITICAL: Sanity's visual-editing overlay constructs GROQ queries with the
+// `_key` of array items embedded as string literals (e.g.
+// `painSection.rows[_key=="..."]`). Periods, quotes, slashes, and other
+// special chars in `_key` values break that parser. So every `_key` we
+// generate is a sanitized slug — alphanumeric + dashes only.
+function safeKey(seed: string, prefix = "k"): string {
+  const slug = seed
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 40);
+  return slug ? `${prefix}-${slug}` : `${prefix}-${Math.random().toString(36).slice(2, 8)}`;
+}
 function cta(label: string, href: string) {
   return { label, href };
 }
 function role(title: string, description: string, href: string) {
-  return { _key: href, _type: "roleCard", title, description, href };
+  return { _key: safeKey(href, "role"), _type: "roleCard", title, description, href };
 }
 function painRow(metadataPill: string, headline: string, body: string) {
-  return { _key: headline.slice(0, 24), _type: "painRow", metadataPill, headline, body };
+  return { _key: safeKey(headline, "row"), _type: "painRow", metadataPill, headline, body };
 }
 function step(num: string, title: string, description: string) {
-  return { _key: num, _type: "stepItem", number: num, title, description };
+  return { _key: safeKey(`${num}-${title}`, "step"), _type: "stepItem", number: num, title, description };
 }
 function feat(title: string, description: string) {
-  return { _key: title.slice(0, 24), _type: "featureCard", title, description };
+  return { _key: safeKey(title, "feat"), _type: "featureCard", title, description };
 }
 function spotFeat(title: string, description: string) {
-  return { _key: title.slice(0, 24), _type: "spotlightFeature", title, description };
+  return { _key: safeKey(title, "spot"), _type: "spotlightFeature", title, description };
 }
 function partnerFeat(title: string, description: string) {
-  return { _key: title.slice(0, 24), _type: "partnerTabFeature", title, description };
+  return { _key: safeKey(title, "ptr"), _type: "partnerTabFeature", title, description };
 }
 // Sanity portable-text blocks REQUIRE _key on every array item including
 // the span children inside `children[]`. Missing _keys cause Studio to
