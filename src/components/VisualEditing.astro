@@ -26,9 +26,13 @@ import { SANITY_STUDIO_URL } from "../lib/sanity";
     // Only run inside an iframe — the overlay is inert otherwise.
     if (window.self === window.top) return;
     try {
+      // ?bundle (vs ?bundle-deps) inlines ALL chunks including the
+       // dynamic `renderVisualEditing` chunk the package lazy-loads.
+       // Without this the comlink handshake silently never completes.
       const mod = await import(
-        "https://esm.sh/@sanity/visual-editing@2.15.4?bundle-deps"
+        "https://esm.sh/@sanity/visual-editing@2.15.4?bundle"
       );
+      console.log("[sanity] visual-editing module loaded, exports:", Object.keys(mod));
       // The v2 package exports the activation function as
       // `enableVisualEditing`; older docs reference it as `enableOverlays`,
       // and newer 4.x/5.x bundles tend to export both. Try whichever exists
@@ -41,7 +45,7 @@ import { SANITY_STUDIO_URL } from "../lib/sanity";
         );
         return;
       }
-      enable({
+      const cleanup = enable({
         studioUrl,
         refresh: (payload) => {
           if (payload.source === "mutation") {
@@ -49,6 +53,7 @@ import { SANITY_STUDIO_URL } from "../lib/sanity";
           }
         },
       });
+      console.log("[sanity] visual editing handshake initiated", { cleanup });
     } catch (err) {
       console.error("[sanity] failed to load visual editing overlay", err);
     }
