@@ -65,12 +65,17 @@ function spotFeat(title: string, description: string) {
 function partnerFeat(title: string, description: string) {
   return { _key: title.slice(0, 24), _type: "partnerTabFeature", title, description };
 }
+// Sanity portable-text blocks REQUIRE _key on every array item including
+// the span children inside `children[]`. Missing _keys cause Studio to
+// silently render the field as empty (no error, just blank).
+let _blockSeq = 0;
 function block(text: string) {
+  const id = `b${++_blockSeq}`;
   return {
-    _key: text.slice(0, 24),
+    _key: id,
     _type: "block",
     style: "normal",
-    children: [{ _type: "span", text, marks: [] }],
+    children: [{ _key: `${id}s`, _type: "span", text, marks: [] }],
     markDefs: [],
   };
 }
