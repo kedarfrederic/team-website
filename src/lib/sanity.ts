@@ -1,17 +1,20 @@
 /**
  * Sanity client + image URL builder.
  *
- * Two modes:
- *   - Published (default): public CDN, no token, no drafts. Used at build
- *     time for the static marketing site.
- *   - Preview: authenticated client with `previewDrafts` perspective and
- *     stega encoding turned on, so the Studio Presentation tool can show
- *     unpublished edits and `@sanity/visual-editing` can paint click-to-edit
- *     overlays.
+ * One client at build time, two modes at request time:
+ *   - Published (default): public CDN, no token, no drafts. Used by every
+ *     prerendered page; emits stega-encoded strings so Studio's overlay can
+ *     paint click-to-edit pencils on the live HTML.
+ *   - Preview (cookie set): same dataset but `previewDrafts` perspective so
+ *     unpublished edits surface in the iframe. Requires SANITY_API_READ_TOKEN.
  *
- * Pages call `getClient(Astro)` — the helper inspects the `sanity-preview`
- * cookie and returns the matching client. In production builds the cookie is
- * never set, so we always fall through to the cached published client.
+ * Why stega in production: the marketing site is statically prerendered, so
+ * Cloudflare's edge serves the same HTML to every visitor. Stega encoding
+ * embeds Sanity field metadata as zero-width unicode chars inside text
+ * strings — invisible to visitors, but the Studio Presentation iframe reads
+ * them to know which Sanity field each chunk of text came from. Without
+ * stega, click-to-edit overlays have nothing to anchor against on a
+ * static-rendered site.
  */
 
 import { createClient, type ClientConfig, type SanityClient } from "@sanity/client";
@@ -25,11 +28,11 @@ export const SANITY_API_VERSION = "2024-12-01";
 
 /**
  * Studio URL used for stega encoding — clicks on an overlay open the matching
- * document at this origin. Local studio runs on :3333; once the hosted Studio
- * is deployed (`npm run deploy` in /sanity), set PUBLIC_SANITY_STUDIO_URL.
+ * document at this origin. Defaults to the deployed Studio so production
+ * pages link to the live editor; override locally with PUBLIC_SANITY_STUDIO_URL.
  */
 export const SANITY_STUDIO_URL =
-  import.meta.env.PUBLIC_SANITY_STUDIO_URL ?? "http://localhost:3333";
+  import.meta.env.PUBLIC_SANITY_STUDIO_URL ?? "https://team-cms.sanity.studio";
 
 const baseConfig: ClientConfig = {
   projectId: SANITY_PROJECT_ID,
@@ -38,12 +41,17 @@ const baseConfig: ClientConfig = {
 };
 
 /**
- * Cached published client — always reads the live, published dataset from
- * the CDN. Safe to share across requests.
+ * Cached published client — reads the published dataset, with stega
+ * encoding turned on so Studio's Visual Editing overlay can paint
+ * click-to-edit pencils on every Sanity-bound string in the static HTML.
  */
 export const sanityClient = createClient({
   ...baseConfig,
   useCdn: true,
+  stega: {
+    enabled: true,
+    studioUrl: SANITY_STUDIO_URL,
+  },
 });
 
 /**
@@ -104,7 +112,11 @@ export function getClient(astro?: Pick<AstroGlobal, "cookies">): SanityClient {
   return isPreviewRequest(astro) ? getPreviewClient() : sanityClient;
 }
 
-const builder = imageUrlBuilder(sanityClient);
+// Image URL builder: stega settings on the source client are stripped here,
+// so generated image URLs stay clean (no encoded metadata in src attrs).
+const builder = imageUrlBuilder(
+  createClient({ ...baseConfig, useCdn: true })
+);
 
 /**
  * Generate a Sanity image URL with optional transformations.
