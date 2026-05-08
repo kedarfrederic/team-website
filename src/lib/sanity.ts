@@ -60,6 +60,11 @@ function readEnv(astro: Pick<AstroGlobal, "locals"> | undefined, name: string): 
  * Build a draft-aware client. Requires `SANITY_API_READ_TOKEN` (a Viewer
  * token from manage.sanity.io). Falls back to the published client when
  * the token isn't reachable so the site keeps rendering.
+ *
+ * Note: `perspective: "drafts"` is the @sanity/client v7+ name for what
+ * used to be called `"previewDrafts"`. With the old name, v7 silently
+ * returns published-only content — which manifests as the Studio iframe
+ * "refreshing without showing the new content until you click Publish".
  */
 function createPreviewClient(astro?: Pick<AstroGlobal, "locals">): SanityClient {
   const token = readEnv(astro, "SANITY_API_READ_TOKEN");
@@ -69,7 +74,7 @@ function createPreviewClient(astro?: Pick<AstroGlobal, "locals">): SanityClient 
     ...baseConfig,
     useCdn: false,
     token,
-    perspective: "previewDrafts",
+    perspective: "drafts",
     stega: {
       enabled: true,
       studioUrl: SANITY_STUDIO_URL,
