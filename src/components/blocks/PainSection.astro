@@ -20,6 +20,7 @@ interface Props {
     headlineTop?: string;
     headlineBottom?: string;
     headline?: string;
+    subhead?: string;
     rows?: PainRow[];
   };
 }
@@ -33,10 +34,11 @@ const hasHeadline = !!(top || bottom);
 
 <section class="pain-section">
   <div class="container">
-    {(value.eyebrow || hasHeadline) && (
+    {(value.eyebrow || hasHeadline || value.subhead) && (
       <div class="pain-intro">
         {value.eyebrow && <span class="label-sm">{value.eyebrow}</span>}
         {hasHeadline && <SplitHeadline as="h2" class="headline-lg" top={top} bottom={bottom} />}
+        {value.subhead && <p class="body-lg">{value.subhead}</p>}
       </div>
     )}
 

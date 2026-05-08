@@ -1168,10 +1168,24 @@ docs.push({
     eyebrow: "The Release Lifecycle",
     headlineTop: "One platform.",
     headlineBottom: "Every phase.",
+    subhead: "From first demo to post-release analytics — every step lives in Team",
     rows: [
       painRow("Pre-Release", "Set your release date. Team builds your plan", "Team generates your timeline, assigns tasks, and tracks every deliverable. Templates built for singles, EPs, and albums. No more wondering what needs to happen next."),
       painRow("Release Week", "The most critical 7 days. Fully coordinated", "DSPs, social, press, ads — every channel running in sync. Team keeps the chaos organised so your launch day is a launch, not a scramble."),
       painRow("Post-Release", "The release is live. Now learn from it", "Track performance, generate reports for your team or your label, and feed insights into your next release. Every campaign makes the next one smarter."),
+    ],
+  },
+  featureSpotlight: {
+    headlineTop: "Built for releases.",
+    headlineBottom: "Nothing else.",
+    subhead: "Every feature exists because a release needs it",
+    cards: [
+      feat("Release Timeline", "Your entire rollout mapped visually. Drag, drop, adjust. See every deadline across every phase."),
+      feat("Task Management", "Not generic tasks. Release tasks. Pre-populated templates, role-based assignments, and deadline tracking that knows the difference between a playlist pitch and a press release."),
+      feat("Rollout Plan", "AI-generated strategy documents tailored to your genre, audience, and goals. Not a blank page — a blueprint."),
+      feat("Budget Tracking", "Track spend across production, marketing, PR, and distribution. Per-release, per-artist, or across your entire roster."),
+      feat("Asset Library", "Every file, every version, every approval — in one place. AI-parsed contracts, searchable metadata, version history."),
+      feat("Collaboration", "Invite anyone into a release. They see what they need — their tasks, their deadlines, their assets. Nothing more, nothing less."),
     ],
   },
   bridgeSection: {

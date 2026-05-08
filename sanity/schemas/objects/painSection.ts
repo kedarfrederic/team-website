@@ -26,6 +26,12 @@ export const painSection = defineType({
       hidden: true,
     }),
     defineField({
+      name: "subhead",
+      type: "text",
+      rows: 2,
+      description: "Optional microcopy below the headline.",
+    }),
+    defineField({
       name: "rows",
       type: "array",
       of: [{ type: "painRow" }],

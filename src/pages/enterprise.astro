@@ -88,8 +88,8 @@ const bridgeLinks: BridgeLink[] = Array.isArray(bridge.links) && bridge.links.le
 
 // ── Final CTA ───────────────────────────────────────────────
 const finalCta = page?.finalCta ?? {};
-const finalHeadlineTop = "Let's build a plan";
-const finalHeadlineBottom = "that works for you";
+const finalHeadlineTop = finalCta.headlineTop ?? finalCta.headline ?? "Let's build a plan";
+const finalHeadlineBottom = finalCta.headlineBottom ?? "that works for you";
 const finalSub = finalCta.body ?? "Customized setup, dedicated support, and security protocols that meets your unique requirements.";
 const finalPrimary = finalCta.primaryCta ?? { label: "Book a demo", href: "/demo" };
 const finalSecondary = finalCta.secondaryCta ?? { label: "Contact us", href: "/contact?interest=enterprise" };

@@ -80,6 +80,25 @@ export const verticalProductPage = defineType({
     defineField({ name: "painSection", type: "painSection", group: "sections" }),
 
     defineField({
+      name: "featureSpotlight",
+      title: "6-card feature spotlight",
+      type: "object",
+      group: "sections",
+      description: "6 feature cards with title + description (used on /orchestration). Preview panels are hardcoded product illustrations keyed by card index.",
+      fields: [
+        defineField({ name: "headlineTop", type: "string" }),
+        defineField({ name: "headlineBottom", type: "string", description: "Italic Nyght-serif phrase." }),
+        defineField({ name: "subhead", type: "text", rows: 2 }),
+        defineField({
+          name: "cards",
+          type: "array",
+          of: [{ type: "featureCard" }],
+          validation: (Rule) => Rule.min(1).max(6),
+        }),
+      ],
+    }),
+
+    defineField({
       name: "tabbedSpotlight",
       title: "4-tab feature spotlight",
       type: "object",

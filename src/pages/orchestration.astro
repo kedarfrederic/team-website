@@ -37,7 +37,7 @@ const pain = page?.painSection ?? {};
 const painEyebrow = pain.eyebrow ?? "The Release Lifecycle";
 const painHeadlineTop = pain.headlineTop ?? "One platform.";
 const painHeadlineBottom = pain.headlineBottom ?? "Every phase.";
-const painSubhead = "From first demo to post-release analytics — every step lives in Team";
+const painSubhead = (pain as any).subhead ?? "From first demo to post-release analytics — every step lives in Team";
 interface PainRow {
   pill?: string;
   h: string;
@@ -59,7 +59,8 @@ const painRows: PainRow[] = Array.isArray(pain.rows) && pain.rows.length > 0
 
 // ── Features (6-card spotlight) ─────────────────────────────
 interface Feature { key: string; title: string; description: string }
-const FEATURES: Feature[] = [
+const FEATURE_KEYS = ["timeline", "tasks", "rollout", "budget", "assets", "collab"];
+const DEFAULT_FEATURES: Feature[] = [
   { key: "timeline", title: "Release Timeline", description: "Your entire rollout mapped visually. Drag, drop, adjust. See every deadline across every phase." },
   { key: "tasks", title: "Task Management", description: "Not generic tasks. Release tasks. Pre-populated templates, role-based assignments, and deadline tracking that knows the difference between a playlist pitch and a press release." },
   { key: "rollout", title: "Rollout Plan", description: "AI-generated strategy documents tailored to your genre, audience, and goals. Not a blank page — a blueprint." },
@@ -67,10 +68,17 @@ const FEATURES: Feature[] = [
   { key: "assets", title: "Asset Library", description: "Every file, every version, every approval — in one place. AI-parsed contracts, searchable metadata, version history." },
   { key: "collab", title: "Collaboration", description: "Invite anyone into a release. They see what they need — their tasks, their deadlines, their assets. Nothing more, nothing less." },
 ];
-
-const featuresHeadlineTop = "Built for releases.";
-const featuresHeadlineBottom = "Nothing else.";
-const featuresSubhead = "Every feature exists because a release needs it";
+const featuresData = (page as any)?.featureSpotlight ?? {};
+const featuresHeadlineTop = featuresData.headlineTop ?? "Built for releases.";
+const featuresHeadlineBottom = featuresData.headlineBottom ?? "Nothing else.";
+const featuresSubhead = featuresData.subhead ?? "Every feature exists because a release needs it";
+const FEATURES: Feature[] = (Array.isArray(featuresData.cards) && featuresData.cards.length > 0)
+  ? featuresData.cards.map((c: any, i: number) => ({
+      key: FEATURE_KEYS[i] ?? `feat${i}`,
+      title: c?.title ?? DEFAULT_FEATURES[i]?.title ?? "",
+      description: c?.description ?? DEFAULT_FEATURES[i]?.description ?? "",
+    }))
+  : DEFAULT_FEATURES;
 
 // ── Bridge ──────────────────────────────────────────────────
 const bridge = page?.bridgeSection ?? {};
@@ -82,8 +90,8 @@ const bridgeCtaHref = bridge.ctaHref ?? "/intelligence";
 
 // ── Final CTA ──────────────────────────────────────────────
 const finalCta = page?.finalCta ?? {};
-const finalHeadlineTop = "Ready to run your releases";
-const finalHeadlineBottom = "the right way?";
+const finalHeadlineTop = finalCta.headlineTop ?? finalCta.headline ?? "Ready to run your releases";
+const finalHeadlineBottom = finalCta.headlineBottom ?? "the right way?";
 const finalPrimary = finalCta.primaryCta ?? primaryCta;
 const finalSecondary = finalCta.secondaryCta ?? secondaryCta;
 const finalFootnote = finalCta.footnote ?? "30-day free trial. No credit card required.";
