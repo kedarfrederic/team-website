@@ -29,7 +29,19 @@ import { SANITY_STUDIO_URL } from "../lib/sanity";
       const mod = await import(
         "https://esm.sh/@sanity/visual-editing@2.15.4?bundle-deps"
       );
-      mod.enableOverlays({
+      // The v2 package exports the activation function as
+      // `enableVisualEditing`; older docs reference it as `enableOverlays`,
+      // and newer 4.x/5.x bundles tend to export both. Try whichever exists
+      // so we work across versions if we ever bump esm.sh.
+      const enable = mod.enableOverlays ?? mod.enableVisualEditing ?? mod.default;
+      if (typeof enable !== "function") {
+        console.error(
+          "[sanity] visual editing module has no recognized entrypoint. exports:",
+          Object.keys(mod)
+        );
+        return;
+      }
+      enable({
         studioUrl,
         refresh: (payload) => {
           if (payload.source === "mutation") {
