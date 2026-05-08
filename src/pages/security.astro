@@ -23,7 +23,8 @@ const secondaryCta = hero.secondaryCta ?? { label: "Talk to us", href: "/demo" }
 
 // ── Pillars ─────────────────────────────────────────────────
 interface Pillar { title: string; body: string; tag?: string }
-const pillarsHeadline = page?.pillarsSection?.headline ?? "Security you can trust";
+const pillarsTop = page?.pillarsSection?.headlineTop ?? page?.pillarsSection?.headline ?? "Security you";
+const pillarsBottom = page?.pillarsSection?.headlineBottom ?? "can trust";
 const pillars: Pillar[] =
   Array.isArray(page?.pillarsSection?.pillars) && page.pillarsSection.pillars.length > 0
     ? page.pillarsSection.pillars
@@ -59,7 +60,8 @@ const aiPills: string[] = Array.isArray(ai.trustPills) && ai.trustPills.length >
 // ── Enterprise ──────────────────────────────────────────────
 interface EnterpriseBlock { tag?: string; title: string; body?: string }
 const ent = page?.enterpriseSection ?? {};
-const entHeadline = ent.headline ?? "Enterprise-grade controls";
+const entTop = ent.headlineTop ?? ent.headline ?? "Enterprise-grade";
+const entBottom = ent.headlineBottom ?? "controls";
 const entSubhead = ent.subhead ?? "For teams that need advanced security and compliance.";
 const entBlocks: EnterpriseBlock[] = Array.isArray(ent.blocks) && ent.blocks.length > 0
   ? ent.blocks
@@ -149,7 +151,7 @@ const finalFootnote = finalCta.footnote ?? "30-day free trial. No credit card re
   <section class="pillars-section">
     <div class="pillars-section__inner">
       <div class="pillars-section__header">
-        <h2>{pillarsHeadline}</h2>
+        <SplitHeadline as="h2" top={pillarsTop} bottom={pillarsBottom} />
       </div>
       <div class="pillars-grid">
         {pillars.map((p) => (
@@ -204,7 +206,7 @@ const finalFootnote = finalCta.footnote ?? "30-day free trial. No credit card re
   <section class="enterprise-section">
     <div class="enterprise-section__inner">
       <div class="enterprise-section__header">
-        <h2>{entHeadline}</h2>
+        <SplitHeadline as="h2" top={entTop} bottom={entBottom} />
         <p>{entSubhead}</p>
       </div>
       <div class="enterprise-grid">

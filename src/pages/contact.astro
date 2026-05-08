@@ -1,13 +1,15 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Wordmark from "../components/Wordmark.astro";
+import SplitHeadline from "../components/SplitHeadline.astro";
 import { getContactPage } from "../lib/queries";
 import { getClient, urlFor } from "../lib/sanity";
 
 const page = await getContactPage(getClient(Astro));
 
 // ── Fallback copy keeps the page identical when the doc is empty ─────
-const headline = page?.headline ?? "Get in touch";
+const headlineTop = page?.headlineTop ?? page?.headline ?? "Get in";
+const headlineBottom = page?.headlineBottom ?? "touch";
 const subhead =
   page?.subhead ??
   "Have a question, want to learn more, or just want to say hello?\nWe'd love to hear from you.";
@@ -35,7 +37,7 @@ const interestOptions: InterestOption[] =
 ---
 
 <BaseLayout
-  title={headline}
+  title={headlineTop + (headlineBottom ? " " + headlineBottom : "")}
   description={subhead.replace(/\n/g, " ")}
   seo={page?.seo}
   navTheme="dark"
@@ -48,7 +50,7 @@ const interestOptions: InterestOption[] =
 
   <div class="auth-page">
     <div class="auth-header">
-      <h1>{headline}</h1>
+      <SplitHeadline as="h1" top={headlineTop} bottom={headlineBottom} />
       <p set:html={subhead.replace(/\n/g, "<br>")} />
     </div>
 

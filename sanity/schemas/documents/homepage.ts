@@ -117,7 +117,9 @@ export const homepage = defineType({
       type: "object",
       group: "sections",
       fields: [
-        defineField({ name: "headline", type: "string", validation: (R) => R.required() }),
+        defineField({ name: "headlineTop", type: "string", description: "First line — sans font." }),
+        defineField({ name: "headlineBottom", type: "string", description: "Second line — serif italic (Nyght)." }),
+        defineField({ name: "headline", type: "string", description: "Legacy single-line headline.", hidden: true }),
         defineField({ name: "body", type: "text", rows: 3 }),
         defineField({
           name: "cta",
@@ -150,7 +152,26 @@ export const homepage = defineType({
       description:
         "4 tabs (Artists / Managers / Labels / Marketing & A&R). Each has a featured item + 3 stack rows + Learn-more link.",
       fields: [
-        defineField({ name: "headline", type: "string", validation: (R) => R.required() }),
+        defineField({
+          name: "label",
+          type: "string",
+          description: "Small uppercase eyebrow above the headline (e.g. \"BUILT FOR EVERY ROLE\").",
+        }),
+        defineField({
+          name: "headlineSuffixA",
+          title: "Headline — first italic phrase",
+          type: "string",
+          description: "Italic phrase rendered between \"From\" and \"to\" (e.g. \"independent artists\").",
+        }),
+        defineField({
+          name: "headlineSuffixB",
+          title: "Headline — second italic phrase",
+          type: "string",
+          description: "Italic phrase rendered after \"to\" (e.g. \"major labels\").",
+        }),
+        defineField({ name: "headlineTop", type: "string", description: "First line — sans font.", hidden: true }),
+        defineField({ name: "headlineBottom", type: "string", description: "Second line — serif italic (Nyght).", hidden: true }),
+        defineField({ name: "headline", type: "string", description: "Legacy single-line headline.", hidden: true }),
         defineField({ name: "subhead", type: "text", rows: 2 }),
         defineField({
           name: "tabs",
@@ -197,12 +218,26 @@ export const homepage = defineType({
       type: "object",
       group: "sections",
       fields: [
-        defineField({ name: "headline", type: "string", validation: (R) => R.required() }),
+        defineField({ name: "headlineTop", type: "string", description: "First line of headline — sans font (e.g. \"Find your personal\")." }),
+        defineField({ name: "headlineMid", type: "string", description: "Second line, before italic word — sans font (e.g. \"release companion in\")." }),
+        defineField({ name: "headlineItalic", type: "string", description: "Italic word at end of headline — Nyght serif (e.g. \"TeamMate\")." }),
+        defineField({ name: "headlineBottom", type: "string", description: "Legacy serif-italic bottom line.", hidden: true }),
+        defineField({ name: "headline", type: "string", description: "Legacy single-line headline.", hidden: true }),
         defineField({ name: "subhead", type: "text", rows: 2 }),
         defineField({
           name: "searchPlaceholder",
           type: "string",
           description: "Placeholder shown in the fake search bar.",
+        }),
+        defineField({
+          name: "buttonLabel",
+          type: "string",
+          description: "Label on the search submit button (e.g. \"Ask TeamMate\").",
+        }),
+        defineField({
+          name: "searchDialog",
+          type: "string",
+          description: "Tooltip shown after submitting the search (e.g. \"To try the search, book a demo\").",
         }),
         defineField({
           name: "ponderingLabel",
@@ -228,7 +263,9 @@ export const homepage = defineType({
       description:
         "Scroll-driven demo: releases grid → loading → timeline view. Demo data is content-controlled.",
       fields: [
-        defineField({ name: "headline", type: "string", validation: (R) => R.required() }),
+        defineField({ name: "headlineTop", type: "string", description: "First line — sans font." }),
+        defineField({ name: "headlineBottom", type: "string", description: "Second line — serif italic (Nyght)." }),
+        defineField({ name: "headline", type: "string", description: "Legacy single-line headline.", hidden: true }),
         defineField({ name: "subhead", type: "text", rows: 2 }),
         defineField({
           name: "demoReleases",
@@ -284,7 +321,9 @@ export const homepage = defineType({
       type: "object",
       group: "sections",
       fields: [
-        defineField({ name: "headline", type: "string", validation: (R) => R.required() }),
+        defineField({ name: "headlineTop", type: "string", description: "First line — sans font." }),
+        defineField({ name: "headlineBottom", type: "string", description: "Second line — serif italic (Nyght)." }),
+        defineField({ name: "headline", type: "string", description: "Legacy single-line headline.", hidden: true }),
         defineField({ name: "body", type: "text", rows: 3 }),
         defineField({
           name: "video",
@@ -313,7 +352,9 @@ export const homepage = defineType({
       group: "sections",
       description: "Two-row infinite marquee of integration logos.",
       fields: [
-        defineField({ name: "headline", type: "string", validation: (R) => R.required() }),
+        defineField({ name: "headlineTop", type: "string", description: "First line — sans font." }),
+        defineField({ name: "headlineBottom", type: "string", description: "Second line — serif italic (Nyght)." }),
+        defineField({ name: "headline", type: "string", description: "Legacy single-line headline.", hidden: true }),
         defineField({ name: "subhead", type: "text", rows: 2 }),
         defineField({
           name: "logos",
@@ -355,7 +396,9 @@ export const homepage = defineType({
       type: "object",
       group: "sections",
       fields: [
-        defineField({ name: "headline", type: "string" }),
+        defineField({ name: "headlineTop", type: "string", description: "First line — sans font." }),
+        defineField({ name: "headlineBottom", type: "string", description: "Second line — serif italic (Nyght)." }),
+        defineField({ name: "headline", type: "string", description: "Legacy single-line headline.", hidden: true }),
         defineField({
           name: "slides",
           type: "array",

@@ -18,10 +18,23 @@ export const contactPage = defineType({
   ],
   fields: [
     defineField({
+      name: "headlineTop",
+      type: "string",
+      group: "copy",
+      description: "First line — sans font.",
+    }),
+    defineField({
+      name: "headlineBottom",
+      type: "string",
+      group: "copy",
+      description: "Second line — serif italic (Nyght).",
+    }),
+    defineField({
       name: "headline",
       type: "string",
       group: "copy",
-      validation: (Rule) => Rule.required(),
+      description: "Legacy single-line headline. Prefer headlineTop + headlineBottom.",
+      hidden: true,
     }),
     defineField({
       name: "subhead",

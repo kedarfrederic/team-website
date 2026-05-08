@@ -2,6 +2,7 @@
 /**
  * "Final CTA" pattern. Optional eyebrow + headline + body + 1–2 buttons + optional footnote.
  */
+import SplitHeadline from "../SplitHeadline.astro";
 
 interface Cta {
   label?: string;
@@ -11,6 +12,8 @@ interface Cta {
 interface Props {
   value?: {
     eyebrow?: string;
+    headlineTop?: string;
+    headlineBottom?: string;
     headline?: string;
     body?: string;
     primaryCta?: Cta;
@@ -21,12 +24,15 @@ interface Props {
 
 const { value } = Astro.props;
 if (!value) return null;
+const top = value.headlineTop ?? value.headline ?? null;
+const bottom = value.headlineBottom ?? null;
+const hasHeadline = !!(top || bottom);
 ---
 
 <section class="cta-block">
   <div class="container container--center">
     {value.eyebrow && <span class="label-sm cta-eyebrow">{value.eyebrow}</span>}
-    {value.headline && <h2 class="headline-lg">{value.headline}</h2>}
+    {hasHeadline && <SplitHeadline as="h2" class="headline-lg" top={top} bottom={bottom} />}
     {value.body && <p class="body-lg">{value.body}</p>}
 
     {(value.primaryCta?.label || value.secondaryCta?.label) && (

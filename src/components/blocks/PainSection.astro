@@ -5,6 +5,7 @@
  */
 
 import MockData from "../mocks/MockData.astro";
+import SplitHeadline from "../SplitHeadline.astro";
 
 interface PainRow {
   metadataPill?: string;
@@ -16,6 +17,8 @@ interface PainRow {
 interface Props {
   value?: {
     eyebrow?: string;
+    headlineTop?: string;
+    headlineBottom?: string;
     headline?: string;
     rows?: PainRow[];
   };
@@ -23,14 +26,17 @@ interface Props {
 
 const { value } = Astro.props;
 if (!value || !value.rows || value.rows.length === 0) return null;
+const top = value.headlineTop ?? value.headline ?? null;
+const bottom = value.headlineBottom ?? null;
+const hasHeadline = !!(top || bottom);
 ---
 
 <section class="pain-section">
   <div class="container">
-    {(value.eyebrow || value.headline) && (
+    {(value.eyebrow || hasHeadline) && (
       <div class="pain-intro">
         {value.eyebrow && <span class="label-sm">{value.eyebrow}</span>}
-        {value.headline && <h2 class="headline-lg">{value.headline}</h2>}
+        {hasHeadline && <SplitHeadline as="h2" class="headline-lg" top={top} bottom={bottom} />}
       </div>
     )}
 

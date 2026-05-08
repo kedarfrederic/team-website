@@ -10,9 +10,20 @@ export const featureSpotlight = defineType({
       type: "string",
     }),
     defineField({
+      name: "headlineTop",
+      type: "string",
+      description: "First line — sans font.",
+    }),
+    defineField({
+      name: "headlineBottom",
+      type: "string",
+      description: "Second line — serif italic (Nyght).",
+    }),
+    defineField({
       name: "headline",
       type: "string",
-      validation: (Rule) => Rule.required(),
+      description: "Legacy single-line headline. Prefer headlineTop + headlineBottom.",
+      hidden: true,
     }),
     defineField({
       name: "subhead",
@@ -27,9 +38,9 @@ export const featureSpotlight = defineType({
     }),
   ],
   preview: {
-    select: { title: "headline", count: "cards" },
-    prepare: ({ title, count }) => ({
-      title: title || "Feature spotlight",
+    select: { titleTop: "headlineTop", titleLegacy: "headline", count: "cards" },
+    prepare: ({ titleTop, titleLegacy, count }) => ({
+      title: titleTop || titleLegacy || "Feature spotlight",
       subtitle: `${(count as unknown[] | undefined)?.length ?? 0} cards`,
     }),
   },

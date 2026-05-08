@@ -1,8 +1,11 @@
 ---
 import { urlFor } from "../../lib/sanity";
+import SplitHeadline from "../SplitHeadline.astro";
 
 interface Props {
   data?: {
+    headlineTop?: string;
+    headlineBottom?: string;
     headline?: string;
     body?: string;
     video?: { src?: string; poster?: any };
@@ -10,8 +13,8 @@ interface Props {
 }
 
 const { data } = Astro.props;
-const headline = data?.headline ?? "Every rollout";
-const headlineNyght = "builds a brain";
+const headlineTop = data?.headlineTop ?? data?.headline ?? "Every rollout";
+const headlineBottom = data?.headlineBottom ?? "builds a brain";
 const body = data?.body ?? "Each contact, task, observation, and decision becomes a living memory — only ever accessible to you and your team.";
 const videoSrc = data?.video?.src ?? "/assets/brain-1-web.mp4";
 const posterUrl = data?.video?.poster?.asset
@@ -22,7 +25,7 @@ const posterUrl = data?.video?.poster?.asset
 <section class="brain-section" id="brainSection">
   <div class="container container--center">
     <div class="section-intro">
-      <h2 class="headline-lg">{headline}<br /><span class="nyght">{headlineNyght}</span></h2>
+      <SplitHeadline as="h2" class="headline-lg" top={headlineTop} bottom={headlineBottom} />
       <p class="body-lg">{body}</p>
     </div>
   </div>

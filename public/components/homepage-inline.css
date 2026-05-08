@@ -550,6 +550,13 @@ body.nav-mobile-lock{overflow:hidden}
 /* Mirror the arrow for left tile so it curves in a nice way */
 .tile-label--left .tile-label__arrow{transform:scaleX(-1)}
 
+/* Re-enable pointer events on the small label text spans so Sanity's
+   visual-edit overlay can attach pencils. The tile-image layer above
+   stays click-through so hero buttons remain reachable. */
+.hero-excerpts .tile-label__text{
+  pointer-events:auto !important;
+}
+
 @media(max-width:768px){
   .hero-excerpts{bottom:4%;width:85vw}
 }

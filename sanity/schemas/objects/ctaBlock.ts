@@ -16,10 +16,23 @@ export const ctaBlock = defineType({
       description: "Small uppercase label above the headline (e.g. \"Get started\").",
     }),
     defineField({
-      name: "headline",
-      title: "Headline",
+      name: "headlineTop",
+      title: "Headline (top line)",
       type: "string",
-      validation: (Rule) => Rule.required(),
+      description: "First line — sans font.",
+    }),
+    defineField({
+      name: "headlineBottom",
+      title: "Headline (bottom line)",
+      type: "string",
+      description: "Second line — serif italic (Nyght).",
+    }),
+    defineField({
+      name: "headline",
+      title: "Legacy headline",
+      type: "string",
+      description: "Legacy single-line headline. Prefer headlineTop + headlineBottom.",
+      hidden: true,
     }),
     defineField({
       name: "body",
@@ -59,9 +72,9 @@ export const ctaBlock = defineType({
     }),
   ],
   preview: {
-    select: { title: "headline", subtitle: "primaryCta.label" },
-    prepare: ({ title, subtitle }) => ({
-      title: title || "(untitled CTA)",
+    select: { titleTop: "headlineTop", titleLegacy: "headline", subtitle: "primaryCta.label" },
+    prepare: ({ titleTop, titleLegacy, subtitle }) => ({
+      title: titleTop || titleLegacy || "(untitled CTA)",
       subtitle: subtitle ? `→ ${subtitle}` : "(no primary CTA set)",
     }),
   },

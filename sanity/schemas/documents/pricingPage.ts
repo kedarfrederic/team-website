@@ -25,7 +25,9 @@ export const pricingPage = defineType({
       type: "object",
       group: "hero",
       fields: [
-        defineField({ name: "headline", type: "string", validation: (R) => R.required() }),
+        defineField({ name: "headlineTop", type: "string", description: "First line — sans font." }),
+        defineField({ name: "headlineBottom", type: "string", description: "Second line — serif italic (Nyght)." }),
+        defineField({ name: "headline", type: "string", description: "Legacy single-line headline.", hidden: true }),
         defineField({ name: "subhead", type: "text", rows: 2 }),
         defineField({
           name: "cta",

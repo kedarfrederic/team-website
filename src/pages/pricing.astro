@@ -8,8 +8,8 @@ import { toHTML } from "@portabletext/to-html";
 const page = await getPricingPage(getClient(Astro));
 
 const hero = page?.hero ?? {};
-const heroHeadline = hero.headline ?? "Start free.";
-const heroNyght = "Upgrade when you're ready.";
+const heroHeadlineTop = hero.headlineTop ?? hero.headline ?? "Start free.";
+const heroHeadlineBottom = hero.headlineBottom ?? "Upgrade when you're ready.";
 const heroSubhead =
   hero.subhead ??
   "Start using it with no commitment. Free forever for one artist, or unlock the full platform with Pro — 30 days free.";
@@ -157,8 +157,8 @@ interface FaqItem {
 }
 
 const faq = page?.faq ?? {};
-const faqHeadline = faq.headline ?? "Questions?";
-const faqHeadlineNyght = "We've got answers.";
+const faqHeadlineTop = faq.headlineTop ?? faq.headline ?? "Questions?";
+const faqHeadlineBottom = faq.headlineBottom ?? "We've got answers.";
 const faqSubhead =
   faq.subhead ??
   "Everything you need to know about plans, billing, and what happens when your trial ends.";
@@ -182,22 +182,22 @@ const faqItems: { q: string; aHtml: string }[] =
     : faqFallback.map((it) => ({ q: it.q, aHtml: `<p>${it.a}</p>` }));
 
 const finalCta = page?.finalCta ?? {};
-const finalHeadline = finalCta.headline ?? "Ready to run";
-const finalHeadlineNyght = "your next release?";
+const finalHeadlineTop = finalCta.headlineTop ?? finalCta.headline ?? "Ready to run";
+const finalHeadlineBottom = finalCta.headlineBottom ?? "your next release?";
 const finalPrimary = finalCta.primaryCta ?? { label: "Start your free trial", href: "https://www.teamrollouts.com/sign-up" };
 const finalSecondary = finalCta.secondaryCta ?? { label: "Book a demo", href: "/demo" };
 const finalFootnote = finalCta.footnote ?? "30-day free trial.";
 ---
 
 <BaseLayout
-  title={hero.headline ?? "Pricing"}
+  title={heroHeadlineTop}
   description={heroSubhead}
   seo={page?.seo}
 >
   <link slot="head" rel="stylesheet" href="/components/pricing-inline.css" />
 
   <section class="pricing-hero">
-    <SplitHeadline as="h1" top={heroHeadline} bottom={heroNyght} />
+    <SplitHeadline as="h1" top={heroHeadlineTop} bottom={heroHeadlineBottom} />
     <p>{heroSubhead}</p>
     <a href={heroCtaHref} class="btn btn--primary-light pricing-hero__cta">
       <span class="pricing-hero__cta-full">{heroCtaLabel}</span>
@@ -320,7 +320,7 @@ const finalFootnote = finalCta.footnote ?? "30-day free trial.";
     <div class="faq-section__inner">
       <div class="faq-section__intro">
         <div class="faq-section__label">{faqEyebrow}</div>
-        <h2 class="faq-section__headline">{faqHeadline} <span class="nyght">{faqHeadlineNyght}</span></h2>
+        <h2 class="faq-section__headline">{faqHeadlineTop} <span class="nyght">{faqHeadlineBottom}</span></h2>
         <p class="faq-section__sub">{faqSubhead}</p>
         <a href={faqCtaHref} class="faq-section__cta">{faqCtaLabel}</a>
       </div>
@@ -351,7 +351,7 @@ const finalFootnote = finalCta.footnote ?? "30-day free trial.";
 
   <section class="final-cta">
     <div class="final-cta__card">
-      <h2>{finalHeadline} <span class="nyght">{finalHeadlineNyght}</span></h2>
+      <h2>{finalHeadlineTop} <span class="nyght">{finalHeadlineBottom}</span></h2>
       <div class="final-cta__buttons">
         <a href={finalPrimary.href} class="btn btn--primary-light">{finalPrimary.label}</a>
         {finalSecondary?.label && finalSecondary?.href && (

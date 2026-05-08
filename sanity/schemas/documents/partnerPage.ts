@@ -65,7 +65,9 @@ export const partnerPage = defineType({
       description: "4-tab feature spotlight unique to /for-partners.",
       fields: [
         defineField({ name: "eyebrow", type: "string" }),
-        defineField({ name: "headline", type: "string", initialValue: "Built for every kind of partner" }),
+        defineField({ name: "headlineTop", type: "string", description: "First line — sans font.", initialValue: "Built for every" }),
+        defineField({ name: "headlineBottom", type: "string", description: "Second line — serif italic (Nyght).", initialValue: "kind of partner" }),
+        defineField({ name: "headline", type: "string", description: "Legacy single-line headline.", hidden: true }),
         defineField({ name: "subhead", type: "text", rows: 2 }),
         defineField({
           name: "tabs",

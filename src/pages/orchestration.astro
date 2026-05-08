@@ -90,8 +90,8 @@ const finalFootnote = finalCta.footnote ?? "30-day free trial. No credit card re
 
 // ── Roles ──────────────────────────────────────────────────
 const rolesGrid = page?.rolesGrid ?? {};
-const rolesTop = rolesGrid.eyebrow ?? "Designed for";
-const rolesBottom = rolesGrid.headline ?? "how you work";
+const rolesTop = rolesGrid.headlineTop ?? rolesGrid.eyebrow ?? "Designed for";
+const rolesBottom = rolesGrid.headlineBottom ?? rolesGrid.headline ?? "how you work";
 const rolesCards = Array.isArray(rolesGrid.cards) && rolesGrid.cards.length > 0
   ? rolesGrid.cards
   : [

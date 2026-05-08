@@ -59,7 +59,9 @@ export const securityPage = defineType({
       type: "object",
       group: "sections",
       fields: [
-        defineField({ name: "headline", type: "string" }),
+        defineField({ name: "headlineTop", type: "string", description: "First line — sans font." }),
+        defineField({ name: "headlineBottom", type: "string", description: "Second line — serif italic (Nyght)." }),
+        defineField({ name: "headline", type: "string", description: "Legacy single-line headline.", hidden: true }),
         defineField({
           name: "pillars",
           type: "array",
@@ -121,7 +123,9 @@ export const securityPage = defineType({
       type: "object",
       group: "sections",
       fields: [
-        defineField({ name: "headline", type: "string" }),
+        defineField({ name: "headlineTop", type: "string", description: "First line — sans font." }),
+        defineField({ name: "headlineBottom", type: "string", description: "Second line — serif italic (Nyght)." }),
+        defineField({ name: "headline", type: "string", description: "Legacy single-line headline.", hidden: true }),
         defineField({ name: "subhead", type: "text", rows: 2 }),
         defineField({
           name: "blocks",

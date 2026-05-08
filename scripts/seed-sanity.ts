@@ -81,6 +81,8 @@ function block(text: string) {
 }
 const ROLES_GRID_DEFAULT = {
   eyebrow: "Designed for",
+  headlineTop: "Designed for",
+  headlineBottom: "how you work",
   headline: "how you work",
   cards: [
     role("For Artists", "Your release, structured. No more winging it.", "/for-artists"),
@@ -220,11 +222,18 @@ docs.push({
     tileLabels: { left: "Single", center: "EP", right: "Album" },
   },
   uploadSection: {
+    headlineTop: "One platform.",
+    headlineBottom: "One team.",
     headline: "One platform. One team.",
     body: "Whether you're rolling out a single, EP, or Album, every task, every asset, and every conversation needs a single home.",
     cta: { ...cta("See how it works", "#"), type: "video" },
   },
   rolesTabs: {
+    label: "Built for every role",
+    headlineSuffixA: "independent artists",
+    headlineSuffixB: "major labels",
+    headlineTop: "Built for",
+    headlineBottom: "every role",
     headline: "Built for every role",
     subhead: "Whether you manage one artist or a roster of fifty, Team adapts to how you work.",
     tabs: [
@@ -290,12 +299,40 @@ docs.push({
       },
     ],
   },
+  engineSection: {
+    headlineTop: "Find your personal",
+    headlineMid: "release companion in",
+    headlineItalic: "TeamMate",
+    subhead: "Converse, plan, and execute plays with AI-powered release intelligence.",
+    searchPlaceholder: "Ask TeamMate anything...",
+    buttonLabel: "Ask TeamMate",
+    searchDialog: "To try the search, book a demo",
+    ponderingLabel: "TeamMate is pondering",
+    resultLabels: [
+      "Portrait_01.jpg",
+      "Campaign_hero.png",
+      "Product_shot.jpg",
+      "Team_photo.png",
+      "Banner_v2.jpg",
+      "Social_post.png",
+    ],
+  },
   brainSection: {
+    headlineTop: "Every rollout",
+    headlineBottom: "builds a brain",
     headline: "Every rollout",
     body: "Each contact, task, observation, and decision becomes a living memory — only ever accessible to you and your team.",
     video: { src: "/assets/brain-1-web.mp4" },
   },
+  integrationsMarquee: {
+    headlineTop: "Connects to",
+    headlineBottom: "your tech stack",
+    headline: "Connects to your tech stack",
+    subhead: "Works with the tools your team already uses. No migration, no disruption.",
+  },
   faq: {
+    headlineTop: "Straight answers",
+    headlineBottom: "no spin.",
     headline: "Straight answers",
     subhead: "Everything you need to know about Team before you give it a try. Still stuck? Our founders answer demos personally.",
     footerCta: { label: "Talk to a founder", href: "/demo" },
@@ -338,6 +375,8 @@ docs.push({
     ],
   },
   stories: {
+    headlineTop: "Ready to transform",
+    headlineBottom: "your next release?",
     headline: "Ready to transform your next release?",
     slides: [
       { _key: "s1", _type: "testimonialSlide", tier: "enterprise", name: "Amara Johnson", role: "Head of Marketing · Major Label", quote: "Team gave our A&R and marketing teams a shared view we never had before." },
@@ -404,6 +443,8 @@ docs.push({
 docs.push({
   _id: "contactPage",
   _type: "contactPage",
+  headlineTop: "Get in",
+  headlineBottom: "touch",
   headline: "Get in touch",
   subhead: "Have a question, want to learn more, or just want to say hello?\nWe'd love to hear from you.",
   submitLabel: "Send message",
@@ -420,6 +461,8 @@ docs.push({
 docs.push({
   _id: "demoPage",
   _type: "demoPage",
+  headlineTop: "Book",
+  headlineBottom: "a demo",
   headline: "Book a demo",
   subhead: "See how Team can streamline your release workflow.\nMeet a founder — not a sales rep.",
   submitLabel: "Continue to pick a time",
@@ -433,6 +476,8 @@ docs.push({
   _id: "pricingPage",
   _type: "pricingPage",
   hero: {
+    headlineTop: "Start free.",
+    headlineBottom: "Upgrade when you're ready.",
     headline: "Start free.",
     subhead: "Start using it with no commitment. Free forever for one artist, or unlock the full platform with Pro — 30 days free.",
     cta: cta("Try Pro free for 30 days", "https://www.teamrollouts.com/sign-up?plan=pro&period=yearly"),
@@ -550,6 +595,8 @@ docs.push({
   },
   faq: {
     eyebrow: "Pricing",
+    headlineTop: "Questions?",
+    headlineBottom: "We've got answers.",
     headline: "Questions? We've got answers.",
     subhead: "Everything you need to know about plans, billing, and what happens when your trial ends.",
     footerCta: { label: "Talk to a founder →", href: "/demo" },
@@ -569,6 +616,8 @@ docs.push({
     ],
   },
   finalCta: {
+    headlineTop: "Ready to run",
+    headlineBottom: "your next release?",
     headline: "Ready to run your next release?",
     primaryCta: cta("Start your free trial", "https://www.teamrollouts.com/sign-up"),
     secondaryCta: cta("Book a demo", "/demo"),
@@ -608,11 +657,15 @@ docs.push({
     ],
   },
   featureSpotlight: {
+    headlineTop: "Everything you need",
+    headlineBottom: "to release with confidence",
     headline: "Everything you need to release with confidence",
     subhead: "From first idea to release day and beyond",
     cards: ICP_FEATURE_CARDS,
   },
   stepsBlock: {
+    headlineTop: "Up and running",
+    headlineBottom: "in minutes",
     headline: "Up and running in minutes",
     steps: [
       step("1", "Sign up for free", "Create your account in 30 seconds. No credit card, no commitment. Full access for 30 days."),
@@ -621,6 +674,8 @@ docs.push({
     ],
   },
   finalCta: {
+    headlineTop: "Ready to take control of",
+    headlineBottom: "your next release?",
     headline: "Ready to take control of your next release?",
     primaryCta: cta("Start your free trial", "https://www.teamrollouts.com/sign-up?plan=free&period=yearly"),
     secondaryCta: cta("Book a demo", "/demo"),
@@ -628,6 +683,8 @@ docs.push({
   },
   rolesGrid: {
     eyebrow: "Designed for",
+    headlineTop: "Designed for",
+    headlineBottom: "how you work",
     headline: "how you work",
     cards: [
       role("For Managers", "A single command center for every rollout across your entire roster.", "/for-managers"),
@@ -657,11 +714,15 @@ docs.push({
     ],
   },
   featureSpotlight: {
+    headlineTop: "Everything a manager needs",
+    headlineBottom: "to scale a roster",
     headline: "Everything a manager needs to scale a roster",
     subhead: "From day-of-release coordination to long-term roster strategy",
     cards: ICP_FEATURE_CARDS,
   },
   stepsBlock: {
+    headlineTop: "From chaos",
+    headlineBottom: "to clarity in days",
     headline: "From chaos to clarity in days",
     steps: [
       step("1", "Add your artists", "Bring your full roster into one workspace. Each artist gets their own space; you stay in control."),
@@ -670,6 +731,8 @@ docs.push({
     ],
   },
   finalCta: {
+    headlineTop: "Ready to manage your roster",
+    headlineBottom: "without the chaos?",
     headline: "Ready to manage your roster without the chaos?",
     primaryCta: cta("Start your free trial", "https://www.teamrollouts.com/sign-up?plan=free&period=yearly"),
     secondaryCta: cta("Book a demo", "/demo"),
@@ -677,6 +740,8 @@ docs.push({
   },
   rolesGrid: {
     eyebrow: "Designed for",
+    headlineTop: "Designed for",
+    headlineBottom: "how you work",
     headline: "how you work",
     cards: [
       role("For Artists", "Your release, structured. No more winging it.", "/for-artists"),
@@ -706,11 +771,15 @@ docs.push({
     ],
   },
   featureSpotlight: {
+    headlineTop: "Everything a label needs",
+    headlineBottom: "to run a roster at scale",
     headline: "Everything a label needs to run a roster at scale",
     subhead: "From release planning to portfolio reporting, in one place",
     cards: ICP_FEATURE_CARDS,
   },
   stepsBlock: {
+    headlineTop: "From sprawl",
+    headlineBottom: "to a single source of truth",
     headline: "From sprawl to a single source of truth",
     steps: [
       step("1", "Bring your catalog in", "Import your artists and active releases. We migrate from spreadsheets, Asana, Notion — whatever you're on today."),
@@ -719,6 +788,8 @@ docs.push({
     ],
   },
   finalCta: {
+    headlineTop: "Ready to scale your label",
+    headlineBottom: "without the chaos?",
     headline: "Ready to scale your label without the chaos?",
     primaryCta: cta("Book a demo", "/demo"),
     secondaryCta: cta("Talk to us", "/contact?interest=enterprise"),
@@ -726,6 +797,8 @@ docs.push({
   },
   rolesGrid: {
     eyebrow: "Designed for",
+    headlineTop: "Designed for",
+    headlineBottom: "how you work",
     headline: "how you work",
     cards: [
       role("For Artists", "Your release, structured. No more winging it.", "/for-artists"),
@@ -756,6 +829,8 @@ docs.push({
     ],
   },
   tabbedFeatures: {
+    headlineTop: "Built for every",
+    headlineBottom: "kind of partner",
     headline: "Built for every kind of partner",
     subhead: "Whatever your role in the release, Team has you covered",
     tabs: [
@@ -786,6 +861,8 @@ docs.push({
     ],
   },
   stepsBlock: {
+    headlineTop: "Up and running",
+    headlineBottom: "in minutes",
     headline: "Up and running in minutes",
     steps: [
       step("1", "Get invited", "A client adds you to their release on Team. You get an email with instant access."),
@@ -794,6 +871,8 @@ docs.push({
     ],
   },
   finalCta: {
+    headlineTop: "Ready to work smarter",
+    headlineBottom: "with your clients?",
     headline: "Ready to work smarter with your clients?",
     primaryCta: cta("Start your free trial", "https://www.teamrollouts.com/sign-up?plan=pro&period=yearly"),
     secondaryCta: cta("Book a demo", "/demo"),
@@ -801,6 +880,8 @@ docs.push({
   },
   rolesGrid: {
     eyebrow: "Designed for",
+    headlineTop: "Designed for",
+    headlineBottom: "how you work",
     headline: "how you work",
     cards: [
       role("For Artists", "Tools for independent artists to plan and execute releases on their own terms.", "/for-artists"),
@@ -886,6 +967,8 @@ docs.push({
     ctaHref: "/orchestration",
   },
   finalCta: {
+    headlineTop: "Ready to release",
+    headlineBottom: "with intelligence?",
     headline: "Ready to release with intelligence?",
     primaryCta: cta("Start your free trial", "https://www.teamrollouts.com/sign-up?plan=pro&period=yearly"),
     secondaryCta: cta("Book a demo", "/demo"),
@@ -931,6 +1014,8 @@ docs.push({
     ctaHref: "/intelligence",
   },
   finalCta: {
+    headlineTop: "Ready to run your releases",
+    headlineBottom: "the right way?",
     headline: "Ready to run your releases the right way?",
     primaryCta: cta("Start your free trial", "https://www.teamrollouts.com/sign-up?plan=pro&period=yearly"),
     secondaryCta: cta("Book a demo", "/demo"),
@@ -994,6 +1079,8 @@ docs.push({
     ],
   },
   finalCta: {
+    headlineTop: "Let's build a plan",
+    headlineBottom: "that works for you",
     headline: "Let's build a plan that works for you",
     body: "Customized setup, dedicated support, and security protocols that meets your unique requirements.",
     primaryCta: cta("Book a demo", "/demo"),
@@ -1016,6 +1103,8 @@ docs.push({
     secondaryCta: cta("Talk to us", "/demo"),
   },
   pillarsSection: {
+    headlineTop: "Security",
+    headlineBottom: "you can trust",
     headline: "Security you can trust",
     pillars: [
       { _key: "enc", _type: "securityPillar", title: "Encrypted at rest and in transit", body: "All data is encrypted using AES-256 at rest and TLS 1.3 in transit. Your unreleased masters, contracts, and business data are protected at every stage.", tag: "AES-256 + TLS 1.3" },
@@ -1042,6 +1131,8 @@ docs.push({
     ],
   },
   enterpriseSection: {
+    headlineTop: "Enterprise-grade",
+    headlineBottom: "controls",
     headline: "Enterprise-grade controls",
     subhead: "For teams that need advanced security and compliance.",
     blocks: [
@@ -1067,6 +1158,8 @@ docs.push({
   },
   faq: {
     eyebrow: "Security",
+    headlineTop: "Questions about security?",
+    headlineBottom: "We've got answers.",
     headline: "Questions about security?",
     subhead: "Your unreleased music and business data deserve the highest level of protection.",
     footerCta: { label: "Talk to a founder →", href: "/demo" },
@@ -1089,6 +1182,8 @@ docs.push({
     ],
   },
   finalCta: {
+    headlineTop: "Ready to protect your releases",
+    headlineBottom: "from day one?",
     headline: "Ready to protect your releases from day one?",
     primaryCta: cta("Start your free trial", "https://www.teamrollouts.com/sign-up?plan=pro&period=yearly"),
     secondaryCta: cta("Book a demo", "/demo"),

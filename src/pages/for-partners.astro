@@ -48,7 +48,8 @@ const painRows: PainRow[] = Array.isArray(pain.rows) && pain.rows.length > 0
 interface TabFeature { title: string; description?: string }
 interface PartnerTab { label: string; tabKey: string; features: TabFeature[] }
 const tabs = page?.tabbedFeatures ?? {};
-const tabHeadline = tabs.headline ?? "Built for every kind of partner";
+const tabHeadlineTop = tabs.headlineTop ?? tabs.headline ?? "Built for every";
+const tabHeadlineBottom = tabs.headlineBottom ?? "kind of partner";
 const tabSubhead = tabs.subhead ?? "Whatever your role in the release, Team has you covered";
 const tabList: PartnerTab[] = Array.isArray(tabs.tabs) && tabs.tabs.length > 0
   ? tabs.tabs
@@ -113,8 +114,8 @@ const stepItems = Array.isArray(steps.steps) && steps.steps.length > 0
 
 // ── Final CTA ──────────────────────────────────────────────
 const finalCta = page?.finalCta ?? {};
-const finalHeadlineTop = "Ready to work smarter";
-const finalHeadlineBottom = "with your clients?";
+const finalHeadlineTop = finalCta.headlineTop ?? finalCta.headline ?? "Ready to work smarter";
+const finalHeadlineBottom = finalCta.headlineBottom ?? "with your clients?";
 const finalPrimary = finalCta.primaryCta ?? { label: "Start your free trial", href: "https://www.teamrollouts.com/sign-up?plan=pro&period=yearly" };
 const finalSecondary = finalCta.secondaryCta ?? { label: "Book a demo", href: "/demo" };
 const finalFootnote = finalCta.footnote ?? "30-day free trial. No credit card required.";
@@ -149,7 +150,7 @@ const others = Array.isArray(rolesGrid.cards) && rolesGrid.cards.length > 0
         <a href="/for-partners" class="icp-nav__pill icp-nav__pill--active">For Partners</a>
       </div>
       {heroPill && <span class="hero-pill">{heroPill}</span>}
-      <h1>{heroTop} <span class="nyght">{heroBottom}</span></h1>
+      <SplitHeadline as="h1" top={heroTop} bottom={heroBottom} />
       <p>{heroSubhead}</p>
       <div class="icp-hero__buttons">
         <a href={primaryCta.href} class="btn btn--green">{primaryCta.label}</a>
@@ -217,7 +218,7 @@ const others = Array.isArray(rolesGrid.cards) && rolesGrid.cards.length > 0
   <section class="features-section" id="featuresSection">
     <div class="features-section__inner">
       <div class="features-section__header">
-        <h2>{tabHeadline}</h2>
+        <SplitHeadline as="h2" top={tabHeadlineTop} bottom={tabHeadlineBottom} />
       </div>
       <p class="features-section__sub">{tabSubhead}</p>
 
@@ -279,7 +280,7 @@ const others = Array.isArray(rolesGrid.cards) && rolesGrid.cards.length > 0
 
   <section class="final-cta">
     <div class="final-cta__card">
-      <h2>{finalHeadlineTop}<br /><span class="nyght">{finalHeadlineBottom}</span></h2>
+      <SplitHeadline as="h2" top={finalHeadlineTop} bottom={finalHeadlineBottom} />
       <div class="final-cta__buttons">
         <a href={finalPrimary.href} class="btn btn--primary-light">{finalPrimary.label}</a>
         {finalSecondary?.href && finalSecondary?.label && (

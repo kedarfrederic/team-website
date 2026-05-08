@@ -1,12 +1,14 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Wordmark from "../components/Wordmark.astro";
+import SplitHeadline from "../components/SplitHeadline.astro";
 import { getDemoPage } from "../lib/queries";
 import { getClient, urlFor } from "../lib/sanity";
 
 const page = await getDemoPage(getClient(Astro));
 
-const headline = page?.headline ?? "Book a demo";
+const headlineTop = page?.headlineTop ?? page?.headline ?? "Book";
+const headlineBottom = page?.headlineBottom ?? "a demo";
 const subhead =
   page?.subhead ??
   "See how Team can streamline your release workflow.\nMeet a founder — not a sales rep.";
@@ -22,7 +24,7 @@ const posterUrl = page?.backgroundVideo?.poster?.asset
 ---
 
 <BaseLayout
-  title={headline}
+  title={headlineTop + (headlineBottom ? " " + headlineBottom : "")}
   description={subhead.replace(/\n/g, " ")}
   seo={page?.seo}
   navTheme="dark"
@@ -37,7 +39,7 @@ const posterUrl = page?.backgroundVideo?.poster?.asset
 
   <div class="auth-page">
     <div class="auth-header">
-      <h1>{headline}</h1>
+      <SplitHeadline as="h1" top={headlineTop} bottom={headlineBottom} />
       <p set:html={subhead.replace(/\n/g, "<br>")} />
     </div>
 

@@ -3,6 +3,8 @@
  * "Up and running in minutes" — 3-step block on every ICP page.
  */
 
+import SplitHeadline from "../SplitHeadline.astro";
+
 interface StepItem {
   number: string;
   title: string;
@@ -12,6 +14,8 @@ interface StepItem {
 interface Props {
   value?: {
     eyebrow?: string;
+    headlineTop?: string;
+    headlineBottom?: string;
     headline?: string;
     steps?: StepItem[];
   };
@@ -19,13 +23,16 @@ interface Props {
 
 const { value } = Astro.props;
 if (!value || !value.steps || value.steps.length === 0) return null;
+const top = value.headlineTop ?? value.headline ?? null;
+const bottom = value.headlineBottom ?? null;
+const hasHeadline = !!(top || bottom);
 ---
 
 <section class="steps-block">
   <div class="container">
     <div class="steps-intro">
       {value.eyebrow && <span class="label-sm">{value.eyebrow}</span>}
-      {value.headline && <h2 class="headline-lg">{value.headline}</h2>}
+      {hasHeadline && <SplitHeadline as="h2" class="headline-lg" top={top} bottom={bottom} />}
     </div>
 
     <ol class="steps-grid">

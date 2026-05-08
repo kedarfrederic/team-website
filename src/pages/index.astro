@@ -18,9 +18,12 @@
 
 import BaseLayout from "../layouts/BaseLayout.astro";
 import HomeRoles from "../components/homepage/HomeRoles.astro";
+import HomeEngine from "../components/homepage/HomeEngine.astro";
 import HomeBrain from "../components/homepage/HomeBrain.astro";
+import HomeIntegrations from "../components/homepage/HomeIntegrations.astro";
 import HomeFaq from "../components/homepage/HomeFaq.astro";
 import HomeStories from "../components/homepage/HomeStories.astro";
+import SplitHeadline from "../components/SplitHeadline.astro";
 import { getHomepage } from "../lib/queries";
 import { getClient, urlFor } from "../lib/sanity";
 // @ts-expect-error — Astro's ?raw modifier returns a string at build time
@@ -53,7 +56,8 @@ const tileRight = tileLabels.right ?? "Album";
 
 // ── Upload section ──────────────────────────────────────────
 const upload = page?.uploadSection ?? {};
-const uploadHeadline = upload.headline ?? "One platform. One team.";
+const uploadHeadlineTop = upload.headlineTop ?? upload.headline ?? "One platform.";
+const uploadHeadlineBottom = upload.headlineBottom ?? "One team.";
 const uploadBody = upload.body ?? "Whether you're rolling out a single, EP, or Album, every task, every asset, and every conversation needs a single home.";
 const uploadCta = upload.cta ?? { label: "See how it works", type: "video", href: "#" };
 const uploadCtaIsVideo = uploadCta?.type === "video";
@@ -149,7 +153,7 @@ const uploadCtaIsVideo = uploadCta?.type === "video";
   <section class="section" id="uploadSection">
     <div class="container container--center">
       <div class="section-intro">
-        <h2 class="headline-lg">{uploadHeadline}</h2>
+        <SplitHeadline as="h2" class="headline-lg" top={uploadHeadlineTop} bottom={uploadHeadlineBottom} />
         <p class="body-lg">{uploadBody}</p>
         {uploadCta?.label && (
           <a
@@ -184,8 +188,10 @@ const uploadCtaIsVideo = uploadCta?.type === "video";
       C: legacy chrome — video modal, side nav, floating CTA.
   */}
   <HomeRoles data={page?.rolesTabs} />
+  <HomeEngine data={page?.engineSection} />
   <Fragment set:html={restAHtml} />
   <HomeBrain data={page?.brainSection} />
+  <HomeIntegrations data={page?.integrationsMarquee} />
   <Fragment set:html={restBHtml} />
   <HomeFaq data={page?.faq} />
   <HomeStories data={page?.stories} />

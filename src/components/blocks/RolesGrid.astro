@@ -4,6 +4,8 @@
  * Cross-link block on enterprise/about/intelligence/orchestration/integrations.
  */
 
+import SplitHeadline from "../SplitHeadline.astro";
+
 interface RoleCard {
   title: string;
   description: string;
@@ -13,6 +15,8 @@ interface RoleCard {
 interface Props {
   value?: {
     eyebrow?: string;
+    headlineTop?: string;
+    headlineBottom?: string;
     headline?: string;
     cards?: RoleCard[];
   };
@@ -20,13 +24,16 @@ interface Props {
 
 const { value } = Astro.props;
 if (!value || !value.cards || value.cards.length === 0) return null;
+const top = value.headlineTop ?? value.headline ?? null;
+const bottom = value.headlineBottom ?? null;
+const hasHeadline = !!(top || bottom);
 ---
 
 <section class="roles-grid-block">
   <div class="container">
     <div class="roles-intro">
       {value.eyebrow && <span class="label-sm">{value.eyebrow}</span>}
-      {value.headline && <h2 class="headline-lg">{value.headline}</h2>}
+      {hasHeadline && <SplitHeadline as="h2" class="headline-lg" top={top} bottom={bottom} />}
     </div>
 
     <div class="roles-grid">

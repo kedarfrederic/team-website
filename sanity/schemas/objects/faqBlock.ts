@@ -11,9 +11,20 @@ export const faqBlock = defineType({
       type: "string",
     }),
     defineField({
+      name: "headlineTop",
+      type: "string",
+      description: "First line — sans font.",
+    }),
+    defineField({
+      name: "headlineBottom",
+      type: "string",
+      description: "Second line — serif italic (Nyght).",
+    }),
+    defineField({
       name: "headline",
       type: "string",
-      validation: (Rule) => Rule.required(),
+      description: "Legacy single-line headline. Prefer headlineTop + headlineBottom.",
+      hidden: true,
     }),
     defineField({
       name: "subhead",
@@ -39,9 +50,9 @@ export const faqBlock = defineType({
     }),
   ],
   preview: {
-    select: { title: "headline", count: "items" },
-    prepare: ({ title, count }) => ({
-      title: title || "FAQ section",
+    select: { titleTop: "headlineTop", titleLegacy: "headline", count: "items" },
+    prepare: ({ titleTop, titleLegacy, count }) => ({
+      title: titleTop || titleLegacy || "FAQ section",
       subtitle: `${(count as unknown[] | undefined)?.length ?? 0} question${
         (count as unknown[] | undefined)?.length === 1 ? "" : "s"
       }`,

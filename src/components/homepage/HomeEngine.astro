@@ -1,0 +1,141 @@
+---
+/**
+ * Engine / TeamMate search demo.
+ *
+ * Lifted out of homepage-rest-A.html so every text node is bound to
+ * `homepage.engineSection`. DOM IDs (engineSection, engineGradient,
+ * engineBlobLeft/1/2/Tertiary, searchPinWrap, searchBar, searchInput,
+ * searchSubmit, searchDialog, pondering, enginePin, resultsGrid,
+ * result-card-w rc-1..rc-6) are preserved verbatim — the legacy
+ * inline JS in /components/homepage-inline-1.js targets them by id /
+ * className, so the GSAP scroll choreography keeps working untouched.
+ */
+
+interface Props {
+  data?: {
+    headlineTop?: string;
+    headlineMid?: string;
+    headlineItalic?: string;
+    subhead?: string;
+    searchPlaceholder?: string;
+    buttonLabel?: string;
+    searchDialog?: string;
+    ponderingLabel?: string;
+    resultLabels?: string[];
+  };
+}
+
+const { data } = Astro.props;
+const headlineTop = data?.headlineTop ?? "Find your personal";
+const headlineMid = data?.headlineMid ?? "release companion in";
+const headlineItalic = data?.headlineItalic ?? "TeamMate";
+const subhead = data?.subhead ?? "Converse, plan, and execute plays with AI-powered release intelligence.";
+const searchPlaceholder = data?.searchPlaceholder ?? "Ask TeamMate anything...";
+const buttonLabel = data?.buttonLabel ?? "Ask TeamMate";
+const searchDialog = data?.searchDialog ?? "To try the search, book a demo";
+const ponderingLabel = data?.ponderingLabel ?? "TeamMate is pondering";
+
+const DEFAULT_RESULT_LABELS = [
+  "Portrait_01.jpg",
+  "Campaign_hero.png",
+  "Product_shot.jpg",
+  "Team_photo.png",
+  "Banner_v2.jpg",
+  "Social_post.png",
+];
+const sourceLabels = Array.isArray(data?.resultLabels) && data.resultLabels.length > 0
+  ? data.resultLabels
+  : DEFAULT_RESULT_LABELS;
+const resultLabels: string[] = [];
+for (let i = 0; i < 6; i++) {
+  resultLabels.push(sourceLabels[i] ?? DEFAULT_RESULT_LABELS[i]);
+}
+---
+
+<section class="engine-section" id="engineSection" data-module="engine">
+  <div class="engine-gradient" id="engineGradient">
+    <div class="engine-gradient__wash"></div>
+    <div class="engine-gradient__blob engine-gradient__blob--left" id="engineBlobLeft"></div>
+    <div class="engine-gradient__blob engine-gradient__blob--primary" id="engineBlob1"></div>
+    <div class="engine-gradient__blob engine-gradient__blob--secondary" id="engineBlob2"></div>
+    <div class="engine-gradient__blob engine-gradient__blob--tertiary" id="engineBlobTertiary"></div>
+  </div>
+
+  <div class="container container--center">
+    <div class="section-intro">
+      <h2 class="headline-lg">{headlineTop}<br />{headlineMid} <span class="nyght">{headlineItalic}</span></h2>
+      <p class="body-lg" style="white-space:nowrap">{subhead}</p>
+    </div>
+    <div class="search-pin-wrap" id="searchPinWrap" style="margin-top:3rem">
+      <div class="search-bar" id="searchBar" style="position:relative">
+        <input class="search-input" id="searchInput" placeholder={searchPlaceholder} disabled />
+        <button class="search-submit" id="searchSubmit">
+          <span class="search-submit__label">{buttonLabel}</span>
+          <span class="search-submit__spinner">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+              <path d="M21 12a9 9 0 1 1-6.22-8.56" opacity="0.95" />
+              <path d="M12 3a9 9 0 0 1 0 0" opacity="0.25" />
+            </svg>
+          </span>
+        </button>
+        <div class="search-dialog" id="searchDialog">{searchDialog}</div>
+      </div>
+      <div class="pondering" id="pondering">
+        <span class="pondering__dot"></span>
+        <span class="pondering__dot"></span>
+        <span class="pondering__dot"></span>
+        <span class="pondering__text">{ponderingLabel}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="engine-w" id="enginePin" style="display:none">
+    <div class="search-selects">
+      <div class="search-select" data-module="select">
+        <span>Category</span>
+        <svg class="search-select__arrow" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 4.5L6 7.5L9 4.5" /></svg>
+        <div class="search-select__list">
+          <div class="search-select__item">Campaign</div>
+          <div class="search-select__item">Event</div>
+          <div class="search-select__item">Product</div>
+        </div>
+      </div>
+      <div class="search-select" data-module="select">
+        <span>Type</span>
+        <svg class="search-select__arrow" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 4.5L6 7.5L9 4.5" /></svg>
+        <div class="search-select__list">
+          <div class="search-select__item">Image</div>
+          <div class="search-select__item">Video</div>
+          <div class="search-select__item">Design</div>
+        </div>
+      </div>
+      <div class="search-select" data-module="select">
+        <span>Industry</span>
+        <svg class="search-select__arrow" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 4.5L6 7.5L9 4.5" /></svg>
+        <div class="search-select__list">
+          <div class="search-select__item">Tech</div>
+          <div class="search-select__item">Health</div>
+          <div class="search-select__item">Retail</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="results-grid" id="resultsGrid" style="margin-top:2rem">
+      <div class="results-breadcrumb">
+        <span>All assets</span> <span>/</span> <span>Search results</span>
+      </div>
+      {resultLabels.map((label, i) => (
+        <div class={`result-card-w rc-${i + 1}${i === 0 ? " is-drop" : ""}`}>
+          <div class="result-card">
+            <div class="result-card__side result-card__front" data-label={label}></div>
+            <div class="result-card__side result-card__back">
+              <div class="result-card__check">
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12" /></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

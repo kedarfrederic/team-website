@@ -192,7 +192,9 @@ const painRows: { pill: string; h: string; p: string; mock: string }[] =
     : D.pain.rows;
 
 const features = page?.featureSpotlight ?? {};
-const featuresHeadline = features.headline ?? D.features.headline;
+const featuresTop = features.headlineTop ?? null;
+const featuresBottom = features.headlineBottom ?? null;
+const featuresHeadlineLegacy = features.headline ?? D.features.headline;
 const featuresSubhead = features.subhead ?? D.features.subhead;
 
 const steps = page?.stepsBlock ?? {};
@@ -285,7 +287,9 @@ const others =
 </section>
 
 <IcpFeaturesCarousel
-  headline={featuresHeadline}
+  headline={featuresHeadlineLegacy}
+  headlineTop={featuresTop ?? undefined}
+  headlineBottom={featuresBottom ?? undefined}
   subhead={featuresSubhead}
   cards={Array.isArray(features.cards) ? features.cards.map((c: any) => ({ title: c.title, description: c.description })) : undefined}
 />

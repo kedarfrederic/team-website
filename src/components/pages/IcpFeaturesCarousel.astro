@@ -8,6 +8,8 @@
  * they show what the product actually does, not ICP-specific copy.
  */
 
+import SplitHeadline from "../SplitHeadline.astro";
+
 interface FeatureCard {
   title: string;
   description: string;
@@ -15,6 +17,8 @@ interface FeatureCard {
 
 interface Props {
   headline?: string;
+  headlineTop?: string;
+  headlineBottom?: string;
   subhead?: string;
   cards?: FeatureCard[];
 }
@@ -98,7 +102,9 @@ function mockHtmlFor(key: string, label: string): string {
   );
 }
 
-const { headline = "Everything you need to release with confidence", subhead = "From first idea to release day and beyond", cards } = Astro.props;
+const { headline, headlineTop, headlineBottom, subhead = "From first idea to release day and beyond", cards } = Astro.props;
+const top = headlineTop ?? headline ?? "Everything you need";
+const bottom = headlineBottom ?? "to release with confidence";
 const featureCards: FeatureCard[] =
   Array.isArray(cards) && cards.length > 0 ? cards : DEFAULT_CARDS;
 const renderCards = featureCards.slice(0, 6);
@@ -110,7 +116,7 @@ while (renderCards.length < 6) {
 <section class="features-section" id="featuresSection">
   <div class="features-section__inner">
     <div class="features-section__header">
-      <h2>{headline}</h2>
+      <SplitHeadline as="h2" top={top} bottom={bottom} />
     </div>
     <p class="features-section__sub">{subhead}</p>
 

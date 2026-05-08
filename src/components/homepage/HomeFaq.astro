@@ -9,6 +9,8 @@ interface FaqItem {
 interface Props {
   data?: {
     eyebrow?: string;
+    headlineTop?: string;
+    headlineBottom?: string;
     headline?: string;
     subhead?: string;
     items?: FaqItem[];
@@ -55,8 +57,8 @@ const FALLBACK: { q: string; a: string[] }[] = [
 ];
 
 const { data } = Astro.props;
-const headline = data?.headline ?? "Straight answers";
-const headlineNyght = "no spin.";
+const headlineTop = data?.headlineTop ?? data?.headline ?? "Straight answers";
+const headlineBottom = data?.headlineBottom ?? "no spin.";
 const subhead = data?.subhead ?? "Everything you need to know about Team before you give it a try. Still stuck? Our founders answer demos personally.";
 const ctaLabel = data?.footerCta?.label ?? "Talk to a founder";
 const ctaHref = data?.footerCta?.href ?? "/demo";
@@ -70,7 +72,7 @@ const items: { q: string; aHtml: string }[] =
 <section class="faq-section" id="faqSection">
   <div class="faq-section__inner">
     <div class="faq-section__intro">
-      <h2 class="faq-section__headline">{headline}<br /><span class="nyght">{headlineNyght}</span></h2>
+      <h2 class="faq-section__headline">{headlineTop}<br /><span class="nyght">{headlineBottom}</span></h2>
       <p class="faq-section__sub">{subhead}</p>
       <a href={ctaHref} class="faq-section__cta"><span class="faq-cta-text">{ctaLabel}</span> →</a>
     </div>

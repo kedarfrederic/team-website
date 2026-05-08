@@ -1,0 +1,81 @@
+---
+/**
+ * Integrations marquee. DOM IDs (techRow1, techRow2, integrationsMarquees,
+ * data-module="marquee") preserved verbatim — the legacy inline JS in
+ * /components/homepage-inline-1.js drives the infinite scroll based on
+ * those identifiers.
+ *
+ * Headline + subhead are bound to homepage.integrationsMarquee. Logo
+ * data is left as static markup for now (integration brand list rarely
+ * changes; bind in v2 if editors need it).
+ */
+
+interface Props {
+  data?: {
+    headlineTop?: string;
+    headlineBottom?: string;
+    headline?: string;
+    subhead?: string;
+  };
+}
+
+const { data } = Astro.props;
+const headlineTop = data?.headlineTop ?? data?.headline ?? "Connects to";
+const headlineBottom = data?.headlineBottom ?? "your tech stack";
+const subhead = data?.subhead ?? "Works with the tools your team already uses. No migration, no disruption.";
+
+const ROW_1 = [
+  { name: "Asana", src: "https://cdn.simpleicons.org/asana" },
+  { name: "Jira", src: "https://cdn.simpleicons.org/jira" },
+  { name: "Trello", src: "https://cdn.simpleicons.org/trello" },
+  { name: "Notion", src: "https://cdn.simpleicons.org/notion/111111" },
+  { name: "ClickUp", src: "https://cdn.simpleicons.org/clickup" },
+  { name: "Linear", src: "https://cdn.simpleicons.org/linear/5E6AD2" },
+  { name: "Monday.com", src: "https://cdn.jsdelivr.net/gh/gilbarbara/logos@main/logos/monday.svg" },
+  { name: "Confluence", src: "https://cdn.simpleicons.org/confluence" },
+  { name: "Slack", src: "https://svgl.app/library/slack.svg" },
+  { name: "Microsoft Teams", src: "https://svgl.app/library/microsoft-teams.svg" },
+  { name: "Discord", src: "https://cdn.simpleicons.org/discord" },
+  { name: "Zoom", src: "https://cdn.simpleicons.org/zoom" },
+  { name: "Gmail", src: "https://cdn.simpleicons.org/gmail" },
+  { name: "Outlook", src: "https://svgl.app/library/microsoft-outlook.svg" },
+  { name: "Google Drive", src: "https://cdn.simpleicons.org/googledrive" },
+  { name: "Dropbox", src: "https://cdn.simpleicons.org/dropbox" },
+  { name: "OneDrive", src: "https://svgl.app/library/microsoft-onedrive.svg" },
+  { name: "Word", src: "https://svgl.app/library/microsoft-word.svg" },
+  { name: "Excel", src: "https://svgl.app/library/microsoft-excel.svg" },
+  { name: "PowerPoint", src: "https://svgl.app/library/microsoft-powerpoint.svg" },
+  { name: "Figma", src: "https://cdn.simpleicons.org/figma" },
+];
+const ROW_2 = [...ROW_1.slice(10), ...ROW_1.slice(0, 10)];
+---
+
+<section class="integrations-section" data-module="marquee">
+  <div class="container container--center">
+    <div class="section-intro" style="max-width:none">
+      <h2 class="headline-lg" style="white-space:nowrap">{headlineTop} <span class="nyght">{headlineBottom}</span></h2>
+      <p class="body-lg" style="white-space:nowrap">{subhead}</p>
+    </div>
+  </div>
+
+  <div class="integrations-marquees" id="integrationsMarquees">
+    <div class="tech-row-wrap">
+      <div class="tech-row" id="techRow1">
+        {[...ROW_1, ...ROW_1].map((logo, i) => (
+          <a class="tech-logo" title={i < ROW_1.length ? logo.name : undefined}>
+            <img src={logo.src} alt={i < ROW_1.length ? logo.name : ""} />
+          </a>
+        ))}
+      </div>
+    </div>
+    <div class="tech-row-wrap">
+      <div class="tech-row" id="techRow2">
+        {[...ROW_2, ...ROW_2].map((logo, i) => (
+          <a class="tech-logo" title={i < ROW_2.length ? logo.name : undefined}>
+            <img src={logo.src} alt={i < ROW_2.length ? logo.name : ""} />
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>

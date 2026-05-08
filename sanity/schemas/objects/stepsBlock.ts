@@ -10,9 +10,20 @@ export const stepsBlock = defineType({
       type: "string",
     }),
     defineField({
+      name: "headlineTop",
+      type: "string",
+      description: "First line — sans font.",
+    }),
+    defineField({
+      name: "headlineBottom",
+      type: "string",
+      description: "Second line — serif italic (Nyght).",
+    }),
+    defineField({
       name: "headline",
       type: "string",
-      validation: (Rule) => Rule.required(),
+      description: "Legacy single-line headline. Prefer headlineTop + headlineBottom.",
+      hidden: true,
     }),
     defineField({
       name: "steps",
@@ -22,9 +33,9 @@ export const stepsBlock = defineType({
     }),
   ],
   preview: {
-    select: { title: "headline", count: "steps" },
-    prepare: ({ title, count }) => ({
-      title: title || "Steps",
+    select: { titleTop: "headlineTop", titleLegacy: "headline", count: "steps" },
+    prepare: ({ titleTop, titleLegacy, count }) => ({
+      title: titleTop || titleLegacy || "Steps",
       subtitle: `${(count as unknown[] | undefined)?.length ?? 0} steps`,
     }),
   },

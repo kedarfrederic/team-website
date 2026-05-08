@@ -42,7 +42,9 @@ export const icpPage = defineType({
       group: "hero",
       fields: [
         defineField({ name: "pillLabel", type: "string", description: "Small uppercase pill above the headline." }),
-        defineField({ name: "headline", type: "string", validation: (R) => R.required() }),
+        defineField({ name: "headlineTop", type: "string", description: "First line — sans font." }),
+        defineField({ name: "headlineBottom", type: "string", description: "Second line — serif italic (Nyght)." }),
+        defineField({ name: "headline", type: "string", description: "Legacy single-line headline.", hidden: true }),
         defineField({ name: "subhead", type: "text", rows: 3 }),
         defineField({
           name: "primaryCta",
@@ -77,10 +79,10 @@ export const icpPage = defineType({
     defineField({ name: "seo", type: "seoBlock", group: "seo" }),
   ],
   preview: {
-    select: { icpKey: "icpKey", headline: "hero.headline" },
-    prepare: ({ icpKey, headline }) => ({
+    select: { icpKey: "icpKey", headlineTop: "hero.headlineTop", headlineLegacy: "hero.headline" },
+    prepare: ({ icpKey, headlineTop, headlineLegacy }) => ({
       title: `For ${icpKey ?? "(unset)"}`,
-      subtitle: headline ?? "(no headline)",
+      subtitle: headlineTop ?? headlineLegacy ?? "(no headline)",
     }),
   },
 });
