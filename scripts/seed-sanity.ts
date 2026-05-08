@@ -478,6 +478,96 @@ docs.push({
       compareLink: "#compare",
     },
   ],
+  comparisonTable: {
+    heading: "Compare plans",
+    columns: ["Free", "Pro"],
+    rows: [
+      { _key: "r1", _type: "comparisonRow", label: "# of artists", valueByColumn: [
+        { _key: "a", _type: "comparisonCell", type: "text", text: "1" },
+        { _key: "b", _type: "comparisonCell", type: "text", text: "Unlimited" },
+      ]},
+      { _key: "r2", _type: "comparisonRow", label: "# of releases per year", valueByColumn: [
+        { _key: "a", _type: "comparisonCell", type: "text", text: "Unlimited" },
+        { _key: "b", _type: "comparisonCell", type: "text", text: "Unlimited" },
+      ]},
+      { _key: "r3", _type: "comparisonRow", label: "TeamMate AI", tooltip: "An AI built for music releases — understands the industry, learns your patterns, works 24/7.", valueByColumn: [
+        { _key: "a", _type: "comparisonCell", type: "check" },
+        { _key: "b", _type: "comparisonCell", type: "check" },
+      ]},
+      { _key: "r4", _type: "comparisonRow", label: "Intelligence", tooltip: "Pro gets full reasoning against your timeline, proactive insights, and a memory that learns your release.", valueByColumn: [
+        { _key: "a", _type: "comparisonCell", type: "text", text: "Basic" },
+        { _key: "b", _type: "comparisonCell", type: "text", text: "Comprehensive" },
+      ]},
+      { _key: "r5", _type: "comparisonRow", label: "# of seats", valueByColumn: [
+        { _key: "a", _type: "comparisonCell", type: "text", text: "1" },
+        { _key: "b", _type: "comparisonCell", type: "text", text: "2 (premium)" },
+      ]},
+      { _key: "r6", _type: "comparisonRow", label: "Collaborator type", valueByColumn: [
+        { _key: "a", _type: "comparisonCell", type: "text", text: "1" },
+        { _key: "b", _type: "comparisonCell", type: "text", text: "Unlimited (Timeline access)" },
+      ]},
+      { _key: "r7", _type: "comparisonRow", label: "# of workspaces", valueByColumn: [
+        { _key: "a", _type: "comparisonCell", type: "text", text: "1" },
+        { _key: "b", _type: "comparisonCell", type: "text", text: "Unlimited" },
+      ]},
+      { _key: "r8", _type: "comparisonRow", label: "TeamMate Email", valueByColumn: [
+        { _key: "a", _type: "comparisonCell", type: "dash" },
+        { _key: "b", _type: "comparisonCell", type: "check" },
+      ]},
+      { _key: "r9", _type: "comparisonRow", label: "TeamMate Text", valueByColumn: [
+        { _key: "a", _type: "comparisonCell", type: "dash" },
+        { _key: "b", _type: "comparisonCell", type: "check" },
+      ]},
+      { _key: "r10", _type: "comparisonRow", label: "Press Tour", valueByColumn: [
+        { _key: "a", _type: "comparisonCell", type: "dash" },
+        { _key: "b", _type: "comparisonCell", type: "check" },
+      ]},
+      { _key: "r11", _type: "comparisonRow", label: "Tour Management", valueByColumn: [
+        { _key: "a", _type: "comparisonCell", type: "dash" },
+        { _key: "b", _type: "comparisonCell", type: "check" },
+      ]},
+      { _key: "r12", _type: "comparisonRow", label: "Document Ingestion", valueByColumn: [
+        { _key: "a", _type: "comparisonCell", type: "dash" },
+        { _key: "b", _type: "comparisonCell", type: "check" },
+      ]},
+      { _key: "r13", _type: "comparisonRow", label: "Team Chat", valueByColumn: [
+        { _key: "a", _type: "comparisonCell", type: "dash" },
+        { _key: "b", _type: "comparisonCell", type: "check" },
+      ]},
+      { _key: "r14", _type: "comparisonRow", label: "Reports & Sharing", valueByColumn: [
+        { _key: "a", _type: "comparisonCell", type: "dash" },
+        { _key: "b", _type: "comparisonCell", type: "check" },
+      ]},
+      { _key: "r15", _type: "comparisonRow", label: "Command Center", valueByColumn: [
+        { _key: "a", _type: "comparisonCell", type: "dash" },
+        { _key: "b", _type: "comparisonCell", type: "check" },
+      ]},
+      { _key: "r16", _type: "comparisonRow", label: "Customer support", tooltip: "Pro accounts get a dedicated email channel with priority response.", valueByColumn: [
+        { _key: "a", _type: "comparisonCell", type: "text", text: "Standard" },
+        { _key: "b", _type: "comparisonCell", type: "text", text: "Priority (dedicated email)" },
+      ]},
+    ],
+  },
+  faq: {
+    eyebrow: "Pricing",
+    headline: "Questions? We've got answers.",
+    subhead: "Everything you need to know about plans, billing, and what happens when your trial ends.",
+    footerCta: { label: "Talk to a founder →", href: "/demo" },
+    items: [
+      { _key: "p-q1", _type: "faqItem", question: "What happens after my 30-day trial?", answer: [
+        block("You choose a plan. All your data is preserved. If you downgrade, excess items become read-only — nothing is ever deleted."),
+      ]},
+      { _key: "p-q2", _type: "faqItem", question: "What happens to my data if I downgrade?", answer: [
+        block("Nothing is deleted. Items beyond your plan's limits become read-only. You can still view and export them. You choose which items stay active."),
+      ]},
+      { _key: "p-q3", _type: "faqItem", question: "Can I change plans anytime?", answer: [
+        block("Yes. Upgrade or downgrade at any time. Changes take effect on your next billing cycle."),
+      ]},
+      { _key: "p-q4", _type: "faqItem", question: "Is there an annual discount?", answer: [
+        block("Yes. The prices shown are annual billing. Monthly billing is also available at a slightly higher rate."),
+      ]},
+    ],
+  },
   finalCta: {
     headline: "Ready to run your next release?",
     primaryCta: cta("Start your free trial", "https://www.teamrollouts.com/sign-up"),
@@ -487,6 +577,16 @@ docs.push({
 });
 
 // ─── for-artists / for-managers / for-labels (ICP) ──────────────────────
+// ICP feature spotlight — same 6 cards across all 3 ICPs
+const ICP_FEATURE_CARDS = [
+  feat("Release Timeline", "Plan your release step by step. See every deadline at a glance and adjust as things change."),
+  feat("Task Management", "Know exactly what you need to do and when. Check off tasks as you go."),
+  feat("TeamMate AI", "Ask questions about your release, get suggestions on timing, and let AI draft your press bio."),
+  feat("Rollout Plan", "Auto-generate a release plan based on your genre, timeline, and goals."),
+  feat("Pre-save & Smart Links", "Create pre-save campaigns and smart links that drive fans to your music everywhere."),
+  feat("Collaboration", "Working with a manager or designer? Invite them in. They see what they need — nothing more, nothing less."),
+];
+
 docs.push({
   _id: "forArtistsPage",
   _type: "icpPage",
@@ -497,6 +597,33 @@ docs.push({
     subhead: "Releases are overwhelming. Between pitching playlists, managing socials, and hitting deadlines, it's easy to lose focus on what matters. Team keeps everything on track so you can create.",
     primaryCta: cta("Start your free trial", "https://www.teamrollouts.com/sign-up?plan=free&period=yearly"),
     secondaryCta: cta("Book a demo", "/demo"),
+  },
+  painSection: {
+    headline: "Stop juggling everything. Start releasing properly.",
+    rows: [
+      painRow("Your release, simplified", "One place for everything instead of scattered notes and apps", "Stop juggling spreadsheets, notes apps, and calendar reminders. Team keeps your timeline, tasks, and assets in one place — so nothing gets forgotten."),
+      painRow("AI-powered guidance", "Not sure what to do next? Let AI guide you", "Not sure when to post, what to say, or how to pitch? TeamMate AI gives you data-driven recommendations and even writes your press bio, social captions, and rollout plan."),
+      painRow("Never miss a deadline", "Automated reminders that keep you on track", "Submission deadlines, marketing milestones, release dates — Team reminds you before things slip. And if you do work with a manager or collaborators, they can see exactly what's needed too."),
+    ],
+  },
+  featureSpotlight: {
+    headline: "Everything you need to release with confidence",
+    subhead: "From first idea to release day and beyond",
+    cards: ICP_FEATURE_CARDS,
+  },
+  stepsBlock: {
+    headline: "Up and running in minutes",
+    steps: [
+      step("1", "Sign up for free", "Create your account in 30 seconds. No credit card, no commitment. Full access for 30 days."),
+      step("2", "Set up your release", "Add your track details, upload artwork, and set your release date."),
+      step("3", "Launch your rollout", "Follow the plan, check off tasks, and release with confidence."),
+    ],
+  },
+  finalCta: {
+    headline: "Ready to take control of your next release?",
+    primaryCta: cta("Start your free trial", "https://www.teamrollouts.com/sign-up?plan=free&period=yearly"),
+    secondaryCta: cta("Book a demo", "/demo"),
+    footnote: "30-day free trial. No credit card required.",
   },
   rolesGrid: {
     eyebrow: "Designed for",
@@ -519,6 +646,33 @@ docs.push({
     primaryCta: cta("Start your free trial", "https://www.teamrollouts.com/sign-up?plan=free&period=yearly"),
     secondaryCta: cta("Book a demo", "/demo"),
   },
+  painSection: {
+    headline: "Stop juggling rosters. Start running them.",
+    rows: [
+      painRow("Roster overview", "See every artist, every release, every status — at a glance", "No more switching between tools to check who's where. Team gives you a unified view of every rollout your roster has in flight."),
+      painRow("Built-in collaboration", "Bring artists and partners into the same workspace", "No more forwarding spreadsheets and copy-pasting updates. Artists, designers, distributors, and labels work alongside you in the same place."),
+      painRow("Reports made simple", "Performance summaries that write themselves", "Send labels and artists clean weekly digests with streaming, social, and rollout progress — automatically generated and ready to share."),
+    ],
+  },
+  featureSpotlight: {
+    headline: "Everything a manager needs to scale a roster",
+    subhead: "From day-of-release coordination to long-term roster strategy",
+    cards: ICP_FEATURE_CARDS,
+  },
+  stepsBlock: {
+    headline: "From chaos to clarity in days",
+    steps: [
+      step("1", "Add your artists", "Bring your full roster into one workspace. Each artist gets their own space; you stay in control."),
+      step("2", "Build their rollouts", "Set up release timelines, tasks, and budgets in minutes. Templates make it fast."),
+      step("3", "Run the show", "Coordinate every release, answer every question, deliver every report — all from one place."),
+    ],
+  },
+  finalCta: {
+    headline: "Ready to manage your roster without the chaos?",
+    primaryCta: cta("Start your free trial", "https://www.teamrollouts.com/sign-up?plan=free&period=yearly"),
+    secondaryCta: cta("Book a demo", "/demo"),
+    footnote: "30-day free trial. No credit card required.",
+  },
   rolesGrid: {
     eyebrow: "Designed for",
     headline: "how you work",
@@ -539,6 +693,33 @@ docs.push({
     subhead: "Run every release across every artist on a single platform — with the controls, reporting, and integrations a label needs.",
     primaryCta: cta("Start your free trial", "https://www.teamrollouts.com/sign-up?plan=free&period=yearly"),
     secondaryCta: cta("Book a demo", "/demo"),
+  },
+  painSection: {
+    headline: "Run more releases. With less coordination tax.",
+    rows: [
+      painRow("Full catalog visibility", "Every artist, every release, every status — in one view", "Stop reconciling spreadsheets across departments. Team gives you a live, filterable view of your entire pipeline."),
+      painRow("Department coordination", "A&R, marketing, finance — all on the same release", "Each team works in their own lane while staying aligned on what's shipping when. No more cross-department surprise."),
+      painRow("Reports built for execs", "Roll-ups for leadership without the manual work", "Performance, budget burn, milestone status — Team rolls them up automatically into the dashboards your execs already expect."),
+    ],
+  },
+  featureSpotlight: {
+    headline: "Everything a label needs to run a roster at scale",
+    subhead: "From release planning to portfolio reporting, in one place",
+    cards: ICP_FEATURE_CARDS,
+  },
+  stepsBlock: {
+    headline: "From sprawl to a single source of truth",
+    steps: [
+      step("1", "Bring your catalog in", "Import your artists and active releases. We migrate from spreadsheets, Asana, Notion — whatever you're on today."),
+      step("2", "Set up your standards", "Templates for release types, departments, approvals. Every release ships on a consistent process."),
+      step("3", "Run the operation", "Coordinate across A&R, marketing, finance, and analytics — and report up to leadership effortlessly."),
+    ],
+  },
+  finalCta: {
+    headline: "Ready to scale your label without the chaos?",
+    primaryCta: cta("Book a demo", "/demo"),
+    secondaryCta: cta("Talk to us", "/contact?interest=enterprise"),
+    footnote: "Talk to us about enterprise pricing.",
   },
   rolesGrid: {
     eyebrow: "Designed for",
@@ -562,6 +743,67 @@ docs.push({
     primaryCta: cta("Start your free trial", "https://www.teamrollouts.com/sign-up?plan=pro&period=yearly"),
     secondaryCta: cta("Book a demo", "/demo"),
   },
+  painSection: {
+    headline: "Working across clients is messy. Team cleans it up.",
+    rows: [
+      painRow("One login, every client", "See every release you're involved in from one dashboard", "No more logging into separate tools for each client. Team gives you a single view of every release you're contributing to — with the context you need to do your job."),
+      painRow("Context, not chaos", "Get briefs, assets, and deadlines without the email chain", "When a client invites you into a release, you see the timeline, the assets, and exactly what's expected of you. No more digging through inboxes for that brief they sent last Tuesday."),
+      painRow("Deliver on time", "Track your deliverables across every client", "See what's due, what's done, and what's at risk — across all your clients. Team keeps you accountable without the micromanagement."),
+    ],
+  },
+  tabbedFeatures: {
+    headline: "Built for every kind of partner",
+    subhead: "Whatever your role in the release, Team has you covered",
+    tabs: [
+      { _key: "marketing", _type: "partnerTab", label: "Marketing & PR", tabKey: "marketing", features: [
+        partnerFeat("Campaign Scheduling", "Sync your campaigns to release milestones"),
+        partnerFeat("Press Outreach", "Track pitches, coverage, and media relationships"),
+        partnerFeat("Social Planning", "Plan content across platforms, aligned to the rollout"),
+        partnerFeat("Budget Visibility", "See what's allocated and what's been spent"),
+      ]},
+      { _key: "distribution", _type: "partnerTab", label: "Distribution", tabKey: "distribution", features: [
+        partnerFeat("DSP Submissions", "Track delivery status across every platform"),
+        partnerFeat("Metadata Check", "Validate metadata before submission"),
+        partnerFeat("Status Updates", "Real-time delivery status for every release"),
+        partnerFeat("Asset Ingestion", "Bulk upload and organise release assets"),
+      ]},
+      { _key: "ar", _type: "partnerTab", label: "A&R", tabKey: "ar", features: [
+        partnerFeat("Demo Pipeline", "Review and rate incoming demos in one place"),
+        partnerFeat("Artist Development", "Track development milestones for each artist"),
+        partnerFeat("Release Analytics", "Understand performance across your roster"),
+        partnerFeat("Market Intelligence", "Discover trends and competitive positioning"),
+      ]},
+      { _key: "creative", _type: "partnerTab", label: "Creative Services", tabKey: "creative", features: [
+        partnerFeat("Asset Briefs", "Get clear specs and creative direction for every deliverable"),
+        partnerFeat("Version Tracking", "Upload revisions and track approval history"),
+        partnerFeat("Approval Workflows", "Submit work and get sign-off without the email thread"),
+        partnerFeat("Deadline Reminders", "Never miss a delivery date"),
+      ]},
+    ],
+  },
+  stepsBlock: {
+    headline: "Up and running in minutes",
+    steps: [
+      step("1", "Get invited", "A client adds you to their release on Team. You get an email with instant access."),
+      step("2", "See what's needed", "Your dashboard shows every release you're involved in, with your tasks and deadlines."),
+      step("3", "Deliver and track", "Complete your work, upload assets, and track progress — all in one place."),
+    ],
+  },
+  finalCta: {
+    headline: "Ready to work smarter with your clients?",
+    primaryCta: cta("Start your free trial", "https://www.teamrollouts.com/sign-up?plan=pro&period=yearly"),
+    secondaryCta: cta("Book a demo", "/demo"),
+    footnote: "30-day free trial. No credit card required.",
+  },
+  rolesGrid: {
+    eyebrow: "Designed for",
+    headline: "how you work",
+    cards: [
+      role("For Artists", "Tools for independent artists to plan and execute releases on their own terms.", "/for-artists"),
+      role("For Managers", "A single command center for every rollout across your entire roster.", "/for-managers"),
+      role("For Labels", "Manage every release across your entire catalog from one central hub.", "/for-labels"),
+    ],
+  },
 });
 
 // ─── intelligence + orchestration ───────────────────────────────────────
@@ -576,6 +818,75 @@ docs.push({
     primaryCta: cta("Start your free trial", "https://www.teamrollouts.com/sign-up?plan=pro&period=yearly"),
     secondaryCta: cta("Book a demo", "/demo"),
   },
+  problemSection: {
+    headlineTop: "AI that works for you.",
+    headlineBottom: "Not instead of you.",
+    paragraphs: [
+      "The music industry has a complicated relationship with AI. We get it. That's why TeamMate was built with a simple principle: every decision is yours. TeamMate surfaces the context, the data, the options. You decide what to do with them.",
+      "It won't write your songs. It won't replace your A&R instincts. It won't automate away the relationships that make this industry work. What it will do is make sure you never walk into a meeting uninformed, never miss a trend, and never launch a release without a strategy.",
+      "Think of it as the smartest colleague you've ever had. One who's read every brief, tracked every number, and remembered every detail of every release you've ever done.",
+    ],
+  },
+  painSection: {
+    headline: "What TeamMate actually does",
+    rows: [
+      painRow("Contextual intelligence", "Recommendations that know your roster", "TeamMate doesn't give generic advice. It knows your artists, your release history, your audience, and your market. Every recommendation is specific to you — your release, your timeline, your goals."),
+      painRow("Market awareness", "Know your landscape before you launch", "Understand your competitive positioning. See what similar artists are doing, when they're releasing, and where the gaps are. Launch with confidence, not guesswork."),
+      painRow("From data to decisions", "Analytics that help you decide what to do next, not just what happened", "Most analytics tools show you charts. Team's intelligence shows you what they mean for your next move. So every insight can be turned into actions you can take right now."),
+    ],
+  },
+  tabbedSpotlight: {
+    headlineTop: "TeamMate",
+    headlineBottom: "in action",
+    subhead: "See how intelligence shapes every stage of a release",
+    tabs: [
+      { _key: "plan", _type: "spotlightTab", label: "Planning", tabKey: "plan", features: [
+        spotFeat("Release Timing", "When should I drop this?"),
+        spotFeat("Audience Analysis", "Who's going to listen?"),
+        spotFeat("Competitive Scan", "What else is releasing?"),
+        spotFeat("Strategy Generation", "Build me a rollout plan"),
+      ]},
+      { _key: "mid", _type: "spotlightTab", label: "Mid-Campaign", tabKey: "mid", features: [
+        spotFeat("Performance Pulse", "How am I tracking?"),
+        spotFeat("Playlist Intelligence", "Which playlists should I pitch?"),
+        spotFeat("Campaign Optimisation", "What should I adjust?"),
+        spotFeat("Real-time Alerts", "What needs my attention?"),
+      ]},
+      { _key: "post", _type: "spotlightTab", label: "Post-Release", tabKey: "post", features: [
+        spotFeat("Release Retrospective", "What worked?"),
+        spotFeat("Audience Growth", "Who found me?"),
+        spotFeat("Revenue Insights", "Where's the money?"),
+        spotFeat("Next Release Brief", "What should I do differently?"),
+      ]},
+      { _key: "scale", _type: "spotlightTab", label: "At Scale", tabKey: "scale", features: [
+        spotFeat("Portfolio Overview", "How's my roster doing?"),
+        spotFeat("Trend Analysis", "What's moving?"),
+        spotFeat("Resource Allocation", "Where should I invest?"),
+        spotFeat("Board Reporting", "Show me the numbers"),
+      ]},
+    ],
+  },
+  trustCallout: {
+    headlineTop: "Your data",
+    headlineBottom: "stays yours",
+    body: "TeamMate learns your context to give better advice. But your data never leaves your account, never trains our models, and is never shared with anyone else.",
+    ctaLabel: "Read more about our security",
+    ctaHref: "/security",
+  },
+  bridgeSection: {
+    headlineTop: "Intelligence without action",
+    headlineBottom: "is just information",
+    body: "Release Intelligence gives you the context to make brilliant decisions. Release Orchestration gives you the tools to execute them. Together, they're the complete operating system for music releases.",
+    ctaLabel: "Explore Release Orchestration",
+    ctaHref: "/orchestration",
+  },
+  finalCta: {
+    headline: "Ready to release with intelligence?",
+    primaryCta: cta("Start your free trial", "https://www.teamrollouts.com/sign-up?plan=pro&period=yearly"),
+    secondaryCta: cta("Book a demo", "/demo"),
+    footnote: "30-day free trial. No credit card required.",
+  },
+  rolesGrid: ROLES_GRID_DEFAULT,
 });
 docs.push({
   _id: "orchestrationPage",
@@ -588,6 +899,38 @@ docs.push({
     primaryCta: cta("Start your free trial", "https://www.teamrollouts.com/sign-up?plan=pro&period=yearly"),
     secondaryCta: cta("Book a demo", "/demo"),
   },
+  problemSection: {
+    headlineTop: "You've been using",
+    headlineBottom: "the wrong tools",
+    paragraphs: [
+      "Spreadsheets weren't built for release timelines. Notion wasn't built for DSP submissions. Monday.com doesn't know what a rollout plan is. You've spent years forcing general-purpose tools to do a music-specific job.",
+      "The result? Missed deadlines. Lost assets. Release day panic. And a whole lot of time wasted on tool management instead of release management.",
+      "Team is different. Not because we bolted music features onto a project management tool. But because we started with the release and built everything around it.",
+    ],
+  },
+  painSection: {
+    eyebrow: "The Release Lifecycle",
+    headline: "One platform. Every phase.",
+    rows: [
+      painRow("Pre-Release", "Set your release date. Team builds your plan", "Team generates your timeline, assigns tasks, and tracks every deliverable. Templates built for singles, EPs, and albums. No more wondering what needs to happen next."),
+      painRow("Release Week", "The most critical 7 days. Fully coordinated", "DSPs, social, press, ads — every channel running in sync. Team keeps the chaos organised so your launch day is a launch, not a scramble."),
+      painRow("Post-Release", "The release is live. Now learn from it", "Track performance, generate reports for your team or your label, and feed insights into your next release. Every campaign makes the next one smarter."),
+    ],
+  },
+  bridgeSection: {
+    headlineTop: "A plan is only as good as",
+    headlineBottom: "the thinking behind it",
+    body: "Release Orchestration gives you the tools to execute. Release Intelligence gives you the context to execute brilliantly. Together, they're the complete operating system for music releases.",
+    ctaLabel: "Explore Release Intelligence",
+    ctaHref: "/intelligence",
+  },
+  finalCta: {
+    headline: "Ready to run your releases the right way?",
+    primaryCta: cta("Start your free trial", "https://www.teamrollouts.com/sign-up?plan=pro&period=yearly"),
+    secondaryCta: cta("Book a demo", "/demo"),
+    footnote: "30-day free trial. No credit card required.",
+  },
+  rolesGrid: ROLES_GRID_DEFAULT,
 });
 
 // ─── enterprise ─────────────────────────────────────────────────────────
@@ -601,6 +944,54 @@ docs.push({
     subhead: "For major labels, distributors, and music companies that need enterprise-grade controls, dedicated support, and the confidence that their IP is protected at every level.",
     primaryCta: cta("Book a demo", "/demo"),
     secondaryCta: cta("Talk to us", "/contact?interest=enterprise"),
+  },
+  whySection: {
+    headlineTop: "Built for the complexity",
+    headlineBottom: "of scale",
+    body: "When you're managing hundreds of releases across dozens of artists, you need more than a project management tool. You need infrastructure that scales with your operation and doesn't slow you down.",
+  },
+  painSection: {
+    headline: "Unlock your releases with Enterprise",
+    rows: [
+      painRow("Authentication", "Single sign-on that works with your existing systems", "SAML 2.0 SSO integration with your identity provider. SCIM provisioning for automated user management. Your IT team controls access — Team handles the rest."),
+      painRow("Governance", "Complete visibility and control over every action", "Comprehensive audit logs, role-based access controls with granular permissions per release, and multi-tiered approval workflows. Know who did what, when, and on which release."),
+      painRow("Flexibility", "Configure Team to match how your organization works", "Custom approval flows, release templates per team or department, configurable notification rules, and flexible billing. Enterprise that's flexible and customized to you."),
+    ],
+  },
+  securityCallout: {
+    headlineTop: "Enterprise-grade",
+    headlineBottom: "security",
+    body: "AES-256 encryption and per-account data isolation. TeamMate AI learns your context to get smarter for you — but your data is never shared across accounts or used to train models for anyone else. Your unreleased content is protected by design.",
+    ctaLabel: "Read more about our security",
+    ctaHref: "/security",
+  },
+  includedSection: {
+    headlineTop: "Everything in Team",
+    headlineBottom: "plus so much more",
+    blocks: [
+      { _key: "ds", _type: "includedBlock", title: "Dedicated Support", description: "A named account manager who knows your operation. Priority response times and quarterly business reviews." },
+      { _key: "co", _type: "includedBlock", title: "Custom Onboarding", description: "White-glove setup for your team. Data migration, workflow configuration, and training sessions." },
+      { _key: "sla", _type: "includedBlock", title: "SLA Guarantee", description: "99.9% uptime SLA with proactive monitoring and incident response." },
+      { _key: "cb", _type: "includedBlock", title: "Custom Billing", description: "Annual contracts, volume pricing, and flexible payment terms. We'll build a plan that works for your organization." },
+      { _key: "api", _type: "includedBlock", title: "API Access", description: "Connect Team to your existing tools and data pipelines. RESTful API with comprehensive documentation." },
+      { _key: "pf", _type: "includedBlock", title: "Priority Features", description: "Influence the roadmap. Enterprise customers get early access to new features and direct input on development priorities." },
+    ],
+  },
+  bridgeSection: {
+    headlineTop: "Ready to see Team",
+    headlineBottom: "in action?",
+    body: "Explore how Release Orchestration and Release Intelligence work together to power your entire operation.",
+    links: [
+      { _key: "orch", _type: "bridgeLink", label: "Explore Release Orchestration", href: "/orchestration" },
+      { _key: "intel", _type: "bridgeLink", label: "Explore Release Intelligence", href: "/intelligence" },
+    ],
+  },
+  finalCta: {
+    headline: "Let's build a plan that works for you",
+    body: "Customized setup, dedicated support, and security protocols that meets your unique requirements.",
+    primaryCta: cta("Book a demo", "/demo"),
+    secondaryCta: cta("Contact us", "/contact?interest=enterprise"),
+    footnote: "Talk to a founder, not a sales rep.",
   },
   rolesGrid: ROLES_GRID_DEFAULT,
 });
@@ -616,6 +1007,85 @@ docs.push({
     subhead: "Team is built with security at its core. Your release, content, data, strategy, and execution are protected by design, not as an afterthought.",
     primaryCta: cta("Start your free trial", "https://www.teamrollouts.com/sign-up?plan=pro&period=yearly"),
     secondaryCta: cta("Talk to us", "/demo"),
+  },
+  pillarsSection: {
+    headline: "Security you can trust",
+    pillars: [
+      { _key: "enc", _type: "securityPillar", title: "Encrypted at rest and in transit", body: "All data is encrypted using AES-256 at rest and TLS 1.3 in transit. Your unreleased masters, contracts, and business data are protected at every stage.", tag: "AES-256 + TLS 1.3" },
+      { _key: "rbac", _type: "securityPillar", title: "Role-based access and 2FA", body: "Control exactly who sees what with granular permissions per release, per artist, per team. Two-factor authentication adds an extra layer of protection.", tag: "Granular permissions" },
+      { _key: "infra", _type: "securityPillar", title: "Enterprise-grade infrastructure", body: "Hosted on industry-leading cloud infrastructure with 99.9% uptime SLA, automated backups, and geo-redundant data storage.", tag: "99.9% uptime SLA" },
+      { _key: "data", _type: "securityPillar", title: "Your data is yours. Always.", body: "Export your data at any time in standard formats. No lock-in, no hostage-taking. If you leave, your data leaves with you.", tag: "Full data export" },
+    ],
+  },
+  aiPrivacySection: {
+    metadataPill: "AI & Data Privacy",
+    headlineTop: "TeamMate AI works for you.",
+    headlineBottom: "Only you.",
+    paragraphs: [
+      "TeamMate AI learns about your artists, releases, and workflows to give you smarter, more context-aware recommendations. But that knowledge is strictly yours.",
+      "Your data is never used to train our models. It is never shared with other users or companies. It is never accessible to anyone outside your account.",
+      "Every Team account operates in its own isolated environment. TeamMate's intelligence about your roster, your release history, and your strategies stays within your account boundary — always.",
+    ],
+    trustPills: [
+      "Your data never trains our AI",
+      "Zero cross-account data sharing",
+      "Per-account data isolation",
+      "Full data export anytime",
+      "No third-party data access",
+    ],
+  },
+  enterpriseSection: {
+    headline: "Enterprise-grade controls",
+    subhead: "For teams that need advanced security and compliance.",
+    blocks: [
+      { _key: "auth", _type: "enterpriseBlock", tag: "Authentication", title: "SSO & SAML", body: "Single sign-on integration with your existing identity provider. SAML 2.0 supported." },
+      { _key: "audit", _type: "enterpriseBlock", tag: "Visibility", title: "Audit Logs", body: "Full activity history across your account. See who did what, when, and on which release." },
+      { _key: "scim", _type: "enterpriseBlock", tag: "Automation", title: "SCIM Provisioning", body: "Automate user management at scale. Add, remove, and update team members from your identity provider." },
+    ],
+    enterpriseCta: {
+      headline: "Need specific security measures?",
+      body: "Talk to the team to see how we can meet your unique security needs.",
+      ctaLabel: "Book a demo",
+      ctaHref: "/demo",
+    },
+  },
+  complianceSection: {
+    headlineTop: "Compliance",
+    headlineBottom: "& certifications",
+    cards: [
+      { _key: "soc2", _type: "complianceCard", title: "SOC 2 Type II", body: "SOC 2 Type II certified for security, availability, and confidentiality trust service criteria. Independently audited and verified.", status: "active" },
+      { _key: "dpa", _type: "complianceCard", title: "Data Processing Agreement", body: "Custom DPA available for enterprise customers covering data handling, sub-processors, and breach notification procedures.", status: "on_request" },
+      { _key: "gdpr", _type: "complianceCard", title: "GDPR Compliant", body: "Full compliance with the EU General Data Protection Regulation. Data subject rights, lawful processing, and privacy by design built into every layer of the platform.", status: "coming_soon" },
+    ],
+  },
+  faq: {
+    eyebrow: "Security",
+    headline: "Questions about security?",
+    subhead: "Your unreleased music and business data deserve the highest level of protection.",
+    footerCta: { label: "Talk to a founder →", href: "/demo" },
+    items: [
+      { _key: "sec-q1", _type: "faqItem", question: "Is my unreleased music safe on Team?", answer: [
+        block("Yes. All files are encrypted at rest (AES-256) and in transit (TLS 1.3). Access is controlled by role-based permissions, and you can restrict who sees what at the release level."),
+      ]},
+      { _key: "sec-q2", _type: "faqItem", question: "Does TeamMate AI use my data to train its models?", answer: [
+        block("No. Your data is never used for model training. TeamMate learns your context to give better recommendations, but that knowledge stays strictly within your account and is never shared."),
+      ]},
+      { _key: "sec-q3", _type: "faqItem", question: "Can other companies see my data?", answer: [
+        block("Absolutely not. Every Team account operates in complete isolation. There is no cross-account data sharing, no shared intelligence, and no way for another user to access your information."),
+      ]},
+      { _key: "sec-q4", _type: "faqItem", question: "What happens to my data if I cancel?", answer: [
+        block("Your data remains accessible for 30 days after cancellation, during which you can export everything. After that, it's permanently deleted from our systems. We don't hold your data hostage."),
+      ]},
+      { _key: "sec-q5", _type: "faqItem", question: "Do you support SSO and enterprise security?", answer: [
+        block("Yes. We support SAML-based SSO, SCIM provisioning for automated user management, and comprehensive audit logs. Contact us for enterprise security requirements."),
+      ]},
+    ],
+  },
+  finalCta: {
+    headline: "Ready to protect your releases from day one?",
+    primaryCta: cta("Start your free trial", "https://www.teamrollouts.com/sign-up?plan=pro&period=yearly"),
+    secondaryCta: cta("Book a demo", "/demo"),
+    footnote: "30-day free trial. No credit card required.",
   },
 });
 
