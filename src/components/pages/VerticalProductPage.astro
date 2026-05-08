@@ -13,7 +13,7 @@ type VerticalKey = "intelligence" | "orchestration";
 interface Defaults {
   hero: { top: string; bottom: string; subhead: string };
   problem: { top: string; bottom: string; paragraphs: string[] };
-  pain: { headline: string; rows: { pill?: string; h: string; p: string; mock: string }[] };
+  pain: { headlineTop: string; headlineBottom: string; rows: { pill?: string; h: string; p: string; mock: string }[] };
   tabs: { top: string; bottom: string; subhead: string; tabs: { label: string; tabKey: string; features: { t: string; d: string }[] }[] };
   trust: { top: string; bottom: string; body: string; ctaLabel: string; ctaHref: string };
   bridge: { top: string; bottom: string; body: string; ctaLabel: string; ctaHref: string };
@@ -50,7 +50,8 @@ const problemParas: string[] = Array.isArray(problem.paragraphs) && problem.para
 
 // ── Pain ────────────────────────────────────────────────────
 const pain = page?.painSection ?? {};
-const painHeadline = pain.headline ?? defaults.pain.headline;
+const painTop = pain.headlineTop ?? defaults.pain.headlineTop;
+const painBottom = pain.headlineBottom ?? defaults.pain.headlineBottom;
 interface PainRow { pill?: string; h: string; p: string; mock: string }
 const painRows: PainRow[] = Array.isArray(pain.rows) && pain.rows.length > 0
   ? pain.rows.map((r: any, i: number) => ({
@@ -156,7 +157,7 @@ const rolesCards = Array.isArray(rolesGrid.cards) && rolesGrid.cards.length > 0
 <section class="pain-section pain-section--alt">
   <div class="pain-section__inner">
     <div class="pain-section__header">
-      <h2>{painHeadline}</h2>
+      <SplitHeadline as="h2" top={painTop} bottom={painBottom} />
     </div>
     {painRows[0] && (
       <div class="pain-row">

@@ -35,8 +35,8 @@ const problemParas: string[] = Array.isArray(problem.paragraphs) && problem.para
 // ── Pain section ───────────────────────────────────────────
 const pain = page?.painSection ?? {};
 const painEyebrow = pain.eyebrow ?? "The Release Lifecycle";
-const painHeadlineTop = "One platform.";
-const painHeadlineBottom = "Every phase.";
+const painHeadlineTop = pain.headlineTop ?? "One platform.";
+const painHeadlineBottom = pain.headlineBottom ?? "Every phase.";
 const painSubhead = "From first demo to post-release analytics — every step lives in Team";
 interface PainRow {
   pill?: string;

@@ -599,7 +599,8 @@ docs.push({
     secondaryCta: cta("Book a demo", "/demo"),
   },
   painSection: {
-    headline: "Stop juggling everything. Start releasing properly.",
+    headlineTop: "Stop juggling everything.",
+    headlineBottom: "Start releasing properly.",
     rows: [
       painRow("Your release, simplified", "One place for everything instead of scattered notes and apps", "Stop juggling spreadsheets, notes apps, and calendar reminders. Team keeps your timeline, tasks, and assets in one place — so nothing gets forgotten."),
       painRow("AI-powered guidance", "Not sure what to do next? Let AI guide you", "Not sure when to post, what to say, or how to pitch? TeamMate AI gives you data-driven recommendations and even writes your press bio, social captions, and rollout plan."),
@@ -647,7 +648,8 @@ docs.push({
     secondaryCta: cta("Book a demo", "/demo"),
   },
   painSection: {
-    headline: "Stop juggling rosters. Start running them.",
+    headlineTop: "Stop juggling rosters.",
+    headlineBottom: "Start running them.",
     rows: [
       painRow("Roster overview", "See every artist, every release, every status — at a glance", "No more switching between tools to check who's where. Team gives you a unified view of every rollout your roster has in flight."),
       painRow("Built-in collaboration", "Bring artists and partners into the same workspace", "No more forwarding spreadsheets and copy-pasting updates. Artists, designers, distributors, and labels work alongside you in the same place."),
@@ -695,7 +697,8 @@ docs.push({
     secondaryCta: cta("Book a demo", "/demo"),
   },
   painSection: {
-    headline: "Run more releases. With less coordination tax.",
+    headlineTop: "Run more releases.",
+    headlineBottom: "With less coordination tax.",
     rows: [
       painRow("Full catalog visibility", "Every artist, every release, every status — in one view", "Stop reconciling spreadsheets across departments. Team gives you a live, filterable view of your entire pipeline."),
       painRow("Department coordination", "A&R, marketing, finance — all on the same release", "Each team works in their own lane while staying aligned on what's shipping when. No more cross-department surprise."),
@@ -744,7 +747,8 @@ docs.push({
     secondaryCta: cta("Book a demo", "/demo"),
   },
   painSection: {
-    headline: "Working across clients is messy. Team cleans it up.",
+    headlineTop: "Working across clients is messy.",
+    headlineBottom: "Team cleans it up.",
     rows: [
       painRow("One login, every client", "See every release you're involved in from one dashboard", "No more logging into separate tools for each client. Team gives you a single view of every release you're contributing to — with the context you need to do your job."),
       painRow("Context, not chaos", "Get briefs, assets, and deadlines without the email chain", "When a client invites you into a release, you see the timeline, the assets, and exactly what's expected of you. No more digging through inboxes for that brief they sent last Tuesday."),
@@ -828,7 +832,8 @@ docs.push({
     ],
   },
   painSection: {
-    headline: "What TeamMate actually does",
+    headlineTop: "What TeamMate",
+    headlineBottom: "actually does",
     rows: [
       painRow("Contextual intelligence", "Recommendations that know your roster", "TeamMate doesn't give generic advice. It knows your artists, your release history, your audience, and your market. Every recommendation is specific to you — your release, your timeline, your goals."),
       painRow("Market awareness", "Know your landscape before you launch", "Understand your competitive positioning. See what similar artists are doing, when they're releasing, and where the gaps are. Launch with confidence, not guesswork."),
@@ -910,7 +915,8 @@ docs.push({
   },
   painSection: {
     eyebrow: "The Release Lifecycle",
-    headline: "One platform. Every phase.",
+    headlineTop: "One platform.",
+    headlineBottom: "Every phase.",
     rows: [
       painRow("Pre-Release", "Set your release date. Team builds your plan", "Team generates your timeline, assigns tasks, and tracks every deliverable. Templates built for singles, EPs, and albums. No more wondering what needs to happen next."),
       painRow("Release Week", "The most critical 7 days. Fully coordinated", "DSPs, social, press, ads — every channel running in sync. Team keeps the chaos organised so your launch day is a launch, not a scramble."),
@@ -951,7 +957,8 @@ docs.push({
     body: "When you're managing hundreds of releases across dozens of artists, you need more than a project management tool. You need infrastructure that scales with your operation and doesn't slow you down.",
   },
   painSection: {
-    headline: "Unlock your releases with Enterprise",
+    headlineTop: "Unlock your releases",
+    headlineBottom: "with Enterprise",
     rows: [
       painRow("Authentication", "Single sign-on that works with your existing systems", "SAML 2.0 SSO integration with your identity provider. SCIM provisioning for automated user management. Your IT team controls access — Team handles the rest."),
       painRow("Governance", "Complete visibility and control over every action", "Comprehensive audit logs, role-based access controls with granular permissions per release, and multi-tiered approval workflows. Know who did what, when, and on which release."),

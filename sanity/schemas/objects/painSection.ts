@@ -10,9 +10,20 @@ export const painSection = defineType({
       type: "string",
     }),
     defineField({
+      name: "headlineTop",
+      type: "string",
+      description: "First line — sans font.",
+    }),
+    defineField({
+      name: "headlineBottom",
+      type: "string",
+      description: "Second line — serif italic (Nyght).",
+    }),
+    defineField({
       name: "headline",
       type: "string",
-      validation: (Rule) => Rule.required(),
+      description: "Legacy single-line headline. Prefer headlineTop + headlineBottom.",
+      hidden: true,
     }),
     defineField({
       name: "rows",
@@ -22,7 +33,7 @@ export const painSection = defineType({
     }),
   ],
   preview: {
-    select: { title: "headline" },
-    prepare: ({ title }) => ({ title: title || "Pain section" }),
+    select: { titleTop: "headlineTop", titleLegacy: "headline" },
+    prepare: ({ titleTop, titleLegacy }) => ({ title: titleTop || titleLegacy || "Pain section" }),
   },
 });

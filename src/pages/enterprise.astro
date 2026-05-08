@@ -28,7 +28,8 @@ const whyBody = why.body ?? "When you're managing hundreds of releases across do
 
 // ── Pain section (mocks are enterprise-specific fixtures) ──
 const pain = page?.painSection ?? {};
-const painHeadline = pain.headline ?? "Unlock your releases with Enterprise";
+const painTop = pain.headlineTop ?? "Unlock your releases";
+const painBottom = pain.headlineBottom ?? "with Enterprise";
 interface PainRow {
   metadataPill?: string;
   headline?: string;
@@ -140,7 +141,7 @@ const rolesCards = Array.isArray(rolesGrid.cards) && rolesGrid.cards.length > 0
   <section class="pain-section pain-section--alt">
     <div class="pain-section__inner">
       <div class="pain-section__header">
-        <h2>{painHeadline}</h2>
+        <SplitHeadline as="h2" top={painTop} bottom={painBottom} />
       </div>
 
       {painRows.map((row, i) => (

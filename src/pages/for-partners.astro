@@ -29,8 +29,8 @@ interface PainRow {
   mockKind: "command" | "tasks" | "dashboard";
 }
 const pain = page?.painSection ?? {};
-const painHeadline = pain.headline ?? "Working across clients is messy.";
-const painHeadlineNyght = "Team cleans it up.";
+const painTop = pain.headlineTop ?? "Working across clients is messy.";
+const painBottom = pain.headlineBottom ?? "Team cleans it up.";
 const painRows: PainRow[] = Array.isArray(pain.rows) && pain.rows.length > 0
   ? pain.rows.map((r: any, i: number) => ({
       metadataPill: r.metadataPill,
@@ -161,7 +161,7 @@ const others = Array.isArray(rolesGrid.cards) && rolesGrid.cards.length > 0
   <section class="pain-section">
     <div class="pain-section__inner">
       <div class="pain-section__header">
-        <h2>{painHeadline} <span class="nyght">{painHeadlineNyght}</span></h2>
+        <SplitHeadline as="h2" top={painTop} bottom={painBottom} />
       </div>
 
       {painRows.map((row, i) => (
