@@ -630,6 +630,10 @@ export const homepage = defineType({
         defineField({ name: "headlineTop", type: "string", description: "First line — sans font." }),
         defineField({ name: "headlineBottom", type: "string", description: "Second line — serif italic (Nyght)." }),
         defineField({ name: "headline", type: "string", description: "Legacy single-line headline.", hidden: true }),
+        defineField({ name: "subhead", type: "text", rows: 2, description: "Microcopy beneath the headline (e.g. \"Experience first-hand how Team eliminates the chaos…\")." }),
+        defineField({ name: "ctaLabel", type: "string", description: "Primary button label (e.g. \"Start a free trial\")." }),
+        defineField({ name: "ctaHref", type: "string", description: "Primary button URL." }),
+        defineField({ name: "note", type: "string", description: "Tiny line below the button (e.g. \"No credit card required.\")." }),
         defineField({
           name: "slides",
           type: "array",
@@ -660,6 +664,58 @@ export const homepage = defineType({
             },
           ],
           validation: (Rule) => Rule.min(1),
+        }),
+      ],
+    }),
+
+    // ── Page chrome (side nav, floating CTA, video modal) ────
+    defineField({
+      name: "chrome",
+      title: "Page chrome (side nav · floating CTA · video modal)",
+      type: "object",
+      group: "footer",
+      description: "Persistent UI overlays — vertical section dots, the corner trial button that follows the scroll, and the demo video modal.",
+      fields: [
+        defineField({
+          name: "sideNav",
+          title: "Side nav (vertical section dots)",
+          type: "object",
+          fields: [
+            defineField({
+              name: "dots",
+              type: "array",
+              of: [
+                {
+                  type: "object",
+                  name: "sideNavDot",
+                  fields: [
+                    defineField({ name: "label", type: "string", validation: (R) => R.required() }),
+                    defineField({ name: "target", type: "string", description: "DOM id of the section to scroll to (e.g. \"engineSection\").", validation: (R) => R.required() }),
+                  ],
+                  preview: { select: { title: "label", subtitle: "target" } },
+                },
+              ],
+              validation: (Rule) => Rule.max(12),
+            }),
+          ],
+        }),
+        defineField({
+          name: "floatingCta",
+          title: "Floating CTA (corner trial button)",
+          type: "object",
+          fields: [
+            defineField({ name: "label", type: "string", initialValue: "Start a free trial", description: "Shown on the floating button + the floating bar variant." }),
+            defineField({ name: "href", type: "string", initialValue: "/pricing" }),
+          ],
+        }),
+        defineField({
+          name: "videoModal",
+          title: "Video modal (demo player)",
+          type: "object",
+          fields: [
+            defineField({ name: "videoSrc", type: "string", description: "Demo video URL.", initialValue: "/assets/demo.mp4" }),
+            defineField({ name: "closeAriaLabel", type: "string", initialValue: "Close video" }),
+          ],
         }),
       ],
     }),

@@ -3,6 +3,7 @@ import "../styles/global.css";
 import { getSiteSettings } from "../lib/queries";
 import { getClient, isPreviewRequest, urlFor } from "../lib/sanity";
 import VisualEditing from "../components/VisualEditing.astro";
+import Footer from "../components/Footer.astro";
 
 interface SeoBlock {
   metaTitle?: string;
@@ -103,10 +104,9 @@ const canonicalUrl =
     <slot />
   </main>
 
-  <div id="team-footer"></div>
+  <Footer settings={settings} />
 
   <script src="/components/nav.js" defer></script>
-  <script src="/components/footer.js" defer></script>
 
   {/*
     Visual Editing overlay — always rendered, but the script self-gates on

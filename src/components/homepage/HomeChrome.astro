@@ -1,0 +1,62 @@
+---
+/**
+ * Persistent homepage chrome: video modal, side nav (vertical section
+ * dots), and the floating "Start a free trial" CTA. DOM ids preserved
+ * (videoModal, modalVideo, sideNav, floatingCta, floatingBar) so the
+ * legacy inline JS in /components/homepage-inline-1.js can still
+ * target them.
+ */
+
+interface SideNavDot { label?: string; target?: string }
+interface Props {
+  data?: {
+    sideNav?: { dots?: SideNavDot[] };
+    floatingCta?: { label?: string; href?: string };
+    videoModal?: { videoSrc?: string; closeAriaLabel?: string };
+  };
+}
+
+const { data } = Astro.props;
+
+const DEFAULT_DOTS: SideNavDot[] = [
+  { label: "Overview", target: "uploadSection" },
+  { label: "TeamMate", target: "engineSection" },
+  { label: "Dashboard", target: "guidelinesSection" },
+  { label: "Features", target: "featuresSection" },
+  { label: "The Brain", target: "brainSection" },
+  { label: "FAQ", target: "faqSection" },
+  { label: "Get started", target: "storiesSection" },
+];
+const dots = (data?.sideNav?.dots && data.sideNav.dots.length > 0) ? data.sideNav.dots : DEFAULT_DOTS;
+
+const ctaLabel = data?.floatingCta?.label ?? "Start a free trial";
+const ctaHref = data?.floatingCta?.href ?? "/pricing";
+
+const videoSrc = data?.videoModal?.videoSrc ?? "/assets/demo.mp4";
+const closeAriaLabel = data?.videoModal?.closeAriaLabel ?? "Close video";
+---
+
+<div class="video-modal" id="videoModal" aria-hidden="true">
+  <div class="video-modal__bg" data-modal-close></div>
+  <button class="video-modal__close" data-modal-close aria-label={closeAriaLabel}>
+    <svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18" /><line x1="18" y1="6" x2="6" y2="18" /></svg>
+  </button>
+  <div class="video-modal__content">
+    <video id="modalVideo" playsinline controls preload="metadata">
+      <source src={videoSrc} type="video/mp4" />
+    </video>
+  </div>
+</div>
+
+<nav class="side-nav" id="sideNav" aria-label="Page sections">
+  {dots.map((d) => (
+    <div class="side-nav__dot" data-target={d.target} data-label={d.label}></div>
+  ))}
+</nav>
+
+<div class="floating-cta" id="floatingCta">
+  <a href={ctaHref} class="floating-cta__btn">{ctaLabel} →</a>
+</div>
+<div class="floating-bar" id="floatingBar">
+  <a href={ctaHref} class="floating-bar__btn">{ctaLabel}</a>
+</div>

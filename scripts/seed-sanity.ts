@@ -150,6 +150,16 @@ docs.push({
   navPrimaryCta: cta("Start free", "https://www.teamrollouts.com/sign-up?plan=pro&period=yearly"),
   navSecondaryCta: cta("Login", "https://www.teamrollouts.com/sign-in"),
 
+  footerNewsletter: {
+    headlineTop: "Get release intel",
+    headlineBottom: "in your inbox",
+    body: "Monthly insights on rollout strategy, industry trends, and how the best teams ship releases. No spam.",
+    placeholder: "you@yourlabel.com",
+    buttonLabel: "Subscribe",
+    successMessage: "Thanks for joining us on this wild ride!",
+  },
+  footerBrandDescription: "The operating system for music releases. Plan, coordinate, and execute your entire rollout from one platform.",
+  footerWordmark: "team",
   footerColumns: [
     {
       _key: "platform",
@@ -477,10 +487,29 @@ docs.push({
       ]},
     ],
   },
+  chrome: {
+    sideNav: {
+      dots: [
+        { _key: "n1", _type: "sideNavDot", label: "Overview", target: "uploadSection" },
+        { _key: "n2", _type: "sideNavDot", label: "TeamMate", target: "engineSection" },
+        { _key: "n3", _type: "sideNavDot", label: "Dashboard", target: "guidelinesSection" },
+        { _key: "n4", _type: "sideNavDot", label: "Features", target: "featuresSection" },
+        { _key: "n5", _type: "sideNavDot", label: "The Brain", target: "brainSection" },
+        { _key: "n6", _type: "sideNavDot", label: "FAQ", target: "faqSection" },
+        { _key: "n7", _type: "sideNavDot", label: "Get started", target: "storiesSection" },
+      ],
+    },
+    floatingCta: { label: "Start a free trial", href: "/pricing" },
+    videoModal: { videoSrc: "/assets/demo.mp4", closeAriaLabel: "Close video" },
+  },
   stories: {
     headlineTop: "Ready to transform",
     headlineBottom: "your next release?",
     headline: "Ready to transform your next release?",
+    subhead: "Experience first-hand how Team eliminates the chaos and brings clarity to your workflow.",
+    ctaLabel: "Start a free trial",
+    ctaHref: "/pricing",
+    note: "No credit card required.",
     slides: [
       { _key: "s1", _type: "testimonialSlide", tier: "enterprise", name: "Amara Johnson", role: "Head of Marketing · Major Label", quote: "Team gave our A&R and marketing teams a shared view we never had before." },
       { _key: "s2", _type: "testimonialSlide", tier: "artist", name: "Marcus Okafor", role: "Independent Artist", quote: "Finally one place to plan my release instead of ten different apps." },

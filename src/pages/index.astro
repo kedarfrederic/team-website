@@ -25,13 +25,12 @@ import HomeBrain from "../components/homepage/HomeBrain.astro";
 import HomeIntegrations from "../components/homepage/HomeIntegrations.astro";
 import HomeFaq from "../components/homepage/HomeFaq.astro";
 import HomeStories from "../components/homepage/HomeStories.astro";
+import HomeChrome from "../components/homepage/HomeChrome.astro";
 import SplitHeadline from "../components/SplitHeadline.astro";
 import { getHomepage } from "../lib/queries";
 import { getClient, urlFor } from "../lib/sanity";
 // @ts-expect-error
 import restBHtml from "../lib/homepage-rest-B.html?raw";
-// @ts-expect-error
-import restCHtml from "../lib/homepage-rest-C.html?raw";
 
 const page = await getHomepage(getClient(Astro));
 
@@ -196,7 +195,7 @@ const uploadCtaIsVideo = uploadCta?.type === "video";
   <Fragment set:html={restBHtml} />
   <HomeFaq data={page?.faq} />
   <HomeStories data={page?.stories} />
-  <Fragment set:html={restCHtml} />
+  <HomeChrome data={page?.chrome} />
 
   <script is:inline src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
   <script is:inline src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>

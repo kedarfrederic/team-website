@@ -85,6 +85,36 @@ export const siteSettings = defineType({
 
     // ── Footer ────────────────────────────────────────────────
     defineField({
+      name: "footerNewsletter",
+      title: "Footer newsletter block",
+      type: "object",
+      group: "footer",
+      fields: [
+        defineField({ name: "headlineTop", type: "string", initialValue: "Get release intel" }),
+        defineField({ name: "headlineBottom", type: "string", description: "Italic Nyght-serif phrase.", initialValue: "in your inbox" }),
+        defineField({ name: "body", type: "text", rows: 2, initialValue: "Monthly insights on rollout strategy, industry trends, and how the best teams ship releases. No spam." }),
+        defineField({ name: "placeholder", type: "string", initialValue: "you@yourlabel.com" }),
+        defineField({ name: "buttonLabel", type: "string", initialValue: "Subscribe" }),
+        defineField({ name: "successMessage", type: "string", initialValue: "Thanks for joining us on this wild ride!" }),
+      ],
+    }),
+    defineField({
+      name: "footerBrandDescription",
+      title: "Footer brand description (under logo)",
+      type: "text",
+      group: "footer",
+      rows: 3,
+      initialValue: "The operating system for music releases. Plan, coordinate, and execute your entire rollout from one platform.",
+    }),
+    defineField({
+      name: "footerWordmark",
+      title: "Footer wordmark",
+      type: "string",
+      group: "footer",
+      description: "Big script wordmark at very bottom of footer.",
+      initialValue: "team",
+    }),
+    defineField({
       name: "footerColumns",
       title: "Footer columns",
       type: "array",
