@@ -85,6 +85,42 @@ const canonicalUrl =
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
+  {/*
+    Scroll position preservation across Visual Editing reloads.
+    @sanity/astro's VisualEditing wrapper triggers window.location.reload()
+    on every keystroke when the editor is typing in Studio's right panel,
+    which jolts the iframe back to the top. Preserving scroll into
+    sessionStorage on unload + restoring on load makes the reload nearly
+    invisible — the editor sees the headline change in place while the
+    page actually refreshes underneath.
+
+    Only runs in preview mode (no point burning sessionStorage budget
+    for ordinary visitors), and uses a generated key per-path so two
+    different pages don't restore each other's scroll.
+  */}
+  {previewMode && (
+    <script is:inline>{`
+      (function () {
+        var key = 'sve-scroll:' + location.pathname;
+        try {
+          var saved = sessionStorage.getItem(key);
+          if (saved !== null) {
+            var y = parseInt(saved, 10);
+            if (!isNaN(y) && y > 0) {
+              // Restore on next paint after layout settles
+              window.addEventListener('load', function () {
+                window.scrollTo(0, y);
+              });
+            }
+          }
+        } catch (e) {}
+        window.addEventListener('beforeunload', function () {
+          try { sessionStorage.setItem(key, String(window.scrollY)); } catch (e) {}
+        });
+      })();
+    `}</script>
+  )}
+
   <!-- Nav + footer CSS hoisted to head to prevent FOUC of large unstyled
        logo + plain-text link list when navigating between pages. -->
   <link rel="stylesheet" href="/components/nav.css" />
