@@ -1,7 +1,6 @@
 ---
 import { urlFor } from "../../lib/sanity";
 import SplitHeadline from "../SplitHeadline.astro";
-import BrainMarketing from "../platform-demos/BrainMarketing";
 
 interface Props {
   data?: {
@@ -9,8 +8,11 @@ interface Props {
     headlineBottom?: string;
     headline?: string;
     body?: string;
-    /** Render the real interactive brain visualization instead of the legacy video. */
+    /** Render the interactive brain demo iframe instead of the legacy looping video. */
     interactive?: boolean;
+    /** Override the iframe URL (defaults to /team-brain/memory-graph.html — the
+        self-contained static demo lifted from the platform's public folder). */
+    iframeSrc?: string;
     video?: { src?: string; poster?: any };
   };
 }
@@ -20,6 +22,7 @@ const headlineTop = data?.headlineTop ?? data?.headline ?? "Every rollout";
 const headlineBottom = data?.headlineBottom ?? "builds a brain";
 const body = data?.body ?? "Each contact, task, observation, and decision becomes a living memory — only ever accessible to you and your team.";
 const interactive = data?.interactive ?? true;
+const iframeSrc = data?.iframeSrc ?? "/team-brain/memory-graph.html";
 const videoSrc = data?.video?.src ?? "/assets/brain-1-web.mp4";
 const posterUrl = data?.video?.poster?.asset
   ? urlFor(data.video.poster).width(1920).quality(85).format("webp").url()
@@ -36,8 +39,14 @@ const posterUrl = data?.video?.poster?.asset
   <div class="brain-video-outer" id="brainVideoOuter">
     <div class="brain-video-wrap" id="brainVideoWrap">
       {interactive ? (
-        <div style="width:100%;height:min(80vh,720px);background:#0E0E10;border-radius:1rem;overflow:hidden;position:relative">
-          <BrainMarketing client:visible height="100%" />
+        <div style="width:100%;height:min(85vh,820px);background:#0E0E10;border-radius:1rem;overflow:hidden;position:relative">
+          <iframe
+            src={iframeSrc}
+            title="Team memory graph — interactive demo"
+            loading="lazy"
+            style="width:100%;height:100%;border:0;display:block;background:#0E0E10"
+            allow="autoplay"
+          />
         </div>
       ) : (
         <video class="brain-video" autoplay loop muted playsinline preload="metadata" poster={posterUrl}>

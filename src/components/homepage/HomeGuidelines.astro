@@ -50,6 +50,12 @@ interface Props {
     headlineTop?: string;
     headlineBottom?: string;
     subhead?: string;
+    /** Render the real interactive Releases dashboard demo iframe instead of
+        the static SVG-illustrated mock release grid. */
+    interactive?: boolean;
+    /** Override the iframe URL — defaults to the static demo at
+        /team-brain/Releases.html (lifted from the platform). */
+    iframeSrc?: string;
     sidebar?: Record<string, string>;
     contentHeader?: Record<string, string>;
     demoReleases?: DemoRelease[];
@@ -209,6 +215,9 @@ const headlineBottom = data?.headlineBottom ?? "";
 const subhead = data?.subhead ?? "";
 const showIntro = !!(headlineTop || headlineBottom || subhead);
 
+const interactive = data?.interactive ?? true;
+const iframeSrc = data?.iframeSrc ?? "/team-brain/Releases.html";
+
 // ── Timeline (zoomed-in release view, post-loading) ─────────────────────
 const tlRelease = data?.timelineRelease ?? {};
 const timelineTitle = tlRelease.title ?? "Arcadia";
@@ -322,6 +331,21 @@ function assigneeBg(c: string | undefined): string {
   </div>
 )}
 
+{interactive ? (
+  <section class="guidelines-section" id="guidelinesSection">
+    <div class="guidelines-trigger" id="assistantTrigger" style="width:100%;padding:2rem 1.5rem">
+      <div style="width:100%;max-width:84rem;margin:0 auto;height:min(85vh,820px);background:#0E0E10;border-radius:1rem;overflow:hidden;position:relative;box-shadow:0 24px 80px rgba(0,0,0,0.16),0 4px 12px rgba(0,0,0,0.08)">
+        <iframe
+          src={iframeSrc}
+          title="Team release dashboard — interactive demo"
+          loading="lazy"
+          style="width:100%;height:100%;border:0;display:block;background:#0E0E10"
+          allow="autoplay"
+        />
+      </div>
+    </div>
+  </section>
+) : (
 <section class="guidelines-section" id="guidelinesSection">
   <div id="assistantTrigger" class="guidelines-trigger" style="width:100%">
     <div class="guidelines-w" id="guidelinesWrap">
@@ -557,3 +581,4 @@ function assigneeBg(c: string | undefined): string {
     </div>
   </div>
 </section>
+)}

@@ -263,6 +263,13 @@ export const homepage = defineType({
       description:
         "Scroll-driven product demo: releases grid → loading → timeline view + TeamMate chat panel. All labels, release names, chat prompts, and card artwork are editable so marketing can iterate the demo content.",
       fields: [
+        defineField({
+          name: "interactive",
+          type: "boolean",
+          title: "Use interactive Releases demo",
+          description: "When true, embeds the real Releases dashboard demo via iframe (lifted from the platform). When false, renders the legacy static SVG-illustrated mock release grid + timeline view.",
+          initialValue: true,
+        }),
         defineField({ name: "headlineTop", type: "string", description: "Optional marketing headline above the demo — first line, sans font." }),
         defineField({ name: "headlineBottom", type: "string", description: "Optional marketing headline above the demo — second line, serif italic (Nyght)." }),
         defineField({ name: "subhead", type: "text", rows: 2, description: "Optional marketing subhead above the demo." }),

@@ -385,6 +385,7 @@ docs.push({
     ],
   },
   guidelinesSection: {
+    interactive: true,
     sidebar: {
       searchPlaceholder: "Search releases...",
       navCommandCenter: "Command Center",
