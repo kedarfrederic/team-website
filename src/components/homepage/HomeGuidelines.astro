@@ -216,7 +216,9 @@ const subhead = data?.subhead ?? "";
 const showIntro = !!(headlineTop || headlineBottom || subhead);
 
 const interactive = data?.interactive ?? true;
-const iframeSrc = data?.iframeSrc ?? "/team-brain/Releases.html";
+// iframeSrc is a BASE URL (no hash). The component appends `#releases` and
+// `#timeline` to load each view of the same demo bundle.
+const iframeSrc = data?.iframeSrc ?? "/dashboard-demo.html";
 
 // ── Timeline (zoomed-in release view, post-loading) ─────────────────────
 const tlRelease = data?.timelineRelease ?? {};
@@ -332,16 +334,25 @@ function assigneeBg(c: string | undefined): string {
 )}
 
 {interactive ? (
-  <section class="guidelines-section" id="guidelinesSection">
+  <section class="guidelines-section guidelines-section--interactive" id="guidelinesSection">
     <div class="guidelines-trigger" id="assistantTrigger" style="width:100%;padding:2rem 1.5rem">
-      <div style="width:100%;max-width:84rem;margin:0 auto;height:min(85vh,820px);background:#0E0E10;border-radius:1rem;overflow:hidden;position:relative;box-shadow:0 24px 80px rgba(0,0,0,0.16),0 4px 12px rgba(0,0,0,0.08)">
-        <iframe
-          src={iframeSrc}
-          title="Team release dashboard — interactive demo"
-          loading="lazy"
-          style="width:100%;height:100%;border:0;display:block;background:#0E0E10"
-          allow="autoplay"
-        />
+      <div class="guidelines-stage">
+        <div class="guidelines-frame guidelines-frame--releases" data-frame="releases">
+          <iframe
+            src={`${iframeSrc}#releases`}
+            title="Team release dashboard — interactive demo"
+            loading="lazy"
+            allow="autoplay"
+          />
+        </div>
+        <div class="guidelines-frame guidelines-frame--timeline" data-frame="timeline">
+          <iframe
+            src={`${iframeSrc}#timeline`}
+            title="Team release timeline — interactive demo"
+            loading="lazy"
+            allow="autoplay"
+          />
+        </div>
       </div>
     </div>
   </section>
@@ -582,3 +593,37 @@ function assigneeBg(c: string | undefined): string {
   </div>
 </section>
 )}
+
+<style>
+  .guidelines-section--interactive {
+    position: relative;
+    min-height: 100vh;
+  }
+  .guidelines-section--interactive .guidelines-stage {
+    position: relative;
+    width: 100%;
+    max-width: 84rem;
+    height: min(85vh, 820px);
+    margin: 0 auto;
+    background: #0E0E10;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.16), 0 4px 12px rgba(0, 0, 0, 0.08);
+    contain: layout style paint;
+  }
+  .guidelines-section--interactive .guidelines-frame {
+    position: absolute;
+    inset: 0;
+    will-change: opacity;
+    transition: opacity 0.35s ease;
+  }
+  .guidelines-section--interactive .guidelines-frame--releases { opacity: 1; }
+  .guidelines-section--interactive .guidelines-frame--timeline { opacity: 0; pointer-events: none; }
+  .guidelines-section--interactive .guidelines-frame iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+    background: #0E0E10;
+  }
+</style>

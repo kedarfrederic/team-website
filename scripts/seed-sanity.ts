@@ -386,6 +386,7 @@ docs.push({
   },
   guidelinesSection: {
     interactive: true,
+    iframeSrc: "/dashboard-demo.html",
     sidebar: {
       searchPlaceholder: "Search releases...",
       navCommandCenter: "Command Center",

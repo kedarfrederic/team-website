@@ -713,7 +713,7 @@ gsap.ticker.lagSmoothing(0);
     scrollTrigger: {
       trigger: pinWrap,
       start: 'center center',
-      end: '+=300%',
+      end: '+=150%',
       scrub: true,
       pin: true,
       pinSpacing: true,
@@ -899,6 +899,55 @@ gsap.ticker.lagSmoothing(0);
 
   // Phase 9: Hold
   revealTl.to({}, { duration: 0.8 });
+})();
+
+
+/* =============================================
+   GUIDELINES (interactive iframe variant)
+   When the section renders the live demo at /dashboard-demo.html, pin for one
+   viewport and crossfade between the #releases (dashboard) and #timeline frames
+   so the original "dashboard → timeline" reveal still happens, but the iframes
+   stay clickable throughout. No new fake interactions — the iframes expose the
+   real product surfaces; only the scroll-driven swap is added.
+   ============================================= */
+(function initGuidelinesInteractive() {
+  if (prefersReduced) return;
+
+  const section = document.getElementById('guidelinesSection');
+  if (!section || !section.classList.contains('guidelines-section--interactive')) return;
+
+  const releases = section.querySelector('[data-frame="releases"]');
+  const timeline = section.querySelector('[data-frame="timeline"]');
+  if (!releases || !timeline) return;
+
+  // Crossfade dashboard (#releases) → timeline (#timeline) across the pin.
+  gsap.timeline({
+    scrollTrigger: {
+      trigger: section,
+      start: 'top top',
+      end: '+=100%',
+      scrub: 0.4,
+      pin: true,
+      pinSpacing: true,
+      anticipatePin: 1,
+      invalidateOnRefresh: true,
+    }
+  })
+    .to(releases, { opacity: 0, duration: 1 }, 0.45)
+    .to(timeline, { opacity: 1, duration: 1 }, 0.45);
+
+  // Keep only the visible frame click-receptive so hover/click lands on the
+  // right iframe surface as the user scrolls past the swap point.
+  ScrollTrigger.create({
+    trigger: section,
+    start: 'top top',
+    end: '+=100%',
+    onUpdate: (self) => {
+      const showTimeline = self.progress > 0.5;
+      releases.style.pointerEvents = showTimeline ? 'none' : 'auto';
+      timeline.style.pointerEvents = showTimeline ? 'auto' : 'none';
+    },
+  });
 })();
 
 
