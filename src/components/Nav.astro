@@ -10,6 +10,7 @@
  * so the existing nav.js script — which still runs to drive the
  * dropdown/mobile interactions — keeps working untouched.
  */
+import { urlFor } from "../lib/sanity";
 
 interface NavLink { label?: string; description?: string; href?: string }
 interface NavColumn { label?: string; links?: NavLink[] }
@@ -22,6 +23,7 @@ interface NavGroup {
 }
 interface Props {
   settings?: {
+    brandLogo?: { image?: any; url?: string; alt?: string };
     navGroups?: NavGroup[];
     navStatus?: { label?: string; href?: string };
     navPricingLink?: { label?: string; href?: string };
@@ -86,7 +88,12 @@ const pricingLink = settings?.navPricingLink ?? { label: "Pricing", href: "/pric
 const loginLink = settings?.navLogin ?? { label: "Login", href: "https://www.teamrollouts.com/sign-in" };
 const primaryCta = settings?.navPrimaryCta ?? { label: "Start free", href: "/onboarding" };
 
-const TEAM_LOGO = "https://www.teamrollouts.com/Team%20Logo%20Graident%2002%20+%20Black.svg";
+const FALLBACK_LOGO_URL = "https://www.teamrollouts.com/Team%20Logo%20Graident%2002%20+%20Black.svg";
+const brandLogo = settings?.brandLogo ?? {};
+const TEAM_LOGO = brandLogo.image?.asset
+  ? urlFor(brandLogo.image).height(96).format("webp").url()
+  : (brandLogo.url ?? FALLBACK_LOGO_URL);
+const TEAM_LOGO_ALT = brandLogo.alt ?? "Team";
 
 function getCols(g: NavGroup): NavColumn[] {
   if (g.columns && g.columns.length > 0) return g.columns;
@@ -99,8 +106,8 @@ function getCols(g: NavGroup): NavColumn[] {
 <nav class="nav" id="nav" data-theme={theme}>
   <div class="nav__pill nav__pill--left">
     <a href="/" class="nav__logo" style="position:relative">
-      <img class="logo-light" src={TEAM_LOGO} alt="Team" style="height:1.125rem;filter:brightness(0) invert(1)" />
-      <img class="logo-dark" src={TEAM_LOGO} alt="Team" style="height:1.125rem" />
+      <img class="logo-light" src={TEAM_LOGO} alt={TEAM_LOGO_ALT} style="height:1.125rem;filter:brightness(0) invert(1)" />
+      <img class="logo-dark" src={TEAM_LOGO} alt={TEAM_LOGO_ALT} style="height:1.125rem" />
     </a>
     <div class="nav__divider"></div>
 
@@ -166,7 +173,7 @@ function getCols(g: NavGroup): NavColumn[] {
 <div class="nav-mobile" id="navMobile" aria-hidden="true" role="dialog" aria-label="Site menu">
   <div class="nav-mobile__header">
     <a href="/" class="nav-mobile__logo">
-      <img src={TEAM_LOGO} alt="Team" />
+      <img src={TEAM_LOGO} alt={TEAM_LOGO_ALT} />
     </a>
     <button class="nav-mobile__close" id="navMobileClose" aria-label="Close menu">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18" /><path d="M6 6l12 12" /></svg>

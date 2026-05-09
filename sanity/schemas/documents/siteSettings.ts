@@ -10,11 +10,54 @@ export const siteSettings = defineType({
   type: "document",
   // Hide from "Create new" — the desk structure pins the single instance.
   groups: [
+    { name: "brand", title: "Brand assets" },
     { name: "nav", title: "Navigation" },
     { name: "footer", title: "Footer" },
     { name: "seo", title: "Default SEO" },
   ],
   fields: [
+    // ── Brand assets (used across multiple pages) ─────────────
+    defineField({
+      name: "brandLogo",
+      title: "Brand logo (nav + mobile menu)",
+      type: "object",
+      group: "brand",
+      description: "The Team wordmark/logo shown in the nav header and mobile menu. If empty, falls back to the legacy hosted SVG.",
+      fields: [
+        defineField({
+          name: "image",
+          type: "image",
+          description: "Uploaded logo (preferred). Used in dark + light variants automatically.",
+        }),
+        defineField({
+          name: "url",
+          type: "string",
+          description: "External logo URL (fallback when no upload). Currently: https://www.teamrollouts.com/Team%20Logo%20Graident%2002%20+%20Black.svg",
+        }),
+        defineField({ name: "alt", type: "string", initialValue: "Team" }),
+      ],
+    }),
+    defineField({
+      name: "teammateAvatar",
+      title: "TeamMate AI avatar",
+      type: "object",
+      group: "brand",
+      description: "Avatar shown in product-illustration chat panels (homepage features, ICP pages, intelligence page mocks). Swap to update across all pages at once.",
+      fields: [
+        defineField({
+          name: "image",
+          type: "image",
+          description: "Uploaded avatar (preferred).",
+        }),
+        defineField({
+          name: "url",
+          type: "string",
+          description: "External avatar URL fallback. Currently: /assets/teammate-avatar-round.png",
+          initialValue: "/assets/teammate-avatar-round.png",
+        }),
+      ],
+    }),
+
     // ── Navigation ────────────────────────────────────────────
     defineField({
       name: "navGroups",

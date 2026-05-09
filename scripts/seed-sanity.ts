@@ -110,6 +110,13 @@ const ROLES_GRID_DEFAULT = {
 docs.push({
   _id: "siteSettings",
   _type: "siteSettings",
+  brandLogo: {
+    url: "https://www.teamrollouts.com/Team%20Logo%20Graident%2002%20+%20Black.svg",
+    alt: "Team",
+  },
+  teammateAvatar: {
+    url: "/assets/teammate-avatar-round.png",
+  },
   navGroups: [
     {
       _key: "product",
