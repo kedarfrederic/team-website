@@ -125,8 +125,23 @@ const TeamBrainVisualization: FC<ExtendedProps> = ({ releaseId, organizationId, 
   if (isLoading) return <div style={S.shell}><div style={S.center}><div style={{ color: T.fg3, fontSize: 14, fontFamily: T.fontSans }}>Loading knowledge graph...</div></div></div>;
   if (!rawData || graph.nodes.length === 0) return <div style={S.shell}><div style={S.center}><div style={{ fontSize: 16, fontWeight: 500, color: T.fg2, fontFamily: T.fontSans }}>Knowledge graph is empty</div><div style={{ fontSize: 13, color: T.fg3, fontFamily: T.fontSans }}>Build a strategy to start populating the graph.</div></div></div>;
 
+  // Marketing-mode shell: render in-flow (relative positioned) instead of
+  // the platform's fixed overlay. The platform uses this brain as a modal,
+  // so its baseline shell is `position:fixed; inset:0; zIndex:100` — which
+  // would cover the whole homepage if used directly.
+  const marketingShell = hideChrome
+    ? {
+        ...S.shell,
+        position: "relative" as const,
+        inset: "auto" as any,
+        zIndex: 0,
+        height: height ?? "100%",
+        width: "100%",
+      }
+    : { ...S.shell, ...(height ? { height } : {}) };
+
   return (
-    <div style={{ ...S.shell, ...(height ? { height } : {}) }}>
+    <div style={marketingShell}>
       {!hideChrome && <TeamBrainStageChrome search={search} onSearchChange={setSearch} stats={stats!} onClose={safeOnClose} />}
       <div ref={stageRef} style={S.stage} onPointerDown={cam.onPointerDown} onPointerMove={cam.onPointerMove} onPointerUp={cam.onPointerUp} onPointerCancel={cam.onPointerUp} onWheel={cam.onWheel}>
         <div style={S.ambientGlow} />

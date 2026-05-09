@@ -1263,12 +1263,15 @@ gsap.ticker.lagSmoothing(0);
     if (el) sections.push({ dot, el });
   });
 
-  // Show after hero, hide at footer
+  // Show after hero, hide at footer.
+  // (Was calling getNav() — a global from a different IIFE that was lost
+  // when nav.js stopped client-side-injecting the nav. Use the local
+  // `nav` reference, which is the side-nav element this IIFE controls.)
   ScrollTrigger.create({
     trigger: hero,
     start: 'bottom 80%',
-    onEnter: () => getNav()?.classList.add('is-visible'),
-    onLeaveBack: () => getNav()?.classList.remove('is-visible'),
+    onEnter: () => nav.classList.add('is-visible'),
+    onLeaveBack: () => nav.classList.remove('is-visible'),
   });
 
   var footer = document.querySelector('footer');
@@ -1276,8 +1279,8 @@ gsap.ticker.lagSmoothing(0);
     ScrollTrigger.create({
       trigger: footer,
       start: 'top 90%',
-      onEnter: () => getNav()?.classList.remove('is-visible'),
-      onLeaveBack: () => getNav()?.classList.add('is-visible'),
+      onEnter: () => nav.classList.remove('is-visible'),
+      onLeaveBack: () => nav.classList.add('is-visible'),
     });
   }
 
