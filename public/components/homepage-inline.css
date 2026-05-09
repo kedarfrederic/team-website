@@ -1357,6 +1357,9 @@ details[open] .accordion-summary svg{transform:rotate(180deg)}
 .brain-section{
   padding:6rem 0 0;
   background:#fff;
+  /* Skip rendering work when offscreen — heavy iframe inside. */
+  content-visibility:auto;
+  contain-intrinsic-size:1px 100vh;
 }
 .brain-section .section-intro{
   padding:0 2rem;
@@ -1372,6 +1375,8 @@ details[open] .accordion-summary svg{transform:rotate(180deg)}
   background:#0a0a1a;
   box-shadow:0 20px 60px rgba(0,0,0,0.1),0 2px 6px rgba(0,0,0,0.04);
   border-radius:1.25rem;
+  /* Contain paint/layout so the iframe's repaints don't propagate outward. */
+  contain:layout style paint;
 }
 .brain-video{
   width:100%;

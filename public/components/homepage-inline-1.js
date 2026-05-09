@@ -69,21 +69,32 @@ gsap.ticker.lagSmoothing(0);
   const footer = document.querySelector('.footer');
   if (!cta || !hero) return;
 
-  function update() {
+  let rafQueued = false;
+  let lastShown = null;
+
+  function compute() {
+    rafQueued = false;
     const scrollY = window.scrollY || window.pageYOffset;
     const heroBottom = hero.offsetTop + hero.offsetHeight;
     const footerTop = footer ? footer.offsetTop : Infinity;
     const viewportBottom = scrollY + window.innerHeight;
 
-    // Visible when past the hero and before the footer enters view
     const shouldShow = scrollY > heroBottom * 0.6 && viewportBottom < footerTop + 60;
+    if (shouldShow === lastShown) return;
+    lastShown = shouldShow;
     cta.classList.toggle('is-visible', shouldShow);
     if (bar) bar.classList.toggle('is-visible', shouldShow);
   }
 
-  window.addEventListener('scroll', update, { passive: true });
-  window.addEventListener('resize', update);
-  update();
+  function onScroll() {
+    if (rafQueued) return;
+    rafQueued = true;
+    requestAnimationFrame(compute);
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  compute();
 })();
 
 
@@ -904,11 +915,10 @@ gsap.ticker.lagSmoothing(0);
 
 /* =============================================
    GUIDELINES (interactive iframe variant)
-   When the section renders the live demo at /dashboard-demo.html, pin for one
-   viewport and crossfade between the #releases (dashboard) and #timeline frames
-   so the original "dashboard → timeline" reveal still happens, but the iframes
-   stay clickable throughout. No new fake interactions — the iframes expose the
-   real product surfaces; only the scroll-driven swap is added.
+   Single iframe loading /dashboard-demo.html. Pinned for one viewport while
+   scroll progress drives a hash swap from #releases → #timeline, so the
+   in-iframe React app re-renders the timeline view without reloading. One
+   iframe = one bundle parse, one React mount — no duplicate-iframe cost.
    ============================================= */
 (function initGuidelinesInteractive() {
   if (prefersReduced) return;
@@ -916,36 +926,39 @@ gsap.ticker.lagSmoothing(0);
   const section = document.getElementById('guidelinesSection');
   if (!section || !section.classList.contains('guidelines-section--interactive')) return;
 
-  const releases = section.querySelector('[data-frame="releases"]');
-  const timeline = section.querySelector('[data-frame="timeline"]');
-  if (!releases || !timeline) return;
+  const iframe = document.getElementById('guidelinesIframe');
+  if (!iframe) return;
 
-  // Crossfade dashboard (#releases) → timeline (#timeline) across the pin.
-  gsap.timeline({
-    scrollTrigger: {
-      trigger: section,
-      start: 'top top',
-      end: '+=100%',
-      scrub: 0.4,
-      pin: true,
-      pinSpacing: true,
-      anticipatePin: 1,
-      invalidateOnRefresh: true,
+  const base = iframe.getAttribute('data-base') || '/dashboard-demo.html';
+  let lastView = 'releases';
+
+  const setView = (next) => {
+    if (next === lastView) return;
+    lastView = next;
+    // Replace src with hash-only delta. The iframe's hashchange listener
+    // re-renders without a network reload — feels like an in-app tab swap.
+    try {
+      const win = iframe.contentWindow;
+      if (win && win.location && win.location.replace) {
+        win.location.replace(base + '#' + next);
+      } else {
+        iframe.src = base + '#' + next;
+      }
+    } catch (e) {
+      iframe.src = base + '#' + next;
     }
-  })
-    .to(releases, { opacity: 0, duration: 1 }, 0.45)
-    .to(timeline, { opacity: 1, duration: 1 }, 0.45);
+  };
 
-  // Keep only the visible frame click-receptive so hover/click lands on the
-  // right iframe surface as the user scrolls past the swap point.
   ScrollTrigger.create({
     trigger: section,
     start: 'top top',
     end: '+=100%',
+    pin: true,
+    pinSpacing: true,
+    anticipatePin: 1,
+    invalidateOnRefresh: true,
     onUpdate: (self) => {
-      const showTimeline = self.progress > 0.5;
-      releases.style.pointerEvents = showTimeline ? 'none' : 'auto';
-      timeline.style.pointerEvents = showTimeline ? 'auto' : 'none';
+      setView(self.progress > 0.5 ? 'timeline' : 'releases');
     },
   });
 })();
@@ -1169,44 +1182,52 @@ gsap.ticker.lagSmoothing(0);
   var wrap = document.getElementById('brainVideoWrap');
   if (!wrap) return;
 
-  // Use the nomorechaos approach: scroll-position-based, no GSAP timeline.
-  // This is what worked originally.
+  // Scroll-position-based expand/shrink, rAF-throttled with skip-if-unchanged
+  // to avoid layout thrash from getBoundingClientRect on every scroll tick —
+  // critical because the wrapper holds a heavy iframe whose paint cost
+  // compounds with each style write.
   var maxRadius = 20;
-  var section = document.getElementById('brainSection');
+  var lastW = -1;
+  var lastRadius = -1;
+  var lastShadow = '';
+  var rafQueued = false;
 
-  function updateBrainExpand() {
+  function compute() {
+    rafQueued = false;
     var frameRect = wrap.getBoundingClientRect();
     var vh = window.innerHeight;
     var frameCenter = frameRect.top + frameRect.height / 2;
     var vpCenter = vh / 2;
 
-    // Progress with dead zone — stays at 1.0 when near centre
-    // Use asymmetric range: longer exit so shrink-back is slower
-    var dist = frameCenter - vpCenter; // positive = below center, negative = above
+    var dist = frameCenter - vpCenter;
     var deadZone = vh * 0.35;
     var absDist = Math.abs(dist);
-    var exitRange = dist < 0 ? vh * 1.2 : vh * 0.7; // above center (scrolled past) = longer range
+    var exitRange = dist < 0 ? vh * 1.2 : vh * 0.7;
     var adjustedDist = Math.max(0, absDist - deadZone);
     var adjustedRange = exitRange - deadZone;
     var progress = Math.max(0, Math.min(1, 1 - (adjustedDist / adjustedRange)));
-
-    // Ease for smoother feel
     var t = progress * progress;
 
-    // Interpolate
-    var radius = maxRadius * (1 - t);
-    var maxW = 72 * 16; // 72rem in px
+    var radius = +(maxRadius * (1 - t)).toFixed(1);
+    var maxW = 72 * 16;
     var fullW = window.innerWidth;
-    var currentW = maxW + (fullW - maxW) * t;
+    var currentW = Math.round(maxW + (fullW - maxW) * t);
+    var shadow = t > 0.5 ? 'none' : '';
 
-    wrap.style.maxWidth = Math.round(currentW) + 'px';
-    wrap.style.borderRadius = radius.toFixed(1) + 'px';
-    wrap.style.boxShadow = t > 0.5 ? 'none' : '';
+    if (currentW !== lastW) { wrap.style.maxWidth = currentW + 'px'; lastW = currentW; }
+    if (radius !== lastRadius) { wrap.style.borderRadius = radius + 'px'; lastRadius = radius; }
+    if (shadow !== lastShadow) { wrap.style.boxShadow = shadow; lastShadow = shadow; }
   }
 
-  window.addEventListener('scroll', updateBrainExpand, { passive: true });
-  window.addEventListener('resize', updateBrainExpand, { passive: true });
-  updateBrainExpand();
+  function onScroll() {
+    if (rafQueued) return;
+    rafQueued = true;
+    requestAnimationFrame(compute);
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+  compute();
 })();
 
 

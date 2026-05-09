@@ -337,22 +337,14 @@ function assigneeBg(c: string | undefined): string {
   <section class="guidelines-section guidelines-section--interactive" id="guidelinesSection">
     <div class="guidelines-trigger" id="assistantTrigger" style="width:100%;padding:2rem 1.5rem">
       <div class="guidelines-stage">
-        <div class="guidelines-frame guidelines-frame--releases" data-frame="releases">
-          <iframe
-            src={`${iframeSrc}#releases`}
-            title="Team release dashboard — interactive demo"
-            loading="lazy"
-            allow="autoplay"
-          />
-        </div>
-        <div class="guidelines-frame guidelines-frame--timeline" data-frame="timeline">
-          <iframe
-            src={`${iframeSrc}#timeline`}
-            title="Team release timeline — interactive demo"
-            loading="lazy"
-            allow="autoplay"
-          />
-        </div>
+        <iframe
+          id="guidelinesIframe"
+          src={`${iframeSrc}#releases`}
+          data-base={iframeSrc}
+          title="Team release dashboard — interactive demo"
+          loading="lazy"
+          allow="autoplay"
+        />
       </div>
     </div>
   </section>
@@ -598,6 +590,10 @@ function assigneeBg(c: string | undefined): string {
   .guidelines-section--interactive {
     position: relative;
     min-height: 100vh;
+    /* content-visibility lets the browser skip rendering work when the
+       section is offscreen — big scroll-perf win with the heavy iframe. */
+    content-visibility: auto;
+    contain-intrinsic-size: 1px 100vh;
   }
   .guidelines-section--interactive .guidelines-stage {
     position: relative;
@@ -611,15 +607,7 @@ function assigneeBg(c: string | undefined): string {
     box-shadow: 0 24px 80px rgba(0, 0, 0, 0.16), 0 4px 12px rgba(0, 0, 0, 0.08);
     contain: layout style paint;
   }
-  .guidelines-section--interactive .guidelines-frame {
-    position: absolute;
-    inset: 0;
-    will-change: opacity;
-    transition: opacity 0.35s ease;
-  }
-  .guidelines-section--interactive .guidelines-frame--releases { opacity: 1; }
-  .guidelines-section--interactive .guidelines-frame--timeline { opacity: 0; pointer-events: none; }
-  .guidelines-section--interactive .guidelines-frame iframe {
+  .guidelines-section--interactive #guidelinesIframe {
     width: 100%;
     height: 100%;
     border: 0;
