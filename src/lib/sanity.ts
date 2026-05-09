@@ -78,16 +78,40 @@ function createPreviewClient(astro?: Pick<AstroGlobal, "locals">): SanityClient 
 }
 
 /**
- * Detect preview mode for the current request via the `sanity-preview`
- * cookie set by `/api/preview/enable`.
+ * Detect preview mode for the current request.
+ *
+ * Three signals, any of which trips preview mode:
+ *  1. The `sanity-preview` cookie set by `/api/preview/enable`.
+ *  2. The same name found in the raw `Cookie` header (works around any
+ *     adapter-level cookie parsing quirks on CF Pages).
+ *  3. A `?preview=1` query param (set by /api/preview/enable as a redirect
+ *     fallback when the browser drops the partitioned cookie — Safari ITP,
+ *     strict cross-site cookie blocking, etc.).
  */
-export function isPreviewRequest(astro?: Pick<AstroGlobal, "cookies">): boolean {
+export function isPreviewRequest(
+  astro?: Pick<AstroGlobal, "cookies" | "request" | "url">
+): boolean {
   if (!astro) return false;
+  // 1. Astro's typed cookie API
   try {
-    return astro.cookies.get("sanity-preview")?.value === "1";
+    if (astro.cookies?.get("sanity-preview")?.value === "1") return true;
   } catch {
-    return false;
+    /* fall through */
   }
+  // 2. Raw cookie header
+  try {
+    const raw = astro.request?.headers?.get("cookie") ?? "";
+    if (/(?:^|;\s*)sanity-preview=1(?:;|$)/.test(raw)) return true;
+  } catch {
+    /* fall through */
+  }
+  // 3. Query param fallback
+  try {
+    if (astro.url?.searchParams.get("preview") === "1") return true;
+  } catch {
+    /* fall through */
+  }
+  return false;
 }
 
 /**
@@ -96,7 +120,9 @@ export function isPreviewRequest(astro?: Pick<AstroGlobal, "cookies">): boolean 
  * calls in the same request (e.g. layout + page) only build the preview
  * client once.
  */
-export function getClient(astro?: Pick<AstroGlobal, "cookies" | "locals">): SanityClient {
+export function getClient(
+  astro?: Pick<AstroGlobal, "cookies" | "locals" | "request" | "url">
+): SanityClient {
   if (!isPreviewRequest(astro)) return sanityClient;
   const cache = (astro?.locals as any) ?? {};
   if (cache.__sanityPreviewClient) return cache.__sanityPreviewClient;

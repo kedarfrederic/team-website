@@ -46,8 +46,14 @@ export const GET: APIRoute = async ({ url, cookies, redirect, locals }) => {
     "Partitioned",
   ].join("; ");
 
-  const target = url.searchParams.get("redirect") ?? "/";
-  // Build a redirect manually so we can attach the Partitioned cookie.
+  // Append ?preview=1 to the redirect target as a fallback signal so
+  // preview mode still works if the browser drops the partitioned cookie
+  // (Safari ITP, strict cookie blocking, CF middleware quirks).
+  const rawTarget = url.searchParams.get("redirect") ?? "/";
+  const targetUrl = new URL(rawTarget, url.origin);
+  targetUrl.searchParams.set("preview", "1");
+  const target = targetUrl.pathname + targetUrl.search;
+
   return new Response(null, {
     status: 307,
     headers: {

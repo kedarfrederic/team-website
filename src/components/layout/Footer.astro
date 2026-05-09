@@ -1,0 +1,139 @@
+---
+/**
+ * Site footer — driven by siteSettings.footerColumns + socialLinks + footerLegal.
+ */
+
+interface FooterLink {
+  label: string;
+  href: string;
+}
+
+interface FooterColumn {
+  heading: string;
+  links?: FooterLink[];
+}
+
+interface SocialLink {
+  platform: string;
+  href: string;
+}
+
+interface Props {
+  settings: {
+    footerColumns?: FooterColumn[];
+    socialLinks?: SocialLink[];
+    footerLegal?: string;
+  } | null;
+}
+
+const { settings } = Astro.props;
+const columns = settings?.footerColumns ?? [];
+const social = settings?.socialLinks ?? [];
+const legal = settings?.footerLegal ?? `© ${new Date().getFullYear()} Team. All rights reserved.`;
+---
+
+<footer class="footer">
+  <div class="container footer__inner">
+    {columns.length > 0 && (
+      <div class="footer__columns">
+        {
+          columns.map((col) => (
+            <div class="footer__column">
+              <h4 class="footer__heading">{col.heading}</h4>
+              {col.links && (
+                <ul>
+                  {col.links.map((link) => (
+                    <li>
+                      <a href={link.href}>{link.label}</a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ))
+        }
+      </div>
+    )}
+
+    <div class="footer__bottom">
+      <p class="footer__legal">{legal}</p>
+      {social.length > 0 && (
+        <ul class="footer__social">
+          {
+            social.map((s) => (
+              <li>
+                <a href={s.href} target="_blank" rel="noopener noreferrer">
+                  {s.platform}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      )}
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: #111110;
+    color: #fff;
+    padding: 4rem 0 2rem;
+    margin-top: 6rem;
+  }
+  .footer__columns {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 2rem;
+    padding-bottom: 3rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .footer__heading {
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: rgba(255, 255, 255, 0.5);
+  }
+  .footer__column ul {
+    list-style: none;
+  }
+  .footer__column li {
+    margin-bottom: 0.5rem;
+  }
+  .footer__column a {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.7);
+    transition: color 0.15s;
+  }
+  .footer__column a:hover {
+    color: #fff;
+  }
+  .footer__bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding-top: 2rem;
+  }
+  .footer__legal {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+  }
+  .footer__social {
+    display: flex;
+    gap: 1rem;
+    list-style: none;
+  }
+  .footer__social a {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.7);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .footer__social a:hover {
+    color: #fff;
+  }
+</style>
