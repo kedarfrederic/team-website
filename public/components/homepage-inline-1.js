@@ -22,6 +22,66 @@ gsap.ticker.lagSmoothing(0);
 
 
 /* =============================================
+   IFRAME SCROLL PASSTHROUGH — fix the scroll-trap
+   When the wheel cursor sits over a same-origin iframe (brain memory-graph,
+   dashboard demo), the browser routes wheel events to the iframe's document
+   and the parent page never sees them — the user gets stuck and has to drag
+   the cursor to the page edges to escape. Re-dispatch each iframe wheel
+   event on the parent window so Lenis picks it up and smooth-scrolls
+   naturally. Iframes stay click/hover-interactive (clicks aren't affected).
+   ============================================= */
+function setupIframeWheelPassthrough(iframe) {
+  if (!iframe) return;
+  function attach() {
+    let doc;
+    try {
+      doc = iframe.contentDocument || (iframe.contentWindow && iframe.contentWindow.document);
+    } catch (err) {
+      return; // cross-origin — can't reach in
+    }
+    if (!doc || doc.__nhWheelPassthrough) return;
+    doc.__nhWheelPassthrough = true;
+
+    doc.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      // Re-dispatch on the parent window so Lenis's wheel handler fires.
+      window.dispatchEvent(new WheelEvent('wheel', {
+        deltaX: e.deltaX,
+        deltaY: e.deltaY,
+        deltaZ: e.deltaZ,
+        deltaMode: e.deltaMode,
+        bubbles: true,
+        cancelable: true,
+      }));
+    }, { passive: false });
+
+    // Touch passthrough for mobile — same idea, keep the page scrolling
+    // when the user pans on top of the iframe.
+    let touchY = 0;
+    doc.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) touchY = e.touches[0].clientY;
+    }, { passive: true });
+    doc.addEventListener('touchmove', (e) => {
+      if (e.touches.length !== 1) return;
+      const dy = touchY - e.touches[0].clientY;
+      touchY = e.touches[0].clientY;
+      if (Math.abs(dy) > 0) window.scrollBy(0, dy);
+    }, { passive: true });
+  }
+  if (iframe.contentDocument && iframe.contentDocument.readyState !== 'loading') {
+    attach();
+  }
+  iframe.addEventListener('load', attach);
+}
+
+(function initIframeScrollPassthrough() {
+  document
+    .querySelectorAll('.brain-video-wrap iframe, #guidelinesIframe')
+    .forEach(setupIframeWheelPassthrough);
+})();
+
+
+/* =============================================
    VIDEO MODAL — Open from any [data-video-trigger]
    Closes via background click, X button, or Escape.
    Pauses + resets video on close.
