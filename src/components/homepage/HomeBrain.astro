@@ -1,6 +1,7 @@
 ---
 import { urlFor } from "../../lib/sanity";
 import SplitHeadline from "../SplitHeadline.astro";
+import BrainMarketing from "../platform-demos/BrainMarketing";
 
 interface Props {
   data?: {
@@ -8,6 +9,8 @@ interface Props {
     headlineBottom?: string;
     headline?: string;
     body?: string;
+    /** Render the real interactive brain visualization instead of the legacy video. */
+    interactive?: boolean;
     video?: { src?: string; poster?: any };
   };
 }
@@ -16,6 +19,7 @@ const { data } = Astro.props;
 const headlineTop = data?.headlineTop ?? data?.headline ?? "Every rollout";
 const headlineBottom = data?.headlineBottom ?? "builds a brain";
 const body = data?.body ?? "Each contact, task, observation, and decision becomes a living memory — only ever accessible to you and your team.";
+const interactive = data?.interactive ?? true;
 const videoSrc = data?.video?.src ?? "/assets/brain-1-web.mp4";
 const posterUrl = data?.video?.poster?.asset
   ? urlFor(data.video.poster).width(1920).quality(85).format("webp").url()
@@ -31,9 +35,15 @@ const posterUrl = data?.video?.poster?.asset
   </div>
   <div class="brain-video-outer" id="brainVideoOuter">
     <div class="brain-video-wrap" id="brainVideoWrap">
-      <video class="brain-video" autoplay loop muted playsinline preload="metadata" poster={posterUrl}>
-        <source src={videoSrc} type="video/mp4" />
-      </video>
+      {interactive ? (
+        <div style="width:100%;aspect-ratio:16/10;max-height:80vh;background:#0E0E10;border-radius:1rem;overflow:hidden;position:relative">
+          <BrainMarketing client:visible height="100%" />
+        </div>
+      ) : (
+        <video class="brain-video" autoplay loop muted playsinline preload="metadata" poster={posterUrl}>
+          <source src={videoSrc} type="video/mp4" />
+        </video>
+      )}
     </div>
   </div>
 </section>

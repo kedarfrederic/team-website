@@ -548,7 +548,7 @@ export const homepage = defineType({
 
     defineField({
       name: "brainSection",
-      title: "Brain video section",
+      title: "Brain visualization section",
       type: "object",
       group: "sections",
       fields: [
@@ -556,6 +556,13 @@ export const homepage = defineType({
         defineField({ name: "headlineBottom", type: "string", description: "Second line — serif italic (Nyght)." }),
         defineField({ name: "headline", type: "string", description: "Legacy single-line headline.", hidden: true }),
         defineField({ name: "body", type: "text", rows: 3 }),
+        defineField({
+          name: "interactive",
+          type: "boolean",
+          title: "Use interactive visualization",
+          description: "When true, renders the real platform brain graph (live, draggable, zoomable). When false, falls back to the legacy looping video.",
+          initialValue: true,
+        }),
         defineField({
           name: "video",
           type: "object",

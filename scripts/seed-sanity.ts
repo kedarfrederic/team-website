@@ -478,6 +478,7 @@ docs.push({
     headlineBottom: "builds a brain",
     headline: "Every rollout",
     body: "Each contact, task, observation, and decision becomes a living memory — only ever accessible to you and your team.",
+    interactive: true,
     video: { src: "/assets/brain-1-web.mp4" },
   },
   integrationsMarquee: {
