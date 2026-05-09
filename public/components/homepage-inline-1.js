@@ -810,6 +810,11 @@ gsap.ticker.lagSmoothing(0);
   const loadingLabel = document.getElementById('showcaseLoadingLabel');
   const timeline = document.getElementById('showcaseTimeline');
 
+  // When the section is rendered as an interactive iframe (guidelinesSection.interactive=true)
+  // none of the legacy mock IDs exist. Bail early — pinning the section here with no inner
+  // animations would eat 300% of viewport scroll and make the next two sections appear blank.
+  if (!section || !guidelinesWrap || !grid || !loading || !timeline) return;
+
   // Start the UI slightly below and hidden
   gsap.set(guidelinesWrap, { y: 40, autoAlpha: 0, filter: 'blur(4px)' });
 
