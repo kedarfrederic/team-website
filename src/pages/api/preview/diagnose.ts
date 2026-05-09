@@ -41,6 +41,8 @@ export const GET: APIRoute = async ({ url, cookies, request, locals }) => {
     runtimeBindingPresent: Boolean((locals as any)?.runtime?.env),
     SANITY_API_READ_TOKEN_runtime: Boolean(runtimeEnv.SANITY_API_READ_TOKEN),
     SANITY_API_READ_TOKEN_buildtime: Boolean(import.meta.env.SANITY_API_READ_TOKEN),
+    SANITY_API_READ_TOKEN_2_runtime: Boolean(runtimeEnv.SANITY_API_READ_TOKEN_2),
+    SANITY_API_READ_TOKEN_2_buildtime: Boolean(import.meta.env.SANITY_API_READ_TOKEN_2),
     SANITY_PREVIEW_SECRET_runtime: Boolean(runtimeEnv.SANITY_PREVIEW_SECRET),
     SANITY_PREVIEW_SECRET_buildtime: Boolean(import.meta.env.SANITY_PREVIEW_SECRET),
     PUBLIC_SANITY_STUDIO_URL_buildtime: import.meta.env.PUBLIC_SANITY_STUDIO_URL ?? null,

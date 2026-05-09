@@ -62,7 +62,12 @@ function readEnv(astro: Pick<AstroGlobal, "locals"> | undefined, name: string): 
  * "refreshing without showing the new content until you click Publish".
  */
 function createPreviewClient(astro?: Pick<AstroGlobal, "locals">): SanityClient {
-  const token = readEnv(astro, "SANITY_API_READ_TOKEN");
+  // Try both names — Cloudflare wouldn't let us re-save the original after a
+  // delete (encrypted-secret namespace quirk), so we accept the suffixed name
+  // as a fallback.
+  const token =
+    readEnv(astro, "SANITY_API_READ_TOKEN") ??
+    readEnv(astro, "SANITY_API_READ_TOKEN_2");
   if (!token) return sanityClient;
 
   return createClient({
