@@ -36,7 +36,7 @@ const posterUrl = data?.video?.poster?.asset
   <div class="brain-video-outer" id="brainVideoOuter">
     <div class="brain-video-wrap" id="brainVideoWrap">
       {interactive ? (
-        <div style="width:100%;aspect-ratio:16/10;max-height:80vh;background:#0E0E10;border-radius:1rem;overflow:hidden;position:relative">
+        <div style="width:100%;height:min(80vh,720px);background:#0E0E10;border-radius:1rem;overflow:hidden;position:relative">
           <BrainMarketing client:visible height="100%" />
         </div>
       ) : (
