@@ -120,6 +120,20 @@
   letter-spacing: -0.02em;
 }
 .nh-nyght { font-family: "Nyght Serif", "Playfair Display", Georgia, serif; font-weight: 300; font-style: italic; }
+.nh-typer { display: inline-block; }
+.nh-typer__caret {
+  display: inline-block;
+  width: 2px;
+  height: 0.95em;
+  margin-left: 2px;
+  background: #F56002;
+  vertical-align: -0.1em;
+  animation: nh-caret-blink 1.05s steps(2, start) infinite;
+}
+@keyframes nh-caret-blink { to { visibility: hidden; } }
+@media (prefers-reduced-motion: reduce) {
+  .nh-typer__caret { animation: none; opacity: 0.55; }
+}
 .nh-hero__body {
   font-size: 17px;
   color: rgba(255,255,255,0.55);

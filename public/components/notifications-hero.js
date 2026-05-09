@@ -269,4 +269,60 @@
   notifs.forEach(function (slot, i) {
     setTimeout(function () { scheduleSwap(slot); }, 1500 + i * 400);
   });
+
+  /* ============ TYPEWRITER ============
+     Self-contained init for the cycling headline. Reads phrases from
+     `data-typer-words` on #nhHeroTyper so the same component works on the
+     homepage and the /playground page without depending on homepage-inline-1.js. */
+  (function initNhTyper() {
+    var el = document.getElementById('nhHeroTyper');
+    if (!el) return;
+    var prefersReduced = window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var phrases;
+    try {
+      phrases = JSON.parse(el.getAttribute('data-typer-words') || '[]');
+    } catch (e) { phrases = []; }
+    if (!phrases.length) return;
+    if (prefersReduced) { el.textContent = phrases[0]; return; }
+
+    var TYPE_MS = 70;
+    var ERASE_MS = 40;
+    var HOLD_MS = 1500;
+    var GAP_MS = 350;
+    var phraseIdx = 0;
+    var charIdx = phrases[0].length;
+    var mode = 'hold';
+
+    function tick() {
+      var phrase = phrases[phraseIdx];
+      if (mode === 'type') {
+        charIdx++;
+        el.textContent = phrase.substring(0, charIdx);
+        if (charIdx >= phrase.length) {
+          mode = 'hold';
+          setTimeout(tick, HOLD_MS);
+        } else {
+          setTimeout(tick, TYPE_MS);
+        }
+      } else if (mode === 'hold') {
+        mode = 'erase';
+        setTimeout(tick, ERASE_MS);
+      } else if (mode === 'erase') {
+        charIdx--;
+        el.textContent = phrase.substring(0, charIdx);
+        if (charIdx <= 0) {
+          mode = 'gap';
+          phraseIdx = (phraseIdx + 1) % phrases.length;
+          setTimeout(tick, GAP_MS);
+        } else {
+          setTimeout(tick, ERASE_MS);
+        }
+      } else if (mode === 'gap') {
+        mode = 'type';
+        setTimeout(tick, TYPE_MS);
+      }
+    }
+    setTimeout(tick, HOLD_MS);
+  })();
 })();

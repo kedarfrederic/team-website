@@ -25,6 +25,13 @@ interface Props {
   eyebrow?: string;
   headline?: string;
   headlineAlt?: string;
+  /**
+   * If provided, the headline cycles through these phrases via the
+   * typewriter init in /components/notifications-hero.js. The first
+   * entry is rendered server-side so non-JS visitors see real copy.
+   * When omitted, the static `headline` prop is used instead.
+   */
+  typewriterWords?: string[];
   body?: string;
   primaryCta?: CtaProps;
   secondaryCta?: CtaProps;
@@ -34,10 +41,14 @@ const {
   eyebrow = "The operating system for music releases",
   headline = "Release chaos",
   headlineAlt = "ends here.",
+  typewriterWords,
   body = "Stop juggling spreadsheets, Slack threads, and email chains. One platform for your entire rollout.",
   primaryCta = { label: "Book a demo", href: "/demo" },
   secondaryCta,
 } = Astro.props;
+
+const useTyper = Array.isArray(typewriterWords) && typewriterWords.length > 0;
+const headlineSeed = useTyper ? typewriterWords![0] : headline;
 ---
 
 <link rel="stylesheet" href="/components/notifications-hero.css" />
@@ -129,7 +140,18 @@ const {
   <div class="nh-hero__content">
     {eyebrow && <div class="nh-hero__eyebrow">{eyebrow}</div>}
     <h1 class="nh-hero__h1" style="line-height:1.0;">
-      {headline}
+      {useTyper ? (
+        <>
+          <span
+            class="nh-typer"
+            id="nhHeroTyper"
+            data-typer-words={JSON.stringify(typewriterWords)}
+          >{headlineSeed}</span>
+          <span class="nh-typer__caret" aria-hidden="true"></span>
+        </>
+      ) : (
+        headline
+      )}
       {headlineAlt && (
         <>
           <br />
