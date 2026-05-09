@@ -27,6 +27,7 @@ import { mockGantt } from "./objects/mockData/mockGantt";
 import { mockBudget } from "./objects/mockData/mockBudget";
 import { mockChat } from "./objects/mockData/mockChat";
 import { mockTimeline } from "./objects/mockData/mockTimeline";
+import { mockPanel } from "./objects/mockPanel";
 
 // ── Pages (singletons) ───────────────────────────────────────
 import { siteSettings } from "./documents/siteSettings";
@@ -92,4 +93,5 @@ export const schemaTypes = [
   mockBudget,
   mockChat,
   mockTimeline,
+  mockPanel,
 ];

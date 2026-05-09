@@ -1,0 +1,252 @@
+---
+/**
+ * Renders a polymorphic mock illustration panel based on its `kind`.
+ * Mirrors the legacy inline mock HTML used in intelligence/orchestration/
+ * homepage product demos (.fp-chat, .mock-dashboard, .fp-budget, etc.)
+ * verbatim so existing CSS keeps working unmodified.
+ */
+import { urlFor } from "../lib/sanity";
+
+interface ChatRow { side?: "user" | "ai"; text?: string }
+interface DashboardCard { title?: string; value?: string; pillLabel?: string; pillTone?: string }
+interface BudgetBar { label?: string; value?: string; percent?: number; color?: string }
+interface TimelineRow { label?: string; leftPct?: number; widthPct?: number; color?: string }
+interface TaskRow { label?: string; status?: string; statusTone?: string }
+interface AlertItem { text?: string; dotTone?: string }
+interface ReportStat { value?: string; label?: string }
+interface CommandCard { artist?: string; release?: string; status?: string; statusTone?: string }
+
+export interface MockPanelData {
+  kind?: string;
+  chatRows?: ChatRow[];
+  chatInputPlaceholder?: string;
+  dashboardCards?: DashboardCard[];
+  budgetBars?: BudgetBar[];
+  budgetTotalLeft?: string;
+  budgetTotalRight?: string;
+  budgetSuggestion?: string;
+  budgetSuggestionPrefix?: string;
+  timelineRows?: TimelineRow[];
+  checklistItems?: string[];
+  tasksRows?: TaskRow[];
+  alertItems?: AlertItem[];
+  reportTitle?: string;
+  reportDateLabel?: string;
+  reportStats?: ReportStat[];
+  commandCards?: CommandCard[];
+}
+
+interface Props {
+  data?: MockPanelData;
+  /** TeamMate avatar URL (used in chat panels). Defaults to legacy asset. */
+  avatarUrl?: string;
+  /** Optional outer wrapper class (e.g. for full-width budget container). */
+  outerClass?: string;
+}
+
+const { data, avatarUrl = "/assets/teammate-avatar-round.png", outerClass } = Astro.props;
+const kind = data?.kind ?? "";
+
+function pillClass(tone?: string): string {
+  switch (tone) {
+    case "blue": return "mock-dashboard__pill--blue";
+    case "amber": return "mock-dashboard__pill--amber";
+    case "red": return "mock-dashboard__pill--red";
+    case "green":
+    default: return "mock-dashboard__pill--green";
+  }
+}
+
+function budgetGradient(color?: string): string {
+  switch (color) {
+    case "purple": return "linear-gradient(90deg,#8B5CF6,#a78bfa)";
+    case "green": return "linear-gradient(90deg,#10B981,#34d399)";
+    case "orange": return "linear-gradient(90deg,#F56002,#ff8533)";
+    case "red": return "linear-gradient(90deg,#EF4444,#f87171)";
+    case "blue":
+    default: return "linear-gradient(90deg,#3B82F6,#60a5fa)";
+  }
+}
+
+function timelineGradient(color?: string): string {
+  switch (color) {
+    case "blue": return "linear-gradient(90deg,#3B82F6,#60a5fa)";
+    case "purple": return "linear-gradient(90deg,#8B5CF6,#a78bfa)";
+    case "pink": return "linear-gradient(90deg,#EC4899,#f472b6)";
+    case "green": return "linear-gradient(90deg,#10B981,#34d399)";
+    case "yellow": return "linear-gradient(90deg,#FAD604,#fbe046)";
+    case "orange":
+    default: return "linear-gradient(90deg,#F56002,#ff8533)";
+  }
+}
+
+function alertDotClass(tone?: string): string {
+  switch (tone) {
+    case "amber": return "fp-alert__dot--amber";
+    case "red": return "fp-alert__dot--red";
+    case "green":
+    default: return "fp-alert__dot--green";
+  }
+}
+---
+
+{kind === "chat" && (
+  <div class="fp-chat">
+    {(data?.chatRows ?? []).map((r) => (
+      r.side === "user" ? (
+        <div class="fp-chat__row fp-chat__row--user">
+          <div class="fp-chat__bubble fp-chat__bubble--user">{r.text}</div>
+        </div>
+      ) : (
+        <div class="fp-chat__row">
+          <div class="fp-chat__avatar" style="background:transparent;padding:0">
+            <img src={avatarUrl} alt="TeamMate" style="width:100%;height:100%;border-radius:50%;object-fit:cover" />
+          </div>
+          <div class="fp-chat__bubble fp-chat__bubble--ai" set:html={(r.text ?? "").replace(/\n/g, "<br>")} />
+        </div>
+      )
+    ))}
+    {data?.chatInputPlaceholder && <div class="fp-chat__input">{data.chatInputPlaceholder}</div>}
+  </div>
+)}
+
+{kind === "dashboard" && (
+  <div class="mock-dashboard">
+    {(() => {
+      const cards = data?.dashboardCards ?? [];
+      const rows: DashboardCard[][] = [];
+      for (let i = 0; i < cards.length; i += 2) rows.push(cards.slice(i, i + 2));
+      return rows.map((row) => (
+        <div class="mock-dashboard__row">
+          {row.map((c) => (
+            <div class="mock-dashboard__card">
+              <div class="mock-dashboard__card-title">{c.title}</div>
+              <div class="mock-dashboard__card-value">{c.value}</div>
+              {c.pillLabel && <div class={`mock-dashboard__pill ${pillClass(c.pillTone)}`}>{c.pillLabel}</div>}
+            </div>
+          ))}
+        </div>
+      ));
+    })()}
+  </div>
+)}
+
+{kind === "budget" && (
+  <div class={outerClass ?? "fp-budget-wrap"} style="width:100%">
+    <div class="fp-budget">
+      <div class="fp-budget__bar-group">
+        {(data?.budgetBars ?? []).map((b) => (
+          <div class="fp-budget__bar-row">
+            <div class="fp-budget__bar-label">{b.label}</div>
+            <div class="fp-budget__bar-track">
+              <div class="fp-budget__bar-fill" style={`width:${b.percent ?? 50}%;background:${budgetGradient(b.color)}`}></div>
+            </div>
+            <div class="fp-budget__bar-value">{b.value}</div>
+          </div>
+        ))}
+      </div>
+      {(data?.budgetTotalLeft || data?.budgetTotalRight) && (
+        <div class="fp-budget__total">
+          <span>{data?.budgetTotalLeft}</span>
+          <span>{data?.budgetTotalRight}</span>
+        </div>
+      )}
+    </div>
+    {data?.budgetSuggestion && (
+      <div class="action-card">
+        {data.budgetSuggestionPrefix && <strong>{data.budgetSuggestionPrefix}</strong>} {data.budgetSuggestion}
+      </div>
+    )}
+  </div>
+)}
+
+{kind === "timeline" && (
+  <div class="fp-timeline">
+    {(data?.timelineRows ?? []).map((r) => (
+      <div class="fp-timeline__row">
+        <div class="fp-timeline__label">{r.label}</div>
+        <div class="fp-timeline__track">
+          <div class="fp-timeline__bar" style={`left:${r.leftPct ?? 10}%;width:${r.widthPct ?? 30}%;background:${timelineGradient(r.color)}`}></div>
+        </div>
+      </div>
+    ))}
+  </div>
+)}
+
+{kind === "checklist" && (
+  <div class="fp-checklist">
+    {(data?.checklistItems ?? []).map((label) => (
+      <div class="fp-checklist__row">
+        <div class="fp-checklist__check"></div>
+        <div class="fp-checklist__label">{label}</div>
+      </div>
+    ))}
+  </div>
+)}
+
+{kind === "tasks" && (
+  <div class="fp-tasks">
+    {(data?.tasksRows ?? []).map((r) => (
+      <div class="fp-tasks__row">
+        <div class="fp-tasks__label">{r.label}</div>
+        <div class={`fp-tasks__status ${pillClass(r.statusTone)}`}>{r.status}</div>
+      </div>
+    ))}
+  </div>
+)}
+
+{kind === "alerts" && (
+  <div style="width:100%;display:flex;flex-direction:column;gap:0.625rem">
+    {(data?.alertItems ?? []).map((a) => (
+      <div class="fp-alert">
+        <div class={`fp-alert__dot ${alertDotClass(a.dotTone)}`}></div>
+        <div class="fp-alert__text">{a.text}</div>
+      </div>
+    ))}
+  </div>
+)}
+
+{kind === "report" && (
+  <div class="fp-report">
+    <div class="fp-report__header">
+      <div class="fp-report__header-title">{data?.reportTitle}</div>
+      {data?.reportDateLabel && <div class="fp-report__header-date">{data.reportDateLabel}</div>}
+    </div>
+    {data?.reportStats && data.reportStats.length > 0 && (
+      <div class="fp-report__stats">
+        {data.reportStats.map((s) => (
+          <div class="fp-report__stat">
+            <div class="fp-report__stat-value">{s.value}</div>
+            <div class="fp-report__stat-label">{s.label}</div>
+          </div>
+        ))}
+      </div>
+    )}
+    <div class="fp-report__body">
+      <div class="fp-report__line"></div>
+      <div class="fp-report__line fp-report__line--med"></div>
+      <div class="fp-report__line fp-report__line--short"></div>
+    </div>
+  </div>
+)}
+
+{kind === "command" && (
+  <div class="fp-command">
+    {(() => {
+      const cards = data?.commandCards ?? [];
+      const rows: CommandCard[][] = [];
+      for (let i = 0; i < cards.length; i += 3) rows.push(cards.slice(i, i + 3));
+      return rows.map((row) => (
+        <div class="fp-command__row">
+          {row.map((c) => (
+            <div class="fp-command__card">
+              <div class="fp-command__card-artist">{c.artist}</div>
+              <div class="fp-command__card-release">{c.release}</div>
+              <div class={`fp-command__card-status ${pillClass(c.statusTone)}`}>{c.status}</div>
+            </div>
+          ))}
+        </div>
+      ));
+    })()}
+  </div>
+)}

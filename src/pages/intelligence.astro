@@ -1,10 +1,21 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import VerticalProductPage from "../components/pages/VerticalProductPage.astro";
-import { getVerticalProductPage } from "../lib/queries";
-import { getClient } from "../lib/sanity";
+import { getVerticalProductPage, getSiteSettings } from "../lib/queries";
+import { getClient, urlFor } from "../lib/sanity";
 
-const page = await getVerticalProductPage("intelligencePage", getClient(Astro));
+const client = getClient(Astro);
+const [page, settings] = await Promise.all([
+  getVerticalProductPage("intelligencePage", client),
+  getSiteSettings(client),
+]);
+
+const teammateAvatarUrl: string = settings?.teammateAvatar?.image?.asset
+  ? urlFor(settings.teammateAvatar.image).width(80).height(80).format("webp").url()
+  : (settings?.teammateAvatar?.url ?? "/assets/teammate-avatar-round.png");
+
+// Inject avatar URL onto page so VerticalProductPage's MockPanel renders pick it up
+const pageWithAvatar = { ...(page ?? {}), _teammateAvatarUrl: teammateAvatarUrl };
 
 const defaults = {
   hero: {
@@ -92,7 +103,7 @@ const defaults = {
 >
   <link slot="head" rel="stylesheet" href="/components/intelligence-inline.css" />
 
-  <VerticalProductPage page={page} verticalKey="intelligence" defaults={defaults}>
+  <VerticalProductPage page={pageWithAvatar} verticalKey="intelligence" defaults={defaults}>
     <Fragment slot="pain-0">
       <div class="fp-chat">
         <div class="fp-chat__row fp-chat__row--user"><div class="fp-chat__bubble fp-chat__bubble--user">When should I release the new single?</div></div>

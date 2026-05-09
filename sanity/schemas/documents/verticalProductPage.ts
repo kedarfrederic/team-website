@@ -177,6 +177,26 @@ export const verticalProductPage = defineType({
 
     defineField({ name: "rolesGrid", type: "rolesGrid", group: "sections" }),
 
+    // ── Mock illustration panels (for product-demo slots) ────
+    defineField({
+      name: "painMocks",
+      title: "Pain section · 3 mock illustrations",
+      type: "array",
+      group: "sections",
+      description: "3 mock panels rendered to the right of each pain row (one per row, in order).",
+      of: [{ type: "mockPanel" }],
+      validation: (Rule) => Rule.max(6),
+    }),
+    defineField({
+      name: "tabbedMocks",
+      title: "Tabbed spotlight · 16 mock illustrations",
+      type: "array",
+      group: "sections",
+      description: "Mock panels for the 4-tab × 4-feature spotlight (16 total). Order: tab1-feat1, tab1-feat2, ..., tab4-feat4.",
+      of: [{ type: "mockPanel" }],
+      validation: (Rule) => Rule.max(24),
+    }),
+
     defineField({ name: "finalCta", type: "ctaBlock", group: "footer" }),
 
     defineField({ name: "seo", type: "seoBlock", group: "seo" }),

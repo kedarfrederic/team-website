@@ -6,6 +6,8 @@
  * mock fixtures are page-specific and rendered via the `tabMocks` slot.
  */
 import SplitHeadline from "../SplitHeadline.astro";
+import MockPanel from "../MockPanel.astro";
+import type { MockPanelData } from "../MockPanel.astro";
 import { urlFor } from "../../lib/sanity";
 
 type VerticalKey = "intelligence" | "orchestration";
@@ -27,6 +29,11 @@ interface Props {
 }
 
 const { page, verticalKey, defaults } = Astro.props;
+
+// ── Mock panels ─────────────────────────────────────────────
+const painMocks: MockPanelData[] = Array.isArray(page?.painMocks) ? page.painMocks : [];
+const tabbedMocks: MockPanelData[] = Array.isArray(page?.tabbedMocks) ? page.tabbedMocks : [];
+const teammateAvatarUrl: string = page?._teammateAvatarUrl ?? "/assets/teammate-avatar-round.png";
 
 // ── Hero ────────────────────────────────────────────────────
 const hero = page?.hero ?? {};
@@ -166,7 +173,9 @@ const rolesCards = Array.isArray(rolesGrid.cards) && rolesGrid.cards.length > 0
           <h3>{painRows[0].h}</h3>
           <p>{painRows[0].p}</p>
         </div>
-        <div class="pain-row__panel"><slot name="pain-0" /></div>
+        <div class="pain-row__panel">
+          {painMocks[0] ? <MockPanel data={painMocks[0]} avatarUrl={teammateAvatarUrl} /> : <slot name="pain-0" />}
+        </div>
       </div>
     )}
     {painRows[1] && (
@@ -176,7 +185,9 @@ const rolesCards = Array.isArray(rolesGrid.cards) && rolesGrid.cards.length > 0
           <h3>{painRows[1].h}</h3>
           <p>{painRows[1].p}</p>
         </div>
-        <div class="pain-row__panel"><slot name="pain-1" /></div>
+        <div class="pain-row__panel">
+          {painMocks[1] ? <MockPanel data={painMocks[1]} avatarUrl={teammateAvatarUrl} /> : <slot name="pain-1" />}
+        </div>
       </div>
     )}
     {painRows[2] && (
@@ -186,7 +197,9 @@ const rolesCards = Array.isArray(rolesGrid.cards) && rolesGrid.cards.length > 0
           <h3>{painRows[2].h}</h3>
           <p>{painRows[2].p}</p>
         </div>
-        <div class="pain-row__panel"><slot name="pain-2" /></div>
+        <div class="pain-row__panel">
+          {painMocks[2] ? <MockPanel data={painMocks[2]} avatarUrl={teammateAvatarUrl} /> : <slot name="pain-2" />}
+        </div>
       </div>
     )}
   </div>
@@ -221,7 +234,23 @@ const rolesCards = Array.isArray(rolesGrid.cards) && rolesGrid.cards.length > 0
           ))}
         </div>
         <div class="partner-panel__preview">
-          {ti === 0 && <slot name="tab-mocks" />}
+          {ti === 0 && (
+            tabbedMocks.length > 0
+              ? tabbedMocks.map((m, mi) => {
+                  // Each mock maps to a tab/feature index pair via flat-array order:
+                  // mi=0..3 → tab 0 features; mi=4..7 → tab 1; etc.
+                  const tabIdx = Math.floor(mi / 4);
+                  const featIdx = (mi % 4) + 1;
+                  const tabKey = tabList[tabIdx]?.tabKey ?? `tab${tabIdx}`;
+                  const isActive = mi === 0;
+                  return (
+                    <div class={`partner-preview-item ${isActive ? "is-active" : ""}`} data-preview={`${tabKey}-${featIdx}`}>
+                      <MockPanel data={m} avatarUrl={teammateAvatarUrl} />
+                    </div>
+                  );
+                })
+              : <slot name="tab-mocks" />
+          )}
         </div>
       </div>
     ))}
