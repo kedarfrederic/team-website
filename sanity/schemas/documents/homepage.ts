@@ -589,6 +589,8 @@ export const homepage = defineType({
         defineField({ name: "subhead", type: "text", rows: 2 }),
         defineField({
           name: "logos",
+          title: "Marquee logos",
+          description: "Up to 40 logos. Provide either an uploaded image OR a logoUrl. Order in the array = order in the marquee.",
           type: "array",
           of: [
             {
@@ -599,7 +601,12 @@ export const homepage = defineType({
                 defineField({
                   name: "logo",
                   type: "image",
-                  validation: (Rule) => Rule.required(),
+                  description: "Uploaded logo. If empty, logoUrl is used.",
+                }),
+                defineField({
+                  name: "logoUrl",
+                  type: "string",
+                  description: "External logo URL (e.g. https://cdn.simpleicons.org/asana). Used when no upload is provided. Many of the seeded logos use simpleicons.org which serves a brand-color SVG by default — append /<hex> to recolor (e.g. /notion/111111).",
                 }),
                 defineField({
                   name: "title",
@@ -607,10 +614,10 @@ export const homepage = defineType({
                   description: "Tooltip / alt text shown on hover.",
                 }),
               ],
-              preview: { select: { title: "name", media: "logo" } },
+              preview: { select: { title: "name", subtitle: "logoUrl", media: "logo" } },
             },
           ],
-          validation: (Rule) => Rule.min(6).max(40),
+          validation: (Rule) => Rule.max(40),
         }),
       ],
     }),
