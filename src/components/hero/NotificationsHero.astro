@@ -1,0 +1,150 @@
+---
+/**
+ * NotificationsHero — animated notification scatter hero.
+ *
+ * Lifted from the Webflow /nomorechaos page (siteamrollouts/team-nomorechaos)
+ * and extended with a per-slot random-interval content cycler so the
+ * notifications continuously rotate through a wider pool of senders,
+ * channels, and messages.
+ *
+ * The slot DOM is empty server-side — content (icon, sender, message,
+ * time) is hydrated on load by /components/notifications-hero.js, which
+ * also owns the parallax / scroll / cycling logic. To extend the pool
+ * or add new channel icons, edit that JS file.
+ *
+ * Class names are prefixed with `nh-` so this can sit alongside other
+ * heroes (e.g. on the homepage) without colliding with existing
+ * `.hero` / `.notif` styles.
+ */
+interface CtaProps {
+  label: string;
+  href: string;
+}
+
+interface Props {
+  eyebrow?: string;
+  headline?: string;
+  headlineAlt?: string;
+  body?: string;
+  primaryCta?: CtaProps;
+  secondaryCta?: CtaProps;
+}
+
+const {
+  eyebrow = "The operating system for music releases",
+  headline = "Release chaos",
+  headlineAlt = "ends here.",
+  body = "Stop juggling spreadsheets, Slack threads, and email chains. One platform for your entire rollout.",
+  primaryCta = { label: "Book a demo", href: "/demo" },
+  secondaryCta,
+} = Astro.props;
+---
+
+<link rel="stylesheet" href="/components/notifications-hero.css" />
+
+<section class="nh-hero" id="nhHero">
+  <div class="nh-hero__grain"></div>
+  <div class="nh-hero__orb nh-hero__orb--orange"></div>
+  <div class="nh-hero__orb nh-hero__orb--blue"></div>
+  <div class="nh-hero-notif-overlay"></div>
+
+  <div class="nh-notif-layer" id="nhNotifLayer">
+    {/* NEAR layer (sharp, ~95% opacity) */}
+    <div class="nh-notif" data-depth="0.05"  data-layer="near" data-float-y="8" data-float-x="3" data-float-dur="5.2" style="top:12%;left:3%;">
+      <div class="nh-notif__icon"></div>
+      <div class="nh-notif__body">
+        <div class="nh-notif__row"><span class="nh-notif__title"></span><span class="nh-notif__time"></span></div>
+        <div class="nh-notif__msg"></div>
+      </div>
+    </div>
+    <div class="nh-notif" data-depth="0.06"  data-layer="near" data-float-y="6" data-float-x="4" data-float-dur="4.8" style="bottom:14%;right:2%;">
+      <div class="nh-notif__icon"></div>
+      <div class="nh-notif__body">
+        <div class="nh-notif__row"><span class="nh-notif__title"></span><span class="nh-notif__time"></span></div>
+        <div class="nh-notif__msg"></div>
+      </div>
+    </div>
+    <div class="nh-notif" data-depth="0.055" data-layer="near" data-float-y="7" data-float-x="2" data-float-dur="5.6" style="bottom:28%;left:1%;">
+      <div class="nh-notif__icon"></div>
+      <div class="nh-notif__body">
+        <div class="nh-notif__row"><span class="nh-notif__title"></span><span class="nh-notif__time"></span></div>
+        <div class="nh-notif__msg"></div>
+      </div>
+    </div>
+
+    {/* MID layer (~70% opacity, 0.5px blur) */}
+    <div class="nh-notif" data-depth="0.04"  data-layer="mid" data-float-y="5" data-float-x="3" data-float-dur="6.2" style="top:8%;right:8%;filter:blur(0.5px);">
+      <div class="nh-notif__icon"></div>
+      <div class="nh-notif__body">
+        <div class="nh-notif__row"><span class="nh-notif__title"></span><span class="nh-notif__time"></span></div>
+        <div class="nh-notif__msg"></div>
+      </div>
+    </div>
+    <div class="nh-notif" data-depth="0.035" data-layer="mid" data-float-y="6" data-float-x="2" data-float-dur="5.8" style="top:38%;right:0%;filter:blur(0.5px);">
+      <div class="nh-notif__icon"></div>
+      <div class="nh-notif__body">
+        <div class="nh-notif__row"><span class="nh-notif__title"></span><span class="nh-notif__time"></span></div>
+        <div class="nh-notif__msg"></div>
+      </div>
+    </div>
+    <div class="nh-notif" data-depth="0.03"  data-layer="mid" data-float-y="4" data-float-x="3" data-float-dur="6.5" style="bottom:8%;left:12%;filter:blur(0.5px);">
+      <div class="nh-notif__icon"></div>
+      <div class="nh-notif__body">
+        <div class="nh-notif__row"><span class="nh-notif__title"></span><span class="nh-notif__time"></span></div>
+        <div class="nh-notif__msg"></div>
+      </div>
+    </div>
+
+    {/* FAR layer (~35% opacity, 2px blur) */}
+    <div class="nh-notif" data-depth="0.02"  data-layer="far" data-float-y="3" data-float-x="2" data-float-dur="7.0" style="top:22%;left:18%;filter:blur(2px);">
+      <div class="nh-notif__icon"></div>
+      <div class="nh-notif__body">
+        <div class="nh-notif__row"><span class="nh-notif__title"></span><span class="nh-notif__time"></span></div>
+        <div class="nh-notif__msg"></div>
+      </div>
+    </div>
+    <div class="nh-notif" data-depth="0.015" data-layer="far" data-float-y="4" data-float-x="1" data-float-dur="7.5" style="bottom:32%;right:12%;filter:blur(2px);">
+      <div class="nh-notif__icon"></div>
+      <div class="nh-notif__body">
+        <div class="nh-notif__row"><span class="nh-notif__title"></span><span class="nh-notif__time"></span></div>
+        <div class="nh-notif__msg"></div>
+      </div>
+    </div>
+    <div class="nh-notif" data-depth="0.022" data-layer="far" data-float-y="3" data-float-x="2" data-float-dur="7.2" style="top:5%;left:40%;filter:blur(2px);">
+      <div class="nh-notif__icon"></div>
+      <div class="nh-notif__body">
+        <div class="nh-notif__row"><span class="nh-notif__title"></span><span class="nh-notif__time"></span></div>
+        <div class="nh-notif__msg"></div>
+      </div>
+    </div>
+    <div class="nh-notif" data-depth="0.012" data-layer="far" data-float-y="2" data-float-x="3" data-float-dur="8.0" style="bottom:5%;right:30%;filter:blur(2px);">
+      <div class="nh-notif__icon"></div>
+      <div class="nh-notif__body">
+        <div class="nh-notif__row"><span class="nh-notif__title"></span><span class="nh-notif__time"></span></div>
+        <div class="nh-notif__msg"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nh-hero__content">
+    {eyebrow && <div class="nh-hero__eyebrow">{eyebrow}</div>}
+    <h1 class="nh-hero__h1" style="line-height:1.0;">
+      {headline}
+      {headlineAlt && (
+        <>
+          <br />
+          <span class="nh-nyght">{headlineAlt}</span>
+        </>
+      )}
+    </h1>
+    {body && <p class="nh-hero__body">{body}</p>}
+    <div class="nh-hero__actions">
+      <a class="nh-btn-orange" href={primaryCta.href}>{primaryCta.label}</a>
+      {secondaryCta && (
+        <a class="nh-hero__ghost" href={secondaryCta.href}>{secondaryCta.label}</a>
+      )}
+    </div>
+  </div>
+</section>
+
+<script is:inline src="/components/notifications-hero.js"></script>

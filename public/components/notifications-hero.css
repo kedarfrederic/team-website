@@ -1,0 +1,160 @@
+/**
+ * Notifications hero — animated notification scatter.
+ *
+ * Lifted from siteamrollouts/team-nomorechaos (the /nomorechaos page on
+ * go.teamrollouts.com). Class names prefixed with `nh-` so this stays
+ * safe to drop alongside other heroes (e.g. on the homepage) without
+ * clobbering existing `.hero` / `.notif` rules.
+ */
+
+.nh-hero {
+  --nh-orange: #ff6a1a;
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at 50% 40%, #1a1a2e, #0a0a0a);
+  overflow: hidden;
+}
+
+.nh-hero__grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.035;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+
+.nh-hero__orb {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.12;
+  pointer-events: none;
+}
+.nh-hero__orb--orange { background: var(--nh-orange); top: -200px; left: -100px; }
+.nh-hero__orb--blue   { background: #4a6cf7; bottom: -200px; right: -100px; }
+
+/* Notification cards */
+.nh-notif-layer { position: absolute; inset: 0; pointer-events: none; z-index: 2; }
+.nh-hero-notif-overlay {
+  position: absolute; inset: 0;
+  background: rgba(10,10,10,0); z-index: 3;
+  pointer-events: none;
+  transition: background 0s;
+}
+@media (max-width: 991px) { .nh-hero-notif-overlay { background: rgba(10,10,10,0.25); } }
+@media (max-width: 768px) { .nh-hero-notif-overlay { background: rgba(10,10,10,0.45); } }
+@media (max-width: 480px) { .nh-hero-notif-overlay { background: rgba(10,10,10,0.55); } }
+
+.nh-notif {
+  position: absolute;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  background: rgba(255,255,255,0.95);
+  border-radius: 14px;
+  padding: 12px 16px;
+  max-width: 320px;
+  min-width: 240px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 2px 8px rgba(0,0,0,0.12);
+  pointer-events: none;
+  will-change: transform, opacity;
+  opacity: 0;
+  transition: opacity 0.5s cubic-bezier(0.16,1,0.3,1);
+}
+.nh-notif.nh-notif-in { opacity: var(--nh-notif-opacity, 0.95); }
+.nh-notif[data-layer="near"] { --nh-notif-opacity: 0.95; }
+.nh-notif[data-layer="mid"]  { --nh-notif-opacity: 0.7; }
+.nh-notif[data-layer="far"]  { --nh-notif-opacity: 0.35; }
+
+.nh-notif__icon {
+  width: 34px; height: 34px; min-width: 34px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+}
+.nh-notif__icon svg { width: 18px; height: 18px; }
+.nh-notif__body { flex: 1; min-width: 0; }
+.nh-notif__row {
+  display: flex; justify-content: space-between; align-items: center; gap: 8px;
+}
+.nh-notif__title {
+  font-size: 13px; font-weight: 600; color: #1d1d1f;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.nh-notif__time {
+  font-size: 11px; color: #86868b;
+  white-space: nowrap; flex-shrink: 0;
+}
+.nh-notif__msg {
+  font-size: 12px; color: #6e6e73; margin-top: 2px;
+  line-height: 1.35;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* Hero centre content */
+.nh-hero__content {
+  position: relative; z-index: 10;
+  text-align: center;
+  max-width: 640px;
+  padding: 0 24px;
+}
+.nh-hero__eyebrow {
+  color: var(--nh-orange);
+  text-transform: uppercase;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  margin-bottom: 20px;
+}
+.nh-hero__h1 {
+  font-size: clamp(36px, 5.6vw, 56px);
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.08;
+  margin-bottom: 20px;
+  letter-spacing: -0.02em;
+}
+.nh-nyght { font-family: "Nyght Serif", "Playfair Display", Georgia, serif; font-weight: 300; font-style: italic; }
+.nh-hero__body {
+  font-size: 17px;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.55;
+  max-width: 480px;
+  margin: 0 auto 36px;
+}
+.nh-hero__actions {
+  display: flex; gap: 20px;
+  justify-content: center; align-items: center;
+  flex-wrap: wrap;
+}
+.nh-btn-orange {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--nh-orange);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 14px 32px;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: background 0.3s, transform 0.2s;
+}
+.nh-btn-orange:hover { background: #e05500; transform: translateY(-1px); }
+.nh-hero__ghost {
+  color: rgba(255,255,255,0.5);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+.nh-hero__ghost:hover { color: rgba(255,255,255,0.8); }
+
+@media (prefers-reduced-motion: reduce) {
+  .nh-notif { transition: none; }
+}
