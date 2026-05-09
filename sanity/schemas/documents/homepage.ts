@@ -281,9 +281,9 @@ export const homepage = defineType({
         defineField({
           name: "iframeSrc",
           type: "string",
-          title: "Demo iframe base URL",
-          description: "Base URL for the interactive demo (no hash). The component appends `#releases` and `#timeline` to load each view of the same bundle. Default: `/dashboard-demo.html`.",
-          initialValue: "/dashboard-demo.html",
+          title: "Demo iframe base path",
+          description: "Base PATH (no trailing slash) for the high-fidelity Tour HTML demos. The component loads `${path}/Releases.html` for the dashboard view and `${path}/Timeline.html` for the timeline view, crossfading between them on scroll. Default: `/dashboard-tour`.",
+          initialValue: "/dashboard-tour",
           hidden: ({ parent }) => !parent?.interactive,
         }),
         defineField({ name: "headlineTop", type: "string", description: "Optional marketing headline above the demo — first line, sans font." }),

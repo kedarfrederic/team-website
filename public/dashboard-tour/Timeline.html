@@ -1,0 +1,1734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Team — Timeline (redesign)</title>
+<link rel="stylesheet" href="team_shell.css">
+<style>
+/* =========================================================================
+   TIMELINE — Horizontal calendar-kanban
+   =========================================================================
+   Structure:
+     ┌─ topnav (release switcher + tabs) ──────────────────────────┐
+     ├─ chat drawer ┬─ timeline header (days) ──────────────┬─ detail drawer (slides in) ─
+     │  Teammate   │  timeline columns (scrollable x)       │  task details
+     │             │                                         │
+     └─────────────┴────────────────────────────────────────┴───────────────────────────
+   ========================================================================= */
+
+.tl-shell {
+  display: grid;
+  grid-template-columns: 240px 360px 1fr;
+  grid-template-rows: 54px 1fr;
+  grid-template-areas:
+    "side topnav topnav"
+    "side chat   timeline";
+  height: 100vh;
+  min-height: 720px;
+  background: var(--bg-canvas);
+}
+.tl-shell.chat-collapsed {
+  grid-template-columns: 240px 58px 1fr;
+}
+.tl-shell.detail-open {
+  grid-template-columns: 240px 320px 1fr 440px;
+  grid-template-areas:
+    "side topnav topnav topnav"
+    "side chat   timeline detail";
+}
+.tl-shell.detail-open.chat-collapsed {
+  grid-template-columns: 240px 58px 1fr 440px;
+}
+
+/* ---------- topnav ---------- */
+.topnav {
+  grid-area: topnav;
+  display: flex; align-items: center; gap: 14px;
+  padding: 0 22px;
+  border-bottom: 1px solid var(--card-border);
+  background: var(--bg-canvas);
+}
+.crumb {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 12.5px; color: var(--fg-2);
+}
+.crumb .slash { color: var(--fg-3); }
+.crumb b { color: var(--fg-1); font-weight: 500; }
+.release-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 5px 10px 5px 6px;
+  background: var(--ink-900);
+  color: var(--paper-50);
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 500;
+  margin-left: 14px;
+}
+.release-pill .bar {
+  width: 14px; height: 14px; border-radius: 3px;
+  background: linear-gradient(180deg, #5E2A20, #E87E2A, #F6C33E);
+}
+.release-pill .dot { width: 6px; height: 6px; background: var(--lime-500); border-radius: 50%; margin-left: 2px; }
+
+.topnav-tabs { display: inline-flex; gap: 2px; margin-left: 12px; }
+.topnav-tab {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: transparent;
+  border: 0;
+  font-size: 12.5px;
+  color: var(--fg-2);
+  cursor: pointer;
+  font-weight: 500;
+  transition: all var(--dur-fast) var(--ease-out);
+}
+.topnav-tab:hover { background: var(--row-hover); color: var(--fg-1); }
+.topnav-tab.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.topnav-tab svg { opacity: 0.7; }
+
+.topnav-right { margin-left: auto; display: inline-flex; align-items: center; gap: 10px; }
+.presence {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px 4px 4px;
+  border-radius: 999px;
+  background: var(--row-hover);
+  font-size: 11.5px;
+  color: var(--fg-1);
+  font-weight: 500;
+}
+.presence .av-stack { display: inline-flex; }
+.presence .av-stack > * + * { margin-left: -6px; }
+.mini-avatar {
+  width: 22px; height: 22px; border-radius: 50%;
+  display: grid; place-items: center;
+  font-family: var(--font-mono); font-size: 9px; font-weight: 700;
+  color: #fff;
+  border: 2px solid var(--card-bg);
+  letter-spacing: 0.02em;
+}
+
+/* ---------- CHAT DRAWER (left column after sidebar) ---------- */
+.chat {
+  grid-area: chat;
+  background: var(--card-bg);
+  border-right: 1px solid var(--card-border);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+.chat-head {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid var(--card-border);
+}
+.chat-head .tm-badge {
+  width: 28px; height: 28px; border-radius: 8px;
+  background: var(--ink-900);
+  display: grid; place-items: center;
+  color: var(--lime-500);
+  flex: none;
+}
+.chat-head .who {
+  display: flex; flex-direction: column; line-height: 1.15; flex: 1; min-width: 0;
+}
+.chat-head .who strong { font-size: 13px; font-weight: 500; color: var(--fg-1); }
+.chat-head .who span { font-size: 11px; color: var(--fg-3); }
+.chat-head .tiny-pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 7px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  background: var(--lime-50);
+  color: var(--lime-700);
+  border: 1px solid transparent;
+}
+[data-surface="dark"] .chat-head .tiny-pill { background: rgba(192,236,95,0.1); color: var(--lime-500); }
+.chat-head .iconbtn-sm {
+  width: 28px; height: 28px;
+  display: grid; place-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 7px;
+  color: var(--fg-3);
+  cursor: pointer;
+}
+.chat-head .iconbtn-sm:hover { background: var(--row-hover); color: var(--fg-1); }
+
+.chat-tabs {
+  display: flex; gap: 2px;
+  padding: 10px 12px 0;
+  border-bottom: 1px solid var(--card-border);
+}
+.chat-tab {
+  padding: 7px 11px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+}
+.chat-tab:hover { color: var(--fg-1); }
+.chat-tab.active {
+  color: var(--fg-1);
+  border-bottom-color: var(--accent);
+}
+
+.chat-scroll {
+  flex: 1; overflow-y: auto;
+  padding: 16px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+
+/* User bubble */
+.bubble.user {
+  align-self: flex-end;
+  max-width: 88%;
+  background: var(--ink-900);
+  color: var(--paper-50);
+  border-radius: 16px 16px 4px 16px;
+  padding: 10px 14px;
+  font-size: 13px;
+  line-height: 1.45;
+  box-shadow: 0 2px 8px -4px rgba(0,0,0,0.25);
+}
+[data-surface="dark"] .bubble.user { background: var(--paper-100); color: var(--ink-900); }
+.bubble.user .at {
+  display: block;
+  margin-top: 4px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  opacity: 0.55;
+  letter-spacing: 0.04em;
+}
+
+/* Assistant message */
+.msg.assistant {
+  align-self: flex-start;
+  width: 100%;
+}
+.msg-head {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 6px;
+}
+.msg-head .label {
+  font-size: 12px; color: var(--fg-1); font-weight: 600;
+}
+.msg-head .at {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.04em;
+  color: var(--fg-3);
+}
+.msg-thinking {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+  background: var(--row-hover);
+  padding: 5px 9px;
+  border-radius: 999px;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+.msg-thinking:hover { color: var(--fg-1); }
+.msg-thinking svg { opacity: 0.6; }
+
+.msg-body {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--fg-1);
+}
+
+.plan {
+  margin-top: 10px;
+  display: flex; flex-direction: column; gap: 6px;
+  padding: 12px 14px;
+  background: var(--row-hover);
+  border-radius: 12px;
+  border: 1px solid var(--card-border);
+}
+.plan-row {
+  display: flex; align-items: flex-start; gap: 8px;
+  font-size: 12.5px;
+  line-height: 1.35;
+  color: var(--fg-1);
+}
+.plan-row .tick {
+  margin-top: 3px;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--lime-500);
+  color: var(--ink-900);
+  display: grid; place-items: center;
+  flex: none;
+}
+
+.msg-actions {
+  margin-top: 10px;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.changes-pill {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 5px 10px 5px 7px;
+  border-radius: 999px;
+  background: var(--lime-50);
+  border: 1px solid var(--lime-300);
+  font-size: 11.5px;
+  color: var(--lime-700);
+  font-weight: 500;
+}
+[data-surface="dark"] .changes-pill {
+  background: rgba(192,236,95,0.1);
+  border-color: rgba(192,236,95,0.2);
+  color: var(--lime-500);
+}
+.changes-pill .count {
+  background: var(--lime-500);
+  color: var(--ink-900);
+  padding: 1px 6px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+}
+.undo-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  color: var(--fg-2);
+  background: transparent;
+  border: 1px solid var(--card-border);
+  cursor: pointer;
+}
+.undo-btn:hover { color: var(--fg-1); background: var(--row-hover); }
+
+/* Suggestions (empty state chips) */
+.suggestions {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  padding: 12px 16px 6px;
+}
+.suggest {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: var(--row-hover);
+  border: 1px solid var(--card-border);
+  font-size: 11.5px;
+  color: var(--fg-1);
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-out);
+}
+.suggest:hover { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+.suggest svg { color: var(--accent); opacity: 0.85; }
+
+/* Composer */
+.composer {
+  border-top: 1px solid var(--card-border);
+  padding: 12px;
+  background: var(--card-bg);
+}
+.composer-inner {
+  border: 1px solid var(--card-border);
+  background: var(--bg-inset);
+  border-radius: 16px;
+  padding: 10px 10px 8px;
+  transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-base) var(--ease-out);
+}
+[data-surface="light"] .composer-inner { background: var(--paper-100); }
+.composer-inner:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.composer textarea {
+  width: 100%;
+  border: 0; outline: 0;
+  background: transparent;
+  resize: none;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--fg-1);
+  min-height: 20px;
+  padding: 4px 4px 6px;
+}
+.composer textarea::placeholder { color: var(--fg-3); }
+.composer-foot {
+  display: flex; align-items: center; gap: 6px;
+  padding-top: 4px;
+}
+.composer-btn {
+  width: 26px; height: 26px;
+  display: grid; place-items: center;
+  background: transparent; border: 0; border-radius: 6px;
+  color: var(--fg-3); cursor: pointer;
+}
+.composer-btn:hover { background: var(--row-hover); color: var(--fg-1); }
+.composer-send {
+  margin-left: auto;
+  width: 28px; height: 28px;
+  background: var(--ink-900); color: var(--paper-50);
+  border-radius: 8px;
+  display: grid; place-items: center;
+  border: 0; cursor: pointer;
+}
+[data-surface="dark"] .composer-send { background: var(--paper-100); color: var(--ink-900); }
+.scope-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 7px 3px 6px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  color: var(--fg-2);
+  background: var(--row-hover);
+}
+.scope-chip .dot { width: 6px; height: 6px; background: var(--ember-500); border-radius: 50%; }
+
+/* Collapsed state */
+.chat.collapsed .chat-head,
+.chat.collapsed .chat-tabs,
+.chat.collapsed .chat-scroll,
+.chat.collapsed .suggestions,
+.chat.collapsed .composer { display: none; }
+.chat.collapsed .rail {
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+  padding: 14px 0;
+}
+.chat .rail { display: none; }
+.chat.collapsed .rail .tm-badge {
+  width: 34px; height: 34px; border-radius: 10px;
+  background: var(--ink-900);
+  display: grid; place-items: center;
+  color: var(--lime-500);
+}
+.rail-btn {
+  width: 34px; height: 34px; border-radius: 10px;
+  background: transparent; border: 0;
+  display: grid; place-items: center;
+  color: var(--fg-3); cursor: pointer;
+}
+.rail-btn:hover { background: var(--row-hover); color: var(--fg-1); }
+
+/* ---------- TIMELINE COLUMN AREA ---------- */
+.timeline {
+  grid-area: timeline;
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  background: var(--bg-canvas);
+  position: relative;
+}
+
+/* Timeline subheader */
+.tl-sub {
+  display: flex; align-items: center; gap: 16px;
+  padding: 16px 24px 12px;
+}
+.tl-title {
+  font-family: var(--font-sans);
+  font-size: 26px;
+  letter-spacing: -0.02em;
+  font-weight: 500;
+  color: var(--fg-1);
+  margin: 0;
+}
+.tl-title .ital {
+  font-family: var(--font-highlight);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--accent);
+}
+.tl-controls { margin-left: auto; display: inline-flex; gap: 6px; align-items: center; }
+
+.filter-chips { display: inline-flex; gap: 6px; padding: 0 24px 14px; flex-wrap: wrap; }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
+  font-size: 11.5px;
+  color: var(--fg-2);
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-out);
+}
+.chip:hover { color: var(--fg-1); }
+.chip.on {
+  background: var(--ink-900);
+  border-color: var(--ink-900);
+  color: var(--paper-50);
+}
+[data-surface="dark"] .chip.on { background: var(--paper-100); color: var(--ink-900); border-color: var(--paper-100); }
+.chip .k {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  color: var(--fg-3);
+}
+.chip.on .k { color: rgba(255,255,255,0.6); }
+[data-surface="dark"] .chip.on .k { color: rgba(0,0,0,0.4); }
+
+/* The scrolling column surface */
+.tl-scroll {
+  flex: 1;
+  overflow: auto;
+  padding: 0 24px 40px;
+}
+.tl-days {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(200px, 1fr);
+  gap: 10px;
+  min-width: 100%;
+}
+.day-col {
+  display: flex; flex-direction: column;
+  min-width: 0;
+}
+.day-head {
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 10px 12px 12px;
+  border-top: 1px solid var(--card-border);
+  position: sticky; top: 0;
+  background: var(--bg-canvas);
+  z-index: 2;
+}
+.day-head.today {
+  border-top-color: var(--accent);
+  border-top-width: 2px;
+}
+.day-head .weekday {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  color: var(--fg-3);
+  text-transform: uppercase;
+}
+.day-head .dayn {
+  display: flex; align-items: baseline; gap: 8px;
+}
+.day-head .dayn .n {
+  font-family: var(--font-feature);
+  font-size: 32px;
+  line-height: 1;
+  color: var(--fg-1);
+  letter-spacing: -0.01em;
+}
+.day-head.today .dayn .n { color: var(--accent); }
+.day-head .dayn .m {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--fg-3);
+  text-transform: uppercase;
+}
+.day-head.today .todaypill {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  align-self: flex-start;
+  font-weight: 500;
+}
+.day-head.weekend .weekday, .day-head.weekend .dayn .m { color: var(--fg-3); opacity: 0.7; }
+.day-head .count-pill {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--fg-3);
+  letter-spacing: 0.06em;
+  margin-left: auto;
+  align-self: flex-start;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--row-hover);
+}
+
+.day-list {
+  display: flex; flex-direction: column; gap: 8px;
+  padding: 10px 4px;
+  min-height: 200px;
+}
+
+/* Rollout Poster card (anchor) */
+.rollout-poster {
+  border-radius: 14px;
+  padding: 14px 14px 18px;
+  background: linear-gradient(155deg, #5E2A20 0%, #8C3A28 55%, #A84A2E 100%);
+  color: #F3D5CC;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 6px 24px -12px rgba(0,0,0,0.25);
+  min-height: 140px;
+}
+.rollout-poster::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at 85% 15%, rgba(246,195,62,0.3) 0%, transparent 45%),
+    radial-gradient(ellipse at 15% 90%, rgba(232,126,42,0.25) 0%, transparent 45%);
+  pointer-events: none;
+}
+.rollout-poster .rp-label {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.75;
+  position: relative;
+}
+.rollout-poster .rp-title {
+  font-family: var(--font-feature);
+  font-size: 22px;
+  letter-spacing: 0.01em;
+  line-height: 1.02;
+  text-transform: uppercase;
+  margin: 6px 0 10px;
+  position: relative;
+  color: #F5E6DF;
+}
+.rollout-poster .rp-release {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 400;
+  opacity: 0.9;
+  position: relative;
+  line-height: 1.3;
+}
+.rollout-poster .rp-release em {
+  font-family: var(--font-highlight);
+  font-style: italic;
+  font-weight: 400;
+  color: #F6C33E;
+  display: block;
+  font-size: 20px;
+  letter-spacing: -0.005em;
+  margin-top: 2px;
+}
+
+/* Task card — warm paper cards */
+.tcard {
+  border-radius: 10px;
+  padding: 10px 11px 11px;
+  cursor: pointer;
+  position: relative;
+  transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+  box-shadow: 0 1px 0 rgba(0,0,0,0.02), 0 2px 8px -4px rgba(0,0,0,0.08);
+  display: flex; flex-direction: column; gap: 6px;
+  --tc-fill: #F6C33E;
+  --tc-ink: #3A2906;
+  --tc-soft: #FBE59C;
+  background: var(--tc-fill);
+  color: var(--tc-ink);
+  border: 1px solid rgba(0,0,0,0.04);
+}
+.tcard:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 0 rgba(0,0,0,0.04), 0 10px 20px -8px rgba(0,0,0,0.18);
+}
+.tcard.selected {
+  box-shadow: 0 0 0 2px var(--accent), 0 10px 20px -8px rgba(0,0,0,0.18);
+}
+.tcard.done { opacity: 0.62; }
+.tcard.done .tc-title { text-decoration: line-through; text-decoration-thickness: 1.2px; }
+
+.tc-head {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+.tc-status {
+  padding: 2px 7px 2px 6px;
+  background: rgba(0,0,0,0.12);
+  border-radius: 999px;
+  color: var(--tc-ink);
+  display: inline-flex; align-items: center; gap: 4px;
+  font-weight: 600;
+}
+.tc-status.done { background: rgba(0,0,0,0.22); }
+.tc-status.blocked { background: rgba(230,75,64,0.88); color: #fff; }
+.tc-status .sdot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+.tc-budget {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  opacity: 0.72;
+  letter-spacing: 0.04em;
+}
+
+.tc-title {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.25;
+  color: var(--tc-ink);
+  letter-spacing: -0.005em;
+}
+
+.tc-dept {
+  display: inline-flex;
+  padding: 2px 7px;
+  background: rgba(0,0,0,0.08);
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 600;
+  width: fit-content;
+}
+
+.tc-foot {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.04em;
+  opacity: 0.78;
+}
+.tc-foot .time {
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.tc-foot .subtasks {
+  display: inline-flex; align-items: center; gap: 3px;
+}
+.tc-foot .ass {
+  margin-left: auto;
+  width: 17px; height: 17px; border-radius: 50%;
+  background: rgba(0,0,0,0.18);
+  color: var(--tc-ink);
+  display: grid; place-items: center;
+  font-size: 8.5px; font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.tc-foot .ass.empty { background: transparent; border: 1px dashed rgba(0,0,0,0.22); color: transparent; }
+
+/* Add task placeholder */
+.add-task {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 10px;
+  border: 1px dashed var(--card-border);
+  border-radius: 10px;
+  color: var(--fg-3);
+  font-size: 11.5px;
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-out);
+  background: transparent;
+}
+.add-task:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+.day-col.weekend .day-list { opacity: 0.75; }
+
+/* Flow ribbon — subtle warm horizontal line at the bottom of timeline (motion cue) */
+.flow-ribbon {
+  position: absolute;
+  left: 24px; right: 24px; bottom: 0;
+  height: 2px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    var(--ember-300) 20%,
+    var(--ember-500) 50%,
+    var(--ember-300) 80%,
+    transparent 100%);
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* ---------- DETAIL DRAWER (right column) ---------- */
+.detail {
+  grid-area: detail;
+  background: var(--card-bg);
+  border-left: 1px solid var(--card-border);
+  display: flex; flex-direction: column;
+  overflow-y: auto;
+  animation: slideIn var(--dur-slow) var(--ease-out);
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.detail-head {
+  display: flex; align-items: center; gap: 8px;
+  padding: 14px 18px 12px;
+  border-bottom: 1px solid var(--card-border);
+}
+.detail-head .tm-ic {
+  width: 28px; height: 28px; border-radius: 8px;
+  background: var(--lime-500); color: var(--ink-900);
+  display: grid; place-items: center;
+  font-weight: 700; font-family: var(--font-mono); font-size: 11px;
+}
+.detail-head .close {
+  margin-left: auto;
+  width: 28px; height: 28px; border-radius: 7px;
+  background: transparent; border: 0;
+  display: grid; place-items: center;
+  color: var(--fg-2); cursor: pointer;
+}
+.detail-head .close:hover { background: var(--row-hover); color: var(--fg-1); }
+.detail-head .iconbtn-sm {
+  width: 28px; height: 28px; border-radius: 7px;
+  background: transparent; border: 0;
+  display: grid; place-items: center;
+  color: var(--fg-2); cursor: pointer;
+}
+.detail-head .iconbtn-sm:hover { background: var(--row-hover); color: var(--fg-1); }
+
+.detail-body {
+  padding: 18px 20px 28px;
+  display: flex; flex-direction: column; gap: 16px;
+}
+
+.detail-title {
+  font-family: var(--font-sans);
+  font-size: 22px;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  color: var(--fg-1);
+  margin: 0;
+  font-weight: 500;
+}
+
+.detail-tags { display: inline-flex; gap: 6px; flex-wrap: wrap; }
+.detail-tag {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 500;
+  background: var(--row-hover);
+  color: var(--fg-1);
+}
+.detail-tag.dept-marketing { background: rgba(244,131,62,0.14); color: var(--ember-700); }
+[data-surface="dark"] .detail-tag.dept-marketing { color: var(--ember-300); }
+.detail-tag.date {
+  background: transparent;
+  color: var(--fg-2);
+  padding: 4px 0;
+}
+.detail-tag .tag-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+.detail-tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--card-border);
+  margin: 0 -20px;
+  padding: 0 20px;
+}
+.d-tab {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: var(--fg-3);
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+}
+.d-tab.active { color: var(--fg-1); border-color: var(--ink-900); font-weight: 500; }
+[data-surface="dark"] .d-tab.active { border-color: var(--paper-100); }
+.d-tab:hover { color: var(--fg-1); }
+
+.d-row {
+  display: grid; grid-template-columns: 2fr 3fr;
+  gap: 14px;
+  align-items: start;
+}
+.d-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+  padding-top: 6px;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.d-label svg { opacity: 0.65; }
+.d-value { min-width: 0; font-size: 13px; color: var(--fg-1); padding-top: 4px; }
+
+.picker-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 5px 10px 5px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
+  font-size: 12px;
+  color: var(--fg-1);
+  cursor: pointer;
+  font-weight: 500;
+}
+.picker-btn:hover { background: var(--row-hover); }
+.picker-btn.status-progress { background: rgba(244,131,62,0.14); border-color: transparent; color: var(--ember-700); }
+[data-surface="dark"] .picker-btn.status-progress { color: var(--ember-300); }
+.picker-btn.priority-med { background: rgba(246,195,62,0.2); border-color: transparent; color: #8A6907; }
+[data-surface="dark"] .picker-btn.priority-med { color: #F6C33E; }
+.picker-btn .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+.assignee-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.assignee-row:hover { background: var(--row-hover); }
+.assignee-row .mini-avatar { border: 0; width: 24px; height: 24px; font-size: 10px; }
+.assignee-row .n { font-size: 12.5px; color: var(--fg-1); font-weight: 500; }
+.assignee-empty {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 5px 11px 5px 7px;
+  border: 1px dashed var(--card-border);
+  border-radius: 999px;
+  font-size: 12px;
+  color: var(--fg-3);
+  cursor: pointer;
+}
+.assignee-empty .plus {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--row-hover);
+  display: grid; place-items: center;
+  color: var(--fg-2);
+}
+
+.color-picker { display: inline-flex; gap: 6px; flex-wrap: wrap; }
+.color-sw {
+  width: 22px; height: 22px; border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  border: 1px solid rgba(0,0,0,0.06);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+.color-sw:hover { transform: scale(1.1); }
+.color-sw.active::after {
+  content: '';
+  position: absolute; inset: -3px;
+  border-radius: 8px;
+  border: 1.5px solid var(--ink-900);
+}
+[data-surface="dark"] .color-sw.active::after { border-color: var(--paper-100); }
+
+.budget-input {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 12px;
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  background: var(--card-bg);
+  font-size: 13px;
+  color: var(--fg-1);
+  max-width: 160px;
+}
+.budget-input .dollar { color: var(--fg-3); font-family: var(--font-mono); font-size: 12px; }
+.budget-input input {
+  border: 0; outline: 0; background: transparent;
+  font: inherit; color: inherit;
+  width: 100%; font-family: var(--font-mono);
+}
+
+.description-block {
+  padding: 14px 16px;
+  background: var(--row-hover);
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--fg-1);
+  border: 1px solid var(--card-border);
+}
+
+.deps {
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--row-hover);
+  border: 1px solid var(--card-border);
+  display: flex; flex-direction: column; gap: 6px;
+}
+.dep-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 8px;
+  background: var(--card-bg);
+  border-radius: 8px;
+  font-size: 12px;
+  color: var(--fg-1);
+}
+.dep-row .sw { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+.dep-row .at {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--fg-3);
+}
+
+/* Sidebar adjustments from Releases (reuse) */
+.sidebar { grid-area: side; }
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .tl-shell { grid-template-columns: 240px 320px 1fr; }
+  .tl-shell.detail-open { grid-template-columns: 240px 0 1fr 400px; }
+  .tl-shell.detail-open .chat { display: none; }
+}
+@media (max-width: 900px) {
+  .tl-shell { grid-template-columns: 64px 1fr; grid-template-areas: "side topnav" "side timeline"; }
+  .tl-shell .chat { display: none; }
+  .tl-shell.detail-open { grid-template-columns: 64px 1fr; }
+}
+
+</style>
+</head>
+<body data-surface="light">
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" data-presets="react">
+// Team — custom iconography
+// House style: 1.6px strokes, hand-drawn corner radii, editorial + mechanical.
+// All icons 24x24 viewBox. Signature touches: notched corners, a small "tick"
+// on geometric icons (signature angle of 62°), hand-dotted terminals.
+
+const mk = (path, opts = {}) => {
+  const { size = 16, fill = 'none', stroke = 'currentColor', sw = 1.6 } = opts;
+  return (...args) => React.createElement('svg', {
+    width: size, height: size, viewBox: '0 0 24 24',
+    fill, stroke, strokeWidth: sw,
+    strokeLinecap: 'round', strokeLinejoin: 'round',
+    dangerouslySetInnerHTML: { __html: path }
+  });
+};
+
+// Sidebar + nav icons (custom geometric style — not Lucide)
+const Icon = {
+  // Tuning fork (Command Center) — vertical forks with a diamond base
+  Tuning: ({size=15}) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 4v7a3 3 0 0 0 6 0V4"/>
+      <path d="M12 14v5"/>
+      <path d="m10 19 2 2 2-2"/>
+    </svg>
+  ),
+  // Clock with tick — Recents (custom: offset hour hand + top notch)
+  Pulse: ({size=15}) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="8"/>
+      <path d="M12 7v5l3 2"/>
+      <path d="M12 2v2"/>
+    </svg>
+  ),
+  // Artist — star-burst profile mark (not a generic person icon)
+  Artist: ({size=15}) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="8" r="3.2"/>
+      <path d="M5 20c1.4-3.8 4-5.8 7-5.8s5.6 2 7 5.8"/>
+      <path d="M19 4l.8 1.8L21.5 6l-1.7 1-.8 1.7-.8-1.7L16.5 6l1.7-.2z" fill="currentColor" stroke="none"/>
+    </svg>
+  ),
+  // Press — folded newsprint
+  Press: ({size=15}) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 5h12v14H6a2 2 0 0 1-2-2V5z"/>
+      <path d="M16 9h4v8a2 2 0 0 1-2 2"/>
+      <path d="M7 9h6M7 12h6M7 15h4"/>
+    </svg>
+  ),
+  // Touring — route pin with ground line
+  Route: ({size=15}) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 3c-3 0-5 2.2-5 5 0 3.5 5 9 5 9s5-5.5 5-9c0-2.8-2-5-5-5z"/>
+      <circle cx="12" cy="8" r="1.6"/>
+      <path d="M5 20h14"/>
+    </svg>
+  ),
+  // Folder (All Releases) — notched, editorial
+  Stack: ({size=15}) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 7h7l2 2h9v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/>
+    </svg>
+  ),
+  // In Progress — concentric arcs
+  Progress: ({size=15}) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="8"/>
+      <path d="M12 4a8 8 0 0 1 0 16" stroke="currentColor" strokeWidth="3" fill="none"/>
+    </svg>
+  ),
+  // Shared With Me — overlapping discs
+  Discs: ({size=15}) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="9" cy="12" r="5"/>
+      <circle cx="15" cy="12" r="5"/>
+    </svg>
+  ),
+  // Released — checkmark in vinyl
+  Released: ({size=15}) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="8"/>
+      <path d="m8 12 3 3 5-6"/>
+    </svg>
+  ),
+  // Archived — tray
+  Archive: ({size=15}) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="5" width="18" height="4" rx="1"/>
+      <path d="M5 9v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9"/>
+      <path d="M10 13h4"/>
+    </svg>
+  ),
+  // Starred
+  Star: ({size=15}) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6-5.4-2.9-5.4 2.9 1-6L3.2 9.5l6.1-.9z"/>
+    </svg>
+  ),
+  // Search
+  Search: ({size=14}) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="11" cy="11" r="6.5"/>
+      <path d="m20 20-3.5-3.5"/>
+    </svg>
+  ),
+  // Plus
+  Plus: ({size=14}) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 5v14M5 12h14"/>
+    </svg>
+  ),
+  // Help — fork pattern (not standard "?")
+  Help: ({size=15}) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="8"/>
+      <path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.9.4-1 1.2-1 2"/>
+      <path d="M12 16.5v.01"/>
+    </svg>
+  ),
+  // Moon/Sun (theme)
+  Moon: ({size=15}) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20 15A8 8 0 0 1 9 4a8 8 0 1 0 11 11z"/>
+    </svg>
+  ),
+  Sun: ({size=15}) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="3.5"/>
+      <path d="M12 3v2M12 19v2M4.2 4.2l1.5 1.5M18.3 18.3l1.5 1.5M3 12h2M19 12h2M4.2 19.8l1.5-1.5M18.3 5.7l1.5-1.5"/>
+    </svg>
+  ),
+  // Chevron Down
+  Caret: ({size=14}) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="m6 9 6 6 6-6"/>
+    </svg>
+  ),
+  // Dots / menu — vertical
+  Dots: ({size=14}) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+      <circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/>
+    </svg>
+  ),
+  // Calendar — block with tear tabs
+  Calendar: ({size=12}) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3.5" y="5" width="17" height="15" rx="2"/>
+      <path d="M3.5 10h17"/>
+      <path d="M8 3v4M16 3v4"/>
+    </svg>
+  ),
+  // Person (small)
+  Person: ({size=12}) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="8" r="3.2"/>
+      <path d="M5 20c1.4-3.8 4-5.8 7-5.8s5.6 2 7 5.8"/>
+    </svg>
+  ),
+  // Views
+  Grid: ({size=14}) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="4" y="4" width="7" height="7" rx="1.2"/>
+      <rect x="13" y="4" width="7" height="7" rx="1.2"/>
+      <rect x="4" y="13" width="7" height="7" rx="1.2"/>
+      <rect x="13" y="13" width="7" height="7" rx="1.2"/>
+    </svg>
+  ),
+  Board: ({size=14}) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="4" y="4" width="5" height="16" rx="1.2"/>
+      <rect x="10" y="4" width="5" height="10" rx="1.2"/>
+      <rect x="16" y="4" width="4" height="13" rx="1.2"/>
+    </svg>
+  ),
+  List: ({size=14}) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 6h16M4 12h16M4 18h16"/>
+      <circle cx="4" cy="6" r="0.6" fill="currentColor"/>
+      <circle cx="4" cy="12" r="0.6" fill="currentColor"/>
+      <circle cx="4" cy="18" r="0.6" fill="currentColor"/>
+    </svg>
+  ),
+  Sliders: ({size=14}) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 6h6M14 6h6M4 12h10M18 12h2M4 18h3M11 18h9"/>
+      <circle cx="12" cy="6" r="1.6" fill="var(--card-bg)"/>
+      <circle cx="16" cy="12" r="1.6" fill="var(--card-bg)"/>
+      <circle cx="9" cy="18" r="1.6" fill="var(--card-bg)"/>
+    </svg>
+  ),
+  Filter: ({size=14}) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 5h16l-6 8v5l-4 2v-7z"/>
+    </svg>
+  ),
+  // Release placeholder: wax-disc stripes (Team's signature — matches the barcode in the screenshot but bespoke)
+  WaxPlaceholder: ({size=36}) => (
+    <svg width={size} height={size} viewBox="0 0 36 36" fill="none">
+      <rect width="36" height="36" rx="4" fill="transparent"/>
+      <g stroke="currentColor" strokeWidth="1.1" opacity="0.5">
+        <line x1="11" y1="8" x2="11" y2="28"/>
+        <line x1="13" y1="10" x2="13" y2="26"/>
+        <line x1="15" y1="8" x2="15" y2="28"/>
+        <line x1="17" y1="11" x2="17" y2="25"/>
+        <line x1="19" y1="9" x2="19" y2="27"/>
+        <line x1="21" y1="10" x2="21" y2="26"/>
+        <line x1="23" y1="8" x2="23" y2="28"/>
+        <line x1="25" y1="11" x2="25" y2="25"/>
+      </g>
+    </svg>
+  ),
+  // Drag handle (custom: double-track groove)
+  Drag: ({size=14}) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+      <circle cx="9" cy="6" r="1.4"/><circle cx="15" cy="6" r="1.4"/>
+      <circle cx="9" cy="12" r="1.4"/><circle cx="15" cy="12" r="1.4"/>
+      <circle cx="9" cy="18" r="1.4"/><circle cx="15" cy="18" r="1.4"/>
+    </svg>
+  ),
+  // Overdue — squared warning
+  Overdue: ({size=12}) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="4" y="4" width="16" height="16" rx="2" transform="rotate(45 12 12)"/>
+      <path d="M12 9v4M12 15.5v.01"/>
+    </svg>
+  ),
+  // Upcoming — angle
+  Upcoming: ({size=12}) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M5 12h12"/>
+      <path d="m13 6 6 6-6 6"/>
+    </svg>
+  ),
+};
+
+window.Icon = Icon;
+
+
+// Timeline data — tasks for "Over the Fence" release, grouped by day.
+// Color vocabulary matches your current sticky-note task cards:
+//   sun (yellow) · olive · fog-blue · rose-brick · brick · red · cream · orange · ember · walnut · ink
+// These are tuned for a warm magazine / paper feel.
+
+const TASK_COLORS = {
+  sun:       { fill: '#F6C33E', ink: '#3A2906', soft: '#FBE59C', label: 'Sun'       },
+  olive:     { fill: '#C5B368', ink: '#2F2807', soft: '#E4DBB4', label: 'Olive'     },
+  fog:       { fill: '#94A3BE', ink: '#142032', soft: '#C9D2DE', label: 'Fog'       },
+  rose:      { fill: '#B87680', ink: '#3B1017', soft: '#DEB7BE', label: 'Rose'      },
+  brick:     { fill: '#D47A7D', ink: '#411112', soft: '#ECBABC', label: 'Brick'     },
+  red:       { fill: '#E64B40', ink: '#3B0804', soft: '#F3A6A1', label: 'Red'       },
+  cream:     { fill: '#F2DCC7', ink: '#3E2410', soft: '#FAF0E4', label: 'Cream'     },
+  orange:    { fill: '#E87E2A', ink: '#3B1A03', soft: '#F3BE95', label: 'Orange'    },
+  ember:     { fill: '#A2321E', ink: '#FDE6DE', soft: '#D9968A', label: 'Ember'     },
+  walnut:    { fill: '#5E2A20', ink: '#F3D5CC', soft: '#9A6A5F', label: 'Walnut'    },
+  ink:       { fill: '#131315', ink: '#F3F0E8', soft: '#4E4E55', label: 'Ink'       },
+};
+
+// Days — Apr 18 (today/Sat) through Apr 24 (Fri)
+const DAYS = [
+  { id: 'sat18', weekday: 'SAT', day: 18, month: 'APR', today: true,  label: 'Today', isWeekend: true  },
+  { id: 'sun19', weekday: 'SUN', day: 19, month: 'APR', today: false, label: 'Sun',   isWeekend: true  },
+  { id: 'mon20', weekday: 'MON', day: 20, month: 'APR', today: false, label: 'Mon',   isWeekend: false },
+  { id: 'tue21', weekday: 'TUE', day: 21, month: 'APR', today: false, label: 'Tue',   isWeekend: false },
+  { id: 'wed22', weekday: 'WED', day: 22, month: 'APR', today: false, label: 'Wed',   isWeekend: false },
+  { id: 'thu23', weekday: 'THU', day: 23, month: 'APR', today: false, label: 'Thu',   isWeekend: false },
+  { id: 'fri24', weekday: 'FRI', day: 24, month: 'APR', today: false, label: 'Fri',   isWeekend: false },
+];
+
+// Rollout poster — anchor card pinned on the first day
+const ROLLOUT_POSTER = {
+  id: 'poster',
+  title: 'Rollout Plan',
+  release: 'Over The Fence',
+  color: 'walnut',
+  isPoster: true,
+};
+
+const TASKS = [
+  // SAT 18
+  { id: 't1',  day: 'sat18', title: 'Update Instagram & TikTok Bio Links to Pr…', dept: 'Social',     color: 'sun',   status: 'Done',    budget: null,   assignee: null, priority: 'Medium', time: null },
+
+  // SUN 19
+  { id: 't2',  day: 'sun19', title: 'Pitch to SubmitHub Country Playlist…',       dept: 'PR',         color: 'sun',   status: 'Done',    budget: null,   assignee: 'ML',  priority: 'High',   time: null },
+  { id: 't3',  day: 'sun19', title: 'Send Announcement Email to Fan List',        dept: 'Marketing',  color: 'sun',   status: 'Active',  budget: null,   assignee: null,  priority: 'Medium', time: '09:00' },
+  { id: 't4',  day: 'sun19', title: 'Acoustic Set at Sally\'s Coffee Shop',        dept: 'Events',     color: 'cream', status: 'Active',  budget: 500,    assignee: 'SC',  priority: 'Medium', time: '19:00', subtasks: '0/6' },
+
+  // MON 20
+  { id: 't5',  day: 'mon20', title: 'Set Up Pre-Save Landing Page',                dept: 'Marketing',  color: 'sun',   status: 'Active',  budget: null,   assignee: null,  priority: 'High',   time: null },
+  { id: 't6',  day: 'mon20', title: 'Radio Interview at Nashville Orpheum',        dept: 'Events',     color: 'sun',   status: 'Active',  budget: null,   assignee: 'ML',  priority: 'High',   time: '14:00' },
+  { id: 't7',  day: 'mon20', title: 'Shoot Announcement Content Package',          dept: 'Content',    color: 'olive', status: 'Active',  budget: 1500,   assignee: 'SC',  priority: 'High',   time: '10:00', subtasks: '2/8' },
+
+  // TUE 21
+  { id: 't8',  day: 'tue21', title: 'Post Single Announcement on Instagram',       dept: 'Social',     color: 'sun',   status: 'Active',  budget: null,   assignee: 'ML',  priority: 'High',   time: '12:00' },
+  { id: 't9',  day: 'tue21', title: 'Launch PlaylistPush Campaign for Country…',   dept: 'Marketing',  color: 'cream', status: 'Active',  budget: 2500,   assignee: 'NB',  priority: 'Medium', time: null, subtasks: '1/4' },
+  { id: 't10', day: 'tue21', title: 'Meeting with Snapchat',                        dept: 'Marketing',  color: 'brick', status: 'Blocked', budget: 500,    assignee: null,  priority: 'Low',    time: '15:00', subtasks: '0/3' },
+
+  // WED 22
+  { id: 't11', day: 'wed22', title: 'Post TikTok #OverTheFence…',                   dept: 'Social',     color: 'red',   status: 'Active',  budget: null,   assignee: 'ML',  priority: 'High',   time: '18:00' },
+
+  // THU 23
+  { id: 't12', day: 'thu23', title: 'Marketing Meeting with Label',                 dept: 'Marketing',  color: 'sun',   status: 'Active',  budget: null,   assignee: 'JT',  priority: 'Medium', time: '11:00' },
+  { id: 't13', day: 'thu23', title: 'Call the Publisher',                           dept: 'Admin',      color: 'ember', status: 'Active',  budget: null,   assignee: 'SC',  priority: 'Low',    time: '13:00' },
+  { id: 't14', day: 'thu23', title: 'Meeting with Twitch',                          dept: 'Marketing',  color: 'red',   status: 'Active',  budget: null,   assignee: null,  priority: 'Medium', time: '16:00' },
+
+  // FRI 24
+  { id: 't15', day: 'fri24', title: 'Pitch Country Music Press (Taste of…)',        dept: 'PR',         color: 'sun',   status: 'Active',  budget: null,   assignee: 'NB',  priority: 'Medium', time: null },
+];
+
+// Chat history for the Teammate AI companion
+const CHAT_HISTORY = [
+  {
+    id: 'h1',
+    role: 'user',
+    at: '1:39 PM',
+    content: 'let\'s move all the tasks on the 22nd and 23rd of april up by a day',
+  },
+  {
+    id: 'h2',
+    role: 'assistant',
+    at: '1:39 PM',
+    thinking: 'Locating tasks on Apr 22–23…',
+    content: 'I\'ll update all four tasks on April 22nd and 23rd simultaneously — moving them each up by one day!',
+    plan: [
+      { label: 'Done — all 4 tasks have been moved up by one day', done: true },
+      { label: 'Launch PlaylistPush Campaign → April 21', done: true },
+      { label: 'Meeting with Snapchat → April 21', done: true },
+      { label: 'Post TikTok #OverTheFence → April 21', done: true },
+      { label: 'Call the Publisher → April 22', done: true },
+    ],
+    changes: { count: 4, label: 'Updated 4 tasks' },
+  },
+];
+
+// Suggested prompts for the chat drawer empty state
+const SUGGESTIONS = [
+  { id: 's1', icon: 'calendar',  label: 'What\'s critical this week?' },
+  { id: 's2', icon: 'chart',     label: 'Summarize rollout status' },
+  { id: 's3', icon: 'message',   label: 'Draft the fan announcement email' },
+  { id: 's4', icon: 'tasks',     label: 'Find unassigned tasks' },
+];
+
+window.TASK_COLORS = TASK_COLORS;
+window.DAYS = DAYS;
+window.ROLLOUT_POSTER = ROLLOUT_POSTER;
+window.TASKS = TASKS;
+window.CHAT_HISTORY = CHAT_HISTORY;
+window.SUGGESTIONS = SUGGESTIONS;
+
+
+
+const { useState, useEffect } = React;
+
+function Sidebar() {
+  const workspaces = [
+    { id:'roc', name:'Roc Universa', meta:'Owner · 110 releases', icon:'R', active:true },
+    { id:'go',  name:'Go Records',   meta:'Owner · 10 releases',  icon:'G' },
+  ];
+  const nav = [
+    { label:'Command Center', icon:<Icon.Tuning/> },
+    { label:'Releases',       icon:<Icon.Stack/>, active:true },
+    { label:'Artists',        icon:<Icon.Artist/> },
+    { label:'Press Runs',     icon:<Icon.Press/> },
+    { label:'Touring',        icon:<Icon.Route/> },
+  ];
+  return (
+    <aside className="sidebar">
+      <div className="profile">
+        <span className="avatar">SC</span>
+        <div className="who"><strong>Sean Carter</strong><span>seantherealsc@gmail.com</span></div>
+        <span className="caret"><Icon.Caret/></span>
+      </div>
+      <div className="ws-list">
+        {workspaces.map(w => (
+          <div key={w.id} className={'ws ' + (w.active ? 'active' : '')}>
+            <span className="ws-icon">{w.icon}</span>
+            <div className="ws-body"><span className="ws-name">{w.name}</span><span className="ws-meta">{w.meta}</span></div>
+          </div>
+        ))}
+      </div>
+      <div className="ws-search"><Icon.Search size={13}/><input placeholder="Search releases…"/></div>
+      <div className="nav-group">
+        {nav.map((n,i) => (
+          <a key={i} href={n.label==='Releases' ? 'Releases.html' : '#'} className={'nav-item ' + (n.active ? 'active' : '')} style={{textDecoration:'none'}}>
+            {n.icon}<span>{n.label}</span>
+          </a>
+        ))}
+      </div>
+      <div className="sidebar-foot">
+        <div className="brand-mark"/><span className="name">Team</span><span className="tier">Pro</span>
+      </div>
+    </aside>
+  );
+}
+
+function TaskCard({ t, selected, onClick }) {
+  const c = TASK_COLORS[t.color];
+  const style = { '--tc-fill': c.fill, '--tc-ink': c.ink, '--tc-soft': c.soft };
+  const cls = 'tcard ' + (t.status==='Done'?'done':'') + ' ' + (selected?'selected':'');
+  return (
+    <div className={cls} style={style} onClick={onClick}>
+      <div className="tc-head">
+        <span className={'tc-status ' + (t.status==='Done'?'done':'') + ' ' + (t.status==='Blocked'?'blocked':'')}>
+          <span className="sdot"/>{t.status.toUpperCase()}
+        </span>
+        {t.budget && <span className="tc-budget">${t.budget.toLocaleString()}</span>}
+      </div>
+      <div className="tc-title">{t.title}</div>
+      <span className="tc-dept">{t.dept}</span>
+      <div className="tc-foot">
+        {t.time && <span className="time"><Icon.Calendar size={10}/>{t.time}</span>}
+        {t.subtasks && <span className="subtasks"><Icon.Stack size={10}/>{t.subtasks}</span>}
+        <span className={'ass ' + (t.assignee?'':'empty')}>{t.assignee || '+'}</span>
+      </div>
+    </div>
+  );
+}
+
+function ChatDrawer({ collapsed, setCollapsed }) {
+  return (
+    <aside className={'chat ' + (collapsed ? 'collapsed' : '')}>
+      <div className="rail">
+        <div className="tm-badge"><Icon.Tuning size={18}/></div>
+        <button className="rail-btn" onClick={() => setCollapsed(false)} title="Open Teammate"><Icon.Discs size={16}/></button>
+        <button className="rail-btn"><Icon.Pulse size={16}/></button>
+      </div>
+
+      <div className="chat-head">
+        <div className="tm-badge"><Icon.Tuning size={16}/></div>
+        <div className="who">
+          <strong>Teammate</strong>
+          <span>AI Assistant · Over the fence</span>
+        </div>
+        <span className="tiny-pill">Ready</span>
+        <button className="iconbtn-sm" onClick={() => setCollapsed(true)} title="Collapse">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="m15 6-6 6 6 6"/></svg>
+        </button>
+      </div>
+
+      <div className="chat-tabs">
+        <button className="chat-tab active">Now</button>
+        <button className="chat-tab">History</button>
+        <button className="chat-tab">Docs</button>
+      </div>
+
+      <div className="chat-scroll">
+        {CHAT_HISTORY.map(m => m.role === 'user' ? (
+          <div key={m.id} className="bubble user">
+            {m.content}
+            <span className="at">{m.at}</span>
+          </div>
+        ) : (
+          <div key={m.id} className="msg assistant">
+            <div className="msg-head">
+              <span className="label">Teammate</span>
+              <span className="at">{m.at}</span>
+            </div>
+            {m.thinking && (
+              <div className="msg-thinking">
+                <Icon.Pulse size={10}/>
+                View full response
+              </div>
+            )}
+            <div className="msg-body">{m.content}</div>
+            {m.plan && (
+              <div className="plan">
+                {m.plan.map((p,i) => (
+                  <div key={i} className="plan-row">
+                    <span className="tick"><svg width="8" height="8" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m2 5 2 2 4-4"/></svg></span>
+                    <span>{p.label}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+            {m.changes && (
+              <div className="msg-actions">
+                <span className="changes-pill">
+                  <span className="count">{m.changes.count}</span>
+                  {m.changes.label}
+                </span>
+                <button className="undo-btn">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 14l-4-4 4-4"/><path d="M5 10h10a4 4 0 0 1 0 8h-2"/></svg>
+                  Undo
+                </button>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      <div className="suggestions">
+        <button className="suggest"><Icon.Calendar size={11}/>What's critical this week?</button>
+        <button className="suggest"><Icon.Stack size={11}/>Find unassigned tasks</button>
+      </div>
+
+      <div className="composer">
+        <div className="composer-inner">
+          <textarea placeholder="Ask Teammate anything about this release…" rows="2"/>
+          <div className="composer-foot">
+            <button className="composer-btn" title="Attach">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5 12 20a5 5 0 0 1-7-7l9-9a3.5 3.5 0 0 1 5 5L10 17a2 2 0 0 1-3-3l8-8"/></svg>
+            </button>
+            <span className="scope-chip"><span className="dot"/>Over the fence</span>
+            <button className="composer-send">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </aside>
+  );
+}
+
+function DayColumn({ day, tasks, selectedId, onSelect }) {
+  return (
+    <div className={'day-col ' + (day.isWeekend ? 'weekend' : '')}>
+      <div className={'day-head ' + (day.today?'today':'') + ' ' + (day.isWeekend?'weekend':'')}>
+        <div className="weekday">{day.weekday}</div>
+        <div className="dayn">
+          <span className="n">{day.day}</span>
+          <span className="m">{day.month}</span>
+        </div>
+        {day.today && <span className="todaypill">Today</span>}
+        {!day.today && tasks.length > 0 && <span className="count-pill">{tasks.length}</span>}
+      </div>
+      <div className="day-list">
+        {day.today && (
+          <div className="rollout-poster">
+            <div className="rp-label">Rollout Plan</div>
+            <div className="rp-title">Over The Fence</div>
+            <div className="rp-release">Miranda Lambert <em>— Jun 5</em></div>
+          </div>
+        )}
+        {tasks.map(t => <TaskCard key={t.id} t={t} selected={selectedId===t.id} onClick={() => onSelect(t)}/>)}
+        <button className="add-task">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          Add Task
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function DetailDrawer({ task, onClose }) {
+  if (!task) return null;
+  const c = TASK_COLORS[task.color];
+  return (
+    <aside className="detail">
+      <div className="detail-head">
+        <button className="iconbtn-sm" onClick={onClose} title="Close">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+        <div className="tm-ic">ML</div>
+        <button className="iconbtn-sm"><Icon.Star size={14}/></button>
+        <button className="iconbtn-sm" title="Delete">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M6 6l1 14a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-14"/></svg>
+        </button>
+      </div>
+
+      <div className="detail-body">
+        <h2 className="detail-title">{task.title}</h2>
+
+        <div className="detail-tags">
+          <span className="detail-tag dept-marketing">
+            <span className="tag-dot"/>{task.dept}
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </span>
+          <span className="detail-tag">
+            <Icon.Calendar size={10}/> No dept
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </span>
+          <span className="detail-tag date"><Icon.Calendar size={10}/> Apr 19, 2026</span>
+        </div>
+
+        <div className="detail-tabs">
+          <button className="d-tab active">Details</button>
+          <button className="d-tab">Strategy</button>
+          <button className="d-tab">Subtasks</button>
+          <button className="d-tab">Assets</button>
+          <button className="d-tab">Links</button>
+          <button className="d-tab">Chat</button>
+        </div>
+
+        <div className="d-row">
+          <span className="d-label">Status</span>
+          <div className="d-value">
+            <button className="picker-btn status-progress"><span className="dot"/>{task.status}
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div className="d-row">
+          <span className="d-label">Priority</span>
+          <div className="d-value">
+            <button className="picker-btn priority-med"><span className="dot"/>{task.priority}
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div className="d-row">
+          <span className="d-label"><Icon.Person size={11}/> Assignees</span>
+          <div className="d-value">
+            {task.assignee ? (
+              <div className="assignee-row"><span className="mini-avatar" style={{background:'#A2321E'}}>{task.assignee}</span><span className="n">Miranda Lambert</span></div>
+            ) : (
+              <button className="assignee-empty"><span className="plus"><Icon.Plus size={10}/></span>Assign team members</button>
+            )}
+          </div>
+        </div>
+
+        <div className="d-row">
+          <span className="d-label">Task Color</span>
+          <div className="d-value">
+            <div className="color-picker">
+              {Object.entries(TASK_COLORS).map(([k,v]) => (
+                <div key={k} className={'color-sw ' + (k===task.color?'active':'')} style={{background:v.fill}} title={v.label}/>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="d-row">
+          <span className="d-label">$  Budget</span>
+          <div className="d-value">
+            <div className="budget-input"><span className="dollar">$</span><input defaultValue={task.budget || 0}/></div>
+          </div>
+        </div>
+
+        <div className="d-row">
+          <span className="d-label"><Icon.Calendar size={11}/> Due Date</span>
+          <div className="d-value" style={{fontSize:13, fontWeight:500}}>Sunday, April 19, 2026</div>
+        </div>
+
+        <div>
+          <span className="d-label" style={{display:'block',marginBottom:8}}>Description</span>
+          <div className="description-block">
+            Deploy an email to Miranda's existing fan/mailing list announcing <em>Over the Fence</em> with the pre-save link, release date, and a personal note from Miranda about the song's meaning. Output: email sent, open rate and click-through rate tracked.
+          </div>
+        </div>
+      </div>
+    </aside>
+  );
+}
+
+function App() {
+  const [collapsed, setCollapsed] = useState(false);
+  const [selected, setSelected] = useState(null);
+
+  useEffect(() => { document.documentElement.setAttribute('data-surface', 'light'); }, []);
+
+  const shellClass = 'tl-shell ' + (collapsed?'chat-collapsed':'') + ' ' + (selected?'detail-open':'');
+  return (
+    <div className={shellClass}>
+      <Sidebar/>
+
+      <div className="topnav">
+        <div className="crumb">
+          <Icon.Stack size={13}/><span>Home</span>
+          <span className="slash">/</span><span>Over the fence</span>
+          <span className="slash">/</span><b>Timeline</b>
+        </div>
+        <span className="release-pill">
+          <span className="bar"/>Over the fence Tim…
+          <span className="dot"/>
+        </span>
+        <nav className="topnav-tabs">
+          <button className="topnav-tab"><Icon.Stack size={12}/>Assets</button>
+          <button className="topnav-tab"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v20M5 8h7M7 14h5"/></svg>Budget</button>
+          <button className="topnav-tab active"><Icon.Pulse size={12}/>Intelligence</button>
+        </nav>
+        <div className="topnav-right">
+          <span className="presence">
+            <span className="av-stack">
+              <span className="mini-avatar" style={{background:'#E87E2A'}}>SC</span>
+            </span>
+            1 online
+          </span>
+          <button className="iconbtn"><Icon.Sun/></button>
+          <button className="btn primary"><Icon.Plus size={12}/>Share</button>
+        </div>
+      </div>
+
+      <ChatDrawer collapsed={collapsed} setCollapsed={setCollapsed}/>
+
+      <section className="timeline">
+        <div className="tl-sub">
+          <h1 className="tl-title">Timeline <span className="ital">— this week</span></h1>
+          <div className="tl-controls">
+            <button className="iconbtn"><Icon.Filter size={13}/></button>
+            <button className="iconbtn"><Icon.Sliders size={13}/></button>
+          </div>
+        </div>
+
+        <div className="filter-chips">
+          <span className="chip on">Show Subtasks</span>
+          <span className="chip">Today <span className="k">T</span></span>
+          <span className="chip">Apr 5</span>
+          <span className="chip">Milestone</span>
+          <span className="chip">Stacks</span>
+        </div>
+
+        <div className="tl-scroll">
+          <div className="tl-days">
+            {DAYS.map(d => {
+              const dayTasks = TASKS.filter(t => t.day === d.id);
+              return <DayColumn key={d.id} day={d} tasks={dayTasks}
+                selectedId={selected?.id} onSelect={setSelected}/>;
+            })}
+          </div>
+        </div>
+
+        <div className="flow-ribbon"/>
+      </section>
+
+      {selected && <DetailDrawer task={selected} onClose={() => setSelected(null)}/>}
+    </div>
+  );
+}
+
+function mount() {
+  const el = document.getElementById('root');
+  if (!el) { setTimeout(mount, 30); return; }
+  ReactDOM.createRoot(el).render(<App/>);
+}
+mount();
+
+</script>
+</body>
+</html>

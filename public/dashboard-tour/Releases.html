@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Team Brain — Releases</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  /* Memory-graph palette on paper */
+  --ink-900: #0E0E10;
+  --ink-800: #17171A;
+  --ink-500: #3A3A42;
+  --paper-50:  #FFFFFF;
+  --paper-100: #FAFAF7;
+  --paper-200: #F2F1EC;
+  --paper-300: #E6E4DC;
+  --paper-400: #CFCCC1;
+
+  --lime-500: #C0EC5F;
+  --lime-600: #A8D84A;
+  --lime-700: #7FA830;
+  --ember-600:#E83E18;
+  --ember-800:#8C1F13;
+
+  --bg:       var(--paper-100);
+  --card:     var(--paper-50);
+  --inset:    var(--paper-200);
+  --fg-1:     var(--ink-900);
+  --fg-2:     #4A4842;
+  --fg-3:     #8A8780;
+  --line:     var(--paper-300);
+  --line-2:   var(--paper-400);
+  --accent:   var(--lime-700);
+  --accent-soft: #EDF6CE;
+  --accent-ital: var(--lime-700);
+
+  --sans:  'Inter', ui-sans-serif, system-ui, sans-serif;
+  --serif: 'Instrument Serif', Georgia, serif;
+  --mono:  'JetBrains Mono', ui-monospace, monospace;
+
+  --shadow: 0 1px 0 rgba(14,14,16,0.02), 0 20px 40px -24px rgba(14,14,16,0.12);
+}
+
+[data-theme="dark"] {
+  --bg:    var(--ink-800);
+  --card:  #1E1E22;
+  --inset: #121214;
+  --fg-1:  #F2F0E8;
+  --fg-2:  #B0AEA4;
+  --fg-3:  #76736B;
+  --line:  rgba(255,255,255,0.08);
+  --line-2:rgba(255,255,255,0.14);
+  --accent: var(--lime-500);
+  --accent-soft: rgba(192,236,95,0.10);
+  --accent-ital: var(--lime-500);
+  --shadow: 0 1px 0 rgba(0,0,0,0.4), 0 20px 40px -24px rgba(0,0,0,0.6);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; height: 100%; background: var(--bg); color: var(--fg-1); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+
+.app { display: grid; grid-template-columns: 232px 1fr; height: 100vh; min-height: 680px; }
+
+/* ============ SIDEBAR ============ */
+.side { padding: 20px 14px; border-right: 1px solid var(--line); background: var(--bg); display: flex; flex-direction: column; gap: 18px; overflow-y: auto; }
+.brand { display: flex; align-items: center; gap: 10px; padding: 2px 6px 6px; }
+.brand-mark {
+  width: 26px; height: 26px; border-radius: 7px;
+  background: linear-gradient(180deg, #3B0F08, #8C1F13 35%, #E83E18 65%, #F4833E 85%, #DCD1C5);
+}
+.brand-name { font-family: var(--serif); font-size: 19px; font-weight: 400; letter-spacing: -0.01em; }
+.brand-name em { font-style: italic; color: var(--accent-ital); }
+
+.ws {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 10px;
+  border-radius: 10px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  cursor: pointer;
+}
+.ws-ic { width: 22px; height: 22px; border-radius: 6px; background: var(--ink-900); color: var(--paper-50); display: grid; place-items: center; font-family: var(--mono); font-size: 11px; font-weight: 600; }
+[data-theme="dark"] .ws-ic { background: var(--paper-100); color: var(--ink-900); }
+.ws-n { font-size: 13px; font-weight: 500; flex: 1; }
+.ws-c { color: var(--fg-3); }
+
+.nav-label { font-family: var(--mono); font-size: 10px; color: var(--fg-3); text-transform: uppercase; letter-spacing: 0.12em; padding: 0 10px 6px; }
+.nav { display: flex; flex-direction: column; gap: 1px; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px; border-radius: 10px;
+  font-size: 13px; color: var(--fg-2); cursor: pointer; text-decoration: none;
+  transition: all 120ms ease;
+}
+.nav-item:hover { background: rgba(14,14,16,0.04); color: var(--fg-1); }
+[data-theme="dark"] .nav-item:hover { background: rgba(255,255,255,0.05); }
+.nav-item.active { background: var(--ink-900); color: var(--paper-50); }
+[data-theme="dark"] .nav-item.active { background: var(--paper-100); color: var(--ink-900); }
+.nav-item .n { margin-left: auto; font-family: var(--mono); font-size: 10.5px; color: var(--fg-3); letter-spacing: 0.02em; }
+.nav-item.active .n { color: rgba(255,255,255,0.5); }
+[data-theme="dark"] .nav-item.active .n { color: rgba(0,0,0,0.4); }
+
+.side-foot { margin-top: auto; padding: 12px 10px 4px; display: flex; align-items: center; gap: 10px; border-top: 1px solid var(--line); }
+.me-av { width: 28px; height: 28px; border-radius: 50%; background: var(--ember-600); color: #fff; display: grid; place-items: center; font-family: var(--mono); font-size: 11px; font-weight: 600; }
+.me-name { font-size: 12.5px; font-weight: 500; }
+.me-email { font-size: 10.5px; color: var(--fg-3); font-family: var(--mono); }
+
+/* ============ MAIN ============ */
+.main { overflow-y: auto; padding: 40px 48px 80px; position: relative; }
+
+/* Subtle memory-graph style ambient glow */
+.main::before {
+  content: '';
+  position: absolute; top: -200px; right: -200px;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(192,236,95,0.09) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.top { display: flex; align-items: flex-end; gap: 24px; margin-bottom: 28px; position: relative; z-index: 1; }
+.crumb { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--fg-3); margin-bottom: 10px; }
+.title {
+  font-family: var(--sans);
+  font-size: 52px;
+  line-height: 1;
+  letter-spacing: -0.025em;
+  font-weight: 500;
+  color: var(--fg-1);
+  margin: 0;
+}
+.title em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--accent-ital);
+  margin: 0 0.04em;
+}
+.title .count {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--fg-3);
+  letter-spacing: 0.04em;
+  vertical-align: top;
+  margin-left: 10px;
+  font-weight: 400;
+}
+
+.top-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+
+.pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  font-size: 12.5px;
+  color: var(--fg-2);
+  cursor: pointer;
+  font-family: inherit;
+}
+.pill:hover { color: var(--fg-1); border-color: var(--line-2); }
+.pill.primary { background: var(--ink-900); color: var(--paper-50); border-color: var(--ink-900); }
+[data-theme="dark"] .pill.primary { background: var(--paper-100); color: var(--ink-900); border-color: var(--paper-100); }
+.pill.primary:hover { filter: brightness(1.1); }
+.icon-btn {
+  width: 36px; height: 36px;
+  display: grid; place-items: center;
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--fg-2); cursor: pointer;
+}
+.icon-btn:hover { color: var(--fg-1); }
+
+/* Filter row */
+.filters { display: flex; align-items: center; gap: 10px; padding-bottom: 18px; border-bottom: 1px solid var(--line); margin-bottom: 28px; position: relative; z-index: 1; }
+.tab {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 12px 6px 14px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  color: var(--fg-2);
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-family: inherit;
+}
+.tab:hover { color: var(--fg-1); }
+.tab.active { background: var(--card); color: var(--fg-1); border-color: var(--line); box-shadow: 0 1px 0 rgba(14,14,16,0.03); }
+.tab.active.lime { background: var(--accent-soft); border-color: rgba(127,168,48,0.25); }
+.tab .n { font-family: var(--mono); font-size: 10.5px; color: var(--fg-3); letter-spacing: 0.02em; }
+.tab.active.lime .n { color: var(--accent); }
+.filters .right { margin-left: auto; display: inline-flex; gap: 6px; }
+
+/* ============ GRID ============ */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 20px;
+  position: relative; z-index: 1;
+}
+
+.card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 22px 24px 18px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--line);
+  cursor: pointer;
+  transition: transform 180ms cubic-bezier(.2,.8,.2,1), box-shadow 180ms ease, border-color 120ms ease;
+  display: flex; flex-direction: column;
+  position: relative;
+  min-width: 0;
+}
+.card:hover {
+  transform: translateY(-2px);
+  border-color: var(--line-2);
+  box-shadow: 0 1px 0 rgba(14,14,16,0.03), 0 30px 50px -24px rgba(14,14,16,0.16);
+}
+
+.card-head { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+.card-cover {
+  width: 42px; height: 42px; border-radius: 9px;
+  background: var(--inset);
+  display: grid; place-items: center;
+  flex: none;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--fg-2);
+  border: 1px solid var(--line);
+}
+.card-cover.t1 { background: #E8DDD1; color: #4E2A1B; border-color: #DCCFC0; }
+.card-cover.t2 { background: #F2D5C4; color: #5A1710; border-color: #E5C3AE; }
+.card-cover.t3 { background: #E6F0B3; color: #4A5422; border-color: #D4E29B; }
+.card-cover.t4 { background: #DDD7CA; color: #2A2822; border-color: #CCC5B3; }
+.card-cover.t5 { background: #F1C7B0; color: #6A2814; border-color: #E3B196; }
+.card-cover.t6 { background: #E5D9E7; color: #3E2A4A; border-color: #D5C7D8; }
+.card-cover.t7 { background: #D8E0DF; color: #223B38; border-color: #C2CECD; }
+.card-cover.t8 { background: #EDD9C4; color: #4A2A0E; border-color: #DDC7AE; }
+
+.card-title-wrap { flex: 1; min-width: 0; }
+.card-title {
+  font-family: var(--sans);
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  color: var(--fg-1);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.card-artist {
+  font-size: 12px;
+  color: var(--fg-3);
+  margin-top: 3px;
+  font-weight: 400;
+}
+.card .menu {
+  width: 28px; height: 28px; border-radius: 8px;
+  display: grid; place-items: center;
+  color: var(--fg-3); cursor: pointer;
+  flex: none;
+}
+.card .menu:hover { background: var(--inset); color: var(--fg-1); }
+
+.card-meta {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+  margin-bottom: 20px;
+}
+.card-meta .status { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 8px; border-radius: 999px; background: var(--inset); color: var(--fg-2); }
+.card-meta .status .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+.card-meta .status.scheduled .dot { background: var(--fg-3); }
+.card-meta .status.released { background: var(--accent-soft); color: var(--accent); }
+.card-meta .status.released .dot { background: var(--accent); }
+.card-meta .status.hold .dot { background: var(--fg-3); }
+.card-meta .status.overdue { background: rgba(232,62,24,0.10); color: var(--ember-800); }
+[data-theme="dark"] .card-meta .status.overdue { color: #F2A56B; }
+.card-meta .status.overdue .dot { background: var(--ember-600); }
+.card-meta .date {
+  margin-left: auto;
+}
+
+/* Progress display — memory-graph style big italic number */
+.card-prog {
+  display: flex; align-items: baseline; gap: 10px;
+  margin-bottom: 10px;
+}
+.card-prog .big {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 42px;
+  line-height: 1;
+  font-weight: 400;
+  color: var(--fg-1);
+  letter-spacing: -0.025em;
+}
+.card-prog .big .pct { font-family: var(--sans); font-style: normal; font-size: 18px; color: var(--fg-3); margin-left: 2px; letter-spacing: 0; }
+.card-prog .lbl { font-family: var(--mono); font-size: 10.5px; color: var(--fg-3); text-transform: uppercase; letter-spacing: 0.08em; }
+.card-prog .lbl strong { color: var(--fg-1); font-weight: 500; }
+
+.bar {
+  height: 2px;
+  background: var(--inset);
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+}
+.bar .fill {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  background: var(--fg-1);
+  border-radius: 2px;
+  transition: width 400ms cubic-bezier(.2,.8,.2,1);
+}
+.bar.lime .fill { background: var(--accent); }
+
+/* Preview — reveals on hover */
+.preview {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 320ms cubic-bezier(.2,.8,.2,1);
+  margin: 0 -24px 0;
+}
+.card:hover .preview, .card.open .preview { max-height: 260px; }
+
+.preview-inner { padding: 16px 24px 4px; margin-top: 16px; border-top: 1px solid var(--line); }
+.prev-lbl {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--fg-3);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 8px;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.prev-lbl.late { color: var(--ember-600); }
+.prev-lbl.up { color: var(--accent); }
+.prev-lbl + .prev-lbl-block { margin-top: 12px; }
+.prev-row { display: flex; justify-content: space-between; gap: 10px; font-size: 12.5px; color: var(--fg-2); padding: 3px 0; }
+.prev-row .t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.prev-row .d { font-family: var(--mono); font-size: 10.5px; color: var(--fg-3); flex: none; letter-spacing: 0.02em; }
+
+/* Footer */
+.card-foot { display: flex; align-items: center; gap: 10px; padding-top: 14px; margin-top: 16px; border-top: 1px solid var(--line); }
+.mini { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-size: 9.5px; font-weight: 600; font-family: var(--mono); color: #fff; }
+.card-foot .who { font-size: 12px; color: var(--fg-2); }
+.card-foot .kpi { margin-left: auto; font-family: var(--mono); font-size: 10.5px; color: var(--fg-3); letter-spacing: 0.04em; }
+.card-foot .kpi strong { color: var(--fg-1); font-weight: 500; }
+
+/* ============ Tweaks ============ */
+.tweaks {
+  position: fixed; right: 22px; bottom: 22px;
+  background: var(--card); border: 1px solid var(--line-2);
+  border-radius: 14px;
+  padding: 14px 16px;
+  width: 260px;
+  box-shadow: 0 30px 60px -20px rgba(14,14,16,0.25);
+  display: none;
+  z-index: 50;
+}
+.tweaks.open { display: block; }
+.tweaks h4 { margin: 0 0 10px; font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--fg-3); font-weight: 500; }
+.tweaks-row { display: flex; align-items: center; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid var(--line); }
+.tweaks-row:last-child { border-bottom: 0; }
+.tweaks-row label { font-size: 12.5px; color: var(--fg-2); }
+.seg { display: inline-flex; background: var(--inset); border-radius: 999px; padding: 2px; }
+.seg button { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; background: transparent; border: 0; padding: 4px 9px; border-radius: 999px; color: var(--fg-3); cursor: pointer; }
+.seg button.active { background: var(--card); color: var(--fg-1); box-shadow: var(--shadow); }
+.swatches { display: inline-flex; gap: 6px; }
+.swatches button { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--card); box-shadow: 0 0 0 1px var(--line-2); cursor: pointer; padding: 0; }
+.swatches button.active { box-shadow: 0 0 0 2px var(--fg-1); }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand">
+      <div class="brand-mark"></div>
+      <div class="brand-name">Team <em>brain</em></div>
+    </div>
+
+    <div class="ws">
+      <div class="ws-ic">R</div>
+      <div class="ws-n">Roc Universa</div>
+      <svg class="ws-c" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+
+    <div>
+      <div class="nav-label">Workspace</div>
+      <div class="nav">
+        <a class="nav-item" href="#">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>
+          Command Center
+        </a>
+        <a class="nav-item active" href="Releases.html">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 7h7l2 2h9v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/></svg>
+          Releases
+          <span class="n">9</span>
+        </a>
+        <a class="nav-item" href="#">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="8" r="3"/><path d="M5 20c1.4-3.8 4-5.8 7-5.8s5.6 2 7 5.8"/></svg>
+          Artists
+        </a>
+        <a class="nav-item" href="#">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 3c-3 0-5 2-5 5 0 3.5 5 9 5 9s5-5.5 5-9c0-3-2-5-5-5z"/><circle cx="12" cy="8" r="1.6"/></svg>
+          Touring
+        </a>
+        <a class="nav-item" href="#">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M4 10h16"/></svg>
+          Press Runs
+        </a>
+      </div>
+    </div>
+
+    <div>
+      <div class="nav-label">Views</div>
+      <div class="nav">
+        <a class="nav-item" href="#">In progress <span class="n">6</span></a>
+        <a class="nav-item" href="#">Released <span class="n">2</span></a>
+        <a class="nav-item" href="#">Archived <span class="n">1</span></a>
+      </div>
+    </div>
+
+    <div>
+      <div class="nav-label">Tools</div>
+      <div class="nav">
+        <a class="nav-item" href="memory-graph.html">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="2.5"/><circle cx="5" cy="6" r="1.6"/><circle cx="19" cy="6" r="1.6"/><circle cx="5" cy="18" r="1.6"/><circle cx="19" cy="18" r="1.6"/><path d="M7 6l3 5M17 6l-3 5M7 18l3-5M17 18l-3-5"/></svg>
+          Memory graph
+        </a>
+      </div>
+    </div>
+
+    <div class="side-foot">
+      <div class="me-av">SC</div>
+      <div>
+        <div class="me-name">Sean Carter</div>
+        <div class="me-email">seanrealsc@gmail.com</div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="top">
+      <div>
+        <div class="crumb">Roc Universa / Releases</div>
+        <h1 class="title">Your releases <em>in motion</em><span class="count">9</span></h1>
+      </div>
+      <div class="top-right">
+        <button class="icon-btn" id="theme-btn" title="Theme">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="3.5"/><path d="M12 3v2M12 19v2M4.2 4.2l1.5 1.5M18.3 18.3l1.5 1.5M3 12h2M19 12h2M4.2 19.8l1.5-1.5M18.3 5.7l1.5-1.5"/></svg>
+        </button>
+        <button class="icon-btn" id="tweaks-btn" title="Tweaks">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 6h6M14 6h6M4 12h10M18 12h2M4 18h3M11 18h9"/></svg>
+        </button>
+        <button class="pill primary">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          New release
+        </button>
+      </div>
+    </div>
+
+    <div class="filters">
+      <button class="tab active lime">All <span class="n">9</span></button>
+      <button class="tab">In progress <span class="n">6</span></button>
+      <button class="tab">Released <span class="n">2</span></button>
+      <button class="tab">Archived <span class="n">1</span></button>
+      <div class="right">
+        <button class="pill">Sort · date</button>
+      </div>
+    </div>
+
+    <div class="grid" id="grid"></div>
+  </main>
+</div>
+
+<div class="tweaks" id="tweaks">
+  <h4>Tweaks</h4>
+  <div class="tweaks-row">
+    <label>Theme</label>
+    <div class="seg" id="theme-seg">
+      <button data-theme="light" class="active">Light</button>
+      <button data-theme="dark">Dark</button>
+    </div>
+  </div>
+  <div class="tweaks-row">
+    <label>Accent</label>
+    <div class="swatches" id="accent-sw">
+      <button data-c="#7FA830" class="active" style="background:#C0EC5F"></button>
+      <button data-c="#E83E18" style="background:#E83E18"></button>
+      <button data-c="#0E0E10" style="background:#0E0E10"></button>
+      <button data-c="#3E5F8A" style="background:#3E5F8A"></button>
+    </div>
+  </div>
+  <div class="tweaks-row">
+    <label>Serif</label>
+    <div class="seg" id="serif-seg">
+      <button data-s="'Instrument Serif'" class="active">Instrument</button>
+      <button data-s="Fraunces">Fraunces</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const RELEASES = [
+  { t:'Over The Fence',  a:'Miranda Lambert', i:'O', tone:1, date:'Jun 5',  rel:'in 48 days', st:'progress', stLbl:'In progress',    pct:12, done:4,  total:38,  own:'SC', ownC:'#E83E18',
+    late:[], up:[{t:'Master delivery to DSPs',d:'Apr 22'},{t:'Cover art review',d:'Apr 25'}] },
+  { t:'Petty Thang',     a:'Bryant Barnes',   i:'P', tone:2, date:'Jun 28', rel:'in 71 days', st:'overdue', stLbl:'2 overdue',       pct:9,  done:9,  total:103, own:'SC', ownC:'#8C1F13',
+    late:[{t:'Save Creative Direction',d:'2d late'},{t:'Finalize Budget & Brief',d:'1d late'}],
+    up:[{t:'Street Activation — Flyer Drop',d:'Tmrw'}] },
+  { t:'My Oh My',        a:'Ava Max',         i:'M', tone:3, date:'Mar 20', rel:'released',   st:'released', stLbl:'Released',       pct:100, done:62, total:62,  own:'SC', ownC:'#7FA830',
+    late:[], up:[{t:'Week 4 performance report',d:'Apr 21'}] },
+  { t:"Cory's Song",     a:'Middle Part',     i:'C', tone:4, date:'Jun 2',  rel:'in 45 days', st:'progress', stLbl:'Pre-production', pct:0,  done:0,  total:12,  own:'JT', ownC:'#2A2822',
+    late:[], up:[{t:'Brief kickoff with A&R',d:'Apr 22'}] },
+  { t:'North Loop',      a:'Omar Apollo',     i:'N', tone:5, date:'May 2',  rel:'in 14 days', st:'overdue', stLbl:'1 overdue',       pct:68, done:30, total:45,  own:'SC', ownC:'#6A2814',
+    late:[{t:'Spotify Canvas deliverable',d:'1d late'}],
+    up:[{t:'Pre-save waterfall → TikTok',d:'Tmrw'}] },
+  { t:'Blue Hour',       a:'Phoebe Wren',     i:'B', tone:6, date:'Jul 12', rel:'in 85 days', st:'scheduled', stLbl:'Scheduled',     pct:22, done:11, total:49,  own:'NB', ownC:'#3E2A4A',
+    late:[], up:[{t:'Press embargo brief',d:'May 3'}] },
+  { t:'Hemlock',         a:'James Spade',     i:'H', tone:7, date:'Apr 25', rel:'in 7 days',  st:'progress', stLbl:'Release week',   pct:88, done:32, total:36,  own:'SC', ownC:'#223B38',
+    late:[], up:[{t:'Release-day thread from label',d:'Apr 25'}] },
+  { t:'Featherweight',   a:'Harlo Montez',    i:'F', tone:8, date:'Feb 8',  rel:'released',   st:'released', stLbl:'Released',       pct:100, done:48, total:48,  own:'NB', ownC:'#4A2A0E',
+    late:[], up:[] },
+  { t:'Safe Harbor',     a:'The Longshore',   i:'S', tone:4, date:'TBD',    rel:'on hold',    st:'hold',  stLbl:'On hold',           pct:4,  done:1,  total:13,  own:'JT', ownC:'#8A8780',
+    late:[], up:[] },
+];
+const NAMES = { SC:'Sean Carter', JT:'Jake Truman', NB:'Nia Bridges' };
+
+const grid = document.getElementById('grid');
+RELEASES.forEach(r => {
+  const card = document.createElement('div');
+  card.className = 'card';
+  const late = r.late.map(l=>`<div class="prev-row"><span class="t">${l.t}</span><span class="d">${l.d}</span></div>`).join('');
+  const up   = r.up.map(l=>`<div class="prev-row"><span class="t">${l.t}</span><span class="d">${l.d}</span></div>`).join('');
+  card.innerHTML = `
+    <div class="card-head">
+      <div class="card-cover t${r.tone}">${r.i}</div>
+      <div class="card-title-wrap">
+        <div class="card-title">${r.t}</div>
+        <div class="card-artist">${r.a}</div>
+      </div>
+      <div class="menu" aria-label="More">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg>
+      </div>
+    </div>
+    <div class="card-meta">
+      <span class="status ${r.st}"><span class="dot"></span>${r.stLbl}</span>
+      <span class="date">${r.date} · ${r.rel}</span>
+    </div>
+    <div class="card-prog">
+      <span class="big">${r.pct}<span class="pct">%</span></span>
+      <span class="lbl"><strong>${r.done}</strong> / ${r.total} tasks</span>
+    </div>
+    <div class="bar ${r.pct>0?'lime':''}"><div class="fill" style="width:${r.pct}%"></div></div>
+    <div class="preview">
+      <div class="preview-inner">
+        ${r.late.length ? `<div class="prev-lbl late">● Overdue</div>${late}` : ''}
+        ${r.up.length ? `<div class="prev-lbl up ${r.late.length?'prev-lbl-block':''}">● Coming up</div>${up}` : ''}
+        ${(!r.late.length && !r.up.length) ? `<div class="prev-lbl">Nothing scheduled</div>` : ''}
+      </div>
+    </div>
+    <div class="card-foot">
+      <div class="mini" style="background:${r.ownC}">${r.own}</div>
+      <div class="who">${NAMES[r.own]}</div>
+      <div class="kpi"><strong>${r.done}</strong> / ${r.total}</div>
+    </div>
+  `;
+  grid.appendChild(card);
+});
+
+// Tweaks + Theme
+const tweaks = document.getElementById('tweaks');
+document.getElementById('tweaks-btn').onclick = () => tweaks.classList.toggle('open');
+function setTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  document.querySelectorAll('#theme-seg button').forEach(b => b.classList.toggle('active', b.dataset.theme === t));
+  try { localStorage.setItem('tb.theme', t); } catch(e){}
+}
+document.getElementById('theme-btn').onclick = () => {
+  const cur = document.documentElement.getAttribute('data-theme') || 'light';
+  setTheme(cur === 'light' ? 'dark' : 'light');
+};
+document.querySelectorAll('#theme-seg button').forEach(b => b.onclick = () => setTheme(b.dataset.theme));
+document.querySelectorAll('#accent-sw button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('#accent-sw button').forEach(x => x.classList.remove('active'));
+  b.classList.add('active');
+  document.documentElement.style.setProperty('--accent', b.dataset.c);
+  document.documentElement.style.setProperty('--accent-ital', b.dataset.c);
+});
+document.querySelectorAll('#serif-seg button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('#serif-seg button').forEach(x => x.classList.remove('active'));
+  b.classList.add('active');
+  document.documentElement.style.setProperty('--serif', b.dataset.s + ', Georgia, serif');
+});
+try { const t = localStorage.getItem('tb.theme'); if (t) setTheme(t); } catch(e){}
+
+// Edit mode protocol
+window.addEventListener('message', (e) => {
+  if (e.data?.type === '__activate_edit_mode') tweaks.classList.add('open');
+  if (e.data?.type === '__deactivate_edit_mode') tweaks.classList.remove('open');
+});
+window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+</script>
+</body>
+</html>

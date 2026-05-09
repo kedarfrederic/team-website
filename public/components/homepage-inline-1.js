@@ -76,7 +76,7 @@ function setupIframeWheelPassthrough(iframe) {
 
 (function initIframeScrollPassthrough() {
   document
-    .querySelectorAll('.brain-video-wrap iframe, #guidelinesIframe')
+    .querySelectorAll('.brain-video-wrap iframe, .guidelines-iframe')
     .forEach(setupIframeWheelPassthrough);
 })();
 
@@ -985,10 +985,12 @@ function setupIframeWheelPassthrough(iframe) {
 
 /* =============================================
    GUIDELINES (interactive iframe variant)
-   Single iframe loading /dashboard-demo.html. Pinned for one viewport while
-   scroll progress drives a hash swap from #releases → #timeline, so the
-   in-iframe React app re-renders the timeline view without reloading. One
-   iframe = one bundle parse, one React mount — no duplicate-iframe cost.
+   Twin stacked iframes loading the high-fidelity Tour demos
+   (/dashboard-tour/Releases.html and /Timeline.html — real CSS-grid
+   recreations of the platform UI, not screenshots). Pinned for one
+   viewport while scroll progress crossfades dashboard → timeline.
+   Both iframes stay click/hover-interactive; only the visible one
+   receives pointer events.
    ============================================= */
 (function initGuidelinesInteractive() {
   if (prefersReduced) return;
@@ -996,39 +998,35 @@ function setupIframeWheelPassthrough(iframe) {
   const section = document.getElementById('guidelinesSection');
   if (!section || !section.classList.contains('guidelines-section--interactive')) return;
 
-  const iframe = document.getElementById('guidelinesIframe');
-  if (!iframe) return;
+  const releases = section.querySelector('[data-frame="releases"]');
+  const timeline = section.querySelector('[data-frame="timeline"]');
+  if (!releases || !timeline) return;
 
-  const base = iframe.getAttribute('data-base') || '/dashboard-demo.html';
-  let lastView = 'releases';
-
-  const setView = (next) => {
-    if (next === lastView) return;
-    lastView = next;
-    // Replace src with hash-only delta. The iframe's hashchange listener
-    // re-renders without a network reload — feels like an in-app tab swap.
-    try {
-      const win = iframe.contentWindow;
-      if (win && win.location && win.location.replace) {
-        win.location.replace(base + '#' + next);
-      } else {
-        iframe.src = base + '#' + next;
-      }
-    } catch (e) {
-      iframe.src = base + '#' + next;
+  // Crossfade dashboard (#releases) → timeline (#timeline) across the pin.
+  gsap.timeline({
+    scrollTrigger: {
+      trigger: section,
+      start: 'top top',
+      end: '+=100%',
+      scrub: 0.4,
+      pin: true,
+      pinSpacing: true,
+      anticipatePin: 1,
+      invalidateOnRefresh: true,
     }
-  };
+  })
+    .to(releases, { opacity: 0, duration: 1 }, 0.45)
+    .to(timeline, { opacity: 1, duration: 1 }, 0.45);
 
+  // Toggle pointer-events so clicks/hover land on the visible frame only.
   ScrollTrigger.create({
     trigger: section,
     start: 'top top',
     end: '+=100%',
-    pin: true,
-    pinSpacing: true,
-    anticipatePin: 1,
-    invalidateOnRefresh: true,
     onUpdate: (self) => {
-      setView(self.progress > 0.5 ? 'timeline' : 'releases');
+      const showTimeline = self.progress > 0.5;
+      releases.style.pointerEvents = showTimeline ? 'none' : 'auto';
+      timeline.style.pointerEvents = showTimeline ? 'auto' : 'none';
     },
   });
 })();
