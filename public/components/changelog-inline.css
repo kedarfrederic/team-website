@@ -560,8 +560,10 @@ a.nav__cta:hover{color:#111 !important;background:rgba(255,255,255,0.75);backdro
   .final-cta__buttons{flex-direction:column;align-items:center}
 }
 @media(min-width:769px) and (max-width:1024px){
-  .roles-grid{grid-template-columns:1fr 1px 1fr;gap:0}
-  .feature-grid{grid-template-columns:repeat(2,1fr)}
+  /* 4 cards + 3 dividers don't fit a 3-col grid cleanly — stack as 1col */
+  .roles-grid{grid-template-columns:1fr;gap:0}
+  .roles-divider{width:100%;height:1px;align-self:auto}
+}
 }
 /* Changelog */
 .cl-hero{

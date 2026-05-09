@@ -758,5 +758,9 @@ a.nav__cta:hover{color:#111 !important;background:rgba(255,255,255,0.75);backdro
   .final-cta__buttons{flex-direction:column;align-items:center}
 }
 @media(min-width:769px) and (max-width:1024px){
-  .roles-grid{grid-template-columns:1fr 1px 1fr;gap:0}
+  /* 4 cards + 3 dividers don't fit cleanly in a 3-column grid at this
+     width — the dividers wrap into card columns and break alignment.
+     Stack as a single column with horizontal dividers instead. */
+  .roles-grid{grid-template-columns:1fr;gap:0}
+  .roles-divider{width:100%;height:1px;align-self:auto}
 }
