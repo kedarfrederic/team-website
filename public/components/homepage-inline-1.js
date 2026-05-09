@@ -308,6 +308,11 @@ gsap.ticker.lagSmoothing(0);
 
   const coverIntro = document.getElementById('coverIntro');
 
+  // Bail when the legacy hero DOM is gone (the homepage now uses
+  // <NotificationsHero> in place of the old hero-img + cover-w + cover-intro
+  // block; only #heroSection survives as the wrapper for side-nav triggers).
+  if (!section || !imgW || !coverW || !coverIntro) return;
+
   ScrollTrigger.create({
     trigger: section,
     start: 'top top',
@@ -351,12 +356,17 @@ gsap.ticker.lagSmoothing(0);
   if (prefersReduced) return;
 
   const heroSection = document.getElementById('heroSection');
+  // Bail when the legacy hero+upload tile-flight DOM is gone (the homepage
+  // now uses <NotificationsHero> and the upload section dropped its
+  // tileLandingZone + .excerpt-landing target divs along with it).
+  if (!heroSection) return;
   const heroImg = heroSection.querySelector('.hero-img');
   const wrapper = document.getElementById('heroExcerpts');
   const center = document.getElementById('heroExcerpt');
   const left = document.getElementById('heroExcerptLeft');
   const right = document.getElementById('heroExcerptRight');
   const landing = document.querySelector('.excerpt-landing');
+  if (!heroImg || !wrapper || !center || !left || !right || !landing) return;
   if (!wrapper || !center || !left || !right || !heroImg || !landing) return;
 
   // Image shown inside the excerpt rectangle (separate from hero BG).

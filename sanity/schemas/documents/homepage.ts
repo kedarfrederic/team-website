@@ -36,6 +36,14 @@ export const homepage = defineType({
       group: "hero",
       fields: [
         defineField({
+          name: "eyebrow",
+          title: "Eyebrow",
+          type: "string",
+          description:
+            "Small uppercase label above the headline (e.g. \"The operating system for music releases\"). Leave blank to hide.",
+          initialValue: "The operating system for music releases",
+        }),
+        defineField({
           name: "typewriterWords",
           title: "Typewriter words",
           type: "array",

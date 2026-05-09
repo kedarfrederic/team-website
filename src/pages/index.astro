@@ -17,6 +17,7 @@
  */
 
 import BaseLayout from "../layouts/BaseLayout.astro";
+import NotificationsHero from "../components/hero/NotificationsHero.astro";
 import HomeRoles from "../components/homepage/HomeRoles.astro";
 import HomeEngine from "../components/homepage/HomeEngine.astro";
 import HomeGuidelines from "../components/homepage/HomeGuidelines.astro";
@@ -36,6 +37,7 @@ const page = await getHomepage(getClient(Astro));
 
 // ── Hero ────────────────────────────────────────────────────
 const hero = page?.hero ?? {};
+const heroEyebrow = hero.eyebrow ?? "The operating system for music releases";
 const typewriterWords: string[] =
   Array.isArray(hero.typewriterWords) && hero.typewriterWords.length > 0
     ? hero.typewriterWords
@@ -43,15 +45,7 @@ const typewriterWords: string[] =
 const headlineSuffix = hero.headlineSuffix ?? "for your music releases";
 const heroSubhead = hero.subhead ?? "Stop juggling spreadsheets, Slack threads, and email chains.\nOne platform for your entire rollout.";
 const primaryCta = hero.primaryCta ?? { label: "Book demo", href: "/demo" };
-const secondaryCta = hero.secondaryCta ?? { label: "See the platform", href: "#", type: "video" };
-const heroBgUrl = hero.backgroundImage?.asset
-  ? urlFor(hero.backgroundImage).width(2400).quality(85).format("webp").url()
-  : "/assets/hero-bg-option-1.jpeg";
-const heroBg = !!hero.backgroundImage?.asset;
-const tileLabels = hero.tileLabels ?? {};
-const tileLeft = tileLabels.left ?? "Single";
-const tileCenter = tileLabels.center ?? "EP";
-const tileRight = tileLabels.right ?? "Album";
+const secondaryCta = hero.secondaryCta ?? { label: "See the platform", href: "/intelligence" };
 
 // ── Upload section ──────────────────────────────────────────
 const upload = page?.uploadSection ?? {};
@@ -66,7 +60,7 @@ const uploadCtaIsVideo = uploadCta?.type === "video";
   title={typewriterWords[0] + " " + headlineSuffix}
   description={heroSubhead.replace(/\n/g, " ")}
   seo={page?.seo}
-  navTheme={heroBg ? "dark" : "light"}
+  navTheme="dark"
 >
   <link slot="head" rel="stylesheet" href="/components/team-home.css" />
   <link slot="head" rel="stylesheet" href="/components/homepage.css" />
@@ -74,78 +68,21 @@ const uploadCtaIsVideo = uploadCta?.type === "video";
   <link slot="head" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
   {/*
-    Hero — every editor-meaningful surface is bound. The typewriter cycles
-    through the array; the inline JS reads `data-typer-words` from the
-    `<span class="typer">` element to drive the animation. Words[0] is the
-    initial render so non-JS / pre-hydration users see real content.
+    Hero — animated notifications scatter with cycling typewriter headline.
+    Bound to page.hero.* (eyebrow, typewriterWords, headlineSuffix, subhead,
+    primaryCta, secondaryCta). The wrapper carries id="heroSection" so the
+    side-nav, floating-CTA, and "nav goes solid past hero" ScrollTriggers
+    in homepage-inline-1.js continue to work without modification.
   */}
-  <section class="hero-section" id="heroSection">
-    <div class="hero-img-w" id="heroImgW">
-      <img src={heroBgUrl} alt="" class="hero-img" loading="eager" />
-    </div>
-
-    <div class="cover-w" id="coverW">
-      <div class="cover__intro" id="coverIntro">
-        <h1 class="headline-xl">
-          The <span class="typer" id="heroTyper" data-typer-words={JSON.stringify(typewriterWords)}>{typewriterWords[0]}</span><span class="typer__caret" aria-hidden="true"></span><br />
-          <span class="nyght">{headlineSuffix}</span>
-        </h1>
-        <p set:html={heroSubhead.replace(/\n/g, "<br />")} />
-        <div class="cover__buttons">
-          <a href={primaryCta.href} class="btn btn--primary btn--demo">
-            <svg class="btn--demo__icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="3" width="12" height="11" rx="2" />
-              <line x1="2" y1="7" x2="14" y2="7" />
-              <line x1="5" y1="1" x2="5" y2="4" />
-              <line x1="11" y1="1" x2="11" y2="4" />
-            </svg>
-            {primaryCta.label}
-          </a>
-          <a
-            href={secondaryCta?.type === "video" ? "#" : (secondaryCta?.href ?? "#")}
-            class="btn btn--outline"
-            data-video-trigger={secondaryCta?.type === "video" ? "" : undefined}
-          >
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><polygon points="3,1 13,8 3,15" /></svg>
-            {secondaryCta?.label ?? "See the platform"}
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <div class="hero-excerpts" id="heroExcerpts">
-      <div class="hero-excerpt__flank hero-excerpt__flank--left" id="heroExcerptLeft"></div>
-      <div class="hero-excerpt__flank hero-excerpt__flank--right" id="heroExcerptRight"></div>
-      <div class="hero-excerpt" id="heroExcerpt"><div class="hero-excerpt__img" id="heroExcerptImg"></div></div>
-
-      <div class="tile-label tile-label--left" id="tileLabelLeft">
-        <div class="tile-label__arrow">
-          <svg viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M48 52 C 44 32, 28 18, 10 12" />
-            <path d="M16 6 L 10 12 L 16 18" />
-          </svg>
-        </div>
-        <div class="tile-label__text">{tileLeft}</div>
-      </div>
-      <div class="tile-label tile-label--center" id="tileLabelCenter">
-        <div class="tile-label__arrow">
-          <svg viewBox="0 0 40 60" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20 52 C 12 40, 28 30, 20 14" />
-            <path d="M14 20 L 20 14 L 26 20" />
-          </svg>
-        </div>
-        <div class="tile-label__text">{tileCenter}</div>
-      </div>
-      <div class="tile-label tile-label--right" id="tileLabelRight">
-        <div class="tile-label__arrow">
-          <svg viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M48 52 C 44 32, 28 18, 10 12" />
-            <path d="M16 6 L 10 12 L 16 18" />
-          </svg>
-        </div>
-        <div class="tile-label__text">{tileRight}</div>
-      </div>
-    </div>
+  <section id="heroSection" class="hero-section hero-section--notifications">
+    <NotificationsHero
+      eyebrow={heroEyebrow}
+      typewriterWords={typewriterWords}
+      headlineAlt={headlineSuffix}
+      body={heroSubhead.replace(/\n/g, " ")}
+      primaryCta={{ label: primaryCta.label ?? "Book demo", href: primaryCta.href ?? "/demo" }}
+      secondaryCta={secondaryCta?.label ? { label: secondaryCta.label, href: secondaryCta.href ?? "/intelligence" } : undefined}
+    />
   </section>
 
   {/* Upload section — Sanity-driven copy + CTA */}
@@ -164,12 +101,6 @@ const uploadCtaIsVideo = uploadCta?.type === "video";
             {uploadCta.label}
           </a>
         )}
-      </div>
-      <div id="tileLandingZone" style="height:18rem"></div>
-      <div class="excerpt-landing">
-        <div class="excerpt-target" id="excerptTargetLeft"></div>
-        <div class="excerpt-target" id="excerptTargetCenter"></div>
-        <div class="excerpt-target" id="excerptTargetRight"></div>
       </div>
     </div>
   </section>

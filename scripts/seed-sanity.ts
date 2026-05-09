@@ -267,6 +267,7 @@ docs.push({
   _id: "homepage",
   _type: "homepage",
   hero: {
+    eyebrow: "The operating system for music releases",
     typewriterWords: ["Command Center", "Strategy hub", "Single source of truth"],
     headlineSuffix: "for your music releases",
     subhead: "Stop juggling spreadsheets, Slack threads, and email chains.\nOne platform for your entire rollout.",
