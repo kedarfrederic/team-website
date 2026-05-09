@@ -1,19 +1,23 @@
 ---
 /**
- * Sanity Visual Editing overlay — wraps our custom React client that
- * bypasses @sanity/astro's hardcoded full-page-reload refresh handler.
- * Without this wrapper, every keystroke in Studio fires
- * window.location.reload() — losing scroll, restarting animations, and
- * dropping the editor back at the top of the page.
+ * Sanity Visual Editing overlay — uses the canonical Astro component from
+ * `@sanity/astro/visual-editing`. That component is itself an .astro file
+ * (NOT a React component) which internally mounts a React child with
+ * `client:only="react"` — so we just render it like any other Astro
+ * component. Adding our own `client:` directive breaks it (the Astro
+ * component definition gets passed to React's renderer, which throws #130).
  *
  * Toggle via the `PUBLIC_SANITY_VISUAL_EDITING_ENABLED` env var:
  *   - "true" or unset → mount the overlay on every request
  *   - "false"          → no overlay code ships
+ *
+ * The overlay is iframe-aware — even when enabled, it stays inert outside
+ * an iframe — so we leave it on by default.
  */
-import VisualEditingClient from "./VisualEditingClient";
+import { VisualEditing } from "@sanity/astro/visual-editing";
 
 const enabled =
   import.meta.env.PUBLIC_SANITY_VISUAL_EDITING_ENABLED !== "false";
 ---
 
-{enabled && <VisualEditingClient client:only="react" zIndex={1000} />}
+<VisualEditing enabled={enabled} zIndex={1000} />
