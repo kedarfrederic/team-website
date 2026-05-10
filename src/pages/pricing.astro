@@ -15,7 +15,7 @@ const heroSubhead =
   "Start using it with no commitment. Free forever for one artist, or unlock the full platform with Pro — 30 days free.";
 const heroCtaLabel = hero.cta?.label ?? "Try Pro free for 30 days";
 const heroCtaShort = "Try Pro free";
-const heroCtaHref = hero.cta?.href ?? "https://www.teamrollouts.com/sign-up?plan=pro&period=yearly";
+const heroCtaHref = hero.cta?.href ?? "https://www.teamrollouts.com/onboarding?plan=pro&period=yearly";
 
 const billingToggle = page?.billingToggle ?? {};
 const yearlyLabel = billingToggle.yearlyLabel ?? "Yearly";
@@ -56,7 +56,7 @@ const tiers: Tier[] =
           period: "forever",
           thenText: "No catch. That's a promise.",
           ctaLabel: "Get started free",
-          ctaHref: "https://www.teamrollouts.com/sign-up?plan=free&period=yearly",
+          ctaHref: "https://www.teamrollouts.com/onboarding?plan=free&period=yearly",
           includesLabel: "Includes:",
           features: [
             "1 artist",
@@ -86,7 +86,7 @@ const tiers: Tier[] =
           thenText: "Then $19.99/month per seat",
           billingNote: "billed yearly",
           ctaLabel: "Start your free trial",
-          ctaHref: "https://www.teamrollouts.com/sign-up?plan=pro&period=yearly",
+          ctaHref: "https://www.teamrollouts.com/onboarding?plan=pro&period=yearly",
           includesLabel: "Everything in Free, plus:",
           badge: "Limited time pricing",
           features: [
@@ -184,7 +184,7 @@ const faqItems: { q: string; aHtml: string }[] =
 const finalCta = page?.finalCta ?? {};
 const finalHeadlineTop = finalCta.headlineTop ?? finalCta.headline ?? "Ready to run";
 const finalHeadlineBottom = finalCta.headlineBottom ?? "your next release?";
-const finalPrimary = finalCta.primaryCta ?? { label: "Start your free trial", href: "https://www.teamrollouts.com/sign-up" };
+const finalPrimary = finalCta.primaryCta ?? { label: "Start your free trial", href: "https://www.teamrollouts.com/onboarding?plan=pro&period=yearly" };
 const finalSecondary = finalCta.secondaryCta ?? { label: "Book a demo", href: "/demo" };
 const finalFootnote = finalCta.footnote ?? "30-day free trial.";
 ---
