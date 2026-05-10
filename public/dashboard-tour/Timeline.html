@@ -992,6 +992,63 @@
   .tl-shell.detail-open { grid-template-columns: 64px 1fr; }
 }
 
+/* ---------- Whiter canvas to match the actual platform UI ----------
+   The platform uses a near-pure-white surface (#FCFCFC / oklch(0.99))
+   with very faint hairline borders. Our team_shell.css "light" surface
+   defaults to paper-100 (warm cream) — override the canvas + card
+   tokens locally so the demo iframe reads as the real product. */
+[data-surface="light"] {
+  --bg-canvas:  #FCFCFC;
+  --bg-surface: #FFFFFF;
+  --card-bg:    #FFFFFF;
+  --card-border: rgba(14,14,16,0.07);
+  --row-hover:   rgba(14,14,16,0.025);
+}
+body[data-surface="light"] { background: #FCFCFC; }
+
+/* ---------- Persistent request context (the original user ask) ---------- */
+.nh-request-context {
+  margin: 12px 14px 0;
+  padding: 10px 12px 11px;
+  background: #FAFAF7;
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+.nh-request-context__head {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 6px;
+}
+.nh-request-context__avatar {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #F56002, #DA4326);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  display: grid; place-items: center;
+  flex: none;
+}
+.nh-request-context__label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--fg-1);
+  letter-spacing: 0.01em;
+}
+.nh-request-context__time {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  color: var(--fg-3);
+  letter-spacing: 0.04em;
+}
+.nh-request-context__body {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--fg-1);
+}
+
 /* ---------- LIVE chat animations (Late Reply demo) ---------- */
 @keyframes nh-msg-in {
   from { opacity: 0; transform: translateY(8px); }
@@ -1685,13 +1742,23 @@ function ChatDrawer({ collapsed, setCollapsed }) {
         <button className="chat-tab">Docs</button>
       </div>
 
+      {/* Persistent request context — the original user ask lives outside
+          the scrollable feed so it's always visible. Otherwise once Teammate
+          appends its 5+ live messages the user prompt scrolls out of view
+          and the chat reads as Teammate talking to itself. */}
+      <div className="nh-request-context">
+        <div className="nh-request-context__head">
+          <span className="nh-request-context__avatar">SC</span>
+          <span className="nh-request-context__label">Sara — request</span>
+          <span className="nh-request-context__time">9:38 AM</span>
+        </div>
+        <div className="nh-request-context__body">
+          Build a comprehensive release strategy for "Late Reply" focused on fan engagement — superfans first, then warm-discovery. Drop tasks straight into the timeline.
+        </div>
+      </div>
+
       <div className="chat-scroll" ref={scrollRef}>
-        {messages.map(m => m.role === 'user' ? (
-          <div key={m.id} className="bubble user">
-            {m.content}
-            <span className="at">{m.at}</span>
-          </div>
-        ) : (
+        {messages.filter(m => m.role !== 'user').map(m => (
           <div key={m.id} className="msg assistant nh-msg-in">
             <div className="msg-head">
               <span className="label">Teammate</span>
