@@ -1329,18 +1329,38 @@ window.Icon = Icon;
 //   sun (yellow) · olive · fog-blue · rose-brick · brick · red · cream · orange · ember · walnut · ink
 // These are tuned for a warm magazine / paper feel.
 
+// Canonical TASK_COLORS palette — same 28 colors the actual platform uses
+// in client/src/components/timeline/ReleaseTimeline.tsx. fill = card bg,
+// ink = card foreground, soft = light tint for category pill background.
 const TASK_COLORS = {
-  sun:       { fill: '#F6C33E', ink: '#3A2906', soft: '#FBE59C', label: 'Sun'       },
-  olive:     { fill: '#C5B368', ink: '#2F2807', soft: '#E4DBB4', label: 'Olive'     },
-  fog:       { fill: '#94A3BE', ink: '#142032', soft: '#C9D2DE', label: 'Fog'       },
-  rose:      { fill: '#B87680', ink: '#3B1017', soft: '#DEB7BE', label: 'Rose'      },
-  brick:     { fill: '#D47A7D', ink: '#411112', soft: '#ECBABC', label: 'Brick'     },
-  red:       { fill: '#E64B40', ink: '#3B0804', soft: '#F3A6A1', label: 'Red'       },
-  cream:     { fill: '#F2DCC7', ink: '#3E2410', soft: '#FAF0E4', label: 'Cream'     },
-  orange:    { fill: '#E87E2A', ink: '#3B1A03', soft: '#F3BE95', label: 'Orange'    },
-  ember:     { fill: '#A2321E', ink: '#FDE6DE', soft: '#D9968A', label: 'Ember'     },
-  walnut:    { fill: '#5E2A20', ink: '#F3D5CC', soft: '#9A6A5F', label: 'Walnut'    },
-  ink:       { fill: '#131315', ink: '#F3F0E8', soft: '#4E4E55', label: 'Ink'       },
+  yellow:     { fill: '#FAD605', ink: '#191919', soft: '#FDE968', label: 'Yellow'     },
+  olive:      { fill: '#A79C54', ink: '#191919', soft: '#C9C08A', label: 'Olive'      },
+  blue:       { fill: '#7784BB', ink: '#FFFFFF', soft: '#A8B1D4', label: 'Blue'       },
+  mauve:      { fill: '#975365', ink: '#FFFFFF', soft: '#BE8A98', label: 'Mauve'      },
+  terracotta: { fill: '#B94B46', ink: '#FFFFFF', soft: '#D48683', label: 'Terracotta' },
+  coral:      { fill: '#DA4326', ink: '#FFFFFF', soft: '#E8806C', label: 'Coral'      },
+  peach:      { fill: '#F9D4C7', ink: '#191919', soft: '#FCE9E3', label: 'Peach'      },
+  orange:     { fill: '#F56002', ink: '#FFFFFF', soft: '#F08A5C', label: 'Orange'     },
+  brown:      { fill: '#361607', ink: '#FFFFFF', soft: '#6B4A3D', label: 'Brown'      },
+  black:      { fill: '#191919', ink: '#FFFFFF', soft: '#4A4A4A', label: 'Black'      },
+  sage:       { fill: '#6B8F71', ink: '#FFFFFF', soft: '#A3C4A8', label: 'Sage'       },
+  lavender:   { fill: '#9B8EC4', ink: '#FFFFFF', soft: '#C5BBE0', label: 'Lavender'   },
+  slate:      { fill: '#64748B', ink: '#FFFFFF', soft: '#94A3B8', label: 'Slate'      },
+  rose:       { fill: '#E11D48', ink: '#FFFFFF', soft: '#FDA4AF', label: 'Rose'       },
+  teal:       { fill: '#0D9488', ink: '#FFFFFF', soft: '#5EEAD4', label: 'Teal'       },
+  indigo:     { fill: '#4F46E5', ink: '#FFFFFF', soft: '#A5B4FC', label: 'Indigo'     },
+  amber:      { fill: '#D97706', ink: '#191919', soft: '#FCD34D', label: 'Amber'      },
+  emerald:    { fill: '#059669', ink: '#FFFFFF', soft: '#6EE7B7', label: 'Emerald'    },
+  fuchsia:    { fill: '#C026D3', ink: '#FFFFFF', soft: '#E879F9', label: 'Fuchsia'    },
+  sky:        { fill: '#0284C7', ink: '#FFFFFF', soft: '#7DD3FC', label: 'Sky'        },
+  wine:       { fill: '#7F1D1D', ink: '#FFFFFF', soft: '#B45454', label: 'Wine'       },
+  mint:       { fill: '#34D399', ink: '#191919', soft: '#A7F3D0', label: 'Mint'       },
+  plum:       { fill: '#6B21A8', ink: '#FFFFFF', soft: '#C084FC', label: 'Plum'       },
+  sand:       { fill: '#C2A76D', ink: '#191919', soft: '#E5D5A8', label: 'Sand'       },
+  steel:      { fill: '#475569', ink: '#FFFFFF', soft: '#94A3B8', label: 'Steel'      },
+  raspberry:  { fill: '#BE185D', ink: '#FFFFFF', soft: '#F9A8D4', label: 'Raspberry'  },
+  forest:     { fill: '#166534', ink: '#FFFFFF', soft: '#86EFAC', label: 'Forest'     },
+  navy:       { fill: '#1E3A5F', ink: '#FFFFFF', soft: '#7DA0C4', label: 'Navy'       },
 };
 
 // Days — Apr 18 (today/Sat) through Apr 24 (Fri)
@@ -1359,7 +1379,7 @@ const ROLLOUT_POSTER = {
   id: 'poster',
   title: 'Rollout Plan',
   release: 'Late Reply',
-  color: 'ember',
+  color: 'wine',
   isPoster: true,
 };
 
@@ -1370,36 +1390,36 @@ const ROLLOUT_POSTER = {
 // Fri release day with the live moments, Sat-Sun deep-fan + retro.
 const TASKS = [
   // MON 18 — fan audit + segment mapping
-  { id: 't1',  day: 'mon18', title: 'Map fan persona segments — top 5 cohorts by engagement',          dept: 'Strategy',  color: 'olive',   status: 'Done',    budget: null,  assignee: 'SC', priority: 'High',   time: null,    subtasks: '5/5' },
-  { id: 't2',  day: 'mon18', title: 'Audit superfan list — last 90d activity + DM history',            dept: 'Community', color: 'cream',   status: 'Done',    budget: null,  assignee: 'MT', priority: 'High',   time: null,    subtasks: '4/4' },
+  { id: 't1',  day: 'mon18', title: 'Map fan persona segments — top 5 cohorts by engagement',          dept: 'Strategy',  color: 'sage',       status: 'Done',    budget: null,  assignee: 'SC', priority: 'High',   time: null,    subtasks: '5/5' },
+  { id: 't2',  day: 'mon18', title: 'Audit superfan list — last 90d activity + DM history',            dept: 'Community', color: 'mauve',      status: 'Done',    budget: null,  assignee: 'MT', priority: 'High',   time: null,    subtasks: '4/4' },
 
   // TUE 19 — activation kit
-  { id: 't3',  day: 'tue19', title: 'TikTok creator brief — fan-discovery DJ remix angle',              dept: 'Creator',   color: 'cream',   status: 'Active',  budget: 1500,  assignee: 'MT', priority: 'High',   time: '14:00', subtasks: '5/7' },
-  { id: 't4',  day: 'tue19', title: 'Discord Town Hall AMA — agenda + giveaway tier logic',             dept: 'Community', color: 'sun',     status: 'Active',  budget: 400,   assignee: 'JK', priority: 'High',   time: '16:00', subtasks: '3/5' },
-  { id: 't5',  day: 'tue19', title: 'Personalized DM batch — top 50 superfans (warm tone)',             dept: 'Community', color: 'cream',   status: 'Active',  budget: null,  assignee: 'MT', priority: 'Medium', time: '11:00', subtasks: '12/50' },
+  { id: 't3',  day: 'tue19', title: 'TikTok creator brief — fan-discovery DJ remix angle',              dept: 'Creator',   color: 'fuchsia',    status: 'Active',  budget: 1500,  assignee: 'MT', priority: 'High',   time: '14:00', subtasks: '5/7' },
+  { id: 't4',  day: 'tue19', title: 'Discord Town Hall AMA — agenda + giveaway tier logic',             dept: 'Community', color: 'plum',       status: 'Active',  budget: 400,   assignee: 'JK', priority: 'High',   time: '16:00', subtasks: '3/5' },
+  { id: 't5',  day: 'tue19', title: 'Personalized DM batch — top 50 superfans (warm tone)',             dept: 'Community', color: 'raspberry',  status: 'Active',  budget: null,  assignee: 'MT', priority: 'Medium', time: '11:00', subtasks: '12/50' },
 
   // WED 20 — TODAY: signature moment goes live
-  { id: 't6',  day: 'wed20', title: 'Lyric Scavenger Hunt — IG / TikTok / YT schedule',                 dept: 'Social',    color: 'ember',   status: 'Active',  budget: null,  assignee: 'MT', priority: 'High',   time: '10:00', subtasks: '4/9' },
-  { id: 't7',  day: 'wed20', title: 'Twitch streamer cohort — finalise 3 partners',                     dept: 'Creator',   color: 'brick',   status: 'Blocked', budget: 800,   assignee: 'JK', priority: 'Medium', time: '15:00', subtasks: '0/4', blockedReason: 'Awaiting cohost confirmation' },
-  { id: 't8',  day: 'wed20', title: 'Behind-the-track audio commentary unlock — record',                dept: 'Content',   color: 'olive',   status: 'Active',  budget: null,  assignee: 'SC', priority: 'Medium', time: '14:00', subtasks: '1/2' },
-  { id: 't9',  day: 'wed20', title: 'Pre-save fan campaign — final copy + CTA review',                  dept: 'Marketing', color: 'sun',     status: 'Active',  budget: null,  assignee: 'SC', priority: 'High',   time: '16:00', subtasks: '2/3' },
+  { id: 't6',  day: 'wed20', title: 'Lyric Scavenger Hunt — IG / TikTok / YT schedule',                 dept: 'Social',    color: 'orange',     status: 'Active',  budget: null,  assignee: 'MT', priority: 'High',   time: '10:00', subtasks: '4/9' },
+  { id: 't7',  day: 'wed20', title: 'Twitch streamer cohort — finalise 3 partners',                     dept: 'Creator',   color: 'wine',       status: 'Blocked', budget: 800,   assignee: 'JK', priority: 'Medium', time: '15:00', subtasks: '0/4', blockedReason: 'Awaiting cohost confirmation' },
+  { id: 't8',  day: 'wed20', title: 'Behind-the-track audio commentary unlock — record',                dept: 'Content',   color: 'olive',      status: 'Active',  budget: null,  assignee: 'SC', priority: 'Medium', time: '14:00', subtasks: '1/2' },
+  { id: 't9',  day: 'wed20', title: 'Pre-save fan campaign — final copy + CTA review',                  dept: 'Marketing', color: 'amber',      status: 'Active',  budget: null,  assignee: 'SC', priority: 'High',   time: '16:00', subtasks: '2/3' },
 
   // THU 21 — pre-launch fan moments
-  { id: 't10', day: 'thu21', title: 'Pre-release fan playlist drop — embed in newsletter',              dept: 'Email',     color: 'red',     status: 'Active',  budget: null,  assignee: 'LR', priority: 'High',   time: '09:00', subtasks: '2/4' },
-  { id: 't11', day: 'thu21', title: 'Fan-stack QA — 9 day-of posts (IG / TikTok / X)',                  dept: 'Social',    color: 'cream',   status: 'Active',  budget: null,  assignee: 'MT', priority: 'High',   time: '12:00', subtasks: '3/9' },
-  { id: 't12', day: 'thu21', title: 'Twitch listening party run-through (cohost dry run)',              dept: 'Live',      color: 'walnut',  status: 'Active',  budget: null,  assignee: 'JK', priority: 'High',   time: '18:00', subtasks: '1/6' },
+  { id: 't10', day: 'thu21', title: 'Pre-release fan playlist drop — embed in newsletter',              dept: 'Email',     color: 'terracotta', status: 'Active',  budget: null,  assignee: 'LR', priority: 'High',   time: '09:00', subtasks: '2/4' },
+  { id: 't11', day: 'thu21', title: 'Fan-stack QA — 9 day-of posts (IG / TikTok / X)',                  dept: 'Social',    color: 'rose',       status: 'Active',  budget: null,  assignee: 'MT', priority: 'High',   time: '12:00', subtasks: '3/9' },
+  { id: 't12', day: 'thu21', title: 'Twitch listening party run-through (cohost dry run)',              dept: 'Live',      color: 'plum',       status: 'Active',  budget: null,  assignee: 'JK', priority: 'High',   time: '18:00', subtasks: '1/6' },
 
   // FRI 22 — RELEASE DAY: live fan moments
-  { id: 't13', day: 'fri22', title: '"Late Reply" goes live — DSP confirmation moment',                 dept: 'Distribution', color: 'ember', status: 'Active', budget: null,  assignee: 'SC', priority: 'Urgent', time: '00:01', subtasks: '0/5' },
-  { id: 't14', day: 'fri22', title: 'Day-of fan rollout — 9 posts staggered with live DM replies',      dept: 'Social',    color: 'sun',     status: 'Active',  budget: null,  assignee: 'MT', priority: 'High',   time: '08:00', subtasks: '0/9' },
-  { id: 't15', day: 'fri22', title: 'Twitch listening party — live with chat moderation',               dept: 'Live',      color: 'walnut',  status: 'Active',  budget: null,  assignee: 'JK', priority: 'High',   time: '20:00', subtasks: '0/6' },
+  { id: 't13', day: 'fri22', title: '"Late Reply" goes live — DSP confirmation moment',                 dept: 'Distribution', color: 'orange',  status: 'Active', budget: null,  assignee: 'SC', priority: 'Urgent', time: '00:01', subtasks: '0/5' },
+  { id: 't14', day: 'fri22', title: 'Day-of fan rollout — 9 posts staggered with live DM replies',      dept: 'Social',    color: 'fuchsia',    status: 'Active',  budget: null,  assignee: 'MT', priority: 'High',   time: '08:00', subtasks: '0/9' },
+  { id: 't15', day: 'fri22', title: 'Twitch listening party — live with chat moderation',               dept: 'Live',      color: 'plum',       status: 'Active',  budget: null,  assignee: 'JK', priority: 'High',   time: '20:00', subtasks: '0/6' },
 
   // SAT 23 — deep-fan window
-  { id: 't16', day: 'sat23', title: 'Fan engagement dashboard — saves, DMs, sentiment',                  dept: 'Strategy',  color: 'olive',   status: 'Active',  budget: null,  assignee: 'SC', priority: 'Medium', time: '11:00', subtasks: '0/4' },
-  { id: 't17', day: 'sat23', title: 'Superfan thank-you DMs — top 50 with personalized line',            dept: 'Community', color: 'cream',   status: 'Active',  budget: null,  assignee: 'MT', priority: 'Medium', time: '14:00', subtasks: '0/50' },
+  { id: 't16', day: 'sat23', title: 'Fan engagement dashboard — saves, DMs, sentiment',                  dept: 'Strategy',  color: 'steel',      status: 'Active',  budget: null,  assignee: 'SC', priority: 'Medium', time: '11:00', subtasks: '0/4' },
+  { id: 't17', day: 'sat23', title: 'Superfan thank-you DMs — top 50 with personalized line',            dept: 'Community', color: 'mauve',      status: 'Active',  budget: null,  assignee: 'MT', priority: 'Medium', time: '14:00', subtasks: '0/50' },
 
   // SUN 24 — retro
-  { id: 't18', day: 'sun24', title: 'Fan-engagement retro — what surfaced from listen party + hunt',     dept: 'Strategy',  color: 'walnut',  status: 'Active',  budget: null,  assignee: 'JK', priority: 'Medium', time: '16:00', subtasks: '0/3' },
+  { id: 't18', day: 'sun24', title: 'Fan-engagement retro — what surfaced from listen party + hunt',     dept: 'Strategy',  color: 'navy',       status: 'Active',  budget: null,  assignee: 'JK', priority: 'Medium', time: '16:00', subtasks: '0/3' },
 ];
 
 // Chat history for the Teammate AI companion. The seeded user prompt asks
