@@ -1,6 +1,6 @@
 (function() {
   // Cutover swap: change to https://app.teamrollouts.com/... when DNS flips
-  var WEBHOOK_URL = 'https://teamrollouts.com/api/forms/contact';
+  var WEBHOOK_URL = 'https://app.teamrollouts.com/api/forms/contact';
 
   // Parse URL params to pre-select interest checkboxes
   var params = new URLSearchParams(window.location.search);

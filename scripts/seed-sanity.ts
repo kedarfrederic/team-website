@@ -189,9 +189,9 @@ docs.push({
   ],
   navStatus: { label: "Operational", href: "#status" },
   navPricingLink: { label: "Pricing", href: "/pricing" },
-  navLogin: { label: "Login", href: "https://www.teamrollouts.com/sign-in" },
+  navLogin: { label: "Login", href: "https://app.teamrollouts.com/sign-in" },
   navPrimaryCta: cta("Start free", "/pricing"),
-  navSecondaryCta: cta("Login", "https://www.teamrollouts.com/sign-in"),
+  navSecondaryCta: cta("Login", "https://app.teamrollouts.com/sign-in"),
 
   footerNewsletter: {
     headlineTop: "Get release intel",
@@ -682,7 +682,7 @@ docs.push({
     headlineBottom: "Upgrade when you're ready.",
     headline: "Start free.",
     subhead: "Start using it with no commitment. Free forever for one artist, or unlock the full platform with Pro — 30 days free.",
-    cta: cta("Try Pro free for 30 days", "/pricing"),
+    cta: cta("Try Pro free for 30 days", "https://app.teamrollouts.com/onboarding?plan=pro&period=yearly"),
   },
   billingToggle: { yearlyLabel: "Yearly", monthlyLabel: "Monthly", yearlySaveTag: "Save ~20%" },
   tiers: [
@@ -697,7 +697,7 @@ docs.push({
       period: "forever",
       thenText: "No catch. That's a promise.",
       ctaLabel: "Get started free",
-      ctaHref: "https://www.teamrollouts.com/onboarding?plan=free&period=yearly",
+      ctaHref: "https://app.teamrollouts.com/onboarding?plan=free&period=yearly",
       includesLabel: "Includes:",
       features: ["1 artist", "Unlimited releases", "1 seat", "1 collaborator", "1 workspace", "Unlimited stacks", "TeamMate AI included", "Intelligence (Basic)", "Rollout Plan", "Budget Management"],
       compareLink: "#compare",
@@ -718,7 +718,7 @@ docs.push({
       thenText: "Then $19.99/month per seat",
       billingNote: "billed yearly",
       ctaLabel: "Start your free trial",
-      ctaHref: "https://www.teamrollouts.com/onboarding?plan=pro&period=yearly",
+      ctaHref: "https://app.teamrollouts.com/onboarding?plan=pro&period=yearly",
       includesLabel: "Everything in Free, plus:",
       badge: "Limited time pricing",
       features: ["Unlimited artists", "2 premium seats", "Unlimited collaborators (Timeline access)", "Unlimited workspaces", "TeamMate AI included", "Intelligence (Comprehensive)", "TeamMate Email & Text", "Press Tour", "Tour Management", "Document Ingestion", "Team Chat", "Reports & Sharing", "Command Center", "Priority support"],

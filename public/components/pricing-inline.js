@@ -21,7 +21,7 @@
       if (plan === 'free') {
         // Update CTA link period param
         const cta = card.querySelector('[data-cta]');
-        if (cta) cta.href = 'https://www.teamrollouts.com/onboarding?plan=free&period=' + period;
+        if (cta) cta.href = 'https://app.teamrollouts.com/onboarding?plan=free&period=' + period;
         return;
       }
 
@@ -39,7 +39,7 @@
         }
       }
       if (billingEl) billingEl.textContent = 'billed ' + period;
-      if (cta) cta.href = 'https://www.teamrollouts.com/onboarding?plan=' + plan + '&period=' + period;
+      if (cta) cta.href = 'https://app.teamrollouts.com/onboarding?plan=' + plan + '&period=' + period;
     });
   }
 

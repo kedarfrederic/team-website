@@ -58,7 +58,7 @@
     changelog: '/changelog',
     // Right nav
     pricing: '/pricing',
-    login: 'https://www.teamrollouts.com/sign-in',
+    login: 'https://app.teamrollouts.com/sign-in',
     signup: '/onboarding',
     // Status (TODO: replace with real status page URL once provisioned)
     status: '#status',

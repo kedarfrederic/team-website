@@ -1,6 +1,6 @@
 (function() {
   // Cutover swap: change to https://app.teamrollouts.com/... when DNS flips
-  var WEBHOOK_URL = 'https://teamrollouts.com/api/forms/demo';
+  var WEBHOOK_URL = 'https://app.teamrollouts.com/api/forms/demo';
 
   var form = document.getElementById('demoForm');
   var submitBtn = document.getElementById('submitBtn');
