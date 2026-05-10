@@ -113,7 +113,7 @@ const chatCopy = {
   aiTimestamp: chat.aiTimestamp ?? "TeamMate · just now",
   aiPrefix: chat.aiPrefix ?? "Done. I've added",
   aiTaskCount: chat.aiTaskCount ?? "6 tasks",
-  aiSuffix: chat.aiSuffix ?? "to the Arcadia timeline covering social teasers, playlist pitch, press run, and launch week.",
+  aiSuffix: chat.aiSuffix ?? "to the Late Reply timeline covering social teasers, playlist pitch, press run, and launch week.",
   replyPlaceholder: chat.replyPlaceholder ?? "Reply to TeamMate...",
 };
 
@@ -146,15 +146,15 @@ function pillFg(color: string | undefined): string {
 }
 
 const DEFAULT_RELEASES: Required<Omit<DemoRelease, "artwork">>[] = [
-  { title: "Arcadia", artist: "Marlowe Sky", releaseDate: "29 May 2026", status: "In Progress", progressPercent: 35 },
-  { title: "Velvet Static", artist: "Kite Harlan", releaseDate: "12 Jun 2026", status: "Promo", progressPercent: 60 },
-  { title: "Cedar & Honey", artist: "Orra Lane", releaseDate: "12 Jun 2026", status: "Planning", progressPercent: 60 },
-  { title: "Deadreckon", artist: "Juno Palm", releaseDate: "2 May 2026", status: "Released", progressPercent: 100 },
-  { title: "Ember Pact", artist: "Sable Roux", releaseDate: "5 Jul 2026", status: "Active", progressPercent: 45 },
-  { title: "Lowtide", artist: "Nine Twenty", releaseDate: "14 Aug 2026", status: "Planning", progressPercent: 10 },
-  { title: "Analog Soul", artist: "Petra Vox", releaseDate: "28 Jun 2026", status: "Promo", progressPercent: 70 },
-  { title: "Runaway Signal", artist: "Blythe Orson", releaseDate: "9 Jul 2026", status: "Active", progressPercent: 50 },
-  { title: "Marigold", artist: "West Canyon", releaseDate: "21 Aug 2026", status: "Planning", progressPercent: 20 },
+  { title: "Late Reply",     artist: "3shades",  releaseDate: "29 May 2026", status: "In Progress", progressPercent: 35 },
+  { title: "Velvet Static",  artist: "Henli",    releaseDate: "12 Jun 2026", status: "Promo",        progressPercent: 60 },
+  { title: "Cedar & Honey",  artist: "Push Ink", releaseDate: "12 Jun 2026", status: "Planning",     progressPercent: 60 },
+  { title: "Deadreckon",     artist: "3shades",  releaseDate: "2 May 2026",  status: "Released",     progressPercent: 100 },
+  { title: "Ember Pact",     artist: "Henli",    releaseDate: "5 Jul 2026",  status: "Active",       progressPercent: 45 },
+  { title: "Lowtide",        artist: "Push Ink", releaseDate: "14 Aug 2026", status: "Planning",     progressPercent: 10 },
+  { title: "Analog Soul",    artist: "3shades",  releaseDate: "28 Jun 2026", status: "Promo",        progressPercent: 70 },
+  { title: "Runaway Signal", artist: "Henli",    releaseDate: "9 Jul 2026",  status: "Active",       progressPercent: 50 },
+  { title: "Marigold",       artist: "Push Ink", releaseDate: "21 Aug 2026", status: "Planning",     progressPercent: 20 },
 ];
 
 const sourceReleases = data?.demoReleases ?? [];
@@ -234,8 +234,8 @@ const timelineSrc = `${iframeSrc}/Timeline.html`;
 
 // ── Timeline (zoomed-in release view, post-loading) ─────────────────────
 const tlRelease = data?.timelineRelease ?? {};
-const timelineTitle = tlRelease.title ?? "Arcadia";
-const timelineMeta = tlRelease.meta ?? "Marlowe Sky · Release · 29 May 2026";
+const timelineTitle = tlRelease.title ?? "Late Reply";
+const timelineMeta = tlRelease.meta ?? "3shades · Release · 29 May 2026";
 const timelineArtworkUrl = tlRelease.artwork?.asset
   ? urlFor(tlRelease.artwork).width(72).quality(85).format("webp").url()
   : undefined;
@@ -252,27 +252,27 @@ const weekSummary = data?.timelineWeekSummary ?? "11 tasks · 1 late · 3 done";
 
 const DEFAULT_DAYS: TimelineDay[] = [
   { dayNumber: "13", dayLabel: "Fri", tasks: [
-    { status: "done", time: "9 AM", title: "Finalise cover artwork v4", category: "Marketing", categoryColor: "marketing", assignees: [{ initials: "JR", color: "orangeRed" }] },
-    { status: "done", time: "2 PM", title: "Pre-save link QA across DSPs", category: "Distribution", categoryColor: "distribution", assignees: [{ initials: "SL", color: "blueIndigo" }] },
-    { status: "done", time: "5 PM", title: "Brief press photographer", category: "PR", categoryColor: "pr", assignees: [{ initials: "MK", color: "pinkViolet" }] },
+    { status: "done", time: "9 AM", title: "Finalise cover artwork v4", category: "Marketing", categoryColor: "marketing", assignees: [{ initials: "LF", color: "orangeRed" }] },
+    { status: "done", time: "2 PM", title: "Pre-save link QA across DSPs", category: "Distribution", categoryColor: "distribution", assignees: [{ initials: "SK", color: "blueIndigo" }] },
+    { status: "done", time: "5 PM", title: "Brief press photographer", category: "PR", categoryColor: "pr", assignees: [{ initials: "ML", color: "pinkViolet" }] },
   ]},
   { dayNumber: "14", dayLabel: "Sat", tasks: [
-    { status: "active", time: "11 AM", title: "Instagram teaser #1", category: "Social", categoryColor: "social", assignees: [{ initials: "AK", color: "cyanBlue" }] },
-    { status: "active", time: "4 PM", title: "TikTok challenge launch", category: "Social", categoryColor: "social", assignees: [{ initials: "TB", color: "orangeBurst" }] },
+    { status: "active", time: "11 AM", title: "Instagram teaser #1", category: "Social", categoryColor: "social", assignees: [{ initials: "KD", color: "cyanBlue" }] },
+    { status: "active", time: "4 PM", title: "TikTok challenge launch", category: "Social", categoryColor: "social", assignees: [{ initials: "HM", color: "orangeBurst" }] },
   ]},
   { dayNumber: "15", dayLabel: "Sun", badge: "TODAY", badgeStyle: "today", tasks: [
-    { status: "late", statusLabel: "LATE · 2 DAYS", time: "10 AM", title: "Spotify playlist pitch", category: "A&R", categoryColor: "ar", assignees: [{ initials: "DR", color: "greenEmerald" }] },
-    { status: "active", time: "3 PM", title: "Upload Spotify Canvas", category: "Content", categoryColor: "content", assignees: [{ initials: "NL", color: "purplePink" }] },
-    { status: "active", time: "6 PM", title: "Send fan newsletter", subtitle: "28,430 subscribers", category: "Marketing", categoryColor: "marketing", assignees: [{ initials: "JR", color: "orangeRed" }] },
+    { status: "late", statusLabel: "LATE · 2 DAYS", time: "10 AM", title: "Spotify playlist pitch", category: "A&R", categoryColor: "ar", assignees: [{ initials: "PP", color: "greenEmerald" }] },
+    { status: "active", time: "3 PM", title: "Upload Spotify Canvas", category: "Content", categoryColor: "content", assignees: [{ initials: "CG", color: "purplePink" }] },
+    { status: "active", time: "6 PM", title: "Send fan newsletter", subtitle: "28,430 subscribers", category: "Marketing", categoryColor: "marketing", assignees: [{ initials: "LF", color: "orangeRed" }] },
   ]},
   { dayNumber: "16", dayLabel: "Mon", tasks: [
-    { status: "pending", time: "8 AM", title: "Press embargo lifts", category: "PR", categoryColor: "pr", assignees: [{ initials: "MK", color: "pinkViolet" }] },
-    { status: "pending", time: "12 PM", title: "Radio plugger follow-up", category: "Radio", categoryColor: "radio", assignees: [{ initials: "RV", color: "skyCyan" }] },
-    { status: "pending", time: "3 PM", title: "Merch store go-live", category: "Commerce", categoryColor: "commerce", assignees: [{ initials: "EO", color: "lime" }] },
+    { status: "pending", time: "8 AM", title: "Press embargo lifts", category: "PR", categoryColor: "pr", assignees: [{ initials: "ML", color: "pinkViolet" }] },
+    { status: "pending", time: "12 PM", title: "Radio plugger follow-up", category: "Radio", categoryColor: "radio", assignees: [{ initials: "PP", color: "skyCyan" }] },
+    { status: "pending", time: "3 PM", title: "Merch store go-live", category: "Commerce", categoryColor: "commerce", assignees: [{ initials: "KD", color: "lime" }] },
   ]},
   { dayNumber: "17", dayLabel: "Tue", badge: "RELEASE", badgeStyle: "release", tasks: [
-    { status: "pending", time: "10 AM", title: "Lyric video premiere", category: "Video", categoryColor: "video", assignees: [{ initials: "NL", color: "purplePink" }] },
-    { status: "pending", time: "7 PM", title: "Launch party · Brooklyn", subtitle: "Baby's All Right · 180 RSVPs", category: "Events", categoryColor: "events", assignees: [{ initials: "AK", color: "cyanBlue" }, { initials: "JR", color: "orangeRed" }] },
+    { status: "pending", time: "10 AM", title: "Lyric video premiere", category: "Video", categoryColor: "video", assignees: [{ initials: "CG", color: "purplePink" }] },
+    { status: "pending", time: "7 PM", title: "Launch party · Brooklyn", subtitle: "Baby's All Right · 180 RSVPs", category: "Events", categoryColor: "events", assignees: [{ initials: "KD", color: "cyanBlue" }, { initials: "LF", color: "orangeRed" }] },
   ]},
 ];
 const sourceDays = data?.timelineDays && data.timelineDays.length > 0 ? data.timelineDays : DEFAULT_DAYS;
