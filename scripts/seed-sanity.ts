@@ -485,10 +485,12 @@ docs.push({
     video: { src: "/assets/brain-1-web.mp4" },
   },
   integrationsMarquee: {
-    headlineTop: "Connects to",
-    headlineBottom: "your tech stack",
-    headline: "Connects to your tech stack",
-    subhead: "Works with the tools your team already uses. No migration, no disruption.",
+    headlineTop: "These weren't built for",
+    headlineBottom: "your release stack",
+    headline: "These weren't built for your release stack",
+    subhead: "General-purpose tools weren't built for how we run releases.",
+    ctaLabel: "Try it for free",
+    ctaHref: "https://app.teamrollouts.com/onboarding?plan=pro&period=yearly",
     logos: [
       { _key: "asana", _type: "marqueeLogo", name: "Asana", logoUrl: "https://cdn.simpleicons.org/asana" },
       { _key: "jira", _type: "marqueeLogo", name: "Jira", logoUrl: "https://cdn.simpleicons.org/jira" },

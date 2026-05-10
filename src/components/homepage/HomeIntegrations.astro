@@ -24,14 +24,18 @@ interface Props {
     headlineBottom?: string;
     headline?: string;
     subhead?: string;
+    ctaLabel?: string;
+    ctaHref?: string;
     logos?: Logo[];
   };
 }
 
 const { data } = Astro.props;
-const headlineTop = data?.headlineTop ?? data?.headline ?? "Connects to";
-const headlineBottom = data?.headlineBottom ?? "your tech stack";
-const subhead = data?.subhead ?? "Works with the tools your team already uses. No migration, no disruption.";
+const headlineTop = data?.headlineTop ?? data?.headline ?? "These weren't built for";
+const headlineBottom = data?.headlineBottom ?? "your release stack";
+const subhead = data?.subhead ?? "General-purpose tools weren't built for how we run releases.";
+const ctaLabel = data?.ctaLabel ?? "Try it for free";
+const ctaHref = data?.ctaHref ?? "https://app.teamrollouts.com/onboarding?plan=pro&period=yearly";
 
 const DEFAULT_LOGOS: Logo[] = [
   { name: "Asana", logoUrl: "https://cdn.simpleicons.org/asana" },
@@ -99,5 +103,9 @@ const ROW_2: ResolvedLogo[] = [...ROW_1.slice(half), ...ROW_1.slice(0, half)];
         ))}
       </div>
     </div>
+  </div>
+
+  <div class="container container--center" style="margin-top:2.5rem;text-align:center">
+    <a href={ctaHref} class="btn btn--primary">{ctaLabel}</a>
   </div>
 </section>
