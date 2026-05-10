@@ -176,7 +176,8 @@ a.nav__cta:hover{color:#111 !important;background:rgba(255,255,255,0.75);backdro
 
 /* ── Pain/Solution — Alternating 2-col ── */
 .pain-section{
-  padding:6rem 2rem;
+  /* Pin the headline tight to the hero handoff — match about + integrations */
+  padding:0 2rem 5rem;
   background:#fff;
 }
 .pain-section__inner{
