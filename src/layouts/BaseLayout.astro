@@ -6,6 +6,7 @@ import { getClient, isPreviewRequest, urlFor } from "../lib/sanity";
 import VisualEditing from "../components/VisualEditing.astro";
 import Footer from "../components/Footer.astro";
 import Nav from "../components/Nav.astro";
+import { v } from "../lib/asset-url";
 
 interface SeoBlock {
   metaTitle?: string;
@@ -57,7 +58,6 @@ const noIndex = seo?.noIndex === true || previewMode;
 const canonicalUrl =
   canonical ?? new URL(Astro.url.pathname, Astro.site ?? "https://teamrollouts.com").toString();
 ---
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -130,8 +130,8 @@ const canonicalUrl =
 
   <!-- Nav + footer CSS hoisted to head to prevent FOUC of large unstyled
        logo + plain-text link list when navigating between pages. -->
-  <link rel="stylesheet" href="/components/nav.css" />
-  <link rel="stylesheet" href="/components/footer.css" />
+  <link rel="stylesheet" href={v("/components/nav.css")} />
+  <link rel="stylesheet" href={v("/components/footer.css")} />
 
   <!-- Critical nav layout — inlined as a defensive measure so the nav
        NEVER renders unstyled even if /components/nav.css is delayed by
@@ -191,7 +191,7 @@ const canonicalUrl =
 
   <Footer settings={settings} />
 
-  <script src="/components/nav.js" defer></script>
+  <script src={v("/components/nav.js")} defer></script>
 
   {/*
     Visual Editing overlay — always mount so Studio's Presentation tool

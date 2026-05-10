@@ -3,19 +3,19 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import IcpPage from "../components/pages/IcpPage.astro";
 import { getIcpPage } from "../lib/queries";
 import { getClient } from "../lib/sanity";
+import { v } from "../lib/asset-url";
 
 const page = await getIcpPage("forArtistsPage", getClient(Astro));
 ---
-
 <BaseLayout
   title={page?.hero?.headlineTop ?? page?.hero?.headline ?? "For Artists"}
   description={page?.hero?.subhead ?? "Focus on your music. Team handles the rest."}
   seo={page?.seo}
   navTheme="dark"
 >
-  <link slot="head" rel="stylesheet" href="/components/for-artists-inline.css" />
+  <link slot="head" rel="stylesheet" href={v("/components/for-artists-inline.css")} />
 
   <IcpPage page={page} icpKey="artists" />
 
-  <script is:inline src="/components/for-artists-inline.js"></script>
+  <script is:inline src={v("/components/for-artists-inline.js")}></script>
 </BaseLayout>

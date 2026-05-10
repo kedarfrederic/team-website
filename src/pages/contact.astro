@@ -4,6 +4,7 @@ import Wordmark from "../components/Wordmark.astro";
 import SplitHeadline from "../components/SplitHeadline.astro";
 import { getContactPage } from "../lib/queries";
 import { getClient, urlFor } from "../lib/sanity";
+import { v } from "../lib/asset-url";
 
 const page = await getContactPage(getClient(Astro));
 
@@ -35,14 +36,13 @@ const interestOptions: InterestOption[] =
         { label: "Team for Enterprise", value: "enterprise" },
       ];
 ---
-
 <BaseLayout
   title={headlineTop + (headlineBottom ? " " + headlineBottom : "")}
   description={subhead.replace(/\n/g, " ")}
   seo={page?.seo}
   navTheme="dark"
 >
-  <link slot="head" rel="stylesheet" href="/components/contact-inline.css" />
+  <link slot="head" rel="stylesheet" href={v("/components/contact-inline.css")} />
 
   <div class="contact-bg">
     <img src={bgUrl} alt="" loading="eager" />
@@ -100,5 +100,5 @@ const interestOptions: InterestOption[] =
     <Wordmark href="/" />
   </div>
 
-  <script is:inline src="/components/contact-inline.js"></script>
+  <script is:inline src={v("/components/contact-inline.js")}></script>
 </BaseLayout>

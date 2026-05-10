@@ -4,6 +4,7 @@ import SplitHeadline from "../components/SplitHeadline.astro";
 import PortableText from "../components/PortableText.astro";
 import { getAboutPage } from "../lib/queries";
 import { getClient, urlFor } from "../lib/sanity";
+import { v } from "../lib/asset-url";
 
 /**
  * About — first fully Sanity-driven page (the canonical Phase 6 reference).
@@ -84,14 +85,13 @@ const rolesCards =
         { title: "For Partners", description: "See your deliverables. Hit your deadlines.", href: "/for-partners" },
       ];
 ---
-
 <BaseLayout
   title={hero.headlineTop ?? "About"}
   description={heroSubhead}
   seo={page?.seo}
   navTheme="dark"
 >
-  <link slot="head" rel="stylesheet" href="/components/about-inline.css" />
+  <link slot="head" rel="stylesheet" href={v("/components/about-inline.css")} />
 
   <section class="icp-hero" id="heroSection">
     <div class="icp-hero__bg"><img src={heroBgUrl} alt="" loading="eager" /></div>
@@ -181,5 +181,5 @@ const rolesCards =
     </div>
   </section>
 
-  <script is:inline src="/components/about-inline.js"></script>
+  <script is:inline src={v("/components/about-inline.js")}></script>
 </BaseLayout>

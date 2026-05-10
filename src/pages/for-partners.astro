@@ -4,6 +4,7 @@ import SplitHeadline from "../components/SplitHeadline.astro";
 import PartnerTabMocks from "../components/pages/PartnerTabMocks.astro";
 import { getPartnerPage } from "../lib/queries";
 import { getClient, urlFor } from "../lib/sanity";
+import { v } from "../lib/asset-url";
 
 const page = await getPartnerPage(getClient(Astro));
 
@@ -130,14 +131,13 @@ const others = Array.isArray(rolesGrid.cards) && rolesGrid.cards.length > 0
       { title: "For Labels", desc: "Manage every release across your entire catalog from one central hub.", href: "/for-labels" },
     ];
 ---
-
 <BaseLayout
   title="For Partners"
   description={heroSubhead}
   seo={page?.seo}
   navTheme="dark"
 >
-  <link slot="head" rel="stylesheet" href="/components/for-partners-inline.css" />
+  <link slot="head" rel="stylesheet" href={v("/components/for-partners-inline.css")} />
 
   <section class="icp-hero" id="heroSection">
     <div class="icp-hero__bg"><img src={heroBgUrl} alt="" loading="eager" /></div>
@@ -306,5 +306,5 @@ const others = Array.isArray(rolesGrid.cards) && rolesGrid.cards.length > 0
     </div>
   </section>
 
-  <script is:inline src="/components/for-partners-inline.js"></script>
+  <script is:inline src={v("/components/for-partners-inline.js")}></script>
 </BaseLayout>

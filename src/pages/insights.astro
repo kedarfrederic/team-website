@@ -3,6 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import SplitHeadline from "../components/SplitHeadline.astro";
 import { getInsightsIndexPage, getInsightPosts } from "../lib/queries";
 import { getClient, urlFor } from "../lib/sanity";
+import { v } from "../lib/asset-url";
 
 const client = getClient(Astro);
 const [page, posts] = await Promise.all([
@@ -123,13 +124,12 @@ function thumbStyle(post: InsightPost): string | undefined {
   return `background-image:url(${url});background-size:cover;background-position:center;`;
 }
 ---
-
 <BaseLayout
   title={hero.headlineTop ? `${hero.headlineTop} ${hero.headlineBottom ?? ""}`.trim() : "Insights"}
   description={heroSubhead}
   seo={page?.seo}
 >
-  <link slot="head" rel="stylesheet" href="/components/insights-inline.css" />
+  <link slot="head" rel="stylesheet" href={v("/components/insights-inline.css")} />
 
   <section class="insights-hero">
     <SplitHeadline as="h1" top={heroTop} bottom={heroBottom} />
@@ -197,5 +197,5 @@ function thumbStyle(post: InsightPost): string | undefined {
     </div>
   </section>
 
-  <script is:inline src="/components/insights-inline.js"></script>
+  <script is:inline src={v("/components/insights-inline.js")}></script>
 </BaseLayout>

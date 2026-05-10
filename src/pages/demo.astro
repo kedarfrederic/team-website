@@ -4,6 +4,7 @@ import Wordmark from "../components/Wordmark.astro";
 import SplitHeadline from "../components/SplitHeadline.astro";
 import { getDemoPage } from "../lib/queries";
 import { getClient, urlFor } from "../lib/sanity";
+import { v } from "../lib/asset-url";
 
 const page = await getDemoPage(getClient(Astro));
 
@@ -22,14 +23,13 @@ const posterUrl = page?.backgroundVideo?.poster?.asset
   ? urlFor(page.backgroundVideo.poster).width(1920).quality(85).format("webp").url()
   : undefined;
 ---
-
 <BaseLayout
   title={headlineTop + (headlineBottom ? " " + headlineBottom : "")}
   description={subhead.replace(/\n/g, " ")}
   seo={page?.seo}
   navTheme="dark"
 >
-  <link slot="head" rel="stylesheet" href="/components/demo-inline.css" />
+  <link slot="head" rel="stylesheet" href={v("/components/demo-inline.css")} />
 
   <div class="demo-video-bg">
     <video autoplay muted loop playsinline poster={posterUrl}>
@@ -103,5 +103,5 @@ const posterUrl = page?.backgroundVideo?.poster?.asset
     <Wordmark href="/" />
   </div>
 
-  <script is:inline src="/components/demo-inline.js"></script>
+  <script is:inline src={v("/components/demo-inline.js")}></script>
 </BaseLayout>

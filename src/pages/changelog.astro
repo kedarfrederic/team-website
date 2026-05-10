@@ -3,6 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import SplitHeadline from "../components/SplitHeadline.astro";
 import { getChangelogPage, getChangelogEntries } from "../lib/queries";
 import { getClient } from "../lib/sanity";
+import { v } from "../lib/asset-url";
 
 const client = getClient(Astro);
 const [page, entries] = await Promise.all([
@@ -130,13 +131,12 @@ function formatDate(iso: string): string {
   });
 }
 ---
-
 <BaseLayout
   title={hero.headlineTop ? `${hero.headlineTop} ${hero.headlineBottom ?? ""}`.trim() : "Changelog"}
   description={heroSubhead}
   seo={page?.seo}
 >
-  <link slot="head" rel="stylesheet" href="/components/changelog-inline.css" />
+  <link slot="head" rel="stylesheet" href={v("/components/changelog-inline.css")} />
 
   <section class="cl-hero">
     <SplitHeadline as="h1" top={heroTop} bottom={heroBottom} />
@@ -180,5 +180,5 @@ function formatDate(iso: string): string {
     <div class="cl-empty" id="clEmpty">No updates found matching your search</div>
   </div>
 
-  <script is:inline src="/components/changelog-inline.js"></script>
+  <script is:inline src={v("/components/changelog-inline.js")}></script>
 </BaseLayout>

@@ -32,6 +32,7 @@ import { getHomepage } from "../lib/queries";
 import { getClient, urlFor } from "../lib/sanity";
 // @ts-expect-error
 import restBHtml from "../lib/homepage-rest-B.html?raw";
+import { v } from "../lib/asset-url";
 
 const page = await getHomepage(getClient(Astro));
 
@@ -55,19 +56,18 @@ const uploadBody = upload.body ?? "Whether you're rolling out a single, EP, or A
 const uploadCta = upload.cta ?? { label: "See how it works", type: "video", href: "#" };
 const uploadCtaIsVideo = uploadCta?.type === "video";
 ---
-
 <BaseLayout
   title={typewriterWords[0] + " " + headlineSuffix}
   description={heroSubhead.replace(/\n/g, " ")}
   seo={page?.seo}
   navTheme="dark"
 >
-  <link slot="head" rel="stylesheet" href="/components/team-home.css" />
+  <link slot="head" rel="stylesheet" href={v("/components/team-home.css")} />
   {/* homepage.css was a near-duplicate of homepage-inline.css (433 vs 435
       selectors, 95% identical content) — leftover from when both a Webflow
       and Astro mount were live. Dropped to remove a render-blocking 80KB
       stylesheet. The Astro mount uses homepage-inline.css. */}
-  <link slot="head" rel="stylesheet" href="/components/homepage-inline.css" />
+  <link slot="head" rel="stylesheet" href={v("/components/homepage-inline.css")} />
   <link slot="head" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
   {/*
@@ -140,6 +140,6 @@ const uploadCtaIsVideo = uploadCta?.type === "video";
   <script is:inline src="https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js"></script>
   <script is:inline src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
-  <script is:inline src="/components/homepage-inline-1.js"></script>
-  <script is:inline src="/components/homepage-inline-2.js"></script>
+  <script is:inline src={v("/components/homepage-inline-1.js")}></script>
+  <script is:inline src={v("/components/homepage-inline-2.js")}></script>
 </BaseLayout>

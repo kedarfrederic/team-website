@@ -1,4 +1,5 @@
 ---
+import { v } from "../../lib/asset-url";
 /**
  * NotificationsHero — animated notification scatter hero.
  *
@@ -50,8 +51,7 @@ const {
 const useTyper = Array.isArray(typewriterWords) && typewriterWords.length > 0;
 const headlineSeed = useTyper ? typewriterWords![0] : headline;
 ---
-
-<link rel="stylesheet" href="/components/notifications-hero.css" />
+<link rel="stylesheet" href={v("/components/notifications-hero.css")} />
 
 <section class="nh-hero" id="nhHero">
   <div class="nh-hero__grain"></div>
@@ -169,4 +169,4 @@ const headlineSeed = useTyper ? typewriterWords![0] : headline;
   </div>
 </section>
 
-<script is:inline src="/components/notifications-hero.js"></script>
+<script is:inline src={v("/components/notifications-hero.js")}></script>

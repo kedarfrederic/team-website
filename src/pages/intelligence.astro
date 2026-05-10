@@ -3,6 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import VerticalProductPage from "../components/pages/VerticalProductPage.astro";
 import { getVerticalProductPage, getSiteSettings } from "../lib/queries";
 import { getClient, urlFor } from "../lib/sanity";
+import { v } from "../lib/asset-url";
 
 const client = getClient(Astro);
 const [page, settings] = await Promise.all([
@@ -94,14 +95,13 @@ const defaults = {
   },
 };
 ---
-
 <BaseLayout
   title={page?.hero?.headlineTop ?? "Intelligence"}
   description={page?.hero?.subhead ?? defaults.hero.subhead}
   seo={page?.seo}
   navTheme="dark"
 >
-  <link slot="head" rel="stylesheet" href="/components/intelligence-inline.css" />
+  <link slot="head" rel="stylesheet" href={v("/components/intelligence-inline.css")} />
 
   <VerticalProductPage page={pageWithAvatar} verticalKey="intelligence" defaults={defaults}>
     <Fragment slot="pain-0">
@@ -312,5 +312,5 @@ const defaults = {
     </Fragment>
   </VerticalProductPage>
 
-  <script is:inline src="/components/intelligence-inline.js"></script>
+  <script is:inline src={v("/components/intelligence-inline.js")}></script>
 </BaseLayout>

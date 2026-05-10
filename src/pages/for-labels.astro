@@ -3,19 +3,19 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import IcpPage from "../components/pages/IcpPage.astro";
 import { getIcpPage } from "../lib/queries";
 import { getClient } from "../lib/sanity";
+import { v } from "../lib/asset-url";
 
 const page = await getIcpPage("forLabelsPage", getClient(Astro));
 ---
-
 <BaseLayout
   title={page?.hero?.headlineTop ?? page?.hero?.headline ?? "For Labels"}
   description={page?.hero?.subhead ?? "Scale your roster. Not your headcount."}
   seo={page?.seo}
   navTheme="dark"
 >
-  <link slot="head" rel="stylesheet" href="/components/for-labels-inline.css" />
+  <link slot="head" rel="stylesheet" href={v("/components/for-labels-inline.css")} />
 
   <IcpPage page={page} icpKey="labels" />
 
-  <script is:inline src="/components/for-labels-inline.js"></script>
+  <script is:inline src={v("/components/for-labels-inline.js")}></script>
 </BaseLayout>

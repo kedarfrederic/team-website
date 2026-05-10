@@ -3,6 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import SplitHeadline from "../components/SplitHeadline.astro";
 import { getIntegrationsPage, getIntegrations } from "../lib/queries";
 import { getClient, urlFor } from "../lib/sanity";
+import { v } from "../lib/asset-url";
 
 const client = getClient(Astro);
 const [page, integrations] = await Promise.all([
@@ -182,14 +183,13 @@ const rolesCards =
         { title: "For Partners", description: "See your deliverables. Hit your deadlines.", href: "/for-partners" },
       ];
 ---
-
 <BaseLayout
   title={hero.headlineTop ?? "Integrations"}
   description={heroSubhead}
   seo={page?.seo}
   navTheme="dark"
 >
-  <link slot="head" rel="stylesheet" href="/components/integrations-inline.css" />
+  <link slot="head" rel="stylesheet" href={v("/components/integrations-inline.css")} />
 
   <section class="icp-hero" id="heroSection">
     <div class="icp-hero__bg"><img src={heroBgUrl} alt="" loading="eager" /></div>
@@ -299,5 +299,5 @@ const rolesCards =
     </div>
   </section>
 
-  <script is:inline src="/components/integrations-inline.js"></script>
+  <script is:inline src={v("/components/integrations-inline.js")}></script>
 </BaseLayout>

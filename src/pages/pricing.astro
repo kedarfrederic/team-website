@@ -4,6 +4,7 @@ import SplitHeadline from "../components/SplitHeadline.astro";
 import { getPricingPage } from "../lib/queries";
 import { getClient } from "../lib/sanity";
 import { toHTML } from "@portabletext/to-html";
+import { v } from "../lib/asset-url";
 
 const page = await getPricingPage(getClient(Astro));
 
@@ -188,13 +189,12 @@ const finalPrimary = finalCta.primaryCta ?? { label: "Start your free trial", hr
 const finalSecondary = finalCta.secondaryCta ?? { label: "Book a demo", href: "/demo" };
 const finalFootnote = finalCta.footnote ?? "30-day free trial.";
 ---
-
 <BaseLayout
   title={heroHeadlineTop}
   description={heroSubhead}
   seo={page?.seo}
 >
-  <link slot="head" rel="stylesheet" href="/components/pricing-inline.css" />
+  <link slot="head" rel="stylesheet" href={v("/components/pricing-inline.css")} />
 
   <section class="pricing-hero">
     <SplitHeadline as="h1" top={heroHeadlineTop} bottom={heroHeadlineBottom} />
@@ -362,5 +362,5 @@ const finalFootnote = finalCta.footnote ?? "30-day free trial.";
     </div>
   </section>
 
-  <script is:inline src="/components/pricing-inline.js"></script>
+  <script is:inline src={v("/components/pricing-inline.js")}></script>
 </BaseLayout>
