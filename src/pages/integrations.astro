@@ -12,12 +12,12 @@ const [page, integrations] = await Promise.all([
 
 // ── Hero ────────────────────────────────────────────────────
 const hero = page?.hero ?? {};
-const heroPill = hero.pillLabel ?? "Integrations";
-const heroTop = hero.headlineTop ?? "Connect Team to";
-const heroBottom = hero.headlineBottom ?? "the tools you already use";
+const heroPill = hero.pillLabel ?? "Coming soon";
+const heroTop = hero.headlineTop ?? "Every signal";
+const heroBottom = hero.headlineBottom ?? "into one strategy";
 const heroSubhead =
   hero.subhead ??
-  "Team works alongside your existing workflow. Plug in the tools your team relies on — from DSPs to social platforms to analytics — and keep everything in sync.";
+  "Team turns the data flowing through your stack — DSPs, social, analytics, ads — into a single coordinated rollout. Native integrations are coming online over the next few months. Here's what's lined up, and how the platform uses each signal.";
 const heroBgUrl = hero.backgroundImage?.asset
   ? urlFor(hero.backgroundImage).width(2400).quality(85).format("webp").url()
   : "/header-images/artist-and-manager-with-platform.webp";
@@ -26,9 +26,9 @@ const secondaryCta = hero.secondaryCta ?? { label: "Book a demo", href: "/demo" 
 
 // ── Grid section ────────────────────────────────────────────
 const grid = page?.gridSection ?? {};
-const gridTop = grid.headlineTop ?? "Built to fit";
-const gridBottom = grid.headlineBottom ?? "your tech stack";
-const gridSubhead = grid.subhead ?? "Team integrates with the platforms that power the music industry";
+const gridTop = grid.headlineTop ?? "Every tool you already use";
+const gridBottom = grid.headlineBottom ?? "feeding one rollout";
+const gridSubhead = grid.subhead ?? "Each integration below maps to a specific moment in the rollout — distribution timing, save velocity, fan engagement, ops handoff. As they come online they become part of the strategy automatically.";
 const searchPlaceholder = grid.searchPlaceholder ?? "Search integrations...";
 
 interface FilterPill { label: string; filterKey: string }
@@ -57,46 +57,52 @@ interface IntegrationDoc {
   name: string;
   description?: string;
   logo?: any;
+  /** External logo URL (used when there's no Sanity-uploaded logo). Pulls
+      from cdn.simpleicons.org / svgl.app / jsdelivr — same CDNs the
+      homepage marquee uses. */
+  logoSrc?: string;
   category: "distribution" | "social" | "analytics" | "productivity";
   comingSoon?: boolean;
   href?: string;
 }
 
 const FALLBACK: IntegrationDoc[] = [
-  { _id: "f1", name: "Spotify", description: "Deliver and track releases on the world's largest streaming platform", category: "distribution" },
-  { _id: "f2", name: "Apple Music", description: "Submit and manage releases across the Apple ecosystem", category: "distribution" },
-  { _id: "f3", name: "Amazon Music", description: "Reach listeners on Amazon's streaming platform", category: "distribution" },
-  { _id: "f4", name: "YouTube Music", description: "Distribute music and videos to YouTube's audience", category: "distribution" },
-  { _id: "f5", name: "Instagram", description: "Plan and schedule content aligned to your release timeline", category: "social" },
-  { _id: "f6", name: "TikTok", description: "Coordinate TikTok campaigns with your rollout", category: "social" },
-  { _id: "f7", name: "Meta Ads", description: "Run and track ad campaigns across Facebook and Instagram", category: "social" },
-  { _id: "f8", name: "X", description: "Schedule posts and track engagement around releases", category: "social" },
-  { _id: "f9", name: "Spotify for Artists", description: "Pull streaming data directly into your release dashboard", category: "analytics" },
-  { _id: "f10", name: "Chartmetric", description: "Track playlist adds, chart positions, and audience growth", category: "analytics" },
-  { _id: "f11", name: "Soundcharts", description: "Monitor cross-platform performance in real-time", category: "analytics" },
-  { _id: "f12", name: "Google Analytics", description: "Track smart link and pre-save campaign performance", category: "analytics" },
-  { _id: "f13", name: "Slack", description: "Get release notifications and updates in your team channels", category: "productivity" },
-  { _id: "f14", name: "Google Workspace", description: "Sync calendars, docs, and assets with your release timeline", category: "productivity" },
-  { _id: "f15", name: "Dropbox", description: "Connect your asset library for seamless file management", category: "productivity" },
-  { _id: "f16", name: "Zapier", description: "Build custom automations between Team and 5,000+ apps", category: "productivity" },
-  { _id: "f17", name: "Bandcamp", description: "Manage Bandcamp releases alongside your DSP strategy", category: "distribution", comingSoon: true },
-  { _id: "f18", name: "SoundCloud", description: "Coordinate SoundCloud uploads with your rollout", category: "distribution", comingSoon: true },
-  { _id: "f19", name: "Mailchimp", description: "Sync fan data and automate release email campaigns", category: "social", comingSoon: true },
-  { _id: "f20", name: "HubSpot", description: "Connect your CRM for deeper fan relationship management", category: "social", comingSoon: true },
+  { _id: "f1",  name: "Spotify",            description: "Deliver and track releases on the world's largest streaming platform", category: "distribution", logoSrc: "https://cdn.simpleicons.org/spotify/1ED760" },
+  { _id: "f2",  name: "Apple Music",        description: "Submit and manage releases across the Apple ecosystem",                  category: "distribution", logoSrc: "https://cdn.simpleicons.org/applemusic/FA243C" },
+  { _id: "f3",  name: "Amazon Music",       description: "Reach listeners on Amazon's streaming platform",                          category: "distribution", logoSrc: "https://cdn.simpleicons.org/amazonmusic/40B4E5" },
+  { _id: "f4",  name: "YouTube Music",      description: "Distribute music and videos to YouTube's audience",                       category: "distribution", logoSrc: "https://cdn.simpleicons.org/youtubemusic/FF0000" },
+  { _id: "f5",  name: "Instagram",          description: "Plan and schedule content aligned to your release timeline",              category: "social",       logoSrc: "https://cdn.simpleicons.org/instagram/E4405F" },
+  { _id: "f6",  name: "TikTok",             description: "Coordinate TikTok campaigns with your rollout",                           category: "social",       logoSrc: "https://cdn.simpleicons.org/tiktok/000000" },
+  { _id: "f7",  name: "Meta Ads",           description: "Run and track ad campaigns across Facebook and Instagram",                category: "social",       logoSrc: "https://cdn.simpleicons.org/meta/0467DF" },
+  { _id: "f8",  name: "X",                  description: "Schedule posts and track engagement around releases",                     category: "social",       logoSrc: "https://cdn.simpleicons.org/x/000000" },
+  { _id: "f9",  name: "Spotify for Artists", description: "Pull streaming data directly into your release dashboard",               category: "analytics",    logoSrc: "https://cdn.simpleicons.org/spotify/1ED760" },
+  { _id: "f10", name: "Chartmetric",        description: "Track playlist adds, chart positions, and audience growth",               category: "analytics",    logoSrc: "https://cdn.simpleicons.org/chartmogul/FF6900" },
+  { _id: "f11", name: "Soundcharts",        description: "Monitor cross-platform performance in real-time",                          category: "analytics",    logoSrc: "https://cdn.simpleicons.org/soundcloud/FF5500" },
+  { _id: "f12", name: "Google Analytics",   description: "Track smart link and pre-save campaign performance",                       category: "analytics",    logoSrc: "https://cdn.simpleicons.org/googleanalytics/E37400" },
+  { _id: "f13", name: "Slack",              description: "Get release notifications and updates in your team channels",            category: "productivity", logoSrc: "https://svgl.app/library/slack.svg" },
+  { _id: "f14", name: "Google Workspace",   description: "Sync calendars, docs, and assets with your release timeline",             category: "productivity", logoSrc: "https://cdn.simpleicons.org/googleworkspace/4285F4" },
+  { _id: "f15", name: "Dropbox",            description: "Connect your asset library for seamless file management",                  category: "productivity", logoSrc: "https://cdn.simpleicons.org/dropbox/0061FF" },
+  { _id: "f16", name: "Zapier",             description: "Build custom automations between Team and 5,000+ apps",                   category: "productivity", logoSrc: "https://cdn.simpleicons.org/zapier/FF4F00" },
+  { _id: "f17", name: "Bandcamp",           description: "Manage Bandcamp releases alongside your DSP strategy",                    category: "distribution", comingSoon: true, logoSrc: "https://cdn.simpleicons.org/bandcamp/408294" },
+  { _id: "f18", name: "SoundCloud",         description: "Coordinate SoundCloud uploads with your rollout",                          category: "distribution", comingSoon: true, logoSrc: "https://cdn.simpleicons.org/soundcloud/FF5500" },
+  { _id: "f19", name: "Mailchimp",          description: "Sync fan data and automate release email campaigns",                       category: "social",       comingSoon: true, logoSrc: "https://cdn.simpleicons.org/mailchimp/FFE01B" },
+  { _id: "f20", name: "HubSpot",            description: "Connect your CRM for deeper fan relationship management",                  category: "social",       comingSoon: true, logoSrc: "https://cdn.simpleicons.org/hubspot/FF7A59" },
 ];
 
 const cards: IntegrationDoc[] =
   Array.isArray(integrations) && integrations.length > 0 ? integrations : FALLBACK;
 
-// ── API section ─────────────────────────────────────────────
+// ── Enterprise section (was "build your own integrations") ────
+// Reframed for enterprise — labels / distributors / management groups
+// who need bespoke connectors into their internal stack.
 const api = page?.apiSection ?? {};
-const apiTop = api.headlineTop ?? "Build your own";
-const apiBottom = api.headlineBottom ?? "integrations";
+const apiTop = api.headlineTop ?? "Need something bespoke?";
+const apiBottom = api.headlineBottom ?? "Built for enterprise teams.";
 const apiBody =
   api.body ??
-  "Need something custom? Team's RESTful API gives you full access to releases, tasks, assets, and analytics. Comprehensive documentation, webhook support, and sandbox environments.";
-const apiCtaLabel = api.ctaLabel ?? "View API documentation";
-const apiCtaHref = api.ctaHref ?? "#";
+  "Major labels, distributors, and management groups often run on internal data warehouses, custom CRMs, and proprietary release tooling. We build dedicated connectors and private endpoints into Team for enterprise customers — including secure SSO, custom data flows, and tailored intelligence pipelines.";
+const apiCtaLabel = api.ctaLabel ?? "Talk to us";
+const apiCtaHref = api.ctaHref ?? "/contact?interest=enterprise";
 
 // ── Roles cross-link ────────────────────────────────────────
 const rolesGrid = page?.rolesGrid ?? {};
@@ -159,8 +165,16 @@ const rolesCards =
           // Cards filed under "coming-soon" data-category to match the legacy filter button.
           const dataCategory = isComingSoon ? "coming-soon" : card.category;
           const cardClass = isComingSoon ? "int-card int-card--soon" : "int-card";
-          const logoStyle = card.logo?.asset
-            ? `background-image:url(${urlFor(card.logo).width(96).format("webp").url()});background-size:contain;background-repeat:no-repeat;background-position:center;`
+          // Logo source priority: Sanity-uploaded > external URL fallback
+          // (cdn.simpleicons.org / svgl.app / jsdelivr — same CDNs the
+          // homepage marquee uses). Empty state if neither is available.
+          const sanityLogo = card.logo?.asset
+            ? urlFor(card.logo).width(96).format("webp").url()
+            : null;
+          const fallbackLogo = (card as any).logoSrc as string | undefined;
+          const logoUrl = sanityLogo ?? fallbackLogo;
+          const logoStyle = logoUrl
+            ? `background-image:url(${logoUrl});background-size:contain;background-repeat:no-repeat;background-position:center;`
             : undefined;
           return (
             <div class={cardClass} data-category={dataCategory} data-name={card.name}>
@@ -188,9 +202,8 @@ const rolesCards =
       </div>
       <div class="api-section__copy">
         <p>{apiBody}</p>
-        <a href={apiCtaHref} class="api-section__link">
-          <span class="api-link-text">{apiCtaLabel}</span>
-          <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+        <a href={apiCtaHref} class="btn btn--primary-light" style="margin-top:1.25rem;display:inline-flex">
+          {apiCtaLabel}
         </a>
       </div>
     </div>
