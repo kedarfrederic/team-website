@@ -971,59 +971,59 @@ const { useState, useEffect, useRef, useMemo, useCallback } = React;
 const HUB_STORIES = [
   {
     cat: 'campaign',
-    title: ['Rollout — ', { ital: 'Midnight Cut' }, ' LP'],
-    meta: 'Campaign · 14 weeks · 48 entities',
+    title: ['Rollout — ', { ital: 'Late Reply' }, ' single'],
+    meta: 'Campaign · 6 weeks · 32 entities · fan-first',
     reason: [
       'teammate clustered this rollout with ',
-      { ital: 'two prior campaigns' },
-      ' in your catalog that performed best at this streaming tier. Same tactic stack, slightly earlier editorial push.',
+      { ital: 'two prior 3shades singles' },
+      ' that converted warm fans into superfans best. Same tactic stack, with the Lyric Scavenger Hunt added as the signature moment for "Late Reply".',
     ],
     cross: [
-      { tag: 'Prior', text: 'Same mix engineer → faster Spotify add on 2 of 3 prior releases.' },
-      { tag: 'Cross',  text: 'College radio contact cluster overlaps with the Oct EP rollout — 82% hit rate there.' },
-      { tag: 'Signal', text: 'Week-1 save-rate pacing at 1.3× the comp set. teammate flagged it for the status thread.' },
+      { tag: 'Prior', text: 'Same warm-fan cohort → 1.7× the DM engagement rate on the last two singles.' },
+      { tag: 'Cross', text: 'Discord Town Hall AMA cluster overlaps with the previous EP rollout — 88% superfan attendance.' },
+      { tag: 'Signal', text: 'TikTok teaser saves pacing 2.1× last single week-over-week. teammate flagged it for the status thread.' },
     ],
   },
   {
     cat: 'decisions',
-    title: ['Pull ', { ital: 'Track 4' }, ' as single 2'],
-    meta: 'Decision · 11 observations behind it · committed Thu',
+    title: ['Lead with ', { ital: 'fan engagement' }, ', not paid push'],
+    meta: 'Decision · 14 observations behind it · committed Mon',
     reason: [
-      'teammate weighed 11 observations from Discord, two A&R calls, and a Shazam pre-save spike. The model shows ',
-      { ital: 'Track 4' },
-      ' correlates with the fan-segment that converted best on the last two rollouts.',
+      'teammate weighed 14 observations from Discord, two listener-party retros, and a Shazam pre-save spike. The pattern: ',
+      { ital: '3shades' },
+      ' converts warm fans through high-context moments (lyric reveals, AMA), not paid impressions.',
     ],
     cross: [
-      { tag: 'Memory', text: 'Matches the pattern from your Feb rollout — fan-first track, not the radio track.' },
-      { tag: 'Ref',    text: 'Manager approved in the thread. See conversation → "so S2 is 4 — locked".' },
+      { tag: 'Memory', text: 'Matches the pattern from the last single — fan-first beat radio-first by 1.4× on saves.' },
+      { tag: 'Ref',    text: 'Manager approved in the thread. See conversation → "fan strategy first — locked".' },
     ],
   },
   {
     cat: 'workflows',
-    title: ['Pre-save ', { ital: 'waterfall' }, ' — live'],
-    meta: 'Workflow · 7 steps · 4 automated',
+    title: ['Lyric ', { ital: 'scavenger hunt' }, ' — scheduled'],
+    meta: 'Workflow · 9 fragments · 3 channels',
     reason: [
-      'Started 21 days pre-release, staggered by DSP. teammate auto-fills assets from the campaign brief and ',
-      { ital: 'asks only when something changed' },
-      '.',
+      'Nine lyric fragments staggered across IG Stories, TikTok captions, and YT community posts. Each links to the next — final one unlocks the ',
+      { ital: 'pre-save' },
+      '. teammate auto-fills assets from the campaign brief.',
     ],
     cross: [
-      { tag: 'Reuse', text: 'Template from Midnight Cut — edited once, now a permanent team preset.' },
-      { tag: 'Watch', text: 'TikTok artwork variant is flagged — aspect ratio differs from last rollout.' },
+      { tag: 'Reuse', text: 'Template from the last single — edited once, now a permanent team preset.' },
+      { tag: 'Watch', text: 'TikTok caption variant flagged — character limit hit on fragment 4.' },
     ],
   },
   {
     cat: 'observations',
-    title: ['Spotify add — ', { ital: 'New Music Friday' }],
+    title: ['Superfan signal — ', { ital: 'Discord pre-save spike' }],
     meta: 'Observation · confirmed 11:02 ET',
     reason: [
-      'Spotify editorial contact confirmed placement. teammate cross-checked against your ',
-      { ital: 'goal sheet' },
-      ' — this is the editorial target you set in the campaign brief.',
+      'Discord superfan cohort hit 78% pre-save in 24h after the agenda drop. teammate cross-checked against your ',
+      { ital: 'fan-engagement goal sheet' },
+      ' — that\'s the conversion target you set for the AMA.',
     ],
     cross: [
-      { tag: 'Memory', text: 'You\'ve hit NMF 4 of the last 6 releases — the pitch cadence in weeks -6 / -3 is the driver.' },
-      { tag: 'Next',   text: 'teammate drafted a short thank-you to the editor. Awaiting your ok.' },
+      { tag: 'Memory', text: 'You\'ve hit superfan pre-save target 4 of 6 releases — Town Hall agenda cadence is the driver.' },
+      { tag: 'Next',   text: 'teammate drafted a thank-you DM batch for the top 50. Awaiting your ok.' },
     ],
   },
 ];
@@ -1160,14 +1160,14 @@ function App() {
   useEffect(() => {
     if (!playing) return;
     const sources = [
-      { cat: 'observations',  text: 'Stream spike — TikTok sound',  dim: '14s ago' },
-      { cat: 'conversations', text: 'Manager text — "pitch is in"', dim: '22s ago' },
-      { cat: 'task',          text: 'Artwork v3 approved',          dim: '38s ago' },
-      { cat: 'observations',  text: 'Spotify editorial confirmed',  dim: '1m ago' },
-      { cat: 'decisions',     text: 'Track 4 locked as Single 2',   dim: '3m ago' },
-      { cat: 'tactic',        text: 'College radio push scheduled', dim: '5m ago' },
-      { cat: 'observations',  text: 'Shazam pre-save +18%',         dim: '7m ago' },
-      { cat: 'workflows',     text: 'Waterfall step 3 auto-ran',    dim: '9m ago' },
+      { cat: 'observations',  text: 'TikTok teaser saves +2.1×',         dim: '14s ago' },
+      { cat: 'conversations', text: 'Discord — superfan AMA RSVP spike', dim: '22s ago' },
+      { cat: 'task',          text: 'Lyric Hunt fragment 4 approved',    dim: '38s ago' },
+      { cat: 'observations',  text: 'Pre-save spike — Discord cohort',   dim: '1m ago' },
+      { cat: 'decisions',     text: 'Lead with fan engagement — locked', dim: '3m ago' },
+      { cat: 'tactic',        text: 'Twitch listening party scheduled',  dim: '5m ago' },
+      { cat: 'observations',  text: 'Superfan DM open rate 78%',         dim: '7m ago' },
+      { cat: 'workflows',     text: 'Scavenger hunt step 4 auto-ran',    dim: '9m ago' },
     ];
     let i = Math.floor(Math.random() * sources.length);
     const push = () => {
@@ -1546,7 +1546,7 @@ function App() {
         <div className="brand">
           <span style={{display:'inline-block',width:18,height:18,borderRadius:4,background:'linear-gradient(90deg,#3B0F08 0%,#8C1F13 20%,#E83E18 40%,#F25A22 55%,#F4833E 70%,#F2A56B 85%,#E8C4A0 100%)'}}/>
           <span className="sep"/>
-          <span className="crumb">Memory graph · Midnight Cut LP</span>
+          <span className="crumb">Memory graph · 3shades — Late Reply</span>
         </div>
 
         {/* Tweaks */}

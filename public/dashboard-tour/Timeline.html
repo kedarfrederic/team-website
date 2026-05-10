@@ -127,9 +127,9 @@
 }
 .chat-head .tm-badge {
   width: 28px; height: 28px; border-radius: 8px;
-  background: var(--ink-900);
+  background: var(--paper-100);
+  border: 1px solid var(--card-border);
   display: grid; place-items: center;
-  color: var(--lime-500);
   flex: none;
 }
 .chat-head .who {
@@ -410,9 +410,9 @@
 .chat .rail { display: none; }
 .chat.collapsed .rail .tm-badge {
   width: 34px; height: 34px; border-radius: 10px;
-  background: var(--ink-900);
+  background: var(--paper-100);
+  border: 1px solid var(--card-border);
   display: grid; place-items: center;
-  color: var(--lime-500);
 }
 .rail-btn {
   width: 34px; height: 34px; border-radius: 10px;
@@ -1083,6 +1083,25 @@ const mk = (path, opts = {}) => {
 };
 
 // Sidebar + nav icons (custom geometric style — not Lucide)
+// Team logomark — inline SVG so the chat badge shows the real brand mark
+// instead of a generic icon. Uses the ember palette (logo gradient stack).
+const TeamLogomark = ({ size = 18 }) => {
+  const bars = [
+    { x: 2,  y: 9,  w: 3, h: 14, c: '#3B0F08' },
+    { x: 6,  y: 5,  w: 3, h: 22, c: '#8C1F13' },
+    { x: 10, y: 7,  w: 3, h: 18, c: '#BF2A14' },
+    { x: 14, y: 3,  w: 3, h: 26, c: '#E83E18' },
+    { x: 18, y: 6,  w: 3, h: 20, c: '#F25A22' },
+    { x: 22, y: 8,  w: 3, h: 16, c: '#F4833E' },
+    { x: 26, y: 4,  w: 3, h: 24, c: '#DCD1C5' },
+  ];
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" fill="none" aria-hidden="true">
+      {bars.map((b, i) => <rect key={i} x={b.x} y={b.y} width={b.w} height={b.h} rx="0.5" fill={b.c}/>)}
+    </svg>
+  );
+};
+
 const Icon = {
   // Tuning fork (Command Center) — vertical forks with a diamond base
   Tuning: ({size=15}) => (
@@ -1344,93 +1363,97 @@ const ROLLOUT_POSTER = {
   isPoster: true,
 };
 
-// Release-week tasks for 3shades' single "Late Reply". 18 tasks across the
-// 7-day grid, weighted realistically: Mon-Tue mostly Done (pre-week setup),
-// Wed (today) is the chaos column with a Blocked, Thu critical pre-launch,
-// Fri the release day itself, Sat-Sun post-release.
+// Release-week tasks for 3shades' single "Late Reply" — every task is a
+// concrete fan-engagement move because that's what Teammate was asked to
+// build in the chat scroll above this section. Mon-Tue audit + setup,
+// Wed (today) the activation columns going live, Thu pre-release prep,
+// Fri release day with the live moments, Sat-Sun deep-fan + retro.
 const TASKS = [
-  // MON 18 — pre-week setup (Done)
-  { id: 't1',  day: 'mon18', title: 'Lock pre-save links across all DSPs',                  dept: 'Distribution', color: 'sun',     status: 'Done',    budget: null,  assignee: 'SC', priority: 'High',   time: null,    subtasks: '6/6' },
-  { id: 't2',  day: 'mon18', title: 'Confirm Spotify Canvas + Apple Animated Cover',         dept: 'Content',      color: 'olive',   status: 'Done',    budget: null,  assignee: 'MT', priority: 'High',   time: null,    subtasks: '4/4' },
+  // MON 18 — fan audit + segment mapping
+  { id: 't1',  day: 'mon18', title: 'Map fan persona segments — top 5 cohorts by engagement',          dept: 'Strategy',  color: 'olive',   status: 'Done',    budget: null,  assignee: 'SC', priority: 'High',   time: null,    subtasks: '5/5' },
+  { id: 't2',  day: 'mon18', title: 'Audit superfan list — last 90d activity + DM history',            dept: 'Community', color: 'cream',   status: 'Done',    budget: null,  assignee: 'MT', priority: 'High',   time: null,    subtasks: '4/4' },
 
-  // TUE 19 — kick-off
-  { id: 't3',  day: 'tue19', title: 'Send single cover + WAV to Jake (DSP delivery)',        dept: 'Distribution', color: 'sun',     status: 'Done',    budget: null,  assignee: 'SC', priority: 'High',   time: null,    subtasks: '3/3' },
-  { id: 't4',  day: 'tue19', title: 'TikTok creator brief — finalize 3 partners',            dept: 'Social',       color: 'cream',   status: 'Active',  budget: 1200,  assignee: 'MT', priority: 'High',   time: '14:00', subtasks: '5/7' },
-  { id: 't5',  day: 'tue19', title: 'Press list — confirm Wed embargo time',                 dept: 'PR',           color: 'red',     status: 'Active',  budget: null,  assignee: 'LR', priority: 'Medium', time: '16:00', subtasks: '0/3' },
+  // TUE 19 — activation kit
+  { id: 't3',  day: 'tue19', title: 'TikTok creator brief — fan-discovery DJ remix angle',              dept: 'Creator',   color: 'cream',   status: 'Active',  budget: 1500,  assignee: 'MT', priority: 'High',   time: '14:00', subtasks: '5/7' },
+  { id: 't4',  day: 'tue19', title: 'Discord Town Hall AMA — agenda + giveaway tier logic',             dept: 'Community', color: 'sun',     status: 'Active',  budget: 400,   assignee: 'JK', priority: 'High',   time: '16:00', subtasks: '3/5' },
+  { id: 't5',  day: 'tue19', title: 'Personalized DM batch — top 50 superfans (warm tone)',             dept: 'Community', color: 'cream',   status: 'Active',  budget: null,  assignee: 'MT', priority: 'Medium', time: '11:00', subtasks: '12/50' },
 
-  // WED 20 — TODAY (chaos column)
-  { id: 't6',  day: 'wed20', title: 'Meta ads — approve static + 15s spot',                  dept: 'Marketing',    color: 'ember',   status: 'Active',  budget: 4500,  assignee: 'JK', priority: 'High',   time: '11:00', subtasks: '2/4' },
-  { id: 't7',  day: 'wed20', title: 'Twitch announce — DJ clip + cohost lock-in',            dept: 'Marketing',    color: 'brick',   status: 'Blocked', budget: 800,   assignee: 'JK', priority: 'Medium', time: '15:00', subtasks: '0/4' },
-  { id: 't8',  day: 'wed20', title: 'Spotify Canvas QA + reupload',                          dept: 'Content',      color: 'olive',   status: 'Active',  budget: null,  assignee: 'MT', priority: 'Medium', time: '14:00', subtasks: '1/2' },
-  { id: 't9',  day: 'wed20', title: 'Pre-save campaign final copy review',                   dept: 'Marketing',    color: 'sun',     status: 'Active',  budget: null,  assignee: 'SC', priority: 'High',   time: '16:00', subtasks: '2/3' },
+  // WED 20 — TODAY: signature moment goes live
+  { id: 't6',  day: 'wed20', title: 'Lyric Scavenger Hunt — IG / TikTok / YT schedule',                 dept: 'Social',    color: 'ember',   status: 'Active',  budget: null,  assignee: 'MT', priority: 'High',   time: '10:00', subtasks: '4/9' },
+  { id: 't7',  day: 'wed20', title: 'Twitch streamer cohort — finalise 3 partners',                     dept: 'Creator',   color: 'brick',   status: 'Blocked', budget: 800,   assignee: 'JK', priority: 'Medium', time: '15:00', subtasks: '0/4', blockedReason: 'Awaiting cohost confirmation' },
+  { id: 't8',  day: 'wed20', title: 'Behind-the-track audio commentary unlock — record',                dept: 'Content',   color: 'olive',   status: 'Active',  budget: null,  assignee: 'SC', priority: 'Medium', time: '14:00', subtasks: '1/2' },
+  { id: 't9',  day: 'wed20', title: 'Pre-save fan campaign — final copy + CTA review',                  dept: 'Marketing', color: 'sun',     status: 'Active',  budget: null,  assignee: 'SC', priority: 'High',   time: '16:00', subtasks: '2/3' },
 
-  // THU 21 — critical pre-launch
-  { id: 't10', day: 'thu21', title: 'Press release distribution prep — 14 outlets',          dept: 'PR',           color: 'red',     status: 'Active',  budget: null,  assignee: 'LR', priority: 'High',   time: '09:00', subtasks: '4/14' },
-  { id: 't11', day: 'thu21', title: 'Day-of social rollout asset stack QA',                  dept: 'Social',       color: 'cream',   status: 'Active',  budget: null,  assignee: 'MT', priority: 'High',   time: '12:00', subtasks: '3/9' },
-  { id: 't12', day: 'thu21', title: 'Listening party run-through (Twitch)',                  dept: 'Marketing',    color: 'walnut',  status: 'Active',  budget: null,  assignee: 'JK', priority: 'Medium', time: '18:00', subtasks: '1/6' },
+  // THU 21 — pre-launch fan moments
+  { id: 't10', day: 'thu21', title: 'Pre-release fan playlist drop — embed in newsletter',              dept: 'Email',     color: 'red',     status: 'Active',  budget: null,  assignee: 'LR', priority: 'High',   time: '09:00', subtasks: '2/4' },
+  { id: 't11', day: 'thu21', title: 'Fan-stack QA — 9 day-of posts (IG / TikTok / X)',                  dept: 'Social',    color: 'cream',   status: 'Active',  budget: null,  assignee: 'MT', priority: 'High',   time: '12:00', subtasks: '3/9' },
+  { id: 't12', day: 'thu21', title: 'Twitch listening party run-through (cohost dry run)',              dept: 'Live',      color: 'walnut',  status: 'Active',  budget: null,  assignee: 'JK', priority: 'High',   time: '18:00', subtasks: '1/6' },
 
-  // FRI 22 — RELEASE DAY
-  { id: 't13', day: 'fri22', title: 'Single goes live across DSPs (00:01 ET)',               dept: 'Distribution', color: 'ember',   status: 'Active',  budget: null,  assignee: 'SC', priority: 'Urgent', time: '00:01', subtasks: '0/5' },
-  { id: 't14', day: 'fri22', title: 'Day-of social rollout (IG / TikTok / X)',               dept: 'Social',       color: 'sun',     status: 'Active',  budget: null,  assignee: 'MT', priority: 'High',   time: '08:00', subtasks: '0/9' },
-  { id: 't15', day: 'fri22', title: 'Twitch listening party — go live',                      dept: 'Marketing',    color: 'walnut',  status: 'Active',  budget: null,  assignee: 'JK', priority: 'High',   time: '20:00', subtasks: '0/6' },
+  // FRI 22 — RELEASE DAY: live fan moments
+  { id: 't13', day: 'fri22', title: '"Late Reply" goes live — DSP confirmation moment',                 dept: 'Distribution', color: 'ember', status: 'Active', budget: null,  assignee: 'SC', priority: 'Urgent', time: '00:01', subtasks: '0/5' },
+  { id: 't14', day: 'fri22', title: 'Day-of fan rollout — 9 posts staggered with live DM replies',      dept: 'Social',    color: 'sun',     status: 'Active',  budget: null,  assignee: 'MT', priority: 'High',   time: '08:00', subtasks: '0/9' },
+  { id: 't15', day: 'fri22', title: 'Twitch listening party — live with chat moderation',               dept: 'Live',      color: 'walnut',  status: 'Active',  budget: null,  assignee: 'JK', priority: 'High',   time: '20:00', subtasks: '0/6' },
 
-  // SAT 23 — post-release
-  { id: 't16', day: 'sat23', title: 'Performance check-in: streams, saves, presaves',        dept: 'Strategy',     color: 'olive',   status: 'Active',  budget: null,  assignee: 'SC', priority: 'Medium', time: '11:00', subtasks: '0/4' },
-  { id: 't17', day: 'sat23', title: 'Fan engagement window — DM 50 superfans',               dept: 'Community',    color: 'cream',   status: 'Active',  budget: null,  assignee: 'MT', priority: 'Medium', time: '14:00', subtasks: '0/50' },
+  // SAT 23 — deep-fan window
+  { id: 't16', day: 'sat23', title: 'Fan engagement dashboard — saves, DMs, sentiment',                  dept: 'Strategy',  color: 'olive',   status: 'Active',  budget: null,  assignee: 'SC', priority: 'Medium', time: '11:00', subtasks: '0/4' },
+  { id: 't17', day: 'sat23', title: 'Superfan thank-you DMs — top 50 with personalized line',            dept: 'Community', color: 'cream',   status: 'Active',  budget: null,  assignee: 'MT', priority: 'Medium', time: '14:00', subtasks: '0/50' },
 
   // SUN 24 — retro
-  { id: 't18', day: 'sun24', title: 'Week 1 retro + insights brief',                          dept: 'Strategy',     color: 'walnut',  status: 'Active',  budget: null,  assignee: 'JK', priority: 'Medium', time: '16:00', subtasks: '0/3' },
+  { id: 't18', day: 'sun24', title: 'Fan-engagement retro — what surfaced from listen party + hunt',     dept: 'Strategy',  color: 'walnut',  status: 'Active',  budget: null,  assignee: 'JK', priority: 'Medium', time: '16:00', subtasks: '0/3' },
 ];
 
-// Chat history for the Teammate AI companion. The first two entries hydrate
-// on render; the LIVE_FEED below appends new typed messages on a timer so
-// the drawer feels continuously alive while a visitor watches the section.
+// Chat history for the Teammate AI companion. The seeded user prompt asks
+// Teammate to build a fan-engagement strategy for "Late Reply" — that's
+// the *reason* the timeline below it is full of fan-engagement tasks. The
+// LIVE_FEED below appends new typed messages on a timer so the drawer
+// stays continuously alive while the visitor watches.
 const CHAT_HISTORY = [
   {
     id: 'h1',
     role: 'user',
-    at: '9:42 AM',
-    content: 'Where do we stand on Meta ads for the Late Reply launch?',
+    at: '9:38 AM',
+    content: 'Build a comprehensive release strategy for "Late Reply" focused on fan engagement — superfans first, then warm-discovery. Drop tasks straight into the timeline.',
   },
   {
     id: 'h2',
     role: 'assistant',
-    at: '9:42 AM',
-    thinking: 'Pulling latest from Meta Ads Manager + creative review queue…',
-    content: 'Meta ads launch is in 3 days — confirm the static creative + 15s spot are approved by Friday. Jake has the static (1 round of feedback open), the 15s spot is in legal review.',
+    at: '9:38 AM',
+    thinking: 'Mapping fan cohorts + activation moves across the rollout window…',
+    content: 'Built. Strategy leads with two superfan moments (Discord Town Hall + personalized DM batch) and a signature warm-discovery moment (Lyric Scavenger Hunt across IG/TikTok/YT). 18 tasks are now scheduled across the rollout — see them in the timeline.',
     plan: [
-      { label: 'Static creative — feedback resolved',          done: true  },
-      { label: '15s spot — out of legal review by Wed EOD',    done: false },
-      { label: 'Audience pixel + lookalike segments built',    done: true  },
-      { label: 'Spend pacing locked at $4.5k for week 1',      done: true  },
+      { label: 'Mapped 5 fan cohorts from last 90d engagement',   done: true  },
+      { label: 'Signature moment — Lyric Scavenger Hunt scheduled', done: true  },
+      { label: 'Discord Town Hall AMA agenda + giveaway tier',    done: true  },
+      { label: 'Twitch listening party — cohost lock-in pending', done: false },
     ],
+    changes: { count: 18, label: 'Added 18 tasks' },
   },
 ];
 
-// New messages typed live into the chat drawer on a timer. Mix of
-// operational ("just emailed Jake…"), confirmations ("done — moved…"),
-// and strategic ("here's a plan to engage new fans on Twitch"). Avoids
-// outreach/pitching language — TeamMate coordinates, it doesn't pitch.
+// New messages typed live into the chat drawer on a timer. All
+// fan-engagement focused (matches the strategy Teammate just delivered).
+// Mix of operational confirmations, strategic insights, and a new idea —
+// no outreach/pitching language ("our agent doesn't pitch").
 const LIVE_FEED = [
   {
-    thinking: 'Drafting handoff note + attaching deliverables to Jake…',
-    content: 'Just emailed Jake the single cover (300dpi PNG + AI master) and the WAV. He has everything for the DSP delivery — confirmation due back by EOD.',
+    thinking: 'Drafting town hall agenda + structuring the giveaway tiers…',
+    content: 'Drafted the Discord Town Hall agenda — leans into a "before/after" lyric reveal so superfans get the unlocked story first. You can edit the giveaway tier before I publish.',
   },
   {
-    thinking: 'Cross-referencing save velocity vs prior release…',
-    content: "Heads up: Spotify saves on Single 01 are pacing 1.4× our last release week-over-week. I'd push the Twitch announce earlier — drafting that brief now.",
+    thinking: 'Pulling top-50 superfans from the last 90d activity feed…',
+    content: 'Pulled the top 50 superfans from your last 6 months of activity. Ready to draft personalized DMs once you sign off on the tone — warm or backstage?',
   },
   {
-    thinking: 'Filing press list + checking embargo windows…',
-    content: 'Filed the press list for Wednesday — 14 outlets confirmed. Need your sign-off on the embargo time before I send the embargo note.',
+    thinking: 'Cross-referencing teaser save velocity vs prior release…',
+    content: "Heads up: TikTok saves on the Late Reply teaser are pacing 2.1× our last release. I'd push the Lyric Scavenger Hunt earlier in the week — drafting the schedule now.",
   },
   {
-    thinking: 'Composing creator-package brief for short-form…',
-    content: "New-fan strategy idea: short-form DJ clip for Twitch streamers, packaged as a ringtone-style hook. Targets the 18–24 segment we underindex on. Want me to brief MT?",
+    thinking: 'Composing behind-the-track unlock concept + packaging note…',
+    content: "New-fan moment idea: pair the Twitch listening party with a behind-the-track audio commentary unlock. Repeat-watch behavior is what converts warm fans → superfans for this cohort.",
   },
   {
-    thinking: 'Updating asset tab + tagging for review…',
-    content: 'Done — moved the Twitch listening-party assets to the assets tab and tagged JK for the run-through walkthrough Thursday at 6pm.',
+    thinking: 'Updating asset tab + tagging the run-through owner…',
+    content: 'Done — moved the fan-engagement asset stack to the release tab and tagged Marcus for the QA pass on Thursday. Run-through with Jamie at 6pm.',
   },
 ];
 
@@ -1461,24 +1484,24 @@ const DAY_DUE_DATES = {
 };
 
 const TASK_DESCRIPTIONS = {
-  't1':  'Final pass on every DSP pre-save link before the campaign goes wide. Confirm UTM params, fallback URLs for territory-restricted DSPs, and that the smart-link routes correctly on iOS, Android, and desktop.',
-  't2':  'Spotify Canvas (9:16, ≤8s loop) + Apple Animated Cover both uploaded and QC-passed. Files must match the master artwork color profile.',
-  't3':  'Hand off the final WAV (24-bit/44.1k) and the 3000×3000 single cover (300dpi PNG + AI master) to Jake for distribution. He confirms ingestion within 24h.',
-  't4':  'Lock the 3 TikTok creators we\'re partnering with for the launch week. Each gets the same brief but different angle: night-drive, low-fi study, and gym variants. Briefs go out Wed.',
-  't5':  'Confirm the embargo time for the press release with Lara. Default to 9am ET unless we want a coordinated international moment.',
-  't6':  'Approve the Meta ads creative stack: 1×1 static, 9:16 15s spot, and the 4×5 carousel. Static is in feedback round 2, spot is in legal review.',
-  't7':  'Twitch announce is blocked on the cohost lock-in — we have 2 of 3 confirmed. Once Riley\'s team replies, asset stack is ready to drop.',
-  't8':  'Reupload the Canvas with the corrected color grade after the v1 came in too desaturated on AMOLED screens.',
-  't9':  'Final review of the pre-save campaign copy. Sara has draft 3 ready — needs sign-off on the tagline and the email follow-up sequence.',
-  't10': 'Press list distribution prep — 14 outlets confirmed (5 trade, 6 lifestyle, 3 streaming-focused). Each gets a personalized note with the embargo terms.',
-  't11': 'QA the day-of social rollout asset stack: 9 posts across IG (carousel + reel + story), TikTok (3 variants), and X (text + image cards). All scheduled.',
-  't12': 'Twitch listening party run-through with Jamie. Tests the OBS scene stack, the fan chat overlay, and the song trigger cues.',
-  't13': 'Single goes live across all DSPs at 00:01 ET. Sara monitors the ingestion queue and pings the team if anything stalls.',
-  't14': 'Day-of social rollout: post 1 of 9 fires at 8am with the cover reveal. Cadence carries through the day, capping with the Twitch party announcement.',
-  't15': 'Twitch listening party kicks off at 8pm. Jamie hosts. We have a backup stream key in case OBS chokes.',
-  't16': 'Saturday performance check-in. Sara pulls the streams + saves + presaves-converted numbers and posts the dashboard link in the rollout thread.',
-  't17': 'Outreach window for the top 50 superfans — personalized DM thanking them for the day-1 push, with an ask to share the listening party clip.',
-  't18': 'Week 1 retro and insights brief. What worked, what didn\'t, what we\'d change for the next single. Outputs feed the next rollout planning session.',
+  't1':  'Map the top 5 fan cohorts based on last-90d engagement (saves, replays, comment depth, DM history). Each cohort gets its own activation move in this rollout — superfans get the Discord Town Hall, warm fans get the Lyric Scavenger Hunt, etc.',
+  't2':  'Audit the top 200 superfans from the past 90d. Pull DM history, comment threads, and asset reactions so the personalized outreach this week reads as continuation, not cold contact.',
+  't3':  'Lock the 3 TikTok creators we\'re partnering with — each gets a fan-discovery DJ remix angle so the moment lands as discovery, not promotion. Briefs ship by EOD.',
+  't4':  'Discord Town Hall AMA on Wednesday. Build the agenda around a "before/after" lyric reveal and tier the giveaway logic so superfans unlock the story first.',
+  't5':  'Send the personalized DM batch to the top 50 superfans. Warm tone, references something specific from each fan\'s last 6 months. Includes early-access link to the listening-party RSVP.',
+  't6':  'Lyric Scavenger Hunt — schedule the 9 fragments across IG Stories, TikTok captions, and YT community posts. Each fragment links to the next; final one unlocks the pre-save.',
+  't7':  'Twitch streamer cohort blocked on cohost lock-in — 2 of 3 confirmed. Once Riley\'s team replies, the listening-party asset stack is ready to drop.',
+  't8':  'Record the behind-the-track audio commentary unlock for the listening party. ~3 minutes of 3shades narrating the lyric origin + production choices. Repeat-watch hook for warm-fan conversion.',
+  't9':  'Final review of the pre-save fan campaign copy. Sara has draft 3 ready — needs sign-off on the tagline and the email follow-up sequence.',
+  't10': 'Pre-release fan playlist drop — 8 tracks 3shades has co-signed publicly + the Late Reply teaser. Embeds in the Thursday newsletter to the warm-fan list.',
+  't11': 'QA the day-of fan-stack: 9 staggered posts (IG carousel + reel + story, TikTok 3 variants, X cards). Each post has a paired DM-reply template so the team can respond fast on launch day.',
+  't12': 'Twitch listening party run-through with Jamie. Tests the OBS scene stack, the fan chat overlay, and the cohost handoff so launch night flows clean.',
+  't13': '"Late Reply" goes live across all DSPs at 00:01 ET. Sara monitors the ingestion queue. First superfan DM sequence fires automatically when the track hits Spotify.',
+  't14': 'Day-of fan rollout — 9 posts staggered through the day, with the team replying live to DMs and superfan tags from a shared inbox. Cadence caps with the Twitch listening party announce.',
+  't15': 'Twitch listening party — go live at 8pm. Jamie hosts, the cohort drops the behind-the-track unlock at the bridge, and chat moderation routes superfan questions for live response.',
+  't16': 'Saturday morning fan engagement dashboard pull. Streams + saves + DM sentiment + listening-party clip shares. Posts the dashboard link in the rollout thread.',
+  't17': 'Personalized thank-you DM batch to the top 50 superfans — references something specific from launch night (a comment they made, a clip they shared). Closes the loop on the Tuesday warm-tone DMs.',
+  't18': 'Fan-engagement retro. What worked from the listening party + scavenger hunt, where the warm-discovery cohort dropped off, what to repeat or change for the next single. Outputs feed the next rollout planning session.',
 };
 
 window.TASK_COLORS = TASK_COLORS;
@@ -1619,13 +1642,13 @@ function ChatDrawer({ collapsed, setCollapsed }) {
   return (
     <aside className={'chat ' + (collapsed ? 'collapsed' : '')}>
       <div className="rail">
-        <div className="tm-badge"><Icon.Tuning size={18}/></div>
+        <div className="tm-badge"><TeamLogomark size={20}/></div>
         <button className="rail-btn" onClick={() => setCollapsed(false)} title="Open Teammate"><Icon.Discs size={16}/></button>
         <button className="rail-btn"><Icon.Pulse size={16}/></button>
       </div>
 
       <div className="chat-head">
-        <div className="tm-badge"><Icon.Tuning size={16}/></div>
+        <div className="tm-badge"><TeamLogomark size={18}/></div>
         <div className="who">
           <strong>Teammate</strong>
           <span>AI Assistant · Late Reply</span>

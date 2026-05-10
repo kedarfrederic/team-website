@@ -985,50 +985,34 @@ function setupIframeWheelPassthrough(iframe) {
 
 /* =============================================
    GUIDELINES (interactive iframe variant)
-   Twin stacked iframes loading the high-fidelity Tour demos
-   (/dashboard-tour/Releases.html and /Timeline.html — real CSS-grid
-   recreations of the platform UI, not screenshots). Pinned for one
-   viewport while scroll progress crossfades dashboard → timeline.
-   Both iframes stay click/hover-interactive; only the visible one
-   receives pointer events.
+   Single high-fidelity Timeline iframe (the dashboard view was removed —
+   the section now reads as the *result* of the Teammate ask in the
+   preceding chat scroll). Section gets a soft fade-in + rise on enter
+   via IntersectionObserver. No pinning, no scroll-driven swap.
    ============================================= */
 (function initGuidelinesInteractive() {
-  if (prefersReduced) return;
-
   const section = document.getElementById('guidelinesSection');
   if (!section || !section.classList.contains('guidelines-section--interactive')) return;
 
-  const releases = section.querySelector('[data-frame="releases"]');
-  const timeline = section.querySelector('[data-frame="timeline"]');
-  if (!releases || !timeline) return;
+  if (prefersReduced) {
+    section.classList.add('is-revealed');
+    return;
+  }
 
-  // Crossfade dashboard (#releases) → timeline (#timeline) across the pin.
-  gsap.timeline({
-    scrollTrigger: {
-      trigger: section,
-      start: 'top top',
-      end: '+=100%',
-      scrub: 0.4,
-      pin: true,
-      pinSpacing: true,
-      anticipatePin: 1,
-      invalidateOnRefresh: true,
-    }
-  })
-    .to(releases, { opacity: 0, duration: 1 }, 0.45)
-    .to(timeline, { opacity: 1, duration: 1 }, 0.45);
-
-  // Toggle pointer-events so clicks/hover land on the visible frame only.
-  ScrollTrigger.create({
-    trigger: section,
-    start: 'top top',
-    end: '+=100%',
-    onUpdate: (self) => {
-      const showTimeline = self.progress > 0.5;
-      releases.style.pointerEvents = showTimeline ? 'none' : 'auto';
-      timeline.style.pointerEvents = showTimeline ? 'auto' : 'none';
-    },
-  });
+  const reveal = () => section.classList.add('is-revealed');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          reveal();
+          io.disconnect();
+        }
+      });
+    }, { rootMargin: '0px 0px -25% 0px', threshold: 0.1 });
+    io.observe(section);
+  } else {
+    reveal();
+  }
 })();
 
 
