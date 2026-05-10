@@ -575,7 +575,7 @@ body.nav-mobile-lock{overflow:hidden}
     },
   };
 
-  const TEAM_LOGO = '/logos/team-logo.webp';
+  const TEAM_LOGO = '/logos/team-logo.svg';
 
   const navHTML = `
 <nav class="nav" id="nav">

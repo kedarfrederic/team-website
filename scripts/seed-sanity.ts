@@ -111,7 +111,7 @@ docs.push({
   _id: "siteSettings",
   _type: "siteSettings",
   brandLogo: {
-    url: "/logos/team-logo.webp",
+    url: "/logos/team-logo.svg",
     alt: "Team",
   },
   teammateAvatar: {
