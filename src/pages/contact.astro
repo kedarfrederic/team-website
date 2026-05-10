@@ -18,7 +18,7 @@ const emailFallbackText =
   page?.emailFallbackText ?? "Or email us directly at";
 const bgUrl = page?.backgroundImage?.asset
   ? urlFor(page.backgroundImage).width(2400).quality(85).format("webp").url()
-  : "/assets/hero-bg-option-1.jpeg";
+  : "/assets/hero-bg-option-1.webp";
 
 interface InterestOption {
   label: string;

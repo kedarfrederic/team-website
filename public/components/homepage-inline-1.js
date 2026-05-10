@@ -441,7 +441,7 @@ function setupIframeWheelPassthrough(iframe) {
   if (!wrapper || !center || !left || !right || !heroImg || !landing) return;
 
   // Image shown inside the excerpt rectangle (separate from hero BG).
-  const imgSrc = '/assets/hero-bg-option-1.jpeg';
+  const imgSrc = '/assets/hero-bg-option-1.webp';
 
   // ── Compute hero-aligned + cover-equivalent pixel values ──
   // Uses a FIXED reference aspect ratio so swapping hero images doesn't

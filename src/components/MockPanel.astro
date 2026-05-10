@@ -44,7 +44,7 @@ interface Props {
   outerClass?: string;
 }
 
-const { data, avatarUrl = "/assets/teammate-avatar-round.png", outerClass } = Astro.props;
+const { data, avatarUrl = "/assets/teammate-avatar-round.webp", outerClass } = Astro.props;
 const kind = data?.kind ?? "";
 
 function pillClass(tone?: string): string {

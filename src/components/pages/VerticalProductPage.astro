@@ -33,7 +33,7 @@ const { page, verticalKey, defaults } = Astro.props;
 // ── Mock panels ─────────────────────────────────────────────
 const painMocks: MockPanelData[] = Array.isArray(page?.painMocks) ? page.painMocks : [];
 const tabbedMocks: MockPanelData[] = Array.isArray(page?.tabbedMocks) ? page.tabbedMocks : [];
-const teammateAvatarUrl: string = page?._teammateAvatarUrl ?? "/assets/teammate-avatar-round.png";
+const teammateAvatarUrl: string = page?._teammateAvatarUrl ?? "/assets/teammate-avatar-round.webp";
 
 // ── Hero ────────────────────────────────────────────────────
 const hero = page?.hero ?? {};
