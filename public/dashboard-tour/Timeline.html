@@ -1006,47 +1006,20 @@
 }
 body[data-surface="light"] { background: #FCFCFC; }
 
-/* ---------- Persistent request context (the original user ask) ---------- */
-.nh-request-context {
-  margin: 12px 14px 0;
-  padding: 10px 12px 11px;
-  background: #FAFAF7;
-  border: 1px solid var(--card-border);
-  border-radius: 12px;
-  flex-shrink: 0;
+/* ---------- Composer "is-typing" cue ----------
+   When the conversation simulation is typewriter-typing the next user
+   question into the textarea, the composer gets a soft lime ring so it
+   reads as "user is actively composing" rather than just text appearing
+   in the input. Subtle — most visitors won't consciously notice but it
+   sells the conversation as real. */
+.composer.is-typing .composer-inner {
+  box-shadow: 0 0 0 2px rgba(192, 236, 95, 0.35);
+  border-color: rgba(192, 236, 95, 0.65);
 }
-.nh-request-context__head {
-  display: flex; align-items: center; gap: 8px;
-  margin-bottom: 6px;
-}
-.nh-request-context__avatar {
-  width: 18px; height: 18px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #F56002, #DA4326);
-  color: #fff;
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  display: grid; place-items: center;
-  flex: none;
-}
-.nh-request-context__label {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--fg-1);
-  letter-spacing: 0.01em;
-}
-.nh-request-context__time {
-  margin-left: auto;
-  font-family: var(--font-mono);
-  font-size: 9.5px;
-  color: var(--fg-3);
-  letter-spacing: 0.04em;
-}
-.nh-request-context__body {
-  font-size: 12.5px;
-  line-height: 1.5;
-  color: var(--fg-1);
+.composer.is-typing .composer-send {
+  background: var(--lime-500);
+  color: var(--ink-900);
+  border-color: transparent;
 }
 
 /* ---------- LIVE chat animations (Late Reply demo) ---------- */
@@ -1507,30 +1480,30 @@ const CHAT_HISTORY = [
   },
 ];
 
-// New messages typed live into the chat drawer on a timer. All
-// fan-engagement focused (matches the strategy Teammate just delivered).
-// Mix of operational confirmations, strategic insights, and a new idea —
-// no outreach/pitching language ("our agent doesn't pitch").
-const LIVE_FEED = [
+// Live conversation cycles. Each entry simulates a real exchange: user types
+// a question into the composer (typewriter), sends it, Teammate shows a
+// thinking indicator, then replies. The drawer cycles through these so the
+// chat stays alive without Teammate appearing to talk to itself.
+const CONVERSATION = [
   {
-    thinking: 'Drafting town hall agenda + structuring the giveaway tiers…',
-    content: 'Drafted the Discord Town Hall agenda — leans into a "before/after" lyric reveal so superfans get the unlocked story first. You can edit the giveaway tier before I publish.',
+    user: 'Can we add a TikTok creator angle on Wednesday morning?',
+    thinking: 'Pulling creator pool + checking Wed availability…',
+    reply: "Added to Wed at 11am. Pulled 3 candidates from your saved creator pool — Marcus is briefing them by EOD. Want me to lock the brief format too?",
   },
   {
-    thinking: 'Pulling top-50 superfans from the last 90d activity feed…',
-    content: 'Pulled the top 50 superfans from your last 6 months of activity. Ready to draft personalized DMs once you sign off on the tone — warm or backstage?',
+    user: "What's the status on the Discord Town Hall?",
+    thinking: 'Checking Town Hall agenda + RSVP data…',
+    reply: 'Agenda is at v2 with the giveaway tier finalised. RSVPs are at 78% of the superfan cohort. JK is hosting; Sara is on the chat queue.',
   },
   {
-    thinking: 'Cross-referencing teaser save velocity vs prior release…',
-    content: "Heads up: TikTok saves on the Late Reply teaser are pacing 2.1× our last release. I'd push the Lyric Scavenger Hunt earlier in the week — drafting the schedule now.",
+    user: 'Move the listening party to 9pm — does that work?',
+    thinking: 'Cross-checking JK calendar + cohost windows…',
+    reply: 'Done. Updated Fri 20:00 → 21:00. Notified JK and the cohort. The pre-show countdown post on TikTok auto-shifts to 19:30.',
   },
   {
-    thinking: 'Composing behind-the-track unlock concept + packaging note…',
-    content: "New-fan moment idea: pair the Twitch listening party with a behind-the-track audio commentary unlock. Repeat-watch behavior is what converts warm fans → superfans for this cohort.",
-  },
-  {
-    thinking: 'Updating asset tab + tagging the run-through owner…',
-    content: 'Done — moved the fan-engagement asset stack to the release tab and tagged Marcus for the QA pass on Thursday. Run-through with Jamie at 6pm.',
+    user: "Are we on track for Friday's release?",
+    thinking: 'Auditing all 18 tasks across the 7-day window…',
+    reply: "On track. 5 done, 11 active, 1 blocked (Twitch cohost). Critical path holds if the cohort confirms by Wed EOD. I'll flag again at 2pm if not.",
   },
 ];
 
@@ -1658,19 +1631,28 @@ function TaskCard({ t, selected, onClick }) {
 }
 
 function ChatDrawer({ collapsed, setCollapsed }) {
-  // Live chat hydration: start with the seeded CHAT_HISTORY then append a
-  // new message from LIVE_FEED every ~14s. Each new message goes through a
-  // "thinking" phase first (animated pulse + label) for ~1.6s, then resolves
-  // to the full body. Times use the visitor's local clock so the timestamps
-  // feel current. The drawer auto-scrolls to the latest message after each
-  // append. Stops once LIVE_FEED is exhausted (no infinite spam).
+  // Live conversation simulation. The drawer plays out a real back-and-forth:
+  // composer typewriter-types a user question → "send" empties the composer
+  // and the user bubble lands in chat → Teammate "thinking" indicator → full
+  // reply slides in → pause → next pair from CONVERSATION → loop. Reads as
+  // a real conversation instead of Teammate talking to itself.
   const [messages, setMessages] = useState(CHAT_HISTORY);
-  const [thinking, setThinking] = useState(null); // {idx, at} while composing
+  const [thinking, setThinking] = useState(null);
+  const [composerText, setComposerText] = useState('');
+  const [composerTyping, setComposerTyping] = useState(false);
   const scrollRef = useRef(null);
 
   useEffect(() => {
-    let feedIdx = 0;
     let cancelled = false;
+    const timeouts = new Set();
+    const queue = (fn, ms) => {
+      const t = setTimeout(() => {
+        timeouts.delete(t);
+        if (!cancelled) fn();
+      }, ms);
+      timeouts.add(t);
+      return t;
+    };
 
     const formatTime = () => {
       const d = new Date();
@@ -1681,36 +1663,67 @@ function ChatDrawer({ collapsed, setCollapsed }) {
       return `${h}:${m} ${ampm}`;
     };
 
-    const tick = () => {
-      if (cancelled || feedIdx >= LIVE_FEED.length) return;
-      const next = LIVE_FEED[feedIdx++];
-      const id = 'live-' + feedIdx;
-      const at = formatTime();
+    let convoIdx = 0;
 
-      // Phase 1 — thinking indicator
-      setThinking({ id, at, label: next.thinking });
+    const runCycle = () => {
+      if (cancelled || convoIdx >= CONVERSATION.length) return;
+      const pair = CONVERSATION[convoIdx++];
+      const id = 'cycle-' + convoIdx;
 
-      setTimeout(() => {
+      // Phase 1: Typewriter into the composer
+      setComposerTyping(true);
+      const text = pair.user;
+      let charIdx = 0;
+      const TYPE_MS = 38;
+      const typeTick = () => {
         if (cancelled) return;
-        // Phase 2 — replace thinking with full message
-        setThinking(null);
-        setMessages(prev => prev.concat({
-          id, role: 'assistant', at,
-          thinking: next.thinking,
-          content: next.content,
-        }));
-      }, 1700);
+        charIdx++;
+        setComposerText(text.substring(0, charIdx));
+        if (charIdx < text.length) {
+          queue(typeTick, TYPE_MS);
+        } else {
+          // Phase 2: Brief pause, then "send"
+          queue(send, 700);
+        }
+      };
+      typeTick();
 
-      // Schedule next message
-      setTimeout(tick, 14000);
+      const send = () => {
+        // Composer empties + user bubble lands in chat
+        setComposerText('');
+        setComposerTyping(false);
+        setMessages(prev => prev.concat({
+          id: id + '-u', role: 'user', at: formatTime(), content: text,
+        }));
+
+        // Phase 3: Thinking indicator after a beat
+        queue(() => {
+          setThinking({ id: id + '-t', at: formatTime(), label: pair.thinking });
+        }, 700);
+
+        // Phase 4: Replace thinking with the reply
+        queue(() => {
+          setThinking(null);
+          setMessages(prev => prev.concat({
+            id: id + '-a', role: 'assistant', at: formatTime(),
+            content: pair.reply,
+          }));
+          // Phase 5: Pause, then next cycle
+          queue(runCycle, 7000);
+        }, 700 + 1900);
+      };
     };
 
-    // Start the loop after the initial timeline reveal settles.
-    const startTimer = setTimeout(tick, 4500);
-    return () => { cancelled = true; clearTimeout(startTimer); };
+    // Kick off the loop after the initial reveal animation settles.
+    queue(runCycle, 5000);
+
+    return () => {
+      cancelled = true;
+      timeouts.forEach(clearTimeout);
+    };
   }, []);
 
-  // Auto-scroll the chat to the newest message on append.
+  // Auto-scroll to the newest message / thinking row.
   useEffect(() => {
     if (!scrollRef.current) return;
     scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -1742,23 +1755,13 @@ function ChatDrawer({ collapsed, setCollapsed }) {
         <button className="chat-tab">Docs</button>
       </div>
 
-      {/* Persistent request context — the original user ask lives outside
-          the scrollable feed so it's always visible. Otherwise once Teammate
-          appends its 5+ live messages the user prompt scrolls out of view
-          and the chat reads as Teammate talking to itself. */}
-      <div className="nh-request-context">
-        <div className="nh-request-context__head">
-          <span className="nh-request-context__avatar">SC</span>
-          <span className="nh-request-context__label">Sara — request</span>
-          <span className="nh-request-context__time">9:38 AM</span>
-        </div>
-        <div className="nh-request-context__body">
-          Build a comprehensive release strategy for "Late Reply" focused on fan engagement — superfans first, then warm-discovery. Drop tasks straight into the timeline.
-        </div>
-      </div>
-
       <div className="chat-scroll" ref={scrollRef}>
-        {messages.filter(m => m.role !== 'user').map(m => (
+        {messages.map(m => m.role === 'user' ? (
+          <div key={m.id} className="bubble user nh-msg-in">
+            {m.content}
+            <span className="at">{m.at}</span>
+          </div>
+        ) : (
           <div key={m.id} className="msg assistant nh-msg-in">
             <div className="msg-head">
               <span className="label">Teammate</span>
@@ -1816,9 +1819,15 @@ function ChatDrawer({ collapsed, setCollapsed }) {
         <button className="suggest"><Icon.Stack size={11}/>Find unassigned tasks</button>
       </div>
 
-      <div className="composer">
+      <div className={'composer ' + (composerTyping ? 'is-typing' : '')}>
         <div className="composer-inner">
-          <textarea placeholder="Ask Teammate anything about this release…" rows="2"/>
+          <textarea
+            placeholder="Ask Teammate anything about this release…"
+            rows="2"
+            value={composerText}
+            onChange={(e) => setComposerText(e.target.value)}
+            readOnly
+          />
           <div className="composer-foot">
             <button className="composer-btn" title="Attach">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5 12 20a5 5 0 0 1-7-7l9-9a3.5 3.5 0 0 1 5 5L10 17a2 2 0 0 1-3-3l8-8"/></svg>

@@ -664,6 +664,13 @@ export const homepage = defineType({
       type: "object",
       group: "sections",
       fields: [
+        defineField({
+          name: "visible",
+          title: "Show this section on the homepage",
+          type: "boolean",
+          description: "Toggle off to hide the testimonials carousel until real reviews + photos are ready. When false, the section is removed entirely from the rendered page (no placeholder shown).",
+          initialValue: false,
+        }),
         defineField({ name: "headlineTop", type: "string", description: "First line — sans font." }),
         defineField({ name: "headlineBottom", type: "string", description: "Second line — serif italic (Nyght)." }),
         defineField({ name: "headline", type: "string", description: "Legacy single-line headline.", hidden: true }),

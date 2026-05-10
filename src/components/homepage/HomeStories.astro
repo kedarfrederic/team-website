@@ -12,6 +12,9 @@ interface Slide {
 
 interface Props {
   data?: {
+    /** When false (default), the section is omitted entirely. Toggle to true
+        in Studio once real testimonials + photos are ready to ship. */
+    visible?: boolean;
     headlineTop?: string;
     headlineBottom?: string;
     headline?: string;
@@ -37,6 +40,10 @@ const FALLBACK_SLIDES: { tier: Slide["tier"]; name: string; role: string; quote:
 ];
 
 const { data } = Astro.props;
+// Hide the section entirely when the editor hasn't flipped `visible: true`.
+// We default to false because the carousel currently shows fallback testimonials
+// (placeholder names + Unsplash photos) — best to suppress until real reviews land.
+const visible = data?.visible === true;
 const headlineTop = data?.headlineTop ?? data?.headline ?? "Ready to transform";
 const headlineBottom = data?.headlineBottom ?? "your next release?";
 const subhead = data?.subhead ?? "Experience first-hand how Team eliminates the chaos and brings clarity to your workflow.";
@@ -58,6 +65,7 @@ const slides: { tier: string; name: string; role?: string; quote: string; photoU
     : FALLBACK_SLIDES.map((s) => ({ tier: s.tier, name: s.name, role: s.role, quote: s.quote, photoUrl: s.photo }));
 ---
 
+{visible && (
 <section class="stories-section" id="storiesSection" data-module="carousel">
   <div class="container container--center">
     <div class="section-intro" style="max-width:none">
@@ -93,3 +101,4 @@ const slides: { tier: string; name: string; role?: string; quote: string; photoU
     </div>
   </div>
 </section>
+)}
