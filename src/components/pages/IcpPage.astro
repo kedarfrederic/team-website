@@ -171,9 +171,18 @@ function legacyHeadlineTop(s: string | undefined): string | undefined {
 const heroTop = hero.headlineTop ?? legacyHeadlineTop(hero.headline) ?? D.hero.top;
 const heroBottom = hero.headlineBottom ?? D.hero.bottom;
 const heroSubhead = hero.subhead ?? D.hero.subhead;
+// Per-ICP header image fallback. Each ICP gets a different scene from
+// the Header Images set (already converted to ~30-80KB grayscale WebP);
+// editors can override per-page via Sanity hero.backgroundImage.
+const ICP_HERO_DEFAULTS: Record<string, string> = {
+  artists:  "/header-images/artist-in-studio.webp",
+  managers: "/header-images/manager-office.webp",
+  labels:   "/header-images/label-meeting-artist.webp",
+  partners: "/header-images/a-r-meeting.webp",
+};
 const heroBgUrl = hero.backgroundImage?.asset
   ? urlFor(hero.backgroundImage).width(2400).quality(85).format("webp").url()
-  : "/assets/hero-bg-new.png";
+  : (ICP_HERO_DEFAULTS[icpKey] ?? "/header-images/team-meeting-with-platform.webp");
 const primaryCta = hero.primaryCta ?? { label: "Start your free trial", href: "https://www.teamrollouts.com/sign-up?plan=free&period=yearly" };
 const secondaryCta = hero.secondaryCta ?? { label: "Book a demo", href: "/demo" };
 const pillLabel = hero.pillLabel;

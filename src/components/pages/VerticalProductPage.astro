@@ -41,9 +41,14 @@ const heroPill = hero.pillLabel;
 const heroTop = hero.headlineTop ?? defaults.hero.top;
 const heroBottom = hero.headlineBottom ?? defaults.hero.bottom;
 const heroSubhead = hero.subhead ?? defaults.hero.subhead;
+// Per-vertical header image fallback (grayscale WebP, ~50KB each).
+const VERTICAL_HERO_DEFAULTS: Record<string, string> = {
+  intelligence:  "/header-images/label-executive-on-phone.webp",
+  orchestration: "/header-images/team-meeting.webp",
+};
 const heroBgUrl = hero.backgroundImage?.asset
   ? urlFor(hero.backgroundImage).width(2400).quality(85).format("webp").url()
-  : "/assets/hero-bg-new.png";
+  : (VERTICAL_HERO_DEFAULTS[verticalKey] ?? "/header-images/team-meeting-with-platform.webp");
 const primaryCta = hero.primaryCta ?? { label: "Start your free trial", href: "https://www.teamrollouts.com/sign-up?plan=pro&period=yearly" };
 const secondaryCta = hero.secondaryCta ?? { label: "Book a demo", href: "/demo" };
 

@@ -993,12 +993,21 @@
 }
 /* Narrow mobile: drop the sidebar entirely so the timeline columns get full
    width to breathe. Otherwise on a 375px iPhone the timeline column area is
-   only ~310px wide, can't show 7 day columns, and reads as broken. */
+   only ~310px wide, can't show 7 day columns, and reads as broken. Also
+   hide the duplicate release pill in the topnav (the breadcrumb already
+   shows the release name) and tighten the toolbar so the day-filter pills
+   don't overflow. Day columns shrink to ~150px so two fit on a 375px
+   viewport with a third peeking on the right to invite horizontal scroll. */
 @media (max-width: 600px) {
   .tl-shell { grid-template-columns: 1fr; grid-template-areas: "topnav" "timeline"; }
   .tl-shell .sidebar { display: none; }
   .tl-shell.detail-open { grid-template-columns: 1fr; }
   .tl-shell.detail-open .detail-drawer { display: none; }
+  .topnav .release-pill { display: none; }
+  .topnav { gap: 8px; padding: 0 12px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .topnav::-webkit-scrollbar { display: none; }
+  .tl-days { grid-auto-columns: minmax(150px, 1fr); gap: 6px; }
+  .day-head { padding: 8px 10px 10px; }
 }
 
 /* ---------- Whiter canvas to match the actual platform UI ----------

@@ -1198,24 +1198,44 @@ function App() {
     const cp = Math.cos(pitch), sp = Math.sin(pitch);
     const cx = size.w / 2, cyy = size.h / 2;
     const perspective = 900;
-    const scale = Math.min(size.w, size.h) * 0.9 * zoom / 700;
+    // Mobile portrait often clips the graph because the camera angle puts
+    // the cluster off-axis. Tighten the scale on narrow viewports so the
+    // cluster reliably fills less width and stays inside the stage.
+    const isNarrow = size.w < 600;
+    const scaleFactor = isNarrow ? 0.65 : 0.9;
+    const scale = Math.min(size.w, size.h) * scaleFactor * zoom / 700;
 
-    return graph.nodes.map(n => {
-      // apply density scale around origin
+    // First pass — compute raw projected x/y for every node so we can
+    // measure the cluster's center-of-mass and offset the whole field
+    // back to (cx, cyy). Without this the cluster drifts visually as the
+    // camera auto-rotates and ends up clipped to one edge on small
+    // viewports (matches the "graph pushed to the right" mobile bug).
+    const raw = graph.nodes.map(n => {
       const x0 = n.x * density, y0 = n.y * density, z0 = n.z * density;
-      // yaw around Y
       const x1 = x0 * cy + z0 * sy;
       const z1 = -x0 * sy + z0 * cy;
-      // pitch around X
       const y2 = y0 * cp - z1 * sp;
       const z2 = y0 * sp + z1 * cp;
-      // perspective project
       const depthFactor = perspective / (perspective + z2);
-      const sx = cx + x1 * scale * depthFactor;
-      const sy2 = cyy + y2 * scale * depthFactor;
+      return {
+        x1, y2, z2, depthFactor,
+        rx: x1 * scale * depthFactor,
+        ry: y2 * scale * depthFactor,
+      };
+    });
+    // Compute mean offset so the centre-of-mass lands on (cx, cyy).
+    let meanX = 0, meanY = 0;
+    for (const r of raw) { meanX += r.rx; meanY += r.ry; }
+    meanX /= raw.length || 1;
+    meanY /= raw.length || 1;
+
+    return graph.nodes.map((n, i) => {
+      const r = raw[i];
+      const sx = cx + r.rx - meanX;
+      const sy2 = cyy + r.ry - meanY;
       // front→back = higher z = farther (we've rotated so +z is away)
-      const depth = z2; // for sorting and fading
-      return { ...n, sx, sy: sy2, depth, depthFactor };
+      const depth = r.z2; // for sorting and fading
+      return { ...n, sx, sy: sy2, depth, depthFactor: r.depthFactor };
     });
   }, [graph, yaw, pitch, zoom, density, size.w, size.h]);
 
