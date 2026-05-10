@@ -1652,7 +1652,19 @@ const POSTS = [
   { id: "post-indie-2026", title: "The independent label playbook for 2026", slug: "independent-label-playbook-2026", excerpt: "What's changed for indie labels this year, and how the smartest operators are adapting their release strategies.", date: "2026-03-22T09:00:00Z", read: 9, cat: "cat-industry" },
   { id: "post-playlist", title: "Playlist pitching: what actually works in 2026", slug: "playlist-pitching-2026", excerpt: "Editorial, algorithmic, and independent playlists each require different approaches. Here's what curators actually respond to.", date: "2026-03-15T09:00:00Z", read: 8, cat: "cat-guides" },
 ];
+// Fetch existing posts so re-seeding doesn't blow away article bodies that
+// were populated via scripts/import-insight-bodies.mjs (256 blocks total).
+// Without this guard, every `npm run seed` resets bodies to placeholders.
+const existingPosts = await client.fetch<{ _id: string; body?: unknown[] }[]>(
+  `*[_type == "insightPost" && _id in $ids]{ _id, body }`,
+  { ids: POSTS.map((p) => p.id) },
+);
+const existingBodyById = new Map(existingPosts.map((p) => [p._id, p.body]));
+
 for (const p of POSTS) {
+  const existingBody = existingBodyById.get(p.id);
+  // A "real" body has more than the 2 placeholder blocks we seed initially.
+  const hasRealBody = Array.isArray(existingBody) && existingBody.length > 2;
   docs.push({
     _id: p.id,
     _type: "insightPost",
@@ -1663,7 +1675,9 @@ for (const p of POSTS) {
     readMinutes: p.read,
     authorName: "Team",
     category: { _type: "reference", _ref: p.cat },
-    body: [block(p.excerpt), block("Full article body to be added in Sanity Studio.")],
+    body: hasRealBody
+      ? (existingBody as unknown[])
+      : [block(p.excerpt), block("Full article body to be added in Sanity Studio.")],
   });
 }
 
