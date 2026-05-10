@@ -222,7 +222,13 @@ const interactive = data?.interactive ?? true;
 // crossfades them on scroll. These are real CSS-grid recreations of the
 // platform UI (chat drawer, calendar columns, detail drawer, brand tokens),
 // not screenshots.
-const iframeSrc = (data?.iframeSrc ?? "/dashboard-tour").replace(/\/$/, "");
+//
+// Migration shim: the previous default was "/dashboard-demo.html" (a single
+// file URL). If the stored Sanity value is still that legacy path the
+// `${path}/Releases.html` append produces a 404. Detect any value ending
+// in ".html" and fall back to the new base path.
+const rawSrc = (data?.iframeSrc ?? "/dashboard-tour").replace(/\/$/, "");
+const iframeSrc = rawSrc.endsWith(".html") ? "/dashboard-tour" : rawSrc;
 const dashboardSrc = `${iframeSrc}/Releases.html`;
 const timelineSrc = `${iframeSrc}/Timeline.html`;
 
