@@ -992,6 +992,71 @@
   .tl-shell.detail-open { grid-template-columns: 64px 1fr; }
 }
 
+/* ---------- LIVE chat animations (Late Reply demo) ---------- */
+@keyframes nh-msg-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.nh-msg-in {
+  animation: nh-msg-in 0.32s ease-out both;
+}
+.nh-thinking-row {
+  opacity: 0.92;
+}
+.nh-thinking-active {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-style: italic;
+  color: var(--fg-2);
+  padding: 6px 10px;
+  background: rgba(192, 236, 95, 0.06);
+  border: 1px dashed rgba(192, 236, 95, 0.35);
+  border-radius: 999px;
+}
+.nh-thinking-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--lime-500);
+  animation: nh-bounce 1.05s ease-in-out infinite;
+}
+.nh-thinking-dot:nth-child(2) { animation-delay: 0.18s; }
+.nh-thinking-dot:nth-child(3) { animation-delay: 0.36s; }
+@keyframes nh-bounce {
+  0%,80%,100% { transform: translateY(0);   opacity: 0.45; }
+  40%         { transform: translateY(-3px); opacity: 1;    }
+}
+
+/* ---------- TASK reveal + active-status pulse ---------- */
+@keyframes nh-card-in {
+  from { opacity: 0; transform: translateY(6px) scale(0.985); }
+  to   { opacity: 1; transform: translateY(0)   scale(1);     }
+}
+.tcard {
+  animation: nh-card-in 0.45s ease-out both;
+  /* per-card stagger via nth-child within a column */
+  animation-delay: calc(var(--tc-i, 0) * 60ms + 120ms);
+}
+.tcard:nth-of-type(2) { --tc-i: 1; }
+.tcard:nth-of-type(3) { --tc-i: 2; }
+.tcard:nth-of-type(4) { --tc-i: 3; }
+.tcard:nth-of-type(5) { --tc-i: 4; }
+
+/* Subtle pulse on Active tasks so the timeline reads "live". Done tasks stay
+   quiet, Blocked uses a stronger ring color, Active tasks breathe. */
+.tcard:not(.done):not(.blocked-card) {
+  animation: nh-card-in 0.45s ease-out both, nh-active-pulse 4.2s ease-in-out 0.8s infinite;
+}
+@keyframes nh-active-pulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(192, 236, 95, 0); }
+  50%     { box-shadow: 0 0 0 4px rgba(192, 236, 95, 0.12); }
+}
+
+/* Honor reduced-motion preference: kill all the demo motion. */
+@media (prefers-reduced-motion: reduce) {
+  .nh-msg-in, .tcard, .nh-thinking-dot { animation: none !important; }
+  .tcard:not(.done):not(.blocked-card) { animation: none !important; }
+}
+
 </style>
 </head>
 <body data-surface="light">
@@ -1261,77 +1326,111 @@ const TASK_COLORS = {
 
 // Days — Apr 18 (today/Sat) through Apr 24 (Fri)
 const DAYS = [
-  { id: 'sat18', weekday: 'SAT', day: 18, month: 'APR', today: true,  label: 'Today', isWeekend: true  },
-  { id: 'sun19', weekday: 'SUN', day: 19, month: 'APR', today: false, label: 'Sun',   isWeekend: true  },
-  { id: 'mon20', weekday: 'MON', day: 20, month: 'APR', today: false, label: 'Mon',   isWeekend: false },
-  { id: 'tue21', weekday: 'TUE', day: 21, month: 'APR', today: false, label: 'Tue',   isWeekend: false },
-  { id: 'wed22', weekday: 'WED', day: 22, month: 'APR', today: false, label: 'Wed',   isWeekend: false },
-  { id: 'thu23', weekday: 'THU', day: 23, month: 'APR', today: false, label: 'Thu',   isWeekend: false },
-  { id: 'fri24', weekday: 'FRI', day: 24, month: 'APR', today: false, label: 'Fri',   isWeekend: false },
+  { id: 'mon18', weekday: 'MON', day: 18, month: 'MAY', today: false, label: 'Mon',     isWeekend: false },
+  { id: 'tue19', weekday: 'TUE', day: 19, month: 'MAY', today: false, label: 'Tue',     isWeekend: false },
+  { id: 'wed20', weekday: 'WED', day: 20, month: 'MAY', today: true,  label: 'Today',   isWeekend: false },
+  { id: 'thu21', weekday: 'THU', day: 21, month: 'MAY', today: false, label: 'Thu',     isWeekend: false },
+  { id: 'fri22', weekday: 'FRI', day: 22, month: 'MAY', today: false, label: 'RELEASE', isWeekend: false, isReleaseDay: true },
+  { id: 'sat23', weekday: 'SAT', day: 23, month: 'MAY', today: false, label: 'Sat',     isWeekend: true  },
+  { id: 'sun24', weekday: 'SUN', day: 24, month: 'MAY', today: false, label: 'Sun',     isWeekend: true  },
 ];
 
 // Rollout poster — anchor card pinned on the first day
 const ROLLOUT_POSTER = {
   id: 'poster',
   title: 'Rollout Plan',
-  release: 'Over The Fence',
-  color: 'walnut',
+  release: 'Late Reply',
+  color: 'ember',
   isPoster: true,
 };
 
+// Release-week tasks for 3shades' single "Late Reply". 18 tasks across the
+// 7-day grid, weighted realistically: Mon-Tue mostly Done (pre-week setup),
+// Wed (today) is the chaos column with a Blocked, Thu critical pre-launch,
+// Fri the release day itself, Sat-Sun post-release.
 const TASKS = [
-  // SAT 18
-  { id: 't1',  day: 'sat18', title: 'Update Instagram & TikTok Bio Links to Pr…', dept: 'Social',     color: 'sun',   status: 'Done',    budget: null,   assignee: null, priority: 'Medium', time: null },
+  // MON 18 — pre-week setup (Done)
+  { id: 't1',  day: 'mon18', title: 'Lock pre-save links across all DSPs',                  dept: 'Distribution', color: 'sun',     status: 'Done',    budget: null,  assignee: 'SC', priority: 'High',   time: null,    subtasks: '6/6' },
+  { id: 't2',  day: 'mon18', title: 'Confirm Spotify Canvas + Apple Animated Cover',         dept: 'Content',      color: 'olive',   status: 'Done',    budget: null,  assignee: 'MT', priority: 'High',   time: null,    subtasks: '4/4' },
 
-  // SUN 19
-  { id: 't2',  day: 'sun19', title: 'Pitch to SubmitHub Country Playlist…',       dept: 'PR',         color: 'sun',   status: 'Done',    budget: null,   assignee: 'ML',  priority: 'High',   time: null },
-  { id: 't3',  day: 'sun19', title: 'Send Announcement Email to Fan List',        dept: 'Marketing',  color: 'sun',   status: 'Active',  budget: null,   assignee: null,  priority: 'Medium', time: '09:00' },
-  { id: 't4',  day: 'sun19', title: 'Acoustic Set at Sally\'s Coffee Shop',        dept: 'Events',     color: 'cream', status: 'Active',  budget: 500,    assignee: 'SC',  priority: 'Medium', time: '19:00', subtasks: '0/6' },
+  // TUE 19 — kick-off
+  { id: 't3',  day: 'tue19', title: 'Send single cover + WAV to Jake (DSP delivery)',        dept: 'Distribution', color: 'sun',     status: 'Done',    budget: null,  assignee: 'SC', priority: 'High',   time: null,    subtasks: '3/3' },
+  { id: 't4',  day: 'tue19', title: 'TikTok creator brief — finalize 3 partners',            dept: 'Social',       color: 'cream',   status: 'Active',  budget: 1200,  assignee: 'MT', priority: 'High',   time: '14:00', subtasks: '5/7' },
+  { id: 't5',  day: 'tue19', title: 'Press list — confirm Wed embargo time',                 dept: 'PR',           color: 'red',     status: 'Active',  budget: null,  assignee: 'LR', priority: 'Medium', time: '16:00', subtasks: '0/3' },
 
-  // MON 20
-  { id: 't5',  day: 'mon20', title: 'Set Up Pre-Save Landing Page',                dept: 'Marketing',  color: 'sun',   status: 'Active',  budget: null,   assignee: null,  priority: 'High',   time: null },
-  { id: 't6',  day: 'mon20', title: 'Radio Interview at Nashville Orpheum',        dept: 'Events',     color: 'sun',   status: 'Active',  budget: null,   assignee: 'ML',  priority: 'High',   time: '14:00' },
-  { id: 't7',  day: 'mon20', title: 'Shoot Announcement Content Package',          dept: 'Content',    color: 'olive', status: 'Active',  budget: 1500,   assignee: 'SC',  priority: 'High',   time: '10:00', subtasks: '2/8' },
+  // WED 20 — TODAY (chaos column)
+  { id: 't6',  day: 'wed20', title: 'Meta ads — approve static + 15s spot',                  dept: 'Marketing',    color: 'ember',   status: 'Active',  budget: 4500,  assignee: 'JK', priority: 'High',   time: '11:00', subtasks: '2/4' },
+  { id: 't7',  day: 'wed20', title: 'Twitch announce — DJ clip + cohost lock-in',            dept: 'Marketing',    color: 'brick',   status: 'Blocked', budget: 800,   assignee: 'JK', priority: 'Medium', time: '15:00', subtasks: '0/4' },
+  { id: 't8',  day: 'wed20', title: 'Spotify Canvas QA + reupload',                          dept: 'Content',      color: 'olive',   status: 'Active',  budget: null,  assignee: 'MT', priority: 'Medium', time: '14:00', subtasks: '1/2' },
+  { id: 't9',  day: 'wed20', title: 'Pre-save campaign final copy review',                   dept: 'Marketing',    color: 'sun',     status: 'Active',  budget: null,  assignee: 'SC', priority: 'High',   time: '16:00', subtasks: '2/3' },
 
-  // TUE 21
-  { id: 't8',  day: 'tue21', title: 'Post Single Announcement on Instagram',       dept: 'Social',     color: 'sun',   status: 'Active',  budget: null,   assignee: 'ML',  priority: 'High',   time: '12:00' },
-  { id: 't9',  day: 'tue21', title: 'Launch PlaylistPush Campaign for Country…',   dept: 'Marketing',  color: 'cream', status: 'Active',  budget: 2500,   assignee: 'NB',  priority: 'Medium', time: null, subtasks: '1/4' },
-  { id: 't10', day: 'tue21', title: 'Meeting with Snapchat',                        dept: 'Marketing',  color: 'brick', status: 'Blocked', budget: 500,    assignee: null,  priority: 'Low',    time: '15:00', subtasks: '0/3' },
+  // THU 21 — critical pre-launch
+  { id: 't10', day: 'thu21', title: 'Press release distribution prep — 14 outlets',          dept: 'PR',           color: 'red',     status: 'Active',  budget: null,  assignee: 'LR', priority: 'High',   time: '09:00', subtasks: '4/14' },
+  { id: 't11', day: 'thu21', title: 'Day-of social rollout asset stack QA',                  dept: 'Social',       color: 'cream',   status: 'Active',  budget: null,  assignee: 'MT', priority: 'High',   time: '12:00', subtasks: '3/9' },
+  { id: 't12', day: 'thu21', title: 'Listening party run-through (Twitch)',                  dept: 'Marketing',    color: 'walnut',  status: 'Active',  budget: null,  assignee: 'JK', priority: 'Medium', time: '18:00', subtasks: '1/6' },
 
-  // WED 22
-  { id: 't11', day: 'wed22', title: 'Post TikTok #OverTheFence…',                   dept: 'Social',     color: 'red',   status: 'Active',  budget: null,   assignee: 'ML',  priority: 'High',   time: '18:00' },
+  // FRI 22 — RELEASE DAY
+  { id: 't13', day: 'fri22', title: 'Single goes live across DSPs (00:01 ET)',               dept: 'Distribution', color: 'ember',   status: 'Active',  budget: null,  assignee: 'SC', priority: 'Urgent', time: '00:01', subtasks: '0/5' },
+  { id: 't14', day: 'fri22', title: 'Day-of social rollout (IG / TikTok / X)',               dept: 'Social',       color: 'sun',     status: 'Active',  budget: null,  assignee: 'MT', priority: 'High',   time: '08:00', subtasks: '0/9' },
+  { id: 't15', day: 'fri22', title: 'Twitch listening party — go live',                      dept: 'Marketing',    color: 'walnut',  status: 'Active',  budget: null,  assignee: 'JK', priority: 'High',   time: '20:00', subtasks: '0/6' },
 
-  // THU 23
-  { id: 't12', day: 'thu23', title: 'Marketing Meeting with Label',                 dept: 'Marketing',  color: 'sun',   status: 'Active',  budget: null,   assignee: 'JT',  priority: 'Medium', time: '11:00' },
-  { id: 't13', day: 'thu23', title: 'Call the Publisher',                           dept: 'Admin',      color: 'ember', status: 'Active',  budget: null,   assignee: 'SC',  priority: 'Low',    time: '13:00' },
-  { id: 't14', day: 'thu23', title: 'Meeting with Twitch',                          dept: 'Marketing',  color: 'red',   status: 'Active',  budget: null,   assignee: null,  priority: 'Medium', time: '16:00' },
+  // SAT 23 — post-release
+  { id: 't16', day: 'sat23', title: 'Performance check-in: streams, saves, presaves',        dept: 'Strategy',     color: 'olive',   status: 'Active',  budget: null,  assignee: 'SC', priority: 'Medium', time: '11:00', subtasks: '0/4' },
+  { id: 't17', day: 'sat23', title: 'Fan engagement window — DM 50 superfans',               dept: 'Community',    color: 'cream',   status: 'Active',  budget: null,  assignee: 'MT', priority: 'Medium', time: '14:00', subtasks: '0/50' },
 
-  // FRI 24
-  { id: 't15', day: 'fri24', title: 'Pitch Country Music Press (Taste of…)',        dept: 'PR',         color: 'sun',   status: 'Active',  budget: null,   assignee: 'NB',  priority: 'Medium', time: null },
+  // SUN 24 — retro
+  { id: 't18', day: 'sun24', title: 'Week 1 retro + insights brief',                          dept: 'Strategy',     color: 'walnut',  status: 'Active',  budget: null,  assignee: 'JK', priority: 'Medium', time: '16:00', subtasks: '0/3' },
 ];
 
-// Chat history for the Teammate AI companion
+// Chat history for the Teammate AI companion. The first two entries hydrate
+// on render; the LIVE_FEED below appends new typed messages on a timer so
+// the drawer feels continuously alive while a visitor watches the section.
 const CHAT_HISTORY = [
   {
     id: 'h1',
     role: 'user',
-    at: '1:39 PM',
-    content: 'let\'s move all the tasks on the 22nd and 23rd of april up by a day',
+    at: '9:42 AM',
+    content: 'Where do we stand on Meta ads for the Late Reply launch?',
   },
   {
     id: 'h2',
     role: 'assistant',
-    at: '1:39 PM',
-    thinking: 'Locating tasks on Apr 22–23…',
-    content: 'I\'ll update all four tasks on April 22nd and 23rd simultaneously — moving them each up by one day!',
+    at: '9:42 AM',
+    thinking: 'Pulling latest from Meta Ads Manager + creative review queue…',
+    content: 'Meta ads launch is in 3 days — confirm the static creative + 15s spot are approved by Friday. Jake has the static (1 round of feedback open), the 15s spot is in legal review.',
     plan: [
-      { label: 'Done — all 4 tasks have been moved up by one day', done: true },
-      { label: 'Launch PlaylistPush Campaign → April 21', done: true },
-      { label: 'Meeting with Snapchat → April 21', done: true },
-      { label: 'Post TikTok #OverTheFence → April 21', done: true },
-      { label: 'Call the Publisher → April 22', done: true },
+      { label: 'Static creative — feedback resolved',          done: true  },
+      { label: '15s spot — out of legal review by Wed EOD',    done: false },
+      { label: 'Audience pixel + lookalike segments built',    done: true  },
+      { label: 'Spend pacing locked at $4.5k for week 1',      done: true  },
     ],
-    changes: { count: 4, label: 'Updated 4 tasks' },
+  },
+];
+
+// New messages typed live into the chat drawer on a timer. Mix of
+// operational ("just emailed Jake…"), confirmations ("done — moved…"),
+// and strategic ("here's a plan to engage new fans on Twitch"). Avoids
+// outreach/pitching language — TeamMate coordinates, it doesn't pitch.
+const LIVE_FEED = [
+  {
+    thinking: 'Drafting handoff note + attaching deliverables to Jake…',
+    content: 'Just emailed Jake the single cover (300dpi PNG + AI master) and the WAV. He has everything for the DSP delivery — confirmation due back by EOD.',
+  },
+  {
+    thinking: 'Cross-referencing save velocity vs prior release…',
+    content: "Heads up: Spotify saves on Single 01 are pacing 1.4× our last release week-over-week. I'd push the Twitch announce earlier — drafting that brief now.",
+  },
+  {
+    thinking: 'Filing press list + checking embargo windows…',
+    content: 'Filed the press list for Wednesday — 14 outlets confirmed. Need your sign-off on the embargo time before I send the embargo note.',
+  },
+  {
+    thinking: 'Composing creator-package brief for short-form…',
+    content: "New-fan strategy idea: short-form DJ clip for Twitch streamers, packaged as a ringtone-style hook. Targets the 18–24 segment we underindex on. Want me to brief MT?",
+  },
+  {
+    thinking: 'Updating asset tab + tagging for review…',
+    content: 'Done — moved the Twitch listening-party assets to the assets tab and tagged JK for the run-through walkthrough Thursday at 6pm.',
   },
 ];
 
@@ -1339,9 +1438,48 @@ const CHAT_HISTORY = [
 const SUGGESTIONS = [
   { id: 's1', icon: 'calendar',  label: 'What\'s critical this week?' },
   { id: 's2', icon: 'chart',     label: 'Summarize rollout status' },
-  { id: 's3', icon: 'message',   label: 'Draft the fan announcement email' },
+  { id: 's3', icon: 'message',   label: 'Draft fan announcement copy' },
   { id: 's4', icon: 'tasks',     label: 'Find unassigned tasks' },
 ];
+
+// Lookup tables surfaced by the detail drawer.
+const ASSIGNEE_NAMES = {
+  'SC': 'Sara Chen',
+  'MT': 'Marcus Tate',
+  'JK': 'Jamie Kelly',
+  'LR': 'Lara Reyes',
+};
+
+const DAY_DUE_DATES = {
+  'mon18': 'Monday, May 18, 2026',
+  'tue19': 'Tuesday, May 19, 2026',
+  'wed20': 'Wednesday, May 20, 2026',
+  'thu21': 'Thursday, May 21, 2026',
+  'fri22': 'Friday, May 22, 2026',
+  'sat23': 'Saturday, May 23, 2026',
+  'sun24': 'Sunday, May 24, 2026',
+};
+
+const TASK_DESCRIPTIONS = {
+  't1':  'Final pass on every DSP pre-save link before the campaign goes wide. Confirm UTM params, fallback URLs for territory-restricted DSPs, and that the smart-link routes correctly on iOS, Android, and desktop.',
+  't2':  'Spotify Canvas (9:16, ≤8s loop) + Apple Animated Cover both uploaded and QC-passed. Files must match the master artwork color profile.',
+  't3':  'Hand off the final WAV (24-bit/44.1k) and the 3000×3000 single cover (300dpi PNG + AI master) to Jake for distribution. He confirms ingestion within 24h.',
+  't4':  'Lock the 3 TikTok creators we\'re partnering with for the launch week. Each gets the same brief but different angle: night-drive, low-fi study, and gym variants. Briefs go out Wed.',
+  't5':  'Confirm the embargo time for the press release with Lara. Default to 9am ET unless we want a coordinated international moment.',
+  't6':  'Approve the Meta ads creative stack: 1×1 static, 9:16 15s spot, and the 4×5 carousel. Static is in feedback round 2, spot is in legal review.',
+  't7':  'Twitch announce is blocked on the cohost lock-in — we have 2 of 3 confirmed. Once Riley\'s team replies, asset stack is ready to drop.',
+  't8':  'Reupload the Canvas with the corrected color grade after the v1 came in too desaturated on AMOLED screens.',
+  't9':  'Final review of the pre-save campaign copy. Sara has draft 3 ready — needs sign-off on the tagline and the email follow-up sequence.',
+  't10': 'Press list distribution prep — 14 outlets confirmed (5 trade, 6 lifestyle, 3 streaming-focused). Each gets a personalized note with the embargo terms.',
+  't11': 'QA the day-of social rollout asset stack: 9 posts across IG (carousel + reel + story), TikTok (3 variants), and X (text + image cards). All scheduled.',
+  't12': 'Twitch listening party run-through with Jamie. Tests the OBS scene stack, the fan chat overlay, and the song trigger cues.',
+  't13': 'Single goes live across all DSPs at 00:01 ET. Sara monitors the ingestion queue and pings the team if anything stalls.',
+  't14': 'Day-of social rollout: post 1 of 9 fires at 8am with the cover reveal. Cadence carries through the day, capping with the Twitch party announcement.',
+  't15': 'Twitch listening party kicks off at 8pm. Jamie hosts. We have a backup stream key in case OBS chokes.',
+  't16': 'Saturday performance check-in. Sara pulls the streams + saves + presaves-converted numbers and posts the dashboard link in the rollout thread.',
+  't17': 'Outreach window for the top 50 superfans — personalized DM thanking them for the day-1 push, with an ask to share the listening party clip.',
+  't18': 'Week 1 retro and insights brief. What worked, what didn\'t, what we\'d change for the next single. Outputs feed the next rollout planning session.',
+};
 
 window.TASK_COLORS = TASK_COLORS;
 window.DAYS = DAYS;
@@ -1352,12 +1490,12 @@ window.SUGGESTIONS = SUGGESTIONS;
 
 
 
-const { useState, useEffect } = React;
+const { useState, useEffect, useRef } = React;
 
 function Sidebar() {
   const workspaces = [
-    { id:'roc', name:'Roc Universa', meta:'Owner · 110 releases', icon:'R', active:true },
-    { id:'go',  name:'Go Records',   meta:'Owner · 10 releases',  icon:'G' },
+    { id:'shades', name:'3shades',       meta:'Owner · 14 releases', icon:'3', active:true },
+    { id:'rouge',  name:'Rouge Records', meta:'Member · 6 releases',  icon:'R' },
   ];
   const nav = [
     { label:'Command Center', icon:<Icon.Tuning/> },
@@ -1420,6 +1558,64 @@ function TaskCard({ t, selected, onClick }) {
 }
 
 function ChatDrawer({ collapsed, setCollapsed }) {
+  // Live chat hydration: start with the seeded CHAT_HISTORY then append a
+  // new message from LIVE_FEED every ~14s. Each new message goes through a
+  // "thinking" phase first (animated pulse + label) for ~1.6s, then resolves
+  // to the full body. Times use the visitor's local clock so the timestamps
+  // feel current. The drawer auto-scrolls to the latest message after each
+  // append. Stops once LIVE_FEED is exhausted (no infinite spam).
+  const [messages, setMessages] = useState(CHAT_HISTORY);
+  const [thinking, setThinking] = useState(null); // {idx, at} while composing
+  const scrollRef = useRef(null);
+
+  useEffect(() => {
+    let feedIdx = 0;
+    let cancelled = false;
+
+    const formatTime = () => {
+      const d = new Date();
+      let h = d.getHours();
+      const m = d.getMinutes().toString().padStart(2, '0');
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      h = h % 12 || 12;
+      return `${h}:${m} ${ampm}`;
+    };
+
+    const tick = () => {
+      if (cancelled || feedIdx >= LIVE_FEED.length) return;
+      const next = LIVE_FEED[feedIdx++];
+      const id = 'live-' + feedIdx;
+      const at = formatTime();
+
+      // Phase 1 — thinking indicator
+      setThinking({ id, at, label: next.thinking });
+
+      setTimeout(() => {
+        if (cancelled) return;
+        // Phase 2 — replace thinking with full message
+        setThinking(null);
+        setMessages(prev => prev.concat({
+          id, role: 'assistant', at,
+          thinking: next.thinking,
+          content: next.content,
+        }));
+      }, 1700);
+
+      // Schedule next message
+      setTimeout(tick, 14000);
+    };
+
+    // Start the loop after the initial timeline reveal settles.
+    const startTimer = setTimeout(tick, 4500);
+    return () => { cancelled = true; clearTimeout(startTimer); };
+  }, []);
+
+  // Auto-scroll the chat to the newest message on append.
+  useEffect(() => {
+    if (!scrollRef.current) return;
+    scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+  }, [messages, thinking]);
+
   return (
     <aside className={'chat ' + (collapsed ? 'collapsed' : '')}>
       <div className="rail">
@@ -1432,7 +1628,7 @@ function ChatDrawer({ collapsed, setCollapsed }) {
         <div className="tm-badge"><Icon.Tuning size={16}/></div>
         <div className="who">
           <strong>Teammate</strong>
-          <span>AI Assistant · Over the fence</span>
+          <span>AI Assistant · Late Reply</span>
         </div>
         <span className="tiny-pill">Ready</span>
         <button className="iconbtn-sm" onClick={() => setCollapsed(true)} title="Collapse">
@@ -1446,14 +1642,14 @@ function ChatDrawer({ collapsed, setCollapsed }) {
         <button className="chat-tab">Docs</button>
       </div>
 
-      <div className="chat-scroll">
-        {CHAT_HISTORY.map(m => m.role === 'user' ? (
+      <div className="chat-scroll" ref={scrollRef}>
+        {messages.map(m => m.role === 'user' ? (
           <div key={m.id} className="bubble user">
             {m.content}
             <span className="at">{m.at}</span>
           </div>
         ) : (
-          <div key={m.id} className="msg assistant">
+          <div key={m.id} className="msg assistant nh-msg-in">
             <div className="msg-head">
               <span className="label">Teammate</span>
               <span className="at">{m.at}</span>
@@ -1461,7 +1657,7 @@ function ChatDrawer({ collapsed, setCollapsed }) {
             {m.thinking && (
               <div className="msg-thinking">
                 <Icon.Pulse size={10}/>
-                View full response
+                {m.id && m.id.indexOf('live-') === 0 ? m.thinking : 'View full response'}
               </div>
             )}
             <div className="msg-body">{m.content}</div>
@@ -1489,6 +1685,20 @@ function ChatDrawer({ collapsed, setCollapsed }) {
             )}
           </div>
         ))}
+        {thinking && (
+          <div key={thinking.id} className="msg assistant nh-thinking-row">
+            <div className="msg-head">
+              <span className="label">Teammate</span>
+              <span className="at">{thinking.at}</span>
+            </div>
+            <div className="msg-thinking nh-thinking-active">
+              <span className="nh-thinking-dot"/>
+              <span className="nh-thinking-dot"/>
+              <span className="nh-thinking-dot"/>
+              <span style={{marginLeft:8}}>{thinking.label}</span>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="suggestions">
@@ -1503,7 +1713,7 @@ function ChatDrawer({ collapsed, setCollapsed }) {
             <button className="composer-btn" title="Attach">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5 12 20a5 5 0 0 1-7-7l9-9a3.5 3.5 0 0 1 5 5L10 17a2 2 0 0 1-3-3l8-8"/></svg>
             </button>
-            <span className="scope-chip"><span className="dot"/>Over the fence</span>
+            <span className="scope-chip"><span className="dot"/>Late Reply</span>
             <button className="composer-send">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
             </button>
@@ -1530,8 +1740,8 @@ function DayColumn({ day, tasks, selectedId, onSelect }) {
         {day.today && (
           <div className="rollout-poster">
             <div className="rp-label">Rollout Plan</div>
-            <div className="rp-title">Over The Fence</div>
-            <div className="rp-release">Miranda Lambert <em>— Jun 5</em></div>
+            <div className="rp-title">Late Reply</div>
+            <div className="rp-release">3shades <em>— May 22</em></div>
           </div>
         )}
         {tasks.map(t => <TaskCard key={t.id} t={t} selected={selectedId===t.id} onClick={() => onSelect(t)}/>)}
@@ -1606,7 +1816,7 @@ function DetailDrawer({ task, onClose }) {
           <span className="d-label"><Icon.Person size={11}/> Assignees</span>
           <div className="d-value">
             {task.assignee ? (
-              <div className="assignee-row"><span className="mini-avatar" style={{background:'#A2321E'}}>{task.assignee}</span><span className="n">Miranda Lambert</span></div>
+              <div className="assignee-row"><span className="mini-avatar" style={{background:'#A2321E'}}>{task.assignee}</span><span className="n">{ASSIGNEE_NAMES[task.assignee] || '3shades team'}</span></div>
             ) : (
               <button className="assignee-empty"><span className="plus"><Icon.Plus size={10}/></span>Assign team members</button>
             )}
@@ -1633,13 +1843,13 @@ function DetailDrawer({ task, onClose }) {
 
         <div className="d-row">
           <span className="d-label"><Icon.Calendar size={11}/> Due Date</span>
-          <div className="d-value" style={{fontSize:13, fontWeight:500}}>Sunday, April 19, 2026</div>
+          <div className="d-value" style={{fontSize:13, fontWeight:500}}>{DAY_DUE_DATES[task.day] || 'Friday, May 22, 2026'}</div>
         </div>
 
         <div>
           <span className="d-label" style={{display:'block',marginBottom:8}}>Description</span>
           <div className="description-block">
-            Deploy an email to Miranda's existing fan/mailing list announcing <em>Over the Fence</em> with the pre-save link, release date, and a personal note from Miranda about the song's meaning. Output: email sent, open rate and click-through rate tracked.
+            {TASK_DESCRIPTIONS[task.id] || 'Operational task in the Late Reply rollout. Owner is responsible for execution and reporting outcomes back to the rollout thread.'}
           </div>
         </div>
       </div>
@@ -1661,11 +1871,11 @@ function App() {
       <div className="topnav">
         <div className="crumb">
           <Icon.Stack size={13}/><span>Home</span>
-          <span className="slash">/</span><span>Over the fence</span>
+          <span className="slash">/</span><span>Late Reply</span>
           <span className="slash">/</span><b>Timeline</b>
         </div>
         <span className="release-pill">
-          <span className="bar"/>Over the fence Tim…
+          <span className="bar"/>Late Reply Tim…
           <span className="dot"/>
         </span>
         <nav className="topnav-tabs">
