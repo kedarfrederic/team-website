@@ -63,7 +63,7 @@ const DEFAULT_GROUPS: NavGroup[] = [
         { label: "For Enterprise", description: "Custom deployments for major labels and large rosters.", href: "/enterprise" },
       ]},
     ],
-    promoCard: { kicker: "Try it free", headline: "Start free for 30 days.", body: "No credit card required. Full access to Team on your first three releases.", ctaLabel: "Start free", ctaHref: "/onboarding" },
+    promoCard: { kicker: "Try it free", headline: "Start free for 30 days.", body: "No credit card required. Full access to Team on your first three releases.", ctaLabel: "Start free", ctaHref: "/pricing" },
   },
   {
     label: "Resources",
@@ -86,7 +86,7 @@ const groups = (settings?.navGroups && settings.navGroups.length > 0) ? settings
 const status = settings?.navStatus ?? { label: "Operational", href: "#status" };
 const pricingLink = settings?.navPricingLink ?? { label: "Pricing", href: "/pricing" };
 const loginLink = settings?.navLogin ?? { label: "Login", href: "https://www.teamrollouts.com/sign-in" };
-const primaryCta = settings?.navPrimaryCta ?? { label: "Start free", href: "/onboarding" };
+const primaryCta = settings?.navPrimaryCta ?? { label: "Start free", href: "/pricing" };
 
 const FALLBACK_LOGO_URL = "https://www.teamrollouts.com/Team%20Logo%20Graident%2002%20+%20Black.svg";
 const brandLogo = settings?.brandLogo ?? {};

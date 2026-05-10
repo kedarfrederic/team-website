@@ -18,7 +18,7 @@ const heroSubhead =
 const heroBgUrl = hero.backgroundImage?.asset
   ? urlFor(hero.backgroundImage).width(2400).quality(85).format("webp").url()
   : "/header-images/label-executive-on-phone.webp";
-const primaryCta = hero.primaryCta ?? { label: "Start your free trial", href: "https://www.teamrollouts.com/sign-up?plan=pro&period=yearly" };
+const primaryCta = hero.primaryCta ?? { label: "Start your free trial", href: "/pricing" };
 const secondaryCta = hero.secondaryCta ?? { label: "Talk to us", href: "/demo" };
 
 // ── Pillars ─────────────────────────────────────────────────
@@ -121,7 +121,7 @@ const faqItems: { q: string; aHtml: string }[] =
 const finalCta = page?.finalCta ?? {};
 const finalHeadlineTop = "Ready to protect your releases";
 const finalHeadlineBottom = "from day one?";
-const finalPrimary = finalCta.primaryCta ?? { label: "Start your free trial", href: "https://www.teamrollouts.com/sign-up?plan=pro&period=yearly" };
+const finalPrimary = finalCta.primaryCta ?? { label: "Start your free trial", href: "/pricing" };
 const finalSecondary = finalCta.secondaryCta ?? { label: "Book a demo", href: "/demo" };
 const finalFootnote = finalCta.footnote ?? "30-day free trial. No credit card required.";
 ---

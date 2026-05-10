@@ -18,7 +18,7 @@ const heroSubhead =
 const heroBgUrl = hero.backgroundImage?.asset
   ? urlFor(hero.backgroundImage).width(2400).quality(85).format("webp").url()
   : "/header-images/a-r-meeting.webp";
-const primaryCta = hero.primaryCta ?? { label: "Start your free trial", href: "https://www.teamrollouts.com/sign-up?plan=pro&period=yearly" };
+const primaryCta = hero.primaryCta ?? { label: "Start your free trial", href: "/pricing" };
 const secondaryCta = hero.secondaryCta ?? { label: "Book a demo", href: "/demo" };
 
 // ── Pain section ───────────────────────────────────────────
@@ -116,7 +116,7 @@ const stepItems = Array.isArray(steps.steps) && steps.steps.length > 0
 const finalCta = page?.finalCta ?? {};
 const finalHeadlineTop = finalCta.headlineTop ?? finalCta.headline ?? "Ready to work smarter";
 const finalHeadlineBottom = finalCta.headlineBottom ?? "with your clients?";
-const finalPrimary = finalCta.primaryCta ?? { label: "Start your free trial", href: "https://www.teamrollouts.com/sign-up?plan=pro&period=yearly" };
+const finalPrimary = finalCta.primaryCta ?? { label: "Start your free trial", href: "/pricing" };
 const finalSecondary = finalCta.secondaryCta ?? { label: "Book a demo", href: "/demo" };
 const finalFootnote = finalCta.footnote ?? "30-day free trial. No credit card required.";
 

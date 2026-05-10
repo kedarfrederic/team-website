@@ -49,7 +49,7 @@ const VERTICAL_HERO_DEFAULTS: Record<string, string> = {
 const heroBgUrl = hero.backgroundImage?.asset
   ? urlFor(hero.backgroundImage).width(2400).quality(85).format("webp").url()
   : (VERTICAL_HERO_DEFAULTS[verticalKey] ?? "/header-images/team-meeting-with-platform.webp");
-const primaryCta = hero.primaryCta ?? { label: "Start your free trial", href: "https://www.teamrollouts.com/sign-up?plan=pro&period=yearly" };
+const primaryCta = hero.primaryCta ?? { label: "Start your free trial", href: "/pricing" };
 const secondaryCta = hero.secondaryCta ?? { label: "Book a demo", href: "/demo" };
 
 // ── Problem ─────────────────────────────────────────────────
