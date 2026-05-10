@@ -575,7 +575,7 @@ body.nav-mobile-lock{overflow:hidden}
     },
   };
 
-  const TEAM_LOGO = 'https://www.teamrollouts.com/Team%20Logo%20Graident%2002%20+%20Black.svg';
+  const TEAM_LOGO = '/logos/team-logo.webp';
 
   const navHTML = `
 <nav class="nav" id="nav">

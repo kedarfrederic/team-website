@@ -111,7 +111,7 @@ docs.push({
   _id: "siteSettings",
   _type: "siteSettings",
   brandLogo: {
-    url: "https://www.teamrollouts.com/Team%20Logo%20Graident%2002%20+%20Black.svg",
+    url: "/logos/team-logo.webp",
     alt: "Team",
   },
   teammateAvatar: {

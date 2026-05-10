@@ -88,7 +88,7 @@ const pricingLink = settings?.navPricingLink ?? { label: "Pricing", href: "/pric
 const loginLink = settings?.navLogin ?? { label: "Login", href: "https://app.teamrollouts.com/sign-in" };
 const primaryCta = settings?.navPrimaryCta ?? { label: "Start free", href: "/pricing" };
 
-const FALLBACK_LOGO_URL = "https://www.teamrollouts.com/Team%20Logo%20Graident%2002%20+%20Black.svg";
+const FALLBACK_LOGO_URL = "/logos/team-logo.webp";
 const brandLogo = settings?.brandLogo ?? {};
 const TEAM_LOGO = brandLogo.image?.asset
   ? urlFor(brandLogo.image).height(96).format("webp").url()
