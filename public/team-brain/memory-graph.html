@@ -1113,7 +1113,20 @@ function App() {
     };
     handle();
     window.addEventListener('resize', handle);
-    return () => window.removeEventListener('resize', handle);
+    // Also observe the stage element directly. Iframe parents resize the
+    // iframe (mobile rotate, content-visibility re-render, layout reflow)
+    // without always firing window.resize on the content window — without
+    // this observer the graph can stay centered on a stale desktop width
+    // and end up clipped to one side on mobile.
+    let ro = null;
+    if (typeof ResizeObserver !== 'undefined' && stageRef.current) {
+      ro = new ResizeObserver(handle);
+      ro.observe(stageRef.current);
+    }
+    return () => {
+      window.removeEventListener('resize', handle);
+      if (ro) ro.disconnect();
+    };
   }, []);
 
   // ---------- Auto-rotate ----------

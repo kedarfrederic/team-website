@@ -7,18 +7,29 @@ CustomEase.create("assistantEase", "0.34, 1.56, 0.64, 1");
 const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const isMobile = window.innerWidth < 768;
 
-// Lenis smooth scroll
-const lenis = new Lenis({
+// Lenis smooth scroll — desktop only.
+// Native touch scroll on iOS/Android is already buttery; Lenis with
+// `syncTouch: true` + `touchMultiplier: 2` was making mobile scrolls feel
+// fast and twitchy because Lenis was re-emitting every touch frame and
+// over-driving the scroll. Detect coarse-pointer / no-hover devices and
+// skip Lenis entirely there — the page falls back to native CSS scrolling.
+const isTouchDevice = window.matchMedia &&
+  window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+
+const lenis = isTouchDevice ? null : new Lenis({
   lerp: 0.1,
   smoothWheel: true,
-  touchMultiplier: 2,
-  syncTouch: true,
+  touchMultiplier: 1.5,
+  syncTouch: false,
 });
-// Expose globally so other modules can programmatic-scroll via Lenis
-window.lenis = lenis;
-lenis.on('scroll', ScrollTrigger.update);
-gsap.ticker.add((t) => lenis.raf(t * 1000));
-gsap.ticker.lagSmoothing(0);
+
+if (lenis) {
+  // Expose globally so other modules can programmatic-scroll via Lenis
+  window.lenis = lenis;
+  lenis.on('scroll', ScrollTrigger.update);
+  gsap.ticker.add((t) => lenis.raf(t * 1000));
+  gsap.ticker.lagSmoothing(0);
+}
 
 
 /* =============================================
