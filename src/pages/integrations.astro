@@ -66,6 +66,70 @@ interface IntegrationDoc {
   href?: string;
 }
 
+// Name → external logo URL lookup. Used as a final fallback when an
+// integration has no Sanity-uploaded logo AND no logoSrc field — the
+// case for Sanity-seeded integration docs created by scripts/seed-sanity.ts
+// (which only writes name/description/category, not the logo). Keyed
+// case-insensitive by name.
+const LOGO_BY_NAME: Record<string, string> = {
+  "spotify":              "https://cdn.simpleicons.org/spotify/1ED760",
+  "apple music":          "https://cdn.simpleicons.org/applemusic/FA243C",
+  "amazon music":         "https://cdn.simpleicons.org/amazonmusic/40B4E5",
+  "youtube music":        "https://cdn.simpleicons.org/youtubemusic/FF0000",
+  "instagram":            "https://cdn.simpleicons.org/instagram/E4405F",
+  "tiktok":               "https://cdn.simpleicons.org/tiktok/000000",
+  "meta ads":             "https://cdn.simpleicons.org/meta/0467DF",
+  "x":                    "https://cdn.simpleicons.org/x/000000",
+  "spotify for artists":  "https://cdn.simpleicons.org/spotify/1ED760",
+  "chartmetric":          "https://cdn.simpleicons.org/chartmogul/FF6900",
+  "soundcharts":          "https://cdn.simpleicons.org/soundcloud/FF5500",
+  "google analytics":     "https://cdn.simpleicons.org/googleanalytics/E37400",
+  "slack":                "https://svgl.app/library/slack.svg",
+  "google workspace":     "https://cdn.simpleicons.org/googleworkspace/4285F4",
+  "dropbox":              "https://cdn.simpleicons.org/dropbox/0061FF",
+  "zapier":               "https://cdn.simpleicons.org/zapier/FF4F00",
+  "bandcamp":             "https://cdn.simpleicons.org/bandcamp/408294",
+  "soundcloud":           "https://cdn.simpleicons.org/soundcloud/FF5500",
+  "mailchimp":            "https://cdn.simpleicons.org/mailchimp/FFE01B",
+  "hubspot":              "https://cdn.simpleicons.org/hubspot/FF7A59",
+  // additional integrations from the seed catalog
+  "deezer":               "https://cdn.simpleicons.org/deezer/FEAA2D",
+  "tidal":                "https://cdn.simpleicons.org/tidal/000000",
+  "pandora":              "https://cdn.simpleicons.org/pandora/3668FF",
+  "facebook":             "https://cdn.simpleicons.org/facebook/0866FF",
+  "youtube":              "https://cdn.simpleicons.org/youtube/FF0000",
+  "twitter":              "https://cdn.simpleicons.org/x/000000",
+  "discord":              "https://cdn.simpleicons.org/discord/5865F2",
+  "snapchat":             "https://cdn.simpleicons.org/snapchat/FFFC00",
+  "twitch":               "https://cdn.simpleicons.org/twitch/9146FF",
+  "shazam":               "https://cdn.simpleicons.org/shazam/0088FF",
+  "audiomack":            "https://cdn.simpleicons.org/audiomack/FFA200",
+  "musixmatch":           "https://cdn.simpleicons.org/musixmatch/F8205B",
+  "linkfire":             "https://cdn.simpleicons.org/linkfire/00B289",
+  "linktree":             "https://cdn.simpleicons.org/linktree/43E55E",
+  "feature.fm":           "https://cdn.simpleicons.org/feature/00C2FF",
+  "toneden":              "https://cdn.simpleicons.org/toneden/000000",
+  "submithub":            "https://cdn.simpleicons.org/submithub/000000",
+  "playlist push":        "https://cdn.simpleicons.org/spotify/1ED760",
+  "groover":              "https://cdn.simpleicons.org/groover/000000",
+  "songkick":             "https://cdn.simpleicons.org/songkick/F80046",
+  "bandsintown":          "https://cdn.simpleicons.org/bandsintown/00CEC8",
+  "patreon":              "https://cdn.simpleicons.org/patreon/FF424D",
+  "gumroad":              "https://cdn.simpleicons.org/gumroad/FF90E8",
+  "shopify":              "https://cdn.simpleicons.org/shopify/96BF48",
+  "stripe":               "https://cdn.simpleicons.org/stripe/635BFF",
+  "paypal":               "https://cdn.simpleicons.org/paypal/00457C",
+  "asana":                "https://cdn.simpleicons.org/asana/F06A6A",
+  "trello":               "https://cdn.simpleicons.org/trello/0079BF",
+  "notion":               "https://cdn.simpleicons.org/notion/000000",
+  "linear":               "https://cdn.simpleicons.org/linear/5E6AD2",
+  "monday":               "https://cdn.simpleicons.org/monday/FF3D57",
+  "clickup":              "https://cdn.simpleicons.org/clickup/7B68EE",
+  "airtable":             "https://cdn.simpleicons.org/airtable/18BFFF",
+  "figma":                "https://cdn.simpleicons.org/figma/F24E1E",
+  "canva":                "https://cdn.simpleicons.org/canva/00C4CC",
+};
+
 const FALLBACK: IntegrationDoc[] = [
   { _id: "f1",  name: "Spotify",            description: "Deliver and track releases on the world's largest streaming platform", category: "distribution", logoSrc: "https://cdn.simpleicons.org/spotify/1ED760" },
   { _id: "f2",  name: "Apple Music",        description: "Submit and manage releases across the Apple ecosystem",                  category: "distribution", logoSrc: "https://cdn.simpleicons.org/applemusic/FA243C" },
@@ -165,14 +229,18 @@ const rolesCards =
           // Cards filed under "coming-soon" data-category to match the legacy filter button.
           const dataCategory = isComingSoon ? "coming-soon" : card.category;
           const cardClass = isComingSoon ? "int-card int-card--soon" : "int-card";
-          // Logo source priority: Sanity-uploaded > external URL fallback
-          // (cdn.simpleicons.org / svgl.app / jsdelivr — same CDNs the
-          // homepage marquee uses). Empty state if neither is available.
+          // Logo source priority:
+          //   1. Sanity-uploaded image
+          //   2. logoSrc field on the integration doc
+          //   3. LOGO_BY_NAME lookup (final fallback for Sanity-seeded
+          //      integrations that have no logo / logoSrc — keyed by name)
+          //   4. empty (no recognisable mark, just shows blank)
           const sanityLogo = card.logo?.asset
             ? urlFor(card.logo).width(96).format("webp").url()
             : null;
           const fallbackLogo = (card as any).logoSrc as string | undefined;
-          const logoUrl = sanityLogo ?? fallbackLogo;
+          const nameLookup = LOGO_BY_NAME[(card.name ?? "").toLowerCase().trim()];
+          const logoUrl = sanityLogo ?? fallbackLogo ?? nameLookup;
           const logoStyle = logoUrl
             ? `background-image:url(${logoUrl});background-size:contain;background-repeat:no-repeat;background-position:center;`
             : undefined;
