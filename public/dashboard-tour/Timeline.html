@@ -24,7 +24,7 @@
     "side topnav topnav"
     "side chat   timeline";
   height: 100vh;
-  min-height: 720px;
+  min-height: 520px;
   background: var(--bg-canvas);
 }
 .tl-shell.chat-collapsed {
@@ -990,6 +990,15 @@
   .tl-shell { grid-template-columns: 64px 1fr; grid-template-areas: "side topnav" "side timeline"; }
   .tl-shell .chat { display: none; }
   .tl-shell.detail-open { grid-template-columns: 64px 1fr; }
+}
+/* Narrow mobile: drop the sidebar entirely so the timeline columns get full
+   width to breathe. Otherwise on a 375px iPhone the timeline column area is
+   only ~310px wide, can't show 7 day columns, and reads as broken. */
+@media (max-width: 600px) {
+  .tl-shell { grid-template-columns: 1fr; grid-template-areas: "topnav" "timeline"; }
+  .tl-shell .sidebar { display: none; }
+  .tl-shell.detail-open { grid-template-columns: 1fr; }
+  .tl-shell.detail-open .detail-drawer { display: none; }
 }
 
 /* ---------- Whiter canvas to match the actual platform UI ----------

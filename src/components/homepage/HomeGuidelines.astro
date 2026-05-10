@@ -602,10 +602,13 @@ function assigneeBg(c: string | undefined): string {
   .guidelines-section--interactive {
     position: relative;
     min-height: 100vh;
-    /* content-visibility lets the browser skip rendering work when the
-       section is offscreen — big scroll-perf win with the heavy iframe. */
-    content-visibility: auto;
-    contain-intrinsic-size: 1px 100vh;
+  }
+  /* Mobile: give the iframe more height so the timeline content (which
+     has 520px min-height inside the iframe) actually fits rather than
+     being clipped at the bottom. iOS Safari treats 92vh as ~92% of the
+     visible viewport which can be cramped after the address bar shows. */
+  @media (max-width: 768px) {
+    .guidelines-section--interactive { min-height: auto; }
   }
   .guidelines-section--interactive .guidelines-stage {
     position: relative;
@@ -618,6 +621,15 @@ function assigneeBg(c: string | undefined): string {
     overflow: hidden;
     box-shadow: 0 24px 80px rgba(0, 0, 0, 0.10), 0 2px 8px rgba(0, 0, 0, 0.04);
     contain: layout style paint;
+  }
+  /* Mobile: cap the iframe height by content rather than viewport so the
+     full timeline shell fits without clipping. 600px is enough to show the
+     topnav + a few day columns with their tasks. Border-radius softened. */
+  @media (max-width: 768px) {
+    .guidelines-section--interactive .guidelines-stage {
+      height: 620px;
+      border-radius: 0.625rem;
+    }
   }
   .guidelines-section--interactive .guidelines-iframe {
     position: absolute;
