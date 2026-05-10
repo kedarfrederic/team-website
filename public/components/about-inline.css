@@ -565,12 +565,11 @@ a.nav__cta:hover{color:#111 !important;background:rgba(255,255,255,0.75);backdro
   .roles-divider{width:100%;height:1px;align-self:auto}
 }
 }
-/* About page */
+/* About page — match the ICP pages' .pain-section spacing (6rem) so the
+   hero → "operating system" transition reads consistently with the rest
+   of the marketing site. */
 .about-mission{
-  /* Pin the headline tight to the hero handoff so there's no white gap
-     above "The operating system" — match the other pages where the next
-     section starts right at the dark→light transition. */
-  padding:0 2rem 5rem;background:#fff;
+  padding:6rem 2rem;background:#fff;
 }
 .about-mission__inner{
   max-width:42rem;margin:0 auto;text-align:center;
@@ -683,7 +682,7 @@ a.nav__cta:hover{color:#111 !important;background:rgba(255,255,255,0.75);backdro
   .about-story__inner{grid-template-columns:1fr;gap:1.5rem}
   .values-grid{grid-template-columns:1fr}
   .about-cta__inner{grid-template-columns:1fr;gap:1.5rem}
-  .about-mission{padding:0 1.5rem 3.5rem}
+  .about-mission{padding:4rem 1.5rem}
   .about-story{padding:4rem 1.5rem}
   .about-values{padding:4rem 1.5rem}
   .about-cta{padding:4rem 1.5rem}
