@@ -84,6 +84,13 @@ const canonicalUrl =
   <!-- Preconnect for fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  {/* Warm the DNS / TCP for the integrations marquee CDNs so the 36 logo
+      images don't burn a fresh handshake each when the marquee scrolls
+      into view. dns-prefetch (cheap, no TLS) for the long-tail; preconnect
+      (TLS handshake too) for the most-used origin. */}
+  <link rel="preconnect" href="https://cdn.simpleicons.org" crossorigin />
+  <link rel="dns-prefetch" href="https://svgl.app" />
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
 
   {/*
     Scroll position preservation across Visual Editing reloads.

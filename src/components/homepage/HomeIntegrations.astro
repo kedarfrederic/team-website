@@ -85,7 +85,7 @@ const ROW_2: ResolvedLogo[] = [...ROW_1.slice(half), ...ROW_1.slice(0, half)];
       <div class="tech-row" id="techRow1">
         {[...ROW_1, ...ROW_1].map((logo, i) => (
           <a class="tech-logo" title={i < ROW_1.length ? (logo.title ?? logo.name) : undefined}>
-            <img src={logo.src} alt={i < ROW_1.length ? logo.name : ""} />
+            <img src={logo.src} alt={i < ROW_1.length ? logo.name : ""} loading="lazy" decoding="async" />
           </a>
         ))}
       </div>
@@ -94,7 +94,7 @@ const ROW_2: ResolvedLogo[] = [...ROW_1.slice(half), ...ROW_1.slice(0, half)];
       <div class="tech-row" id="techRow2">
         {[...ROW_2, ...ROW_2].map((logo, i) => (
           <a class="tech-logo" title={i < ROW_2.length ? (logo.title ?? logo.name) : undefined}>
-            <img src={logo.src} alt={i < ROW_2.length ? logo.name : ""} />
+            <img src={logo.src} alt={i < ROW_2.length ? logo.name : ""} loading="lazy" decoding="async" />
           </a>
         ))}
       </div>

@@ -83,7 +83,7 @@ const slides: { tier: string; name: string; role?: string; quote: string; photoU
           <div class="swiper-slide">
             <div class="story-card">
               <div class="story-card__photo">
-                {slide.photoUrl && <img src={slide.photoUrl} alt="" />}
+                {slide.photoUrl && <img src={slide.photoUrl} alt="" loading="lazy" decoding="async" />}
               </div>
               <div class={`story-card__tier story-card__tier--${slide.tier}`}>
                 {slide.tier === "enterprise" ? "Enterprise" : slide.tier === "artist" ? "Artist" : "Team"}

@@ -63,7 +63,10 @@ const uploadCtaIsVideo = uploadCta?.type === "video";
   navTheme="dark"
 >
   <link slot="head" rel="stylesheet" href="/components/team-home.css" />
-  <link slot="head" rel="stylesheet" href="/components/homepage.css" />
+  {/* homepage.css was a near-duplicate of homepage-inline.css (433 vs 435
+      selectors, 95% identical content) — leftover from when both a Webflow
+      and Astro mount were live. Dropped to remove a render-blocking 80KB
+      stylesheet. The Astro mount uses homepage-inline.css. */}
   <link slot="head" rel="stylesheet" href="/components/homepage-inline.css" />
   <link slot="head" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
