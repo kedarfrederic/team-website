@@ -59,7 +59,7 @@
     // Right nav
     pricing: '/pricing',
     login: 'https://app.teamrollouts.com/sign-in',
-    signup: '/onboarding',
+    signup: 'https://app.teamrollouts.com/onboarding?plan=pro&period=yearly',
     // Status (TODO: replace with real status page URL once provisioned)
     status: '#status',
   };
