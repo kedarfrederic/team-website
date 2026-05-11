@@ -194,6 +194,19 @@ const canonicalUrl =
   <script src={v("/components/nav.js")} defer></script>
 
   {/*
+    Website lead capture — auto-attaches a submit handler to every form
+    carrying `data-hubspot-form="<source>"` (the attribute name is
+    legacy; leads now POST to the in-house CRM at
+    admin.getteamnow.com/api/v1/website-leads, not HubSpot). Covers the
+    newsletter form in the footer and the /contact, /demo, /onboarding
+    forms. Idempotent — if a form is re-injected by client-side code
+    the handler skips already-wired forms. Loaded site-wide because
+    forms appear on many pages; the script does nothing on pages with
+    no matching form.
+  */}
+  <script src={v("/components/website-leads.js")} defer></script>
+
+  {/*
     Visual Editing overlay — always mount so Studio's Presentation tool
     can establish its postMessage connection with the iframe. Without
     stega encoding on public pages (sanityClient has stega disabled),
