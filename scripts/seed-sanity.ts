@@ -1529,7 +1529,7 @@ docs.push({
     headlineTop: "Compliance",
     headlineBottom: "& certifications",
     cards: [
-      { _key: "soc2", _type: "complianceCard", title: "SOC 2 Type II", body: "We're pursuing SOC 2 Type II certification. Our security controls are designed to meet the security, availability, and confidentiality trust service criteria.", status: "coming_soon" },
+      { _key: "entsec", _type: "complianceCard", title: "Enterprise-grade security", body: "Security built into every layer — end-to-end encryption in transit and at rest, role-based access controls, full audit logging, and continuous monitoring. Independent security review is on our roadmap as we scale.", status: "active" },
       { _key: "dpa", _type: "complianceCard", title: "Data Processing Agreement", body: "Custom DPA available for enterprise customers covering data handling, sub-processors, and breach notification procedures.", status: "on_request" },
       { _key: "gdpr", _type: "complianceCard", title: "GDPR Compliant", body: "Full compliance with the EU General Data Protection Regulation. Data subject rights, lawful processing, and privacy by design built into every layer of the platform.", status: "coming_soon" },
     ],
