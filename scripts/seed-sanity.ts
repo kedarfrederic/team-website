@@ -1529,7 +1529,7 @@ docs.push({
     headlineTop: "Compliance",
     headlineBottom: "& certifications",
     cards: [
-      { _key: "entsec", _type: "complianceCard", title: "Enterprise-grade security", body: "Security built into every layer — end-to-end encryption in transit and at rest, role-based access controls, full audit logging, and continuous monitoring. Independent security review is on our roadmap as we scale.", status: "active" },
+      { _key: "entsec", _type: "complianceCard", title: "Enterprise-grade security", body: "End-to-end encryption in transit and at rest, role-based access controls, full audit logging, and continuous monitoring.", status: "active" },
       { _key: "dpa", _type: "complianceCard", title: "Data Processing Agreement", body: "Custom DPA available for enterprise customers covering data handling, sub-processors, and breach notification procedures.", status: "on_request" },
       { _key: "gdpr", _type: "complianceCard", title: "GDPR Compliant", body: "Full compliance with the EU General Data Protection Regulation. Data subject rights, lawful processing, and privacy by design built into every layer of the platform.", status: "coming_soon" },
     ],

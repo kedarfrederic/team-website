@@ -48,9 +48,8 @@ const client = createClient({
 const NEW_CARD = {
   title: "Enterprise-grade security",
   body:
-    "Security built into every layer — end-to-end encryption in transit and at rest, " +
-    "role-based access controls, full audit logging, and continuous monitoring. " +
-    "Independent security review is on our roadmap as we scale.",
+    "End-to-end encryption in transit and at rest, role-based access controls, " +
+    "full audit logging, and continuous monitoring.",
   status: "active" as const,
 };
 
