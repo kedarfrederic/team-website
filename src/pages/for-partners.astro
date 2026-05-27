@@ -251,8 +251,9 @@ const others = Array.isArray(rolesGrid.cards) && rolesGrid.cards.length > 0
             ))}
           </div>
           <div class="partner-panel__preview">
-            {/* Mock previews are rendered once for ALL tabs and switched via JS */}
-            {ti === 0 && <PartnerTabMocks />}
+            {/* Each panel renders its own tab's mock previews; the feature
+                buttons switch which one is active within this panel via JS. */}
+            <PartnerTabMocks tabKey={tab.tabKey} />
           </div>
         </div>
       ))}

@@ -9,9 +9,15 @@
  *
  * Each mock is keyed by `${tabKey}-${index+1}` (e.g. `marketing-1`).
  * Tab keys are: marketing | distribution | ar | creative
+ *
+ * Pass `tabKey` so only that tab's 4 mocks render — this component is
+ * mounted once per panel, inside each panel's own `.partner-panel__preview`.
  */
+const { tabKey } = Astro.props as { tabKey: string };
 ---
 
+{tabKey === "marketing" && (
+<Fragment>
 {/* Marketing & PR */}
 <div class="partner-preview-item is-active" data-preview="marketing-1">
   <div class="fp-timeline">
@@ -48,7 +54,11 @@
     <div class="fp-budget__total"><span>Campaign Total</span><span>$17.0k</span></div>
   </div>
 </div>
+</Fragment>
+)}
 
+{tabKey === "distribution" && (
+<Fragment>
 {/* Distribution */}
 <div class="partner-preview-item is-active" data-preview="distribution-1">
   <div class="mock-dashboard">
@@ -90,7 +100,11 @@
     </div>
   </div>
 </div>
+</Fragment>
+)}
 
+{tabKey === "ar" && (
+<Fragment>
 {/* A&R */}
 <div class="partner-preview-item is-active" data-preview="ar-1">
   <div class="mock-dashboard">
@@ -166,7 +180,11 @@
     </div>
   </div>
 </div>
+</Fragment>
+)}
 
+{tabKey === "creative" && (
+<Fragment>
 {/* Creative Services */}
 <div class="partner-preview-item is-active" data-preview="creative-1">
   <div class="mock-dashboard">
@@ -200,3 +218,5 @@
     <div class="mock-collab__row"><div class="mock-collab__avatar" style="background:rgba(0,0,0,0.08);color:var(--text-secondary)">&#10003;</div><div class="mock-collab__task" style="text-decoration:line-through;opacity:0.5">Press photos — delivered</div><div class="mock-collab__check mock-collab__check--done"></div></div>
   </div>
 </div>
+</Fragment>
+)}
