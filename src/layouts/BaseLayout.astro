@@ -28,9 +28,16 @@ interface Props {
    * forms). Default "light".
    */
   navTheme?: "dark" | "light";
+  /**
+   * When false, the page ships its own chrome: BaseLayout skips the site
+   * nav, footer, and the <main> wrapper (the page body is injected as-is).
+   * Used by the v2 homepage, which carries its own capsule nav, loader,
+   * cursor, and footer. Default true.
+   */
+  chrome?: boolean;
 }
 
-const { title, description, ogImage, seo, canonical, navTheme = "light" } = Astro.props;
+const { title, description, ogImage, seo, canonical, navTheme = "light", chrome = true } = Astro.props;
 const previewMode = isPreviewRequest(Astro);
 const settings = await getSiteSettings(getClient(Astro));
 
@@ -128,16 +135,19 @@ const canonicalUrl =
     `}</script>
   )}
 
+  {/* Chromeless pages ship their own nav/footer — the site chrome CSS
+      would fight them (nav.css sets overflow-x:hidden on html/body, which
+      also breaks position:sticky pinning). */}
   <!-- Nav + footer CSS hoisted to head to prevent FOUC of large unstyled
        logo + plain-text link list when navigating between pages. -->
-  <link rel="stylesheet" href={v("/components/nav.css")} />
-  <link rel="stylesheet" href={v("/components/footer.css")} />
+  {chrome && <link rel="stylesheet" href={v("/components/nav.css")} />}
+  {chrome && <link rel="stylesheet" href={v("/components/footer.css")} />}
 
   <!-- Critical nav layout — inlined as a defensive measure so the nav
        NEVER renders unstyled even if /components/nav.css is delayed by
        cache misses or the CDN. Mirrors the layout-only rules from
        nav.css; full visual styling still comes from the linked file. -->
-  <style is:inline>
+  {chrome && <style is:inline>
     .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 0.875rem 2rem; display: flex; align-items: center; justify-content: space-between; max-width: 80rem; margin: 0 auto; }
     .nav__pill { display: flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.5rem; border-radius: 100px; background: rgba(255,255,255,0.12); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.1); }
     .nav__logo { display: flex; align-items: center; padding: 0 0.5rem; position: relative; }
@@ -157,7 +167,7 @@ const canonicalUrl =
     .nav-mobile, .nav-mobile-overlay { display: none; }
     .nav a { text-decoration: none; }
     .nav a svg { fill: none; stroke: currentColor; }
-  </style>
+  </style>}
 
   <slot name="head" />
 </head>
@@ -181,17 +191,23 @@ const canonicalUrl =
   */}
   <script is:inline set:html={`window.__TEAM_SITE__ = ${JSON.stringify(settings ?? null)};`} />
 
-  <div id="team-nav" data-theme={navTheme}>
-    <Nav settings={settings} theme={navTheme} />
-  </div>
+  {chrome ? (
+    <>
+      <div id="team-nav" data-theme={navTheme}>
+        <Nav settings={settings} theme={navTheme} />
+      </div>
 
-  <main>
+      <main>
+        <slot />
+      </main>
+
+      <Footer settings={settings} />
+
+      <script src={v("/components/nav.js")} defer></script>
+    </>
+  ) : (
     <slot />
-  </main>
-
-  <Footer settings={settings} />
-
-  <script src={v("/components/nav.js")} defer></script>
+  )}
 
   {/*
     Visual Editing overlay — always mount so Studio's Presentation tool

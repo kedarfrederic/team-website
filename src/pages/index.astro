@@ -1,145 +1,51 @@
 ---
 /**
- * Homepage.
+ * Homepage — v2 "A brain for music operations" (2026-07-10).
  *
- * Hybrid render: the hero + upload sections are Sanity-driven (every
- * editor-meaningful surface — typewriter words, headline suffix, subhead,
- * CTAs, hero bg image, tile labels, upload section copy + CTA — bound to
- * the homepage singleton). The mid-page heavy-animation sections (roles
- * tabs, engine search demo, guidelines releases→timeline transition,
- * features spotlight, brain video, integrations marquee, FAQ, stories
- * carousel) stay as legacy lift-and-import HTML so the GSAP / Lenis /
- * Swiper choreography keeps working untouched.
+ * The page was designed and built as a self-contained static build
+ * (hand-tuned scroll choreography: pinned acts, a 3D point-cloud brain
+ * canvas, scrub-driven scenes, no frameworks), so rather than
+ * transcribing it into Astro components we inject it whole — the same
+ * strategy the previous homepage used in its Phase 5.2 port:
  *
- * Editor priorities are covered: hero copy + assets, upload positioning,
- * page SEO. Mid-page sections can be deeper-bound section-by-section as
- * follow-up work — schemas already exist for all of them.
+ *   1. Styles:  public/components/homepage-v2.css
+ *   2. Script:  public/components/homepage-v2.js  (one rAF loop, no libs)
+ *   3. Body:    src/lib/homepage-v2-body.html injected via set:html
+ *   4. Assets:  public/v2/assets/** (fonts, logos, imagery)
+ *
+ * The page carries its OWN chrome — loader, capsule nav, equalizer
+ * cursor, footer — so BaseLayout renders chromeless (chrome={false}):
+ * no site nav/footer, no <main> wrapper (the body brings its own).
+ * BaseLayout still owns SEO, canonical, OG tags, and the Visual
+ * Editing mount.
+ *
+ * The beta signup form posts straight to the CRM
+ * (admin.getteamnow.com/api/v1/website-leads, source_form='beta') —
+ * teamrollouts.com is on that endpoint's CORS allowlist.
+ *
+ * The previous (Sanity-hybrid) homepage remains intact at /home-classic
+ * for rollback and comparison; its Sanity schemas and components are
+ * untouched, ready to be layered into this page section-by-section as
+ * follow-up work.
  */
 
 import BaseLayout from "../layouts/BaseLayout.astro";
-import NotificationsHero from "../components/hero/NotificationsHero.astro";
-import HomeRoles from "../components/homepage/HomeRoles.astro";
-import HomeEngine from "../components/homepage/HomeEngine.astro";
-import HomeGuidelines from "../components/homepage/HomeGuidelines.astro";
-import HomeFeatures from "../components/homepage/HomeFeatures.astro";
-import HomeBrain from "../components/homepage/HomeBrain.astro";
-import HomeIntegrations from "../components/homepage/HomeIntegrations.astro";
-import HomeFaq from "../components/homepage/HomeFaq.astro";
-import HomeStories from "../components/homepage/HomeStories.astro";
-import HomeChrome from "../components/homepage/HomeChrome.astro";
-import SplitHeadline from "../components/SplitHeadline.astro";
-import { getHomepage } from "../lib/queries";
-import { getClient, urlFor } from "../lib/sanity";
-// @ts-expect-error
-import restBHtml from "../lib/homepage-rest-B.html?raw";
 import { v } from "../lib/asset-url";
-
-const page = await getHomepage(getClient(Astro));
-
-// ── Hero ────────────────────────────────────────────────────
-const hero = page?.hero ?? {};
-const heroEyebrow = hero.eyebrow ?? "The operating system for music releases";
-const typewriterWords: string[] =
-  Array.isArray(hero.typewriterWords) && hero.typewriterWords.length > 0
-    ? hero.typewriterWords
-    : ["Command Center", "Strategy hub", "Single source of truth"];
-const headlineSuffix = hero.headlineSuffix ?? "for your music releases";
-const heroSubhead = hero.subhead ?? "Stop juggling spreadsheets, Slack threads, and email chains.\nOne platform for your entire rollout.";
-const primaryCta = hero.primaryCta ?? { label: "Book demo", href: "/demo" };
-const secondaryCta = hero.secondaryCta ?? { label: "See the platform", href: "/intelligence" };
-
-// ── Upload section ──────────────────────────────────────────
-const upload = page?.uploadSection ?? {};
-const uploadHeadlineTop = upload.headlineTop ?? upload.headline ?? "One platform.";
-const uploadHeadlineBottom = upload.headlineBottom ?? "One team.";
-const uploadBody = upload.body ?? "Whether you're rolling out a single, EP, or Album, every task, every asset, and every conversation needs a single home.";
-const uploadCta = upload.cta ?? { label: "See how it works", type: "video", href: "#" };
-const uploadCtaIsVideo = uploadCta?.type === "video";
+// @ts-expect-error — Astro's ?raw modifier returns a string at build time
+import bodyHtml from "../lib/homepage-v2-body.html?raw";
 ---
+
 <BaseLayout
-  title={typewriterWords[0] + " " + headlineSuffix}
-  description={heroSubhead.replace(/\n/g, " ")}
-  seo={page?.seo}
+  title="Team — A Brain for Music Operations"
+  description="Team is the operational brain for music companies, artist teams, and modern music businesses. It connects the systems your operation already runs on and turns them into one living intelligence layer."
   navTheme="dark"
+  chrome={false}
 >
-  <link slot="head" rel="stylesheet" href={v("/components/team-home.css")} />
-  {/* homepage.css was a near-duplicate of homepage-inline.css (433 vs 435
-      selectors, 95% identical content) — leftover from when both a Webflow
-      and Astro mount were live. Dropped to remove a render-blocking 80KB
-      stylesheet. The Astro mount uses homepage-inline.css. */}
-  <link slot="head" rel="stylesheet" href={v("/components/homepage-inline.css")} />
-  <link slot="head" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <link slot="head" rel="preload" href="/v2/assets/fonts/NyghtSerif-LightItalic.woff" as="font" type="font/woff" crossorigin />
+  <link slot="head" rel="preload" href="/v2/assets/fonts/Inter-Variable.ttf" as="font" type="font/ttf" crossorigin />
+  <link slot="head" rel="stylesheet" href={v("/components/homepage-v2.css")} />
 
-  {/*
-    Hero — animated notifications scatter with cycling typewriter headline.
-    Bound to page.hero.* (eyebrow, typewriterWords, headlineSuffix, subhead,
-    primaryCta, secondaryCta). The wrapper carries id="heroSection" so the
-    side-nav, floating-CTA, and "nav goes solid past hero" ScrollTriggers
-    in homepage-inline-1.js continue to work without modification.
-  */}
-  <section id="heroSection" class="hero-section hero-section--notifications">
-    <NotificationsHero
-      eyebrow={heroEyebrow}
-      typewriterWords={typewriterWords}
-      headlineAlt={headlineSuffix}
-      body={heroSubhead.replace(/\n/g, " ")}
-      primaryCta={{ label: primaryCta.label ?? "Book demo", href: primaryCta.href ?? "/demo" }}
-      secondaryCta={secondaryCta?.label ? { label: secondaryCta.label, href: secondaryCta.href ?? "/intelligence" } : undefined}
-    />
-  </section>
+  <Fragment set:html={bodyHtml} />
 
-  {/* Upload section — Sanity-driven copy + CTA */}
-  <section class="section" id="uploadSection">
-    <div class="container container--center">
-      <div class="section-intro">
-        <SplitHeadline as="h2" class="headline-lg" top={uploadHeadlineTop} bottom={uploadHeadlineBottom} />
-        <p class="body-lg">{uploadBody}</p>
-        {uploadCta?.label && (
-          <a
-            href={uploadCtaIsVideo ? "#" : (uploadCta.href ?? "#")}
-            class="btn btn--primary"
-            style="margin-top:1.25rem"
-            data-video-trigger={uploadCtaIsVideo ? "" : undefined}
-          >
-            {uploadCta.label}
-          </a>
-        )}
-      </div>
-    </div>
-  </section>
-
-  {/*
-    Mid-page render order:
-      → <HomeRoles /> bound from page.rolesTabs
-      A: legacy lift-and-import for engine demo → guidelines transition
-         → features spotlight (heaviest GSAP / Lenis choreography; bind
-         section-by-section in v2).
-      → <HomeBrain /> bound from page.brainSection
-      B: legacy lift-and-import for the integrations marquee.
-      → <HomeFaq /> bound from page.faq
-      → <HomeStories /> bound from page.stories
-      C: legacy chrome — video modal, side nav, floating CTA.
-  */}
-  <HomeRoles data={page?.rolesTabs} />
-  <HomeEngine data={page?.engineSection} />
-  <HomeGuidelines data={page?.guidelinesSection} />
-  <HomeFeatures data={page?.featureSpotlight} />
-  <HomeBrain data={page?.brainSection} />
-  <HomeIntegrations data={page?.integrationsMarquee} />
-  <Fragment set:html={restBHtml} />
-  <HomeFaq data={page?.faq} />
-  <HomeStories data={page?.stories} />
-  <HomeChrome data={page?.chrome} />
-
-  <script is:inline src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
-  <script is:inline src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
-  <script is:inline src="https://cdn.jsdelivr.net/npm/gsap@3/dist/Flip.min.js"></script>
-  <script is:inline src="https://cdn.jsdelivr.net/npm/gsap@3/dist/Observer.min.js"></script>
-  <script is:inline src="https://cdn.jsdelivr.net/npm/gsap@3/dist/Draggable.min.js"></script>
-  <script is:inline src="https://cdn.jsdelivr.net/npm/gsap@3/dist/CustomEase.min.js"></script>
-  <script is:inline src="https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js"></script>
-  <script is:inline src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-
-  <script is:inline src={v("/components/homepage-inline-1.js")}></script>
-  <script is:inline src={v("/components/homepage-inline-2.js")}></script>
+  <script is:inline src={v("/components/homepage-v2.js")}></script>
 </BaseLayout>
