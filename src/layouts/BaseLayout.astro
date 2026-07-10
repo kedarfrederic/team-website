@@ -35,9 +35,21 @@ interface Props {
    * cursor, and footer. Default true.
    */
   chrome?: boolean;
+  /**
+   * Absolute (or root-relative) URL of a static OG/Twitter card image,
+   * bypassing the Sanity-image pipeline. Highest precedence — use for a
+   * page that ships its own hand-made share card (e.g. the v2 homepage's
+   * /v2/og-brain.png). Root-relative paths are resolved against the site
+   * origin so crawlers get an absolute URL. Ignored if a Sanity `seo.ogImage`
+   * is set, which stays the editor-controlled source of truth.
+   */
+  ogImageUrl?: string;
 }
 
-const { title, description, ogImage, seo, canonical, navTheme = "light", chrome = true } = Astro.props;
+const {
+  title, description, ogImage, seo, canonical,
+  navTheme = "light", chrome = true, ogImageUrl: ogImageUrlProp,
+} = Astro.props;
 const previewMode = isPreviewRequest(Astro);
 const settings = await getSiteSettings(getClient(Astro));
 
@@ -56,10 +68,15 @@ const finalTitle = stegaClean(
 const finalDescription = stegaClean(
   seo?.metaDescription ?? description ?? defaultSeo.metaDescription ?? "Stop juggling spreadsheets, Slack threads, and email chains. One platform for your entire rollout."
 );
+const siteOrigin = (Astro.site ?? new URL("https://teamrollouts.com")).origin;
 const finalOgImage = seo?.ogImage ?? ogImage ?? defaultSeo.ogImage;
+// Precedence: Sanity image (editor-controlled) → static ogImageUrl prop →
+// site-wide default. Root-relative prop paths are absolutized for crawlers.
 const ogImageUrl = finalOgImage?.asset?._ref
   ? urlFor(finalOgImage).width(1200).height(630).fit("crop").url()
-  : "https://teamrollouts.com/og-image.png";
+  : ogImageUrlProp
+    ? new URL(ogImageUrlProp, siteOrigin).toString()
+    : "https://teamrollouts.com/og-image.png";
 
 const noIndex = seo?.noIndex === true || previewMode;
 const canonicalUrl =
