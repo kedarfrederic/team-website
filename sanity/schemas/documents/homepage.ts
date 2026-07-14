@@ -22,12 +22,113 @@ export const homepage = defineType({
   title: "Homepage",
   type: "document",
   groups: [
-    { name: "hero", title: "Hero", default: true },
-    { name: "sections", title: "Page sections" },
-    { name: "footer", title: "Bottom of page" },
+    { name: "v2", title: "Homepage v2 (LIVE)", default: true },
+    { name: "hero", title: "Hero (classic)" },
+    { name: "sections", title: "Page sections (classic)" },
+    { name: "footer", title: "Bottom of page (classic)" },
     { name: "seo", title: "SEO" },
   ],
   fields: [
+    // ── Homepage v2 (the LIVE "A brain for music operations" page) ──
+    // Only the high-churn copy is bound. Every field falls back to the
+    // built-in default in src/lib/homepage-v2-body.html, so leaving these
+    // blank renders the page exactly as shipped. The mid-page scroll
+    // choreography stays as code and is intentionally not editable here.
+    defineField({
+      name: "heroV2",
+      title: "Hero",
+      type: "object",
+      group: "v2",
+      description:
+        "Hero of the live homepage. Blank fields fall back to the shipped defaults.",
+      fields: [
+        defineField({
+          name: "eyebrow",
+          title: "Eyebrow",
+          type: "string",
+          description: 'Serif italic line above the headline.',
+          initialValue: "Meet Team.",
+        }),
+        defineField({
+          name: "titleLead",
+          title: "Headline — lead",
+          type: "string",
+          description: 'Text before the emphasized word (e.g. "A").',
+          initialValue: "A",
+        }),
+        defineField({
+          name: "titleEmphasis",
+          title: "Headline — emphasized word",
+          type: "string",
+          description: 'The serif-italic word (e.g. "brain").',
+          initialValue: "brain",
+        }),
+        defineField({
+          name: "titleTail",
+          title: "Headline — tail",
+          type: "string",
+          description: 'Text after the emphasized word (e.g. "for music operations.").',
+          initialValue: "for music operations.",
+        }),
+        defineField({
+          name: "subhead",
+          title: "Subhead",
+          type: "text",
+          rows: 2,
+          initialValue:
+            "Team connects the systems your music operation already runs on, turning every tool, file, message, plan, and data point into one living intelligence layer.",
+        }),
+        defineField({
+          name: "primaryCtaLabel",
+          title: "Primary button label",
+          type: "string",
+          description: "The solid button (anchors to the beta form).",
+          initialValue: "Join the beta",
+        }),
+        defineField({
+          name: "secondaryCtaLabel",
+          title: "Secondary button label",
+          type: "string",
+          description: "The ghost button (opens the Calendly walkthrough).",
+          initialValue: "Book a walkthrough",
+        }),
+      ],
+    }),
+    defineField({
+      name: "betaV2",
+      title: "Beta / finale",
+      type: "object",
+      group: "v2",
+      description: "The closing beta-signup section of the live homepage.",
+      fields: [
+        defineField({
+          name: "titleLead",
+          title: "Headline — lead",
+          type: "string",
+          initialValue: "Try it on your",
+        }),
+        defineField({
+          name: "titleEmphasis",
+          title: "Headline — emphasized word",
+          type: "string",
+          description: "Serif-italic phrase on the second line.",
+          initialValue: "next release.",
+        }),
+        defineField({
+          name: "subhead",
+          title: "Subhead",
+          type: "string",
+          initialValue: "The Team beta program is now open. Sign up today.",
+        }),
+        defineField({
+          name: "submitLabel",
+          title: "Submit button label",
+          type: "string",
+          initialValue: "Sign me up",
+        }),
+      ],
+    }),
+
     // ── Hero ──────────────────────────────────────────────────
     defineField({
       name: "hero",

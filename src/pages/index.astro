@@ -31,8 +31,43 @@
 
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { v } from "../lib/asset-url";
+import { getHomepage } from "../lib/queries";
 // @ts-expect-error — Astro's ?raw modifier returns a string at build time
 import bodyHtml from "../lib/homepage-v2-body.html?raw";
+
+// ── Sanity-bound copy ────────────────────────────────────────
+// Only the high-churn hero + beta copy is editable; every token below falls
+// back to the string shipped in homepage-v2-body.html, so an empty or
+// unreachable CMS renders the page exactly as designed. Uses the published
+// (CDN) client — copy updates go live on publish, not draft — which also
+// keeps stega encoding out of the raw HTML we inject via set:html.
+const page = await getHomepage();
+const heroV2 = page?.heroV2 ?? {};
+const betaV2 = page?.betaV2 ?? {};
+
+const esc = (s: unknown) =>
+  String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+const tokens: Record<string, unknown> = {
+  "{{V2_HERO_EYEBROW}}": heroV2.eyebrow ?? "Meet Team.",
+  "{{V2_HERO_TITLE_LEAD}}": heroV2.titleLead ?? "A",
+  "{{V2_HERO_TITLE_EM}}": heroV2.titleEmphasis ?? "brain",
+  "{{V2_HERO_TITLE_TAIL}}": heroV2.titleTail ?? "for music operations.",
+  "{{V2_HERO_SUBHEAD}}":
+    heroV2.subhead ??
+    "Team connects the systems your music operation already runs on, turning every tool, file, message, plan, and data point into one living intelligence layer.",
+  "{{V2_CTA_PRIMARY}}": heroV2.primaryCtaLabel ?? "Join the beta",
+  "{{V2_CTA_SECONDARY}}": heroV2.secondaryCtaLabel ?? "Book a walkthrough",
+  "{{V2_BETA_TITLE_LEAD}}": betaV2.titleLead ?? "Try it on your",
+  "{{V2_BETA_TITLE_EM}}": betaV2.titleEmphasis ?? "next release.",
+  "{{V2_BETA_SUBHEAD}}": betaV2.subhead ?? "The Team beta program is now open. Sign up today.",
+  "{{V2_BETA_SUBMIT}}": betaV2.submitLabel ?? "Sign me up",
+};
+
+let body = bodyHtml as string;
+for (const [token, value] of Object.entries(tokens)) {
+  body = body.split(token).join(esc(value));
+}
 ---
 
 <BaseLayout
@@ -46,7 +81,7 @@ import bodyHtml from "../lib/homepage-v2-body.html?raw";
   <link slot="head" rel="preload" href="/v2/assets/fonts/Inter-Variable.ttf" as="font" type="font/ttf" crossorigin />
   <link slot="head" rel="stylesheet" href={v("/components/homepage-v2.css")} />
 
-  <Fragment set:html={bodyHtml} />
+  <Fragment set:html={body} />
 
   <script is:inline src={v("/components/homepage-v2.js")}></script>
 </BaseLayout>
