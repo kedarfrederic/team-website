@@ -152,6 +152,21 @@ const canonicalUrl =
     `}</script>
   )}
 
+  {/*
+    PostHog — same project as the app (app.teamrollouts.com) and the in-repo
+    marketing partials (server/marketing/partials/head.ts), so marketing-site
+    pageviews land alongside product events. Anonymous-only on the marketing
+    site; identify() runs only post-login in the SPA. Set $host as a super
+    property so dashboards can split "marketing" vs "app" traffic when needed.
+    Emitted unconditionally (outside the chrome guard) so the chromeless v2
+    homepage is tracked too.
+  */}
+  <script is:inline>{`
+    !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src=s.api_host+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchingSurveys getSurveys onSessionId".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+    posthog.init('phc_rbP43MvbYyuKY4snFXECD7QA5qyUZd9dsVu89pWnf7wC',{api_host:'https://us.i.posthog.com',autocapture:true,capture_pageview:true,capture_pageleave:true});
+    posthog.register({ surface: 'marketing', site: 'team-website' });
+  `}</script>
+
   {/* Chromeless pages ship their own nav/footer — the site chrome CSS
       would fight them (nav.css sets overflow-x:hidden on html/body, which
       also breaks position:sticky pinning). */}
