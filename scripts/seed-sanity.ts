@@ -550,7 +550,7 @@ docs.push({
         block("Artists and small teams are usually up and running within 15 minutes. Mid-sized teams import their existing workflows and roster in a day. Enterprise rollouts come with dedicated onboarding — typically 1–2 weeks to migrate data, configure approvals, and train the team."),
       ]},
       { _key: "q8", _type: "faqItem", question: "Is my data secure?", answer: [
-        block("Yes. SOC 2 Type II compliant, end-to-end encryption in transit and at rest, role-based access controls, and full audit logs. Enterprise customers get SSO, custom data residency, and dedicated support."),
+        block("Yes. End-to-end encryption in transit and at rest, role-based access controls, and full audit logs. Enterprise customers get SSO, custom data residency, and dedicated support."),
         block("Unreleased music and assets are protected — watermarking, access logs, and expirable share links come standard."),
       ]},
       { _key: "q9", _type: "faqItem", question: "Can I talk to a real person?", answer: [
@@ -1529,7 +1529,7 @@ docs.push({
     headlineTop: "Compliance",
     headlineBottom: "& certifications",
     cards: [
-      { _key: "soc2", _type: "complianceCard", title: "SOC 2 Type II", body: "SOC 2 Type II certified for security, availability, and confidentiality trust service criteria. Independently audited and verified.", status: "active" },
+      { _key: "entsec", _type: "complianceCard", title: "Enterprise-grade security", body: "End-to-end encryption in transit and at rest, role-based access controls, full audit logging, and continuous monitoring.", status: "active" },
       { _key: "dpa", _type: "complianceCard", title: "Data Processing Agreement", body: "Custom DPA available for enterprise customers covering data handling, sub-processors, and breach notification procedures.", status: "on_request" },
       { _key: "gdpr", _type: "complianceCard", title: "GDPR Compliant", body: "Full compliance with the EU General Data Protection Regulation. Data subject rights, lawful processing, and privacy by design built into every layer of the platform.", status: "coming_soon" },
     ],
