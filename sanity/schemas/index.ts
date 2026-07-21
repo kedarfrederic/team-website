@@ -21,6 +21,7 @@ import { featureCard } from "./objects/featureCard";
 import { featureSpotlight } from "./objects/featureSpotlight";
 import { stepItem } from "./objects/stepItem";
 import { stepsBlock } from "./objects/stepsBlock";
+import { formFieldCopy } from "./objects/formFieldCopy";
 
 // ── Mock visuals (polymorphic — used inside painRow + featureCard) ─
 import { mockGantt } from "./objects/mockData/mockGantt";
@@ -87,6 +88,7 @@ export const schemaTypes = [
   featureSpotlight,
   stepItem,
   stepsBlock,
+  formFieldCopy,
 
   // Mock visuals
   mockGantt,
