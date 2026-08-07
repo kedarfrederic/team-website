@@ -16,10 +16,22 @@
    persisted toggle, deferred as its own feature. Don't add a
    light-theme block here piecemeal.
 
-   Scoping note: these are global class names (.h1, .btn, .container,
-   .section, .reveal) and a body{} rule, but the file is only ever
-   linked from v2 pages, so it can't reach the classic Sanity pages.
-   Verified against nav.css/footer.css: no collisions.
+   COLLISIONS — read this before adding a utility class here. The file
+   is only linked from v2 pages, so it can't reach the classic Sanity
+   pages. The reverse is NOT true: BaseLayout does
+   `import "../styles/global.css"`, so global.css is bundled AFTER
+   anything a page <link>s, and its identically-specific rules WIN.
+   `.container` and `.btn` are defined in BOTH files and were silently
+   overriding the v2 values (wrong max-width, padding, font-size,
+   border-radius) until the `body.v2` overrides at the bottom of this
+   file. Pages must pass bodyClass="v2" to BaseLayout for those to bite.
+
+   After editing either file, re-check for collisions: extract the class
+   selectors from src/styles/global.css and from this file, intersect them,
+   and add a `body.v2` override below for anything that appears in both.
+   (Don't paste a regex containing a comment-close sequence into this
+   comment — that ends the comment early and silently kills every rule
+   that follows, including the :root tokens. It happened.)
    ──────────────────────────────────────────────────────────── */
 :root{
   --ink:#0d0c0b;--ink-2:#161412;--ink-3:#1e1a15;
@@ -38,23 +50,22 @@
 }
 
 /* ── page ground ──
-   !important is deliberate: BaseLayout's global.css sets
-   body{background:#fff;color:#111110} for the classic light pages, and
-   Vite's dev-mode style injection order doesn't guarantee this file lands
-   after it. This is the one override a v2 page must always win. */
-body{
-  color:var(--bone) !important;
+   Scoped to body.v2 (0,2,0) so it outranks global.css's
+   body{background:#fff;color:#111110} (0,1,0) regardless of bundle order —
+   no !important needed. */
+body.v2{
+  color:var(--bone);
   background:
     radial-gradient(120% 90% at 50% -8%, var(--bg-1) 0%, transparent 55%),
     radial-gradient(100% 70% at 50% 108%, var(--bg-2) 0%, transparent 55%),
-    var(--ink) !important;
+    var(--ink);
 }
 
 /* Legibility scrim + stacking, used ONLY when a page renders the ambient
    brain canvas (brain.js injects .brain-bg). Without the canvas the scrim is
    pure unwanted darkening, so it's keyed off .brain-bg being present rather
    than applied unconditionally. */
-body:has(.brain-bg)::after{
+body.v2:has(.brain-bg)::after{
   content:'';position:fixed;inset:0;z-index:1;pointer-events:none;
   background:
     linear-gradient(var(--v2-scrim),var(--v2-scrim)),
@@ -110,3 +121,15 @@ main,.section,.container{position:relative;z-index:2}
 @media (prefers-reduced-motion:reduce){
   .js-reveal .reveal{opacity:1;transform:none;transition:none}
 }
+
+/* ── global.css collision overrides ──
+   MUST stay last in this file. global.css is bundled after page-linked CSS,
+   so its `.container` (max-width:1200px; padding:0 1.5rem) and `.btn`
+   (font-size:.875rem; padding:.75rem 1.25rem; border-radius:1.5rem) beat the
+   v2 rules above at equal specificity. `body.v2` (0,2,0) outranks them and
+   restores the design values. Keep these in sync with the definitions above. */
+/* padding-INLINE, never the `padding` shorthand: the shorthand also sets
+   padding-top:0, which at this specificity would clobber page rules like
+   .phero{padding-top:10.5rem} — exactly the bug global.css caused here. */
+body.v2 .container{max-width:var(--v2-maxw);padding-inline:var(--v2-pad)}
+body.v2 .btn{gap:.55em;font-size:.92rem;padding:.95rem 1.7rem;border-radius:99px}

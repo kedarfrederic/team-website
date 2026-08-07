@@ -5,11 +5,11 @@
  * pattern as every other page: every value below falls back to the
  * exact copy shipped in the source, so an empty CMS renders unchanged.
  *
- * Design: dark, matching the v2 homepage — chrome stays on (Nav/Footer),
- * navTheme="dark" so the pill nav never flips to its solid/light state
- * (nav.js only adds nav--solid for theme==="light"; dark pages keep the
- * frosted-on-dark look for their whole scroll length, which is correct
- * here since the page is dark all the way down, not just in a hero).
+ * Design: dark, matching the v2 homepage. Renders BaseLayout with
+ * chrome={false} and supplies the DELIVERED v2 chrome instead —
+ * V2Nav + V2Footer — rather than the classic light Nav.astro/Footer.astro
+ * the Sanity pages still use. BaseLayout keeps owning SEO, canonical, OG
+ * and the Visual Editing mount.
  *
  * The final-CTA section is hidden per the source ("hidden for now per
  * Simon") — kept as a hardcoded display:none, not a CMS toggle, since
@@ -17,6 +17,8 @@
  */
 import BaseLayout from "../layouts/BaseLayout.astro";
 import V2Head from "../components/V2Head.astro";
+import V2Nav from "../components/V2Nav.astro";
+import V2Footer from "../components/V2Footer.astro";
 import SplitHeadline from "../components/SplitHeadline.astro";
 import { getPricingPage } from "../lib/queries";
 import { getClient } from "../lib/sanity";
@@ -234,10 +236,13 @@ const finalFootnote = finalCta.footnote ?? "Free platform · no card required";
   title="Pricing — free platform, Pro brain | Team"
   description={metaDescription}
   seo={page?.seo}
-  navTheme="dark"
+  chrome={false}
+  bodyClass="v2"
 >
   <script type="application/ld+json" slot="head" set:html={JSON.stringify(faqJsonLd)} />
   <V2Head slot="head" pageCss="/components/pricing-v2.css" />
+
+  <V2Nav active="plans" />
 
   <main id="main">
     <section class="phero container">
@@ -361,6 +366,9 @@ const finalFootnote = finalCta.footnote ?? "Free platform · no card required";
     </section>
   </main>
 
+  <V2Footer />
+
   <script is:inline src={v("/components/v2-base.js")}></script>
+  <script is:inline src={v("/components/v2-chrome.js")}></script>
   <script is:inline src={v("/components/pricing-v2.js")}></script>
 </BaseLayout>

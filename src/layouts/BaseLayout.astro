@@ -29,6 +29,15 @@ interface Props {
    */
   navTheme?: "dark" | "light";
   /**
+   * Extra class on <body>. The v2 marketing pages pass "v2": global.css is
+   * imported by this layout and therefore bundled AFTER any page-linked
+   * stylesheet, so its `.container` / `.btn` rules would otherwise beat the
+   * identically-specific v2 ones. All v2 CSS is scoped under `body.v2`, which
+   * raises specificity above global.css regardless of bundle order. Set
+   * server-side (not via a client script) so there's no layout flash.
+   */
+  bodyClass?: string;
+  /**
    * When false, the page ships its own chrome: BaseLayout skips the site
    * nav, footer, and the <main> wrapper (the page body is injected as-is).
    * Used by the v2 homepage, which carries its own capsule nav, loader,
@@ -48,7 +57,7 @@ interface Props {
 
 const {
   title, description, ogImage, seo, canonical,
-  navTheme = "light", chrome = true, ogImageUrl: ogImageUrlProp,
+  navTheme = "light", chrome = true, bodyClass, ogImageUrl: ogImageUrlProp,
 } = Astro.props;
 const previewMode = isPreviewRequest(Astro);
 const settings = await getSiteSettings(getClient(Astro));
@@ -203,7 +212,7 @@ const canonicalUrl =
 
   <slot name="head" />
 </head>
-<body>
+<body class={bodyClass}>
   {/*
     Legacy nav + footer — both auto-inject their CSS and build their own DOM
     into the placeholder divs below. data-theme controls nav appearance:

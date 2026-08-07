@@ -1,0 +1,166 @@
+---
+/**
+ * V2Nav — the delivered v2 site nav, server-rendered.
+ *
+ * Ported from team-july2026-multipager/js/chrome.js, which builds the nav
+ * client-side from a `GROUPS` array. Rendered in Astro instead, per that
+ * repo's HANDOFF.md §4c/§0.4: many AI crawlers don't execute JS, so nav must
+ * be in the delivered HTML.
+ *
+ * Use on pages that render BaseLayout with chrome={false} (they supply their
+ * own nav/footer), together with V2Footer and v2-chrome.css.
+ *
+ * UNBUILT DESTINATIONS: the design's Platform dropdown lists Rollouts,
+ * TeamMate, Assets, Connections and Tours — none of those pages exist yet.
+ * Rows carry `enabled`, and disabled ones are simply not rendered, so the nav
+ * never ships a dead link. Flip `enabled: true` as each page lands.
+ *
+ * Not ported: the light/dark theme toggle (deferred as its own feature).
+ */
+interface Row {
+  href: string;
+  icon: keyof typeof IC;
+  title: string;
+  desc: string;
+  pro?: boolean;
+  enabled: boolean;
+}
+interface Group {
+  key: string;
+  label: string;
+  href?: string;
+  panelLabel?: string;
+  rows?: Row[];
+}
+
+interface Props {
+  /** Matches Group.key to light the active top-level item (source used <body data-nav>). */
+  active?: string;
+}
+const { active = "" } = Astro.props;
+
+const IC = {
+  rollouts: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>',
+  teammate: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3a5 5 0 0 1 5 5v1a4 4 0 0 1 0 8 5 5 0 0 1-10 0 4 4 0 0 1 0-8V8a5 5 0 0 1 5-5z"/><path d="M12 8v8M9 11h6"/></svg>',
+  assets: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 14l5-4 4 3 3-3 6 5"/><circle cx="8.5" cy="9" r="1.3"/></svg>',
+  integrations: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="2.4"/><circle cx="5" cy="5" r="2"/><circle cx="19" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="19" cy="19" r="2"/><path d="M10.3 10.3 6.4 6.4M13.7 10.3l3.9-3.9M10.3 13.7l-3.9 3.9M13.7 13.7l3.9 3.9"/></svg>',
+  tours: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-5.2-7-11a7 7 0 0 1 14 0c0 5.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>',
+  security: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>',
+  artists: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/></svg>',
+  managers: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3"/><path d="M15.5 5.2a3 3 0 0 1 0 5.6M3 20a6 6 0 0 1 12 0M15.5 14a5 5 0 0 1 5.5 6"/></svg>',
+  labels: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="4" rx="1"/><rect x="3" y="10" width="18" height="4" rx="1"/><rect x="3" y="16" width="18" height="4" rx="1"/></svg>',
+  partners: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.5 6H15a3 3 0 0 1 3 3v6.5"/></svg>',
+  enterprise: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="3" width="16" height="18" rx="1.5"/><path d="M9 7h.01M15 7h.01M9 11h.01M15 11h.01M10 21v-4h4v4"/></svg>',
+  insights: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 1 4 10.5c-.7.7-1 1.3-1 2.5H9c0-1.2-.3-1.8-1-2.5A6 6 0 0 1 12 3z"/></svg>',
+  about: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>',
+} as const;
+
+const GROUPS: Group[] = [
+  {
+    key: "platform",
+    label: "Platform",
+    panelLabel: "One platform, one brain",
+    rows: [
+      { href: "/rollouts", icon: "rollouts", title: "Rollouts", desc: "Run a release like a campaign", enabled: false },
+      { href: "/teammate", icon: "teammate", title: "TeamMate", desc: "The intelligence across every module", pro: true, enabled: false },
+      { href: "/assets", icon: "assets", title: "Assets", desc: "The creative library, release-ready", enabled: false },
+      { href: "/connections", icon: "integrations", title: "Connections", desc: "Bring the tools you already use", pro: true, enabled: false },
+      { href: "/tours", icon: "tours", title: "Tours", desc: "Take the release to the road", pro: true, enabled: false },
+      { href: "/security", icon: "security", title: "Security & trust", desc: "Why it's safe on your whole stack", enabled: true },
+    ],
+  },
+  {
+    key: "solutions",
+    label: "Solutions",
+    panelLabel: "One brain, for how you work",
+    rows: [
+      { href: "/for-artists", icon: "artists", title: "Solo artists", desc: "A label-grade rollout, solo", enabled: true },
+      { href: "/for-managers", icon: "managers", title: "Artist managers", desc: "The whole roster, in one mind", enabled: true },
+      { href: "/for-labels", icon: "labels", title: "Labels", desc: "Every release, one living picture", enabled: true },
+      { href: "/for-partners", icon: "partners", title: "Distributors & partners", desc: "Risk across the whole slate", enabled: true },
+      { href: "/enterprise", icon: "enterprise", title: "Enterprise", desc: "Controls, deployment, scale", enabled: true },
+    ],
+  },
+  {
+    key: "resources",
+    label: "Resources",
+    panelLabel: "Learn & keep up",
+    rows: [
+      { href: "/insights", icon: "insights", title: "Insights", desc: "Playbooks & release strategy", enabled: true },
+      { href: "/about", icon: "about", title: "About", desc: "Why we built Team", enabled: true },
+    ],
+  },
+  { key: "plans", label: "Pricing", href: "/pricing" },
+];
+
+const SIGNIN = "https://app.teamrollouts.com/sign-in";
+const BETA = "/pricing"; // "Sign up free" → the pricing page (Free / Pro)
+const LOGO = "/v2/assets/logo/team-logo-live.svg";
+
+// Only render rows whose destination exists.
+const groups = GROUPS.map((g) => ({ ...g, rows: g.rows?.filter((r) => r.enabled) })).filter(
+  (g) => g.href || (g.rows && g.rows.length > 0)
+);
+---
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="nav v2-chrome" id="v2Nav">
+  <div class="nav__in">
+    <a class="nav__brand" href="/" aria-label="Team — home"><img src={LOGO} alt="Team" /></a>
+
+    <nav class="nav__menu" aria-label="Primary">
+      {groups.map((g) => (
+        <div class="nav__item">
+          {g.href ? (
+            <a class={`nav__link${active === g.key ? " is-active" : ""}`} href={g.href}>{g.label}</a>
+          ) : (
+            <>
+              <button type="button" class={`nav__link${active === g.key ? " is-active" : ""}`} aria-haspopup="true">
+                {g.label}<i class="caret"></i>
+              </button>
+              <div class="nav__panel" role="menu">
+                {g.panelLabel && <p class="nav__plabel">{g.panelLabel}</p>}
+                {(g.rows ?? []).map((r) => (
+                  <a class="nav__prow" href={r.href} role="menuitem">
+                    <span class="ic" set:html={IC[r.icon]} />
+                    <span><b>{r.title}</b><span>{r.desc}</span></span>
+                    {r.pro && <span class="nav__pro">Pro</span>}
+                  </a>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      ))}
+    </nav>
+
+    <div class="nav__spacer"></div>
+    <div class="nav__cta">
+      <a class="nav__signin" href={SIGNIN}>Sign in</a>
+      <a class="nav__beta" href={BETA}>Sign up free</a>
+    </div>
+    <button class="nav__burger" id="v2Burger" aria-label="Menu" aria-expanded="false" aria-controls="v2Mnav">
+      <i></i><i></i><i></i>
+    </button>
+  </div>
+</header>
+
+<div class="mnav v2-chrome" id="v2Mnav">
+  {groups.map((g) =>
+    g.href ? (
+      <div class="mnav__grp"><a href={g.href}>{g.label}</a></div>
+    ) : (
+      <div class="mnav__grp">
+        <p>{g.label}</p>
+        {(g.rows ?? []).map((r) => (
+          <a href={r.href}>{r.title}{r.pro && <span class="nav__pro">Pro</span>}</a>
+        ))}
+      </div>
+    )
+  )}
+  <div class="mnav__cta">
+    <a class="btn btn--ghost" href={SIGNIN}>Sign in</a>
+    <a class="btn btn--solid" href={BETA}>Sign up free</a>
+  </div>
+</div>

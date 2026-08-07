@@ -4,7 +4,11 @@
    page ground all live in v2-base.css, which MUST be loaded first.
    ──────────────────────────────────────────────────────────── */
 /* ── hero ── */
-.phero{padding-top:10.5rem;min-height:0;text-align:center}
+/* body.v2 prefix is REQUIRED here: this element also carries .container, and
+   global.css's `.container{padding:0 1.5rem}` (same specificity, bundled
+   later) would otherwise zero padding-top. Any v2 page rule that sets
+   padding-block on a .container element needs the same prefix. */
+body.v2 .phero{padding-top:10.5rem;min-height:0;text-align:center}
 .phero__in{display:flex;flex-direction:column;align-items:center}
 .phero .h1{font-size:clamp(2.9rem,7vw,5.4rem)}
 .phero__note{margin-top:1.7rem;font-family:ui-monospace,'SF Mono','JetBrains Mono',Menlo,monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--v2-accent)}
