@@ -59,8 +59,27 @@ interface Tier {
   ctaLabel: string;
   ctaHref: string;
   includesLabel?: string;
-  features?: { text: string; pro?: boolean }[];
+  /**
+   * Either a plain string (the original schema shape, still what the live
+   * Sanity document holds) or a `tierFeature` object that can flag a Pro-only
+   * line for the ✦ bullet. normalizeFeatures() below accepts both — reading
+   * `.text` off a plain string silently renders an EMPTY bullet, so never
+   * index into these without normalizing first.
+   */
+  features?: (string | { text?: string; pro?: boolean })[];
   badge?: string;
+}
+
+function normalizeFeatures(
+  features: Tier["features"]
+): { text: string; pro: boolean }[] {
+  return (features ?? [])
+    .map((f) =>
+      typeof f === "string"
+        ? { text: f, pro: false }
+        : { text: f?.text ?? "", pro: !!f?.pro }
+    )
+    .filter((f) => f.text.length > 0);
 }
 
 const rawTiers = Array.isArray(page?.tiers) ? page.tiers : [];
@@ -256,7 +275,7 @@ const finalFootnote = finalCta.footnote ?? "Free platform · no card required";
               <a class="btn btn--solid" href={tier.ctaHref} data-cta data-plan={tier.tierKey}>{tier.ctaLabel}</a>
               <p class="plan__inclab">{tier.includesLabel ?? "Includes"}</p>
               <ul class="plan__feats">
-                {(tier.features ?? []).map((feat) => (
+                {normalizeFeatures(tier.features).map((feat) => (
                   <li class={feat.pro ? "pro" : undefined}>{feat.text}</li>
                 ))}
               </ul>

@@ -73,10 +73,10 @@ const tiers = [
     ctaHref: "https://app.teamrollouts.com/onboarding?plan=free",
     includesLabel: "Includes",
     features: [
-      "Rollouts — release management",
-      "Assets — the creative library",
-      "Unlimited artists & releases",
-      "Unlimited collaborators & workspaces",
+      feat("Rollouts — release management"),
+      feat("Assets — the creative library"),
+      feat("Unlimited artists & releases"),
+      feat("Unlimited collaborators & workspaces"),
     ],
   },
   {
@@ -99,15 +99,27 @@ const tiers = [
     ctaHref: "https://app.teamrollouts.com/onboarding?plan=pro",
     includesLabel: "Everything in Free, plus",
     features: [
-      "Tours — tour management",
-      "TeamMate AI — the intelligence layer",
-      "Connections — connect your whole stack",
-      "TeamMate Email & Text",
-      "First access to new betas",
-      "Priority support",
+      feat("Tours — tour management", true),
+      feat("TeamMate AI — the intelligence layer", true),
+      feat("Connections — connect your whole stack", true),
+      feat("TeamMate Email & Text", true),
+      feat("First access to new betas", true),
+      feat("Priority support", true),
     ],
   },
 ];
+
+// `features` accepts plain strings (✓ bullet) or tierFeature objects that can
+// flag a Pro-only line (✦ bullet). Objects need _key + _type like any Sanity
+// array member.
+function feat(text: string, pro = false) {
+  return {
+    _type: "tierFeature",
+    _key: `feat-${text.toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 40)}`,
+    text,
+    pro,
+  };
+}
 
 function checkCell() { return { _type: "comparisonCell", type: "check" }; }
 function dashCell() { return { _type: "comparisonCell", type: "dash" }; }

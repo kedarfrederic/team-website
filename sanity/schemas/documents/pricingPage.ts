@@ -153,8 +153,33 @@ export const pricingPage = defineType({
             defineField({
               name: "features",
               type: "array",
-              of: [{ type: "string" }],
-              description: "Bulleted feature list shown under the price.",
+              of: [
+                { type: "string" },
+                {
+                  type: "object",
+                  name: "tierFeature",
+                  title: "Feature (with Pro marker)",
+                  fields: [
+                    defineField({ name: "text", type: "string", validation: (R) => R.required() }),
+                    defineField({
+                      name: "pro",
+                      type: "boolean",
+                      title: "Pro-only line",
+                      description: "Renders the ✦ bullet instead of ✓ — used for Pro-tier additions.",
+                      initialValue: false,
+                    }),
+                  ],
+                  preview: {
+                    select: { title: "text", pro: "pro" },
+                    prepare: ({ title, pro }: { title?: string; pro?: boolean }) => ({
+                      title: title || "(empty)",
+                      subtitle: pro ? "✦ Pro-only" : "✓ included",
+                    }),
+                  },
+                },
+              ],
+              description:
+                "Bulleted feature list shown under the price. Plain strings get a ✓ bullet; use \"Feature (with Pro marker)\" to flag a Pro-only line with a ✦ bullet.",
             }),
             defineField({
               name: "badge",
