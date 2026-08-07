@@ -60,6 +60,15 @@ export const insightPost = defineType({
             { title: "H3", value: "h3" },
             { title: "Quote", value: "blockquote" },
           ],
+          // Declared explicitly rather than leaning on Sanity's implicit
+          // defaults — the imported articles contain <ul>/<ol>, block-tools
+          // emits listItem:"bullet"|"number" for them, and PortableText.astro
+          // groups those into real <ul>/<ol>. Declaring them keeps the Studio
+          // editor able to create and edit the same lists.
+          lists: [
+            { title: "Bullet", value: "bullet" },
+            { title: "Numbered", value: "number" },
+          ],
           marks: {
             decorators: [
               { title: "Strong", value: "strong" },
@@ -121,6 +130,15 @@ export const insightPost = defineType({
       type: "number",
       group: "meta",
       validation: (Rule) => Rule.min(1).integer(),
+    }),
+    defineField({
+      name: "hiddenFromIndex",
+      title: "Hide from the Insights index",
+      type: "boolean",
+      group: "meta",
+      description:
+        "SEO/GEO page: the post still gets a real, indexable page and a sitemap entry, but is left OFF the /insights index and any related-post lists. This is NOT the same as \"Hide from search engines\" under SEO — that one noindexes the page, which is the opposite of what this does.",
+      initialValue: false,
     }),
     defineField({
       name: "seo",

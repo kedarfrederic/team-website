@@ -85,9 +85,18 @@ export async function getVerticalProductPage(
 }
 
 // ── Collections ───────────────────────────────────────────────
+/**
+ * Insights index listing.
+ *
+ * Excludes `hiddenFromIndex` posts — those are SEO/GEO pages that keep a real,
+ * indexable page + sitemap entry (getInsightPostSlugs still returns them, so
+ * the route is still built) but are deliberately not surfaced in the index or
+ * related-post lists. `!= true` (not `== false`) so posts predating the field,
+ * where it's undefined, still show up.
+ */
 export async function getInsightPosts(client: Client = sanityClient) {
   return client.fetch(`
-    *[_type == "insightPost"] | order(publishDate desc) {
+    *[_type == "insightPost" && hiddenFromIndex != true] | order(publishDate desc) {
       _id,
       title,
       slug,
@@ -114,6 +123,11 @@ export async function getInsightPostBySlug(slug: string, client: Client = sanity
   );
 }
 
+/**
+ * Every post slug — INCLUDING `hiddenFromIndex` ones, on purpose: those pages
+ * must still be built and indexable (that's the whole point of the flag), they
+ * just don't appear in the index. Don't add a hiddenFromIndex filter here.
+ */
 export async function getInsightPostSlugs(client: Client = sanityClient): Promise<string[]> {
   const slugs = await client.fetch<{ slug: { current: string } }[]>(
     `*[_type == "insightPost" && defined(slug.current)]{ slug }`
