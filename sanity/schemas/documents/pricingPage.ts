@@ -160,12 +160,19 @@ export const pricingPage = defineType({
             defineField({
               name: "features",
               type: "array",
+              // Objects only — Sanity REJECTS an `of` that mixes primitive and
+              // object types ("can't have both object types and primitive
+              // types"), which fails `sanity schema validate` and breaks
+              // manifest extraction on deploy. The live document was migrated
+              // to tierFeature objects by seed-pricing-v2-copy.ts. The page's
+              // normalizeFeatures() still accepts bare strings defensively, so
+              // restoring an older revision degrades gracefully rather than
+              // rendering empty bullets.
               of: [
-                { type: "string" },
                 {
                   type: "object",
                   name: "tierFeature",
-                  title: "Feature (with Pro marker)",
+                  title: "Feature",
                   fields: [
                     defineField({ name: "text", type: "string", validation: (R) => R.required() }),
                     defineField({
@@ -186,7 +193,7 @@ export const pricingPage = defineType({
                 },
               ],
               description:
-                "Bulleted feature list shown under the price. Plain strings get a ✓ bullet; use \"Feature (with Pro marker)\" to flag a Pro-only line with a ✦ bullet.",
+                "Bulleted feature list shown under the price. Each line renders a ✓ bullet — tick \"Pro-only line\" to render ✦ instead (used for the Pro tier's additions).",
             }),
             defineField({
               name: "badge",
