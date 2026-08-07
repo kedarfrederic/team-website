@@ -1,0 +1,97 @@
+/* ────────────────────────────────────────────────────────────
+   v2-security.css — /security page styles only.
+   Ported verbatim from team-july2026-multipager/security.html's
+   inline <style>. Shared tokens/typography/buttons/.reveal and the
+   page ground live in v2-base.css, which loads first.
+   No body.v2 prefix needed here: unlike /pricing, this page's .phero does
+   NOT also carry .container, so global.css's `.container{padding:0 1.5rem}`
+   can't zero its padding-top. Verified: computed padding-top 112px (7rem).
+   ──────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════
+     Security — trust is the unlock. Signature: the BOUNDARY — your data
+     works for you only, never trains a model, never leaves. Then the
+     foundations, enterprise controls, FAQ. Shared elements (.phero__ask,
+     .ui-dark) come from base.css.
+     ═══════════════════════════════════════════════════════════════ */
+  .phero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding-top:7rem;padding-bottom:3rem}
+  .phero .h1{font-size:clamp(3rem,7.2vw,6rem)}
+
+  /* ═══ SIGNATURE — THE BOUNDARY ═══ */
+  .vaultsec{display:grid;gap:clamp(2.2rem,5vw,4.5rem);align-items:center;grid-template-columns:1fr}
+  @media(min-width:940px){.vaultsec{grid-template-columns:.92fr 1.08fr}}
+  .vaultsec__copy h2{margin-bottom:1.1rem}
+  .vpts{list-style:none;display:flex;flex-direction:column;gap:.7rem;margin-top:1.6rem}
+  .vpts li{display:flex;gap:.65rem;align-items:baseline;color:var(--bone-dim);font-size:.95rem}
+  .vpts li b{color:var(--bone);font-weight:560}
+  .vpts .yes{color:var(--accent);flex:none;font-weight:700}
+  .vpts .no{color:var(--signal);flex:none;font-weight:700}
+
+  /* the vault: what's inside your wall (protected) vs blocked outside it */
+  .vault{position:relative;border:1px solid var(--line);border-radius:22px;background:var(--ink-2);padding:clamp(1.3rem,3vw,1.9rem);
+    box-shadow:0 30px 70px var(--shadow)}
+  .vault::before{content:'';position:absolute;inset:0;border-radius:22px;pointer-events:none;
+    box-shadow:inset 0 0 0 1px rgba(217,250,135,.18),0 0 60px rgba(217,250,135,.08)}
+  .vault__lab{display:flex;align-items:center;gap:.55rem;font-family:var(--font-mono);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:1.1rem}
+  .vault__lab svg{width:.95rem;height:.95rem}
+  .vault__lab .sealed{margin-left:auto;display:flex;align-items:center;gap:.35rem;color:var(--bone-faint)}
+  .vault__lab .sealed i{width:6px;height:6px;border-radius:50%;background:var(--lime);box-shadow:0 0 8px rgba(217,250,135,.7);animation:blink 2s ease-in-out infinite}
+  @keyframes blink{50%{opacity:.4}}
+  .vault__chips{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.2rem}
+  .vchip{font-size:.8rem;color:var(--bone-dim);border:1px solid var(--line);border-radius:99px;padding:.4rem .85rem;background:var(--glass)}
+  .vault__core{display:flex;align-items:center;gap:.9rem;padding:1rem 1.1rem;border:1px solid rgba(217,250,135,.3);border-radius:14px;background:rgba(217,250,135,.05)}
+  .vault__core .mk{width:2.2rem;height:2.2rem;border-radius:9px;background:var(--lime);display:grid;place-items:center;flex:none}
+  .vault__core .mk img{width:1.1rem;filter:brightness(0)}
+  .vault__core b{display:block;color:var(--bone);font-weight:560;font-size:.95rem}
+  .vault__core span{display:block;color:var(--bone-dim);font-size:.82rem;margin-top:.1rem}
+  .vault__ok{display:flex;align-items:center;gap:.55rem;margin-top:1rem;font-size:.9rem;color:var(--bone)}
+  .vault__ok .a{color:var(--accent);font-weight:700}
+  /* the wall + what's blocked outside it */
+  .vault__wall{margin-top:1.3rem;padding-top:1.2rem;border-top:1px dashed var(--line);display:flex;flex-direction:column;gap:.5rem}
+  .vault__wall .wlab{font-family:var(--font-mono);font-size:.54rem;letter-spacing:.16em;text-transform:uppercase;color:var(--bone-faint);margin-bottom:.15rem}
+  .vblock{display:flex;align-items:center;gap:.6rem;font-size:.88rem;color:var(--bone-faint);text-decoration:line-through;text-decoration-color:var(--signal)}
+  .vblock .x{width:1.15rem;height:1.15rem;border-radius:5px;background:rgba(245,96,2,.12);color:var(--signal);display:grid;place-items:center;font-size:.7rem;flex:none;text-decoration:none;font-weight:700}
+  /* the vault fills in on scroll-down and empties on scroll-up (TM.replay) */
+  .vault__lab,.vchip,.vault__core,.vault__ok,.wlab,.vblock{opacity:0;transform:translateY(12px);transition:opacity .5s var(--ease),transform .5s var(--ease)}
+  .vault__lab.in,.vchip.in,.vault__core.in,.vault__ok.in,.wlab.in,.vblock.in{opacity:1;transform:none}
+  @media(prefers-reduced-motion:reduce){.vault__lab,.vchip,.vault__core,.vault__ok,.wlab,.vblock{opacity:1;transform:none}}
+
+  /* ═══ FOUNDATIONS — rich cards ═══ */
+  .sgrid{display:grid;gap:1rem;grid-template-columns:1fr}
+  @media(min-width:680px){.sgrid{grid-template-columns:1fr 1fr}}
+  .scard{position:relative;overflow:hidden;background:var(--glass);border:1px solid var(--line);border-radius:18px;padding:1.6rem 1.7rem;
+    transition:transform .5s var(--ease),border-color .5s,background .5s;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+  .scard::after{content:'';position:absolute;left:0;right:0;top:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0;transition:opacity .4s}
+  .scard:hover{transform:translateY(-4px);border-color:var(--line-2);background:var(--ink-2)}
+  .scard:hover::after{opacity:.75}
+  .scard .ic{width:2.5rem;height:2.5rem;border-radius:11px;background:var(--ink-3);border:1px solid var(--line);color:var(--accent);display:grid;place-items:center;margin-bottom:1.15rem;transition:border-color .5s,color .5s}
+  .scard:hover .ic{border-color:rgba(217,250,135,.4)}
+  .scard .ic svg{width:1.25rem;height:1.25rem}
+  .scard h3{font-family:var(--font-display);font-weight:400;font-size:1.26rem;letter-spacing:-.02em;margin-bottom:.5rem;line-height:1.12;color:var(--bone)}
+  .scard h3 em{color:var(--accent);font-style:italic}
+  .scard p{color:var(--bone-dim);font-size:.92rem;line-height:1.56}
+
+  /* ═══ ENTERPRISE CALL-OUT ═══ */
+  .entcall{position:relative;overflow:hidden;border:1px solid rgba(217,250,135,.28);border-radius:26px;background:var(--ink-2);
+    padding:clamp(2rem,4vw,3.2rem);display:grid;gap:clamp(1.6rem,4vw,3.2rem);grid-template-columns:1fr;align-items:center}
+  @media(min-width:880px){.entcall{grid-template-columns:1fr 1fr}}
+  .entcall::before{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 70% 90% at 100% 0%,var(--bloom),transparent 58%)}
+  .entcall>*{position:relative}
+  .entcall h2{margin-bottom:.9rem}
+  .entcall .lede{margin-bottom:1.4rem}
+  .ctrls{display:grid;gap:.65rem;grid-template-columns:1fr}
+  @media(min-width:520px){.ctrls{grid-template-columns:1fr 1fr}}
+  .ctrl{display:flex;gap:.6rem;align-items:baseline;padding:.85rem 1rem;border:1px solid var(--line-2);border-radius:11px;color:var(--bone-dim);font-size:.88rem;background:var(--glass)}
+  .ctrl::before{content:'✳';color:var(--accent);font-size:.8em;flex:none}
+  .ctrl b{color:var(--bone);font-weight:560}
+
+  /* ═══ FAQ ═══ */
+  .faq{max-width:44rem;margin:0 auto}
+  .faq details{border-bottom:1px solid var(--line);padding:.3rem 0}
+  .faq summary{list-style:none;cursor:pointer;padding:1.1rem .2rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;font-size:1.02rem;font-weight:500;color:var(--bone)}
+  .faq summary::-webkit-details-marker{display:none}
+  .faq summary .pl{width:1rem;height:1rem;flex:none;position:relative}
+  .faq summary .pl::before,.faq summary .pl::after{content:'';position:absolute;background:var(--accent);border-radius:2px}
+  .faq summary .pl::before{left:0;right:0;top:calc(50% - 1px);height:2px}
+  .faq summary .pl::after{top:0;bottom:0;left:calc(50% - 1px);width:2px;transition:transform .3s var(--ease)}
+  .faq details[open] summary .pl::after{transform:scaleY(0)}
+  .faq details p{color:var(--bone-dim);font-size:.94rem;line-height:1.6;padding:0 .2rem 1.1rem;max-width:60ch}

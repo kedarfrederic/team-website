@@ -1,0 +1,50 @@
+/* ────────────────────────────────────────────────────────────
+   v2-contact.css — /contact page styles only.
+   Ported verbatim from team-july2026-multipager/contact.html's inline
+   <style>. Shared tokens/typography/buttons/.reveal + page ground live
+   in v2-base.css, loaded first.
+   ──────────────────────────────────────────────────────────── */
+body.v2 .chero{position:relative;z-index:2;padding-top:10.5rem;padding-bottom:clamp(5rem,11vh,9rem)}
+  .contact{display:grid;gap:clamp(2.5rem,5vw,4.5rem);grid-template-columns:1fr;max-width:64rem;margin:0 auto;align-items:start}
+  @media(min-width:900px){.contact{grid-template-columns:.85fr 1.15fr}}
+
+  /* left rail — the invitation + direct routes */
+  .contact__say .h1{margin-bottom:1.3rem}
+  .contact__say .lede{max-width:34rem}
+  .croutes{list-style:none;margin:2.6rem 0 0;padding:0;display:flex;flex-direction:column;gap:1.5rem}
+  .croute{display:flex;gap:1rem;align-items:flex-start}
+  .croute__ic{width:2.4rem;height:2.4rem;border-radius:10px;background:var(--ink-3);border:1px solid var(--line);flex:none;display:grid;place-items:center;color:var(--accent)}
+  .croute__ic svg{width:1.1rem;height:1.1rem}
+  .croute b{display:block;font-size:.95rem;font-weight:560;color:var(--bone)}
+  .croute p{color:var(--bone-dim);font-size:.88rem;line-height:1.5;margin-top:.2rem}
+  .croute a{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+  .croute a:hover{color:var(--bone)}
+
+  /* form card */
+  .cform{position:relative;border:1px solid var(--line);border-radius:22px;background:var(--ink-2);padding:clamp(1.6rem,3vw,2.4rem)}
+  .cform__row{display:grid;gap:1.1rem;grid-template-columns:1fr}
+  @media(min-width:560px){.cform__row{grid-template-columns:1fr 1fr}}
+  .cfield{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.1rem}
+  .cfield label{font-family:var(--font-mono);font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--bone-faint)}
+  .cfield input,.cfield textarea{background:var(--glass);border:1px solid var(--line);border-radius:11px;padding:.8rem 1rem;color:var(--bone);font-family:inherit;font-size:.95rem;outline:none;transition:border-color .25s;width:100%}
+  .cfield input:focus,.cfield textarea:focus{border-color:rgba(217,250,135,.5)}
+  .cfield input::placeholder,.cfield textarea::placeholder{color:var(--bone-faint)}
+  .cfield textarea{resize:vertical;min-height:6.5rem;line-height:1.5}
+  .cf-hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none}
+
+  .cint>span{display:block;font-family:var(--font-mono);font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--bone-faint);margin-bottom:.75rem}
+  .cint__opts{display:flex;flex-wrap:wrap;gap:.55rem}
+  .cchip{position:relative;cursor:pointer}
+  .cchip input{position:absolute;opacity:0;pointer-events:none}
+  .cchip span{display:inline-block;padding:.5rem .95rem;border:1px solid var(--line);border-radius:99px;font-size:.85rem;color:var(--bone-dim);transition:border-color .2s,color .2s,background .2s}
+  .cchip:hover span{color:var(--bone);border-color:var(--line-2)}
+  .cchip input:checked+span{background:rgba(217,250,135,.1);border-color:rgba(217,250,135,.5);color:var(--accent)}
+  .cchip input:focus-visible+span{outline:2px solid rgba(217,250,135,.5);outline-offset:2px}
+
+  .cform .btn{margin-top:.6rem;width:100%;justify-content:center}
+  .cform__ok{display:none;flex-direction:column;align-items:center;text-align:center;gap:.9rem;padding:1.5rem 0}
+  .cform.done .cform__body{display:none}
+  .cform.done .cform__ok{display:flex}
+  .cform__ok .tick{width:3rem;height:3rem;border-radius:50%;background:rgba(217,250,135,.12);border:1px solid rgba(217,250,135,.4);display:grid;place-items:center;color:var(--accent);font-size:1.3rem}
+  .cform__ok h3{font-family:var(--font-display);font-weight:400;font-size:1.4rem;color:var(--bone)}
+  .cform__ok p{color:var(--bone-dim);font-size:.92rem;max-width:26rem;line-height:1.55}

@@ -133,3 +133,11 @@ main,.section,.container{position:relative;z-index:2}
    .phero{padding-top:10.5rem} — exactly the bug global.css caused here. */
 body.v2 .container{max-width:var(--v2-maxw);padding-inline:var(--v2-pad)}
 body.v2 .btn{gap:.55em;font-size:.92rem;padding:.95rem 1.7rem;border-radius:99px}
+/* Ported sections are markup'd `class="section container"`, so global.css's
+   `.container{padding:0 1.5rem}` shorthand ALSO zeroed their padding-block —
+   every v2 section rendered with collapsed vertical spacing. Re-assert it
+   here at body.v2 specificity. Any page rule that sets padding-block on an
+   element which also carries .container needs the same treatment; find them
+   by intersecting the page's `class="… container"` list with its stylesheet. */
+body.v2 .section{padding-block:clamp(4rem,9vw,8rem)}
+body.v2 .section--tight{padding-block:clamp(3rem,6vw,5rem)}
