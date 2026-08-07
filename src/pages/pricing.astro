@@ -29,8 +29,13 @@ const heroHeadlineTop = hero.headlineTop ?? hero.headline ?? "Start free.";
 const heroHeadlineBottom = hero.headlineBottom ?? "Upgrade when you're ready.";
 const heroSubhead =
   hero.subhead ??
-  "Team gives you access to Rollouts, Assets and Tours for free, forever. Ready to go the next step? Add TeamMate, your AI brain, and connect your whole stack with Pro.";
+  "Team gives you access to Rollouts and Assets for free, forever. Ready to go further? Pro adds Tours, TeamMate — your AI brain — and connects your whole stack.";
 const heroNote = hero.note ?? "Take advantage of our limited-time Beta pricing today";
+
+// Distinct from the hero lede — the source ships a separate, shorter meta
+// description tuned for SERP/social. Sanity `seo.metaDescription` still wins.
+const metaDescription =
+  "The Team platform — Rollouts and Assets — is free, no card. Pro adds Tours, TeamMate AI, and connects your whole stack, at beta pricing.";
 
 const billingToggle = page?.billingToggle ?? {};
 const yearlyLabel = billingToggle.yearlyLabel ?? "Yearly";
@@ -77,7 +82,6 @@ const tiers: Tier[] =
           features: [
             { text: "Rollouts — release management" },
             { text: "Assets — the creative library" },
-            { text: "Tours — tour management" },
             { text: "Unlimited artists & releases" },
             { text: "Unlimited collaborators & workspaces" },
           ],
@@ -101,6 +105,7 @@ const tiers: Tier[] =
           ctaHref: "https://app.teamrollouts.com/onboarding?plan=pro",
           includesLabel: "Everything in Free, plus",
           features: [
+            { text: "Tours — tour management", pro: true },
             { text: "TeamMate AI — the intelligence layer", pro: true },
             { text: "Connections — connect your whole stack", pro: true },
             { text: "TeamMate Email & Text", pro: true },
@@ -136,7 +141,7 @@ const compareRows: ComparisonRow[] =
         { label: "The platform", isGroupHeader: true },
         { label: "Rollouts — release management", valueByColumn: [{ type: "check" }, { type: "check" }] },
         { label: "Assets — creative library", valueByColumn: [{ type: "check" }, { type: "check" }] },
-        { label: "Tours — tour management", valueByColumn: [{ type: "check" }, { type: "check" }] },
+        { label: "Tours — tour management", valueByColumn: [{ type: "dash" }, { type: "check" }] },
         { label: "Artists / roster", valueByColumn: [{ type: "text", text: "Unlimited" }, { type: "text", text: "Unlimited" }] },
         { label: "Releases", valueByColumn: [{ type: "text", text: "Unlimited" }, { type: "text", text: "Unlimited" }] },
         { label: "Collaborators", valueByColumn: [{ type: "text", text: "Unlimited" }, { type: "text", text: "Unlimited" }] },
@@ -163,8 +168,8 @@ const faqCtaHref = "https://calendly.com/teamrollouts-demo/30min";
 const faqCtaLabel = faq.footerCta?.label ?? "Talk to a founder";
 
 const faqFallback = [
-  { q: "Is the platform really free?", a: "Yes. Rollouts, Assets and Tours are free — unlimited artists, releases, collaborators and workspaces, with no card. It's the whole platform, not a stripped-down taster." },
-  { q: "What's in Pro?", a: "Pro adds TeamMate — your AI brain — plus the integrations that connect your whole stack, TeamMate Email & Text, comprehensive intelligence, and first access to new betas." },
+  { q: "Is the platform really free?", a: "Yes. Rollouts and Assets are free — unlimited artists, releases, collaborators and workspaces, with no card. It's the real platform, not a stripped-down taster." },
+  { q: "What's in Pro?", a: "Pro adds Tours, TeamMate — your AI brain — plus the integrations that connect your whole stack, TeamMate Email & Text, comprehensive intelligence, and first access to new betas." },
   { q: "What's this \"beta pricing\"?", a: "Team is in early access, so Pro is offered at a beta discount off its standard price. Sign up now and you lock in that early-access rate. Both plans start with a 14-day free trial." },
   { q: "Do I need a card to start?", a: "Not for Free — it's no card, ever. Pro starts with a 14-day free trial and takes a card so it can continue seamlessly if you stay." },
   { q: "Is my data mine?", a: "Always. Connections are permissioned and revocable, nothing is used to train models, and everything you build is portable and exportable." },
@@ -198,7 +203,7 @@ const finalFootnote = finalCta.footnote ?? "Free platform · no card required";
 ---
 <BaseLayout
   title="Pricing — free platform, Pro brain | Team"
-  description={heroSubhead}
+  description={metaDescription}
   seo={page?.seo}
   navTheme="dark"
 >

@@ -48,7 +48,7 @@ const hero = {
   headlineTop: "Start free.",
   headlineBottom: "Upgrade when you're ready.",
   subhead:
-    "Team gives you access to Rollouts, Assets and Tours for free, forever. Ready to go the next step? Add TeamMate, your AI brain, and connect your whole stack with Pro.",
+    "Team gives you access to Rollouts and Assets for free, forever. Ready to go further? Pro adds Tours, TeamMate — your AI brain — and connects your whole stack.",
   note: "Take advantage of our limited-time Beta pricing today",
   cta: { label: "Start for free", href: "https://app.teamrollouts.com/onboarding?plan=free" },
 };
@@ -75,7 +75,6 @@ const tiers = [
     features: [
       "Rollouts — release management",
       "Assets — the creative library",
-      "Tours — tour management",
       "Unlimited artists & releases",
       "Unlimited collaborators & workspaces",
     ],
@@ -100,6 +99,7 @@ const tiers = [
     ctaHref: "https://app.teamrollouts.com/onboarding?plan=pro",
     includesLabel: "Everything in Free, plus",
     features: [
+      "Tours — tour management",
       "TeamMate AI — the intelligence layer",
       "Connections — connect your whole stack",
       "TeamMate Email & Text",
@@ -126,7 +126,7 @@ const comparisonTable = {
     groupRow("The platform"),
     row("Rollouts — release management", [checkCell(), checkCell()]),
     row("Assets — creative library", [checkCell(), checkCell()]),
-    row("Tours — tour management", [checkCell(), checkCell()]),
+    row("Tours — tour management", [dashCell(), checkCell()]),
     row("Artists / roster", [textCell("Unlimited"), textCell("Unlimited")]),
     row("Releases", [textCell("Unlimited"), textCell("Unlimited")]),
     row("Collaborators", [textCell("Unlimited"), textCell("Unlimited")]),
@@ -161,11 +161,11 @@ const faq = {
   items: [
     faqItem(
       "Is the platform really free?",
-      "Yes. Rollouts, Assets and Tours are free — unlimited artists, releases, collaborators and workspaces, with no card. It's the whole platform, not a stripped-down taster."
+      "Yes. Rollouts and Assets are free — unlimited artists, releases, collaborators and workspaces, with no card. It's the real platform, not a stripped-down taster."
     ),
     faqItem(
       "What's in Pro?",
-      "Pro adds TeamMate — your AI brain — plus the integrations that connect your whole stack, TeamMate Email & Text, comprehensive intelligence, and first access to new betas."
+      "Pro adds Tours, TeamMate — your AI brain — plus the integrations that connect your whole stack, TeamMate Email & Text, comprehensive intelligence, and first access to new betas."
     ),
     faqItem(
       "What's this \"beta pricing\"?",
