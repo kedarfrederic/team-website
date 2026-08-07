@@ -30,6 +30,11 @@ export const pricingPage = defineType({
         defineField({ name: "headline", type: "string", description: "Legacy single-line headline.", hidden: true }),
         defineField({ name: "subhead", type: "text", rows: 2 }),
         defineField({
+          name: "note",
+          type: "string",
+          description: "Small mono label under the billing toggle (e.g. \"Take advantage of our limited-time Beta pricing today\").",
+        }),
+        defineField({
           name: "cta",
           type: "object",
           fields: [
@@ -161,6 +166,41 @@ export const pricingPage = defineType({
               type: "string",
               description: "Optional anchor link to the comparison table.",
             }),
+            defineField({
+              name: "priceWasMonthly",
+              type: "string",
+              description: "Optional strikethrough \"was\" price shown next to the current monthly price (beta/launch discount display). Leave blank to hide.",
+            }),
+            defineField({
+              name: "priceWasYearly",
+              type: "string",
+              description: "Optional strikethrough \"was\" price shown next to the current yearly price. Leave blank to hide.",
+            }),
+            defineField({
+              name: "seatsIncludedNote",
+              type: "string",
+              description: "1-line seat summary shown below the price (e.g. \"1 seat · unlimited artists, releases & collaborators\").",
+            }),
+            defineField({
+              name: "extraSeatPriceMonthly",
+              type: "string",
+              description: "Per-extra-seat monthly price (e.g. \"$29.95/mo\"). Leave blank if this tier doesn't sell extra seats.",
+            }),
+            defineField({
+              name: "extraSeatPriceYearly",
+              type: "string",
+              description: "Per-extra-seat yearly-billed price (e.g. \"$23.96/mo\").",
+            }),
+            defineField({
+              name: "extraSeatWasMonthly",
+              type: "string",
+              description: "Optional strikethrough \"was\" price for an extra seat, monthly billing.",
+            }),
+            defineField({
+              name: "extraSeatWasYearly",
+              type: "string",
+              description: "Optional strikethrough \"was\" price for an extra seat, yearly billing.",
+            }),
           ],
           preview: { select: { title: "name", subtitle: "monthlyPrice" } },
         },
@@ -192,14 +232,22 @@ export const pricingPage = defineType({
               fields: [
                 defineField({ name: "label", type: "string", validation: (R) => R.required() }),
                 defineField({
+                  name: "isGroupHeader",
+                  type: "boolean",
+                  description: "Render this row as a section divider (e.g. \"The platform\", \"The brain — Pro\") spanning all columns, instead of a normal comparison row. When true, tooltip/valueByColumn are ignored.",
+                  initialValue: false,
+                }),
+                defineField({
                   name: "tooltip",
                   type: "string",
                   description: "Optional helper tooltip shown on hover.",
+                  hidden: ({ parent }) => !!parent?.isGroupHeader,
                 }),
                 defineField({
                   name: "valueByColumn",
                   type: "array",
                   description: "One entry per column (matches columns above).",
+                  hidden: ({ parent }) => !!parent?.isGroupHeader,
                   of: [
                     {
                       type: "object",

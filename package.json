@@ -12,7 +12,8 @@
     "astro": "astro",
     "check": "astro check",
     "seed": "tsx scripts/seed-sanity.ts",
-    "seed:homepage-v2-copy": "tsx scripts/seed-homepage-v2-copy.ts"
+    "seed:homepage-v2-copy": "tsx scripts/seed-homepage-v2-copy.ts",
+    "seed:pricing-v2-copy": "tsx scripts/seed-pricing-v2-copy.ts"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
