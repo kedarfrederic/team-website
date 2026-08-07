@@ -89,6 +89,7 @@ const tiers = [
     priceWasMonthly: "$99.95",
     priceWasYearly: "$79.96",
     period: "/mo · billed yearly",
+    periodMonthly: "/mo",
     seatsIncludedNote: "Includes 2 seats",
     extraSeatWasMonthly: "$39.95",
     extraSeatWasYearly: "$31.96",

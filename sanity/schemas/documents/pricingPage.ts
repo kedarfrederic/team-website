@@ -115,8 +115,15 @@ export const pricingPage = defineType({
             defineField({
               name: "period",
               type: "string",
-              description: "Period label (e.g. \"/mo\", \"per seat\").",
+              description:
+                "Period label shown with the YEARLY price (e.g. \"/mo · billed yearly\", \"forever\").",
               initialValue: "/mo",
+            }),
+            defineField({
+              name: "periodMonthly",
+              type: "string",
+              description:
+                "Period label shown with the MONTHLY price (e.g. \"/mo\"). Leave blank to reuse the yearly label — only set this when the two differ, otherwise the monthly view can contradict itself (\"/mo · billed yearly\" while Monthly is selected).",
             }),
             defineField({
               name: "trialNote",

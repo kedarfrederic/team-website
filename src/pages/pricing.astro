@@ -55,7 +55,15 @@ interface Tier {
   extraSeatPriceYearly?: string;
   extraSeatWasMonthly?: string;
   extraSeatWasYearly?: string;
+  /** Period label for the YEARLY price (e.g. "/mo · billed yearly", "forever"). */
   period?: string;
+  /**
+   * Period label for the MONTHLY price (e.g. "/mo"). Falls back to `period`.
+   * Must be set whenever the yearly label names the billing cycle — otherwise
+   * selecting Monthly renders "/mo · billed yearly", which contradicts itself
+   * and misstates the billing terms.
+   */
+  periodMonthly?: string;
   ctaLabel: string;
   ctaHref: string;
   includesLabel?: string;
@@ -114,6 +122,7 @@ const tiers: Tier[] =
           priceWasMonthly: "$99.95",
           priceWasYearly: "$79.96",
           period: "/mo · billed yearly",
+          periodMonthly: "/mo",
           seatsIncludedNote: "Includes 2 seats",
           extraSeatWasMonthly: "$39.95",
           extraSeatWasYearly: "$31.96",
@@ -257,7 +266,7 @@ const finalFootnote = finalCta.footnote ?? "Free platform · no card required";
                   <span class="plan__was" data-yearly={tier.priceWasYearly} data-monthly={tier.priceWasMonthly}>{tier.priceWasYearly ?? tier.priceWasMonthly}</span>
                 )}
                 <span class="plan__amount" data-yearly={tier.yearlyPrice} data-monthly={tier.monthlyPrice}>{tier.yearlyPrice ?? tier.monthlyPrice}</span>
-                <span class="plan__period" data-yearly={tier.period} data-monthly={tier.period}>{tier.period ?? "/mo"}</span>
+                <span class="plan__period" data-yearly={tier.period} data-monthly={tier.periodMonthly ?? tier.period}>{tier.period ?? "/mo"}</span>
               </div>
               {tier.seatsIncludedNote && (
                 <p class="plan__seat">
