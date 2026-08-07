@@ -1,8 +1,8 @@
 /* ────────────────────────────────────────────────────────────
-   Pricing page v2 — billing toggle + reveal-on-scroll.
-   Ported from team-july2026-multipager/{pricing.html inline
-   script, js/chrome.js's reveal observer}. FAQ needs no JS —
-   native <details>/<summary> handles disclosure.
+   Pricing page v2 — billing toggle only.
+   reveal-on-scroll and the [data-demo] rewrite are shared, and live
+   in v2-base.js (loaded before this). FAQ needs no JS — native
+   <details>/<summary> handles disclosure.
    ──────────────────────────────────────────────────────────── */
 (() => {
   'use strict';
@@ -29,12 +29,4 @@
     });
   }
 
-  /* reveal on scroll */
-  const io = new IntersectionObserver(
-    (entries) => entries.forEach((e) => {
-      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
-    }),
-    { threshold: 0.16 }
-  );
-  document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
 })();

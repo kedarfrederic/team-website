@@ -1,0 +1,36 @@
+---
+/**
+ * V2Head — the shared <head> payload for the v2 (dark) marketing pages
+ * ported from team-july2026-multipager.
+ *
+ * Use it inside BaseLayout's head slot:
+ *   <V2Head slot="head" pageCss="/components/pricing-v2.css" />
+ *
+ * Emits, in order:
+ *   1. the .js-reveal flag (see below)
+ *   2. font preloads for the two faces the v2 design actually uses
+ *   3. v2-base.css   — shared tokens/typography/buttons/reveal
+ *   4. pageCss       — optional per-page stylesheet, loaded last so it wins
+ *
+ * The .js-reveal flag makes reveal-on-scroll a progressive enhancement:
+ * v2-base.css only hides `.reveal` under `.js-reveal`, so if this script
+ * doesn't run the content stays visible rather than the page rendering
+ * entirely at opacity:0. It's inline and first so it lands before paint,
+ * avoiding a flash of visible-then-hidden content.
+ */
+import { v } from "../lib/asset-url";
+
+interface Props {
+  /** Root-relative path to the page's own stylesheet, e.g. "/components/pricing-v2.css". */
+  pageCss?: string;
+}
+const { pageCss } = Astro.props;
+---
+
+<script is:inline set:html={`document.documentElement.classList.add('js-reveal')`} />
+
+<link rel="preload" href="/v2/assets/fonts/NyghtSerif-LightItalic.woff" as="font" type="font/woff" crossorigin />
+<link rel="preload" href="/v2/assets/fonts/Inter-Variable.ttf" as="font" type="font/ttf" crossorigin />
+
+<link rel="stylesheet" href={v("/components/v2-base.css")} />
+{pageCss && <link rel="stylesheet" href={v(pageCss)} />}

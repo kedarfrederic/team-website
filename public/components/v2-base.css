@@ -1,0 +1,112 @@
+/* ────────────────────────────────────────────────────────────
+   v2-base.css — shared foundation for the v2 (dark) marketing
+   pages ported from team-july2026-multipager.
+
+   This is the port of that repo's css/base.css + the shared bits
+   of css/chrome.css (buttons, .txtlink), holding ONLY things used
+   by more than one page: design tokens, typography, layout
+   utilities, buttons, reveal-on-scroll, and the page ground.
+
+   Page-specific styles live in their own v2-<page>.css alongside
+   this one. Load order in the page head:
+     1. v2-base.css   (this file)
+     2. v2-<page>.css (page styles — may override)
+
+   DARK-LOCKED on purpose: the source ships a light theme + a
+   persisted toggle, deferred as its own feature. Don't add a
+   light-theme block here piecemeal.
+
+   Scoping note: these are global class names (.h1, .btn, .container,
+   .section, .reveal) and a body{} rule, but the file is only ever
+   linked from v2 pages, so it can't reach the classic Sanity pages.
+   Verified against nav.css/footer.css: no collisions.
+   ──────────────────────────────────────────────────────────── */
+:root{
+  --ink:#0d0c0b;--ink-2:#161412;--ink-3:#1e1a15;
+  --bone:#efebe3;--bone-dim:rgba(239,235,227,.56);--bone-faint:rgba(239,235,227,.3);
+  --line:rgba(239,235,227,.13);--line-2:rgba(239,235,227,.07);
+  --orange:#f56002;
+  --lime:#d9fa87;--glass:rgba(22,20,18,.6);
+  --on-accent:#0d0c0b;
+  --bg-1:#18130d;--bg-2:#14110c;
+  --v2-scrim:rgba(13,12,11,.5);
+  --v2-accent:#d9fa87;
+  --v2-ease:cubic-bezier(.16,1,.3,1);
+  --v2-ease-io:cubic-bezier(.65,0,.35,1);
+  --v2-pad:clamp(1.3rem,5vw,4.5rem);
+  --v2-maxw:78rem;
+}
+
+/* ── page ground ──
+   !important is deliberate: BaseLayout's global.css sets
+   body{background:#fff;color:#111110} for the classic light pages, and
+   Vite's dev-mode style injection order doesn't guarantee this file lands
+   after it. This is the one override a v2 page must always win. */
+body{
+  color:var(--bone) !important;
+  background:
+    radial-gradient(120% 90% at 50% -8%, var(--bg-1) 0%, transparent 55%),
+    radial-gradient(100% 70% at 50% 108%, var(--bg-2) 0%, transparent 55%),
+    var(--ink) !important;
+}
+
+/* Legibility scrim + stacking, used ONLY when a page renders the ambient
+   brain canvas (brain.js injects .brain-bg). Without the canvas the scrim is
+   pure unwanted darkening, so it's keyed off .brain-bg being present rather
+   than applied unconditionally. */
+body:has(.brain-bg)::after{
+  content:'';position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:
+    linear-gradient(var(--v2-scrim),var(--v2-scrim)),
+    radial-gradient(ellipse 92% 74% at 50% 42%,transparent 18%,var(--v2-scrim) 100%);
+}
+.brain-bg{position:fixed;inset:0;z-index:0;pointer-events:none}
+main,.section,.container{position:relative;z-index:2}
+
+/* ── typography ── */
+.h1,.h2,.h3{font-family:var(--font-display,'InterV',Inter,-apple-system,sans-serif);font-weight:330;letter-spacing:-.03em;line-height:1.04;color:var(--bone)}
+.h1{font-size:clamp(2.6rem,6vw,5rem)}
+.h2{font-size:clamp(2rem,4.4vw,3.4rem)}
+.h3{font-size:clamp(1.4rem,2.4vw,2rem)}
+/* The source uses <em> for the serif-italic accent; SplitHeadline.astro emits
+   .nyght for the same thing. Support both so ported markup and the shared
+   component look identical. */
+.h1 em,.h2 em,.h3 em,.h1 .nyght,.h2 .nyght,.h3 .nyght{font-family:var(--font-serif,'Nyght Serif',Georgia,serif);font-style:italic;font-weight:300;color:var(--v2-accent);letter-spacing:-.01em}
+.lede{font-size:clamp(1.05rem,1.5vw,1.28rem);color:var(--bone-dim);max-width:42rem;line-height:1.5}
+.mono{font-family:ui-monospace,'SF Mono','JetBrains Mono',Menlo,monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--bone-faint)}
+
+/* ── layout ── */
+.container{max-width:var(--v2-maxw);margin:0 auto;padding-inline:var(--v2-pad)}
+.section{padding-block:clamp(4rem,9vw,8rem)}
+.section--tight{padding-block:clamp(3rem,6vw,5rem)}
+
+/* ── buttons ── */
+.btn{display:inline-flex;align-items:center;gap:.55em;justify-content:center;border-radius:99px;
+  font-weight:600;font-size:.92rem;letter-spacing:.01em;padding:.95rem 1.7rem;
+  text-decoration:none;transition:background .28s,color .28s,border-color .28s,transform .28s}
+.btn--solid{background:var(--lime);color:var(--on-accent)}
+.btn--solid:hover{background:var(--bone);color:var(--ink)}
+.btn--ghost{border:1px solid var(--bone-faint);color:var(--bone)}
+.btn--ghost:hover{border-color:var(--v2-accent);color:var(--v2-accent)}
+.btn__arr{display:inline-block;transition:transform .3s var(--v2-ease)}
+.btn:hover .btn__arr{transform:translateX(.28em)}
+
+/* ── text link w/ arrow ── */
+.txtlink{display:inline-flex;align-items:center;gap:.5em;font-size:.92rem;font-weight:540;color:var(--v2-accent);cursor:pointer;line-height:1.3;text-decoration:none}
+.txtlink .tl{border-bottom:1.5px solid currentColor;padding-bottom:2px;transition:border-color .28s var(--v2-ease)}
+.txtlink:hover .tl{border-color:transparent}
+.txtlink .arr{display:inline-block;transition:transform .28s var(--v2-ease)}
+.txtlink:hover .arr{transform:translateX(4px)}
+
+/* ── reveal on scroll (observer lives in v2-base.js) ──
+   PROGRESSIVE ENHANCEMENT, deliberately different from the source: the hidden
+   state is scoped to .js-reveal, which a tiny inline <script> in the head adds
+   before first paint. If that script never runs — JS disabled, a blocked
+   bundle, an error earlier in the head — the content simply stays visible
+   instead of the whole page rendering at opacity:0. The source hides .reveal
+   unconditionally, which makes every section depend on one observer. */
+.js-reveal .reveal{opacity:0;transform:translateY(22px);transition:opacity .8s var(--v2-ease),transform .9s var(--v2-ease)}
+.js-reveal .reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){
+  .js-reveal .reveal{opacity:1;transform:none;transition:none}
+}

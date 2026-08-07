@@ -1,96 +1,31 @@
 /* ────────────────────────────────────────────────────────────
-   Pricing page v2 — dark, matching the v2 homepage brand.
-   Ported from team-july2026-multipager/{base.css,pricing.html}.
-   Scoped by class name (all classes below are unique to this
-   page's markup) — loaded only on /pricing via <link slot="head">.
-   Dark-locked: no light-theme override block (deferred — see
-   memory: homepage_v2_brain_live).
+   pricing-v2.css — /pricing page styles only.
+   Tokens, typography, buttons, .reveal, .container/.section and the
+   page ground all live in v2-base.css, which MUST be loaded first.
    ──────────────────────────────────────────────────────────── */
-:root{
-  --ink:#0d0c0b;--ink-2:#161412;--ink-3:#1e1a15;
-  --bone:#efebe3;--bone-dim:rgba(239,235,227,.56);--bone-faint:rgba(239,235,227,.3);
-  --line:rgba(239,235,227,.13);--line-2:rgba(239,235,227,.07);
-  --lime:#d9fa87;--glass:rgba(22,20,18,.6);
-  --on-accent:#0d0c0b;
-  --bg-1:#18130d;--bg-2:#14110c;
-  --pricing-scrim:rgba(13,12,11,.5);
-  --pricing-accent:#d9fa87;
-  --pricing-ease:cubic-bezier(.16,1,.3,1);
-}
-
-/* ── page ground — scoped to this stylesheet, so only /pricing gets the
-   dark wash (loaded only there via <link slot="head">). !important is
-   deliberate here: BaseLayout's global reset sets body{background:#fff;
-   color:#111110} for classic light pages, and Vite's dev-mode style
-   injection order doesn't guarantee this stylesheet loads after it —
-   this is the one override this page intentionally always wins. ── */
-/* No body::after scrim here — that exists in the source to keep text
-   legible over the ambient animated brain canvas (js/brain.js), which
-   this page doesn't render (no canvas element ported). Without the
-   canvas the scrim is just unwanted darkening over an already-clean
-   gradient, so it's dropped rather than ported. */
-body{
-  color:var(--bone) !important;
-  background:
-    radial-gradient(120% 90% at 50% -8%, var(--bg-1) 0%, transparent 55%),
-    radial-gradient(100% 70% at 50% 108%, var(--bg-2) 0%, transparent 55%),
-    var(--ink) !important;
-}
-
-/* ── typography / layout utilities ── */
-.h1,.h2,.h3{font-family:var(--font-display,'InterV',Inter,-apple-system,sans-serif);font-weight:330;letter-spacing:-.03em;line-height:1.04;color:var(--bone)}
-.h1{font-size:clamp(2.6rem,6vw,5rem)}
-.h2{font-size:clamp(2rem,4.4vw,3.4rem)}
-.h1 .nyght,.h2 .nyght,.h3 .nyght{font-style:italic;color:var(--pricing-accent);letter-spacing:-.01em}
-.lede{font-size:clamp(1.05rem,1.5vw,1.28rem);color:var(--bone-dim);max-width:42rem;line-height:1.5}
-.container{max-width:78rem;margin:0 auto;padding-inline:clamp(1.3rem,5vw,4.5rem)}
-.section{padding-block:clamp(4rem,9vw,8rem);position:relative}
-
-/* ── buttons ── */
-.btn{display:inline-flex;align-items:center;gap:.55em;justify-content:center;border-radius:99px;
-  font-weight:600;font-size:.92rem;letter-spacing:.01em;padding:.95rem 1.7rem;
-  text-decoration:none;transition:background .28s,color .28s,border-color .28s,transform .28s}
-.btn--solid{background:var(--lime);color:var(--on-accent)}
-.btn--solid:hover{background:var(--bone);color:var(--ink)}
-.btn--ghost{border:1px solid var(--bone-faint);color:var(--bone)}
-.btn--ghost:hover{border-color:var(--pricing-accent);color:var(--pricing-accent)}
-.btn__arr{display:inline-block;transition:transform .3s var(--pricing-ease)}
-.btn:hover .btn__arr{transform:translateX(.28em)}
-
-/* ── reveal on scroll (see pricing-v2.js for the observer) ── */
-.reveal{opacity:0;transform:translateY(22px);transition:opacity .8s var(--pricing-ease),transform .9s var(--pricing-ease)}
-.reveal.in{opacity:1;transform:none}
-
-/* ── text link w/ arrow ── */
-.txtlink{display:inline-flex;align-items:center;gap:.5em;font-size:.92rem;font-weight:540;color:var(--pricing-accent);cursor:pointer;line-height:1.3;text-decoration:none}
-.txtlink .tl{border-bottom:1.5px solid currentColor;padding-bottom:2px;transition:border-color .28s var(--pricing-ease)}
-.txtlink:hover .tl{border-color:transparent}
-.txtlink .arr{display:inline-block;transition:transform .28s var(--pricing-ease)}
-.txtlink:hover .arr{transform:translateX(4px)}
-
 /* ── hero ── */
 .phero{padding-top:10.5rem;min-height:0;text-align:center}
 .phero__in{display:flex;flex-direction:column;align-items:center}
 .phero .h1{font-size:clamp(2.9rem,7vw,5.4rem)}
-.phero__note{margin-top:1.7rem;font-family:ui-monospace,'SF Mono','JetBrains Mono',Menlo,monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--pricing-accent)}
+.phero__note{margin-top:1.7rem;font-family:ui-monospace,'SF Mono','JetBrains Mono',Menlo,monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--v2-accent)}
 
 /* ── billing toggle ── */
 .bill{display:inline-flex;align-items:center;gap:.25rem;padding:.3rem;border:1px solid var(--line);border-radius:99px;background:var(--glass);margin:1.3rem auto 0}
 .bill button{background:none;border:0;font-family:inherit;cursor:pointer;color:var(--bone-dim);padding:.5rem 1.15rem;border-radius:99px;font-size:.9rem;transition:background .25s,color .25s;display:inline-flex;align-items:center;gap:.5rem}
 .bill button.on{background:var(--lime);color:var(--on-accent);font-weight:560}
 .bill .save{font-family:ui-monospace,'SF Mono','JetBrains Mono',Menlo,monospace;font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;color:var(--on-accent);background:rgba(13,12,11,.14);border-radius:99px;padding:.25em .5em}
-.bill button:not(.on) .save{color:var(--pricing-accent);background:rgba(217,250,135,.12)}
+.bill button:not(.on) .save{color:var(--v2-accent);background:rgba(217,250,135,.12)}
 
 /* ── plan cards ── */
 .plans{display:grid;gap:1.2rem;grid-template-columns:1fr;max-width:60rem;margin:2.8rem auto 0}
 @media(min-width:780px){.plans{grid-template-columns:1fr 1fr}}
-.plan{position:relative;border:1px solid var(--line);border-radius:22px;background:var(--ink-2);padding:2rem 1.9rem;display:flex;flex-direction:column;transition:border-color .4s,transform .4s var(--pricing-ease)}
+.plan{position:relative;border:1px solid var(--line);border-radius:22px;background:var(--ink-2);padding:2rem 1.9rem;display:flex;flex-direction:column;transition:border-color .4s,transform .4s var(--v2-ease)}
 .plan:hover{transform:translateY(-4px)}
 .plan--pro{border-color:rgba(217,250,135,.5)}
 .plan--pro::before{content:'';position:absolute;left:0;right:0;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(217,250,135,.6),transparent)}
 .plan__badge{position:absolute;top:-.72rem;left:50%;transform:translateX(-50%);font-family:ui-monospace,'SF Mono','JetBrains Mono',Menlo,monospace;font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;color:var(--on-accent);background:var(--lime);border-radius:99px;padding:.42em .9em;white-space:nowrap}
 .plan__name{font-family:var(--font-display,'InterV',Inter,-apple-system,sans-serif);font-weight:600;font-size:1.95rem;letter-spacing:-.02em;color:var(--bone);line-height:1;margin:0}
-.plan--pro .plan__name{color:var(--pricing-accent)}
+.plan--pro .plan__name{color:var(--v2-accent)}
 .plan__who{color:var(--bone-dim);font-size:.9rem;margin-top:.5rem;min-height:2.7em}
 .plan__price{margin-top:1.3rem;display:flex;align-items:baseline;gap:.5rem;flex-wrap:wrap;min-height:3.4rem}
 .plan__was{font-family:var(--font-display,'InterV',Inter,-apple-system,sans-serif);font-weight:330;font-size:1.5rem;letter-spacing:-.02em;color:var(--bone-faint);text-decoration:line-through;text-decoration-thickness:1px}
@@ -104,7 +39,7 @@ body{
 .plan__inclab{font-family:ui-monospace,'SF Mono','JetBrains Mono',Menlo,monospace;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--bone-faint);margin:1.7rem 0 1rem;padding-top:1.4rem;border-top:1px solid var(--line-2)}
 .plan__feats{list-style:none;display:flex;flex-direction:column;gap:.7rem;margin:0;padding:0}
 .plan__feats li{display:flex;gap:.65rem;align-items:flex-start;font-size:.9rem;color:var(--bone-dim);line-height:1.4}
-.plan__feats li::before{content:'✓';color:var(--pricing-accent);font-size:.8em;flex:none;margin-top:.15em}
+.plan__feats li::before{content:'✓';color:var(--v2-accent);font-size:.8em;flex:none;margin-top:.15em}
 .plan__feats li.pro::before{content:'✦'}
 .plans__compare{text-align:center;margin:1.8rem 0 0;font-size:.9rem}
 
@@ -114,11 +49,11 @@ body{
 .ctable th,.ctable td{padding:.85rem 1.2rem;border-bottom:1px solid var(--line-2);text-align:left}
 .ctable tbody tr:last-child td{border-bottom:0}
 .ctable thead th{background:var(--ink-3);font-family:ui-monospace,'SF Mono','JetBrains Mono',Menlo,monospace;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--bone-faint);position:sticky;top:0}
-.ctable thead th.pro{color:var(--pricing-accent)}
+.ctable thead th.pro{color:var(--v2-accent)}
 .ctable thead th:not(:first-child),.ctable td.val{text-align:center;width:22%}
 .ctable td:first-child{color:var(--bone)}
 .ctable td.val{font-variant-numeric:tabular-nums;color:var(--bone-dim)}
-.ctable .yes{color:var(--pricing-accent);font-size:1rem}
+.ctable .yes{color:var(--v2-accent);font-size:1rem}
 .ctable .no{color:var(--bone-faint)}
 .ctable tbody tr:hover td{background:rgba(239,235,227,.02)}
 .ctable .grp td{font-family:ui-monospace,'SF Mono','JetBrains Mono',Menlo,monospace;font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--bone-faint);background:rgba(239,235,227,.02)}
@@ -131,7 +66,7 @@ body{
 .faq summary .pl{width:1rem;height:1rem;flex:none;position:relative}
 .faq summary .pl::before,.faq summary .pl::after{content:'';position:absolute;background:var(--lime);border-radius:2px}
 .faq summary .pl::before{left:0;right:0;top:calc(50% - 1px);height:2px}
-.faq summary .pl::after{top:0;bottom:0;left:calc(50% - 1px);width:2px;transition:transform .3s var(--pricing-ease)}
+.faq summary .pl::after{top:0;bottom:0;left:calc(50% - 1px);width:2px;transition:transform .3s var(--v2-ease)}
 .faq details[open] summary .pl::after{transform:scaleY(0)}
 .faq details p{color:var(--bone-dim);font-size:.94rem;line-height:1.6;padding:0 .2rem 1.1rem;max-width:60ch;margin:0}
 .faq__foot{text-align:center;margin-top:2rem}
