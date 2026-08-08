@@ -13,11 +13,18 @@
  *   3. Body:    src/lib/homepage-v2-body.html injected via set:html
  *   4. Assets:  public/v2/assets/** (fonts, logos, imagery)
  *
- * The page carries its OWN chrome — loader, capsule nav, equalizer
- * cursor, footer — so BaseLayout renders chromeless (chrome={false}):
- * no site nav/footer, no <main> wrapper (the body brings its own).
+ * The page carries its own loader, equalizer cursor, footer and the
+ * `.capsule` scroll narrator (progress ring + current act, pinned
+ * top-right), so BaseLayout renders chromeless (chrome={false}): no
+ * classic nav/footer, no <main> wrapper (the body brings its own).
  * BaseLayout still owns SEO, canonical, OG tags, and the Visual
  * Editing mount.
+ *
+ * It DOES render the shared V2Nav, matching the delivered design: the
+ * source's index.html loads js/chrome.js, which injects the site nav
+ * unconditionally, so the homepage has both the site nav and the
+ * capsule. Without it the homepage had ZERO internal links — every
+ * other page was unreachable from the front door.
  *
  * The beta signup form posts straight to the CRM
  * (admin.getteamnow.com/api/v1/website-leads, source_form='beta') —
@@ -30,6 +37,7 @@
  */
 
 import BaseLayout from "../layouts/BaseLayout.astro";
+import V2Nav from "../components/V2Nav.astro";
 import { v } from "../lib/asset-url";
 import { getHomepage } from "../lib/queries";
 // @ts-expect-error — Astro's ?raw modifier returns a string at build time
@@ -79,9 +87,13 @@ for (const [token, value] of Object.entries(tokens)) {
 >
   <link slot="head" rel="preload" href="/v2/assets/fonts/NyghtSerif-LightItalic.woff" as="font" type="font/woff" crossorigin />
   <link slot="head" rel="preload" href="/v2/assets/fonts/Inter-Variable.ttf" as="font" type="font/ttf" crossorigin />
+  <link slot="head" rel="stylesheet" href={v("/components/v2-chrome.css")} />
   <link slot="head" rel="stylesheet" href={v("/components/homepage-v2.css")} />
+
+  <V2Nav />
 
   <Fragment set:html={body} />
 
+  <script is:inline src={v("/components/v2-chrome.js")}></script>
   <script is:inline src={v("/components/homepage-v2.js")}></script>
 </BaseLayout>

@@ -1016,3 +1016,28 @@ body.menu-open .menu__list a{opacity:1;transform:none}
    on this page and paints body #fff — `html body` outranks its `body`
    selector regardless of order, so the page owns its own ground. ═══ */
 html body{background:var(--ink);color:var(--bone);max-width:none;overflow-x:clip}
+
+/* ── capsule offset for the site nav ──
+   The homepage now renders the shared V2Nav (matching the delivered design,
+   whose index.html loads chrome.js). The nav is a full-width fixed bar at
+   top:0 (~69px tall, z-index 100); the capsule was authored at top:1.1rem
+   pinned right, which puts it directly under the nav's "Sign in / Sign up
+   free" cluster — measured overlap x1190-1384 vs x1019-1382. Because the nav
+   sits above it, the capsule's links and burger became unclickable.
+
+   This conflict exists in the source too (its onepager.css positions the
+   capsule identically while chrome.js injects the nav), so it isn't something
+   the port introduced. Dropping the capsule below the nav keeps BOTH usable
+   and reads correctly: the capsule is a scroll narrator, not a header. */
+.capsule{top:5rem}
+@media(max-width:940px){
+  /* Mobile nav is shorter (burger only) but the same height class; keep the
+     same clearance so the two never touch. */
+  .capsule{top:4.8rem}
+}
+
+/* The page's own fixed brand mark is redundant now that V2Nav renders one:
+   both pinned top-left (.brand at left:var(--pad) top:1.35rem, the nav's at
+   the same corner), so they overlapped as a doubled wordmark. The nav's is
+   kept — it links to / rather than #top and belongs to the site nav. */
+.brand{display:none}

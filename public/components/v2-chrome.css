@@ -19,6 +19,13 @@
   --hover-tint:rgba(239,235,227,.05);
   --shadow-lg:rgba(0,0,0,.5);
   --bloom:rgba(217,250,135,.055);
+  /* Self-sufficiency: these normally come from v2-base.css, but the homepage
+     loads only homepage-v2.css + this file (it brings its own design system),
+     and homepage-v2.css doesn't define them. Without --on-accent the "Sign up
+     free" pill renders with no text colour. Values match v2-base.css exactly,
+     so pages loading both are unaffected. */
+  --on-accent:#0d0c0b;
+  --v2-ease:cubic-bezier(.16,1,.3,1);
 }
 
 .v2-chrome a{text-decoration:none}
