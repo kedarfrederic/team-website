@@ -1,0 +1,12 @@
+/* v2-notfound.css — /404 page styles.
+   Ported from team-july2026-multipager/404.html's inline <style>.
+*/
+body.v2 .nf{min-height:82vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:9rem var(--pad) 5rem}
+  .nf__code{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);margin-bottom:1.4rem}
+  .nf .h1{font-size:clamp(2.6rem,6vw,4.6rem);max-width:18ch}
+  .nf .lede{margin:1.6rem auto 0;max-width:44ch}
+  .nf__ctas{margin-top:2.4rem;display:flex;gap:.9rem;flex-wrap:wrap;justify-content:center}
+  .nf__links{margin-top:2.6rem;display:flex;gap:.4rem 1.6rem;flex-wrap:wrap;justify-content:center;
+    font-family:var(--font-mono);font-size:.64rem;letter-spacing:.14em;text-transform:uppercase}
+  .nf__links a{color:var(--bone-faint)}
+  .nf__links a:hover{color:var(--accent)}

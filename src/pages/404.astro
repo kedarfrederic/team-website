@@ -1,0 +1,30 @@
+---
+/**
+ * Page not found — v2, ported from team-july2026-multipager/404.html.
+ *
+ * Astro serves src/pages/404.astro for unmatched routes. team-website had no
+ * 404 page at all before this, so unmatched URLs fell through to Cloudflare's
+ * default — this is a net-new page, not a port over something existing.
+ *
+ * Injection port (HANDOFF §A.5).
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import V2Head from "../components/V2Head.astro";
+import V2Nav from "../components/V2Nav.astro";
+import V2Footer from "../components/V2Footer.astro";
+import { v } from "../lib/asset-url";
+// @ts-expect-error — Astro's ?raw modifier returns a string at build time
+import bodyHtml from "../lib/v2-404-body.html?raw";
+---
+<BaseLayout title="Page not found | Team" description="That page has moved or never existed. Head back to Team." chrome={false} bodyClass="v2">
+  <V2Head slot="head" pageCss="/components/v2-notfound.css" />
+
+  <V2Nav />
+
+  <Fragment set:html={bodyHtml} />
+
+  <V2Footer />
+
+  <script is:inline src={v("/components/v2-base.js")}></script>
+  <script is:inline src={v("/components/v2-chrome.js")}></script>
+</BaseLayout>

@@ -1,0 +1,9 @@
+/* v2-terms.css — /terms page styles.
+   Ported from team-july2026-multipager/terms.html's inline <style>.
+*/
+.legal{max-width:48rem}
+  .legal .post__title{font-size:clamp(1.9rem,4vw,2.7rem)}
+  .legal__updated{margin-top:.9rem;font-family:var(--font-mono);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--bone-faint)}
+  .legal .prose{margin-top:2.6rem}
+  .legal .prose>section+section{margin-top:2.4rem;padding-top:2.4rem;border-top:1px solid var(--line)}
+  .legal .prose section h2{margin-top:0}
