@@ -1,21 +1,41 @@
 ---
+/**
+ * For labels — v2, ported from team-july2026-multipager/for-labels.html.
+ *
+ * Injection port (HANDOFF §A.5). Like /enterprise, this page has NO inline
+ * <style> of its own — all styling comes from the shared solutions.css,
+ * ported to public/components/v2-solutions.css. Scripts mirror the source's
+ * own tags: v2-brain.js (ambient canvas) + v2-solutions.js.
+ *
+ * NOT Sanity-bound yet (HANDOFF §A.8: hardcode first, model after). The
+ * schema + document are untouched; only `seo` is read.
+ */
 import BaseLayout from "../layouts/BaseLayout.astro";
-import IcpPage from "../components/pages/IcpPage.astro";
+import V2Head from "../components/V2Head.astro";
+import V2Nav from "../components/V2Nav.astro";
+import V2Footer from "../components/V2Footer.astro";
 import { getIcpPage } from "../lib/queries";
 import { getClient } from "../lib/sanity";
 import { v } from "../lib/asset-url";
+// @ts-expect-error — Astro's ?raw modifier returns a string at build time
+import bodyHtml from "../lib/v2-for-labels-body.html?raw";
 
 const page = await getIcpPage("forLabelsPage", getClient(Astro));
+
+const TITLE = "For labels — every release, one living picture | Team";
+const DESCRIPTION = "A label runs a slate, not one release. Team reasons across A&R, marketing, production and distribution, keeping the whole slate in one living picture.";
 ---
-<BaseLayout
-  title={page?.hero?.headlineTop ?? page?.hero?.headline ?? "For Labels"}
-  description={page?.hero?.subhead ?? "Scale your roster. Not your headcount."}
-  seo={page?.seo}
-  navTheme="dark"
->
-  <link slot="head" rel="stylesheet" href={v("/components/for-labels-inline.css")} />
+<BaseLayout title={TITLE} description={DESCRIPTION} seo={page?.seo} chrome={false} bodyClass="v2">
+  <V2Head slot="head" pageCss="/components/v2-solutions.css" />
 
-  <IcpPage page={page} icpKey="labels" />
+  <V2Nav active="solutions" />
 
-  <script is:inline src={v("/components/for-labels-inline.js")}></script>
+  <Fragment set:html={bodyHtml} />
+
+  <V2Footer />
+
+  <script is:inline src={v("/components/v2-base.js")}></script>
+  <script is:inline src={v("/components/v2-chrome.js")}></script>
+  <script is:inline src={v("/components/v2-brain.js")}></script>
+  <script is:inline src={v("/components/v2-solutions.js")}></script>
 </BaseLayout>

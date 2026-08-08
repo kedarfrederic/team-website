@@ -1,21 +1,41 @@
 ---
+/**
+ * For artist managers — v2, ported from team-july2026-multipager/for-managers.html.
+ *
+ * Injection port (HANDOFF §A.5). Like /enterprise, this page has NO inline
+ * <style> of its own — all styling comes from the shared solutions.css,
+ * ported to public/components/v2-solutions.css. Scripts mirror the source's
+ * own tags: v2-brain.js (ambient canvas) + v2-solutions.js.
+ *
+ * NOT Sanity-bound yet (HANDOFF §A.8: hardcode first, model after). The
+ * schema + document are untouched; only `seo` is read.
+ */
 import BaseLayout from "../layouts/BaseLayout.astro";
-import IcpPage from "../components/pages/IcpPage.astro";
+import V2Head from "../components/V2Head.astro";
+import V2Nav from "../components/V2Nav.astro";
+import V2Footer from "../components/V2Footer.astro";
 import { getIcpPage } from "../lib/queries";
 import { getClient } from "../lib/sanity";
 import { v } from "../lib/asset-url";
+// @ts-expect-error — Astro's ?raw modifier returns a string at build time
+import bodyHtml from "../lib/v2-for-managers-body.html?raw";
 
 const page = await getIcpPage("forManagersPage", getClient(Astro));
+
+const TITLE = "For artist managers — your whole roster, in one place | Team";
+const DESCRIPTION = "Managing a roster means a dozen releases in your head. Team gives each artist a brain and keeps the roster in one place — catch risk before it's a fire.";
 ---
-<BaseLayout
-  title={page?.hero?.headlineTop ?? page?.hero?.headline ?? "For Managers"}
-  description={page?.hero?.subhead ?? "Every artist. Every release. One dashboard."}
-  seo={page?.seo}
-  navTheme="dark"
->
-  <link slot="head" rel="stylesheet" href={v("/components/for-managers-inline.css")} />
+<BaseLayout title={TITLE} description={DESCRIPTION} seo={page?.seo} chrome={false} bodyClass="v2">
+  <V2Head slot="head" pageCss="/components/v2-solutions.css" />
 
-  <IcpPage page={page} icpKey="managers" />
+  <V2Nav active="solutions" />
 
-  <script is:inline src={v("/components/for-managers-inline.js")}></script>
+  <Fragment set:html={bodyHtml} />
+
+  <V2Footer />
+
+  <script is:inline src={v("/components/v2-base.js")}></script>
+  <script is:inline src={v("/components/v2-chrome.js")}></script>
+  <script is:inline src={v("/components/v2-brain.js")}></script>
+  <script is:inline src={v("/components/v2-solutions.js")}></script>
 </BaseLayout>
