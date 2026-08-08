@@ -25,6 +25,15 @@ import { getInsightPostSlugs, getInsightPostBySlug } from "../../lib/queries";
 import { getClient, urlFor } from "../../lib/sanity";
 import { v } from "../../lib/asset-url";
 
+/**
+ * Prerendered at build time (the site is output:"server", so this must be
+ * explicit). Two things depend on it: @astrojs/sitemap only emits prerendered
+ * routes, so without this the article URLs vanish from sitemap.xml; and the
+ * articles are static content that shouldn't cost a Worker invocation per
+ * view. Dropping this line silently removed 10 article URLs from the sitemap.
+ */
+export const prerender = true;
+
 export async function getStaticPaths() {
   const slugs = await getInsightPostSlugs();
   return slugs.map((slug) => ({ params: { slug } }));

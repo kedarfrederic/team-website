@@ -58,8 +58,18 @@ export default defineConfig({
   integrations: [
     react(),
     sitemap({
-      // Skip the API + preview routes — they're not user-facing pages.
-      filter: (page) => !page.includes("/api/"),
+      /**
+       * Exclude anything that isn't a public, indexable page. A sitemap invites
+       * crawling, so listing a noindex'd URL sends contradictory signals.
+       *   /api/       — endpoints, not pages
+       *   /playground/ — component sandbox (noindex'd; its own comment says it
+       *                  should stay out of the sitemap, but it was being listed)
+       *   /home-classic — the pre-v2 homepage kept for rollback; noindex'd
+       */
+      filter: (page) =>
+        !page.includes("/api/") &&
+        !page.includes("/playground/") &&
+        !page.includes("/home-classic"),
     }),
     sanity({
       projectId: "g1olb5am",
