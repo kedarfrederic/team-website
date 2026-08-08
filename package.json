@@ -2,7 +2,7 @@
   "name": "team-website",
   "version": "0.1.0",
   "private": true,
-  "description": "Team marketing site — Astro SSG fed by Sanity CMS",
+  "description": "Team marketing site \u2014 Astro SSG fed by Sanity CMS",
   "type": "module",
   "scripts": {
     "dev": "astro dev",
@@ -13,7 +13,8 @@
     "check": "astro check",
     "seed": "tsx scripts/seed-sanity.ts",
     "seed:homepage-v2-copy": "tsx scripts/seed-homepage-v2-copy.ts",
-    "seed:pricing-v2-copy": "tsx scripts/seed-pricing-v2-copy.ts"
+    "seed:pricing-v2-copy": "tsx scripts/seed-pricing-v2-copy.ts",
+    "check:v2-links": "node scripts/check-v2-links.mjs"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
