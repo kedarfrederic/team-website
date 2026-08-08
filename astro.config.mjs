@@ -26,6 +26,32 @@ import sitemap from "@astrojs/sitemap";
 export default defineConfig({
   site: "https://teamrollouts.com",
   output: "server",
+
+  /**
+   * Retired pages from the pre-v2 site, 301'd to their v2 successors.
+   *
+   * These four are NOT part of the delivered v2 design (they don't exist in
+   * team-july2026-multipager at all), and after the v2 nav/footer landed
+   * nothing linked to them — they were live, indexable dead ends still
+   * rendering the old light chrome. Redirecting rather than deleting keeps any
+   * accumulated SEO equity and stops external/bookmarked links 404ing.
+   *
+   * Their .astro files are removed, because a matching page file takes
+   * precedence over a redirect entry (recoverable from git history).
+   *
+   * DELIBERATELY NOT redirected:
+   *   /sms-terms    — SMS compliance doc, referenced by the app's opt-in flow
+   *                   and by carriers. Not a marketing page; must stay reachable.
+   *   /changelog    — kept, per owner.
+   *   /home-classic — intentional rollback copy of the previous homepage,
+   *                   already noindex'd.
+   */
+  redirects: {
+    "/orchestration": "/rollouts",
+    "/intelligence": "/teammate",
+    "/integrations": "/connections",
+    "/demo": "/contact",
+  },
   adapter: cloudflare({
     platformProxy: { enabled: true },
   }),
