@@ -1,206 +1,127 @@
 ---
+/**
+ * Insight article — v2, restyled from
+ * team-july2026-multipager/insights/<slug>.html.
+ *
+ * Like the index, this is a RESTYLE, not an injection port: the article bodies
+ * live in Sanity as Portable Text (migrated by scripts/import-insights-v2.mjs)
+ * and are rendered by PortableText.astro, which already handles the h2/h3/
+ * blockquote/list/link/image set the imported bodies use. Only the surrounding
+ * markup and styling move to v2.
+ *
+ * getInsightPostSlugs() deliberately includes `hiddenFromIndex` posts, so the
+ * SEO/GEO pages still build and stay indexable — they're just absent from the
+ * index listing.
+ *
+ * BlogPosting + BreadcrumbList JSON-LD per HANDOFF §8, built from the Sanity
+ * fields so it can't drift from what's rendered.
+ */
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import V2Head from "../../components/V2Head.astro";
+import V2Nav from "../../components/V2Nav.astro";
+import V2Footer from "../../components/V2Footer.astro";
 import PortableText from "../../components/PortableText.astro";
-import CtaBlock from "../../components/blocks/CtaBlock.astro";
-import { getInsightPostSlugs, getInsightPostBySlug, getInsightsIndexPage } from "../../lib/queries";
+import { getInsightPostSlugs, getInsightPostBySlug } from "../../lib/queries";
 import { getClient, urlFor } from "../../lib/sanity";
-
-// Prerender every insight post at build time. Output is "server" by
-// default for visual editing on the rest of the site, but blog posts
-// don't need cookie-aware preview — keeping them static = faster + cheaper.
-export const prerender = true;
+import { v } from "../../lib/asset-url";
 
 export async function getStaticPaths() {
-  // Build-time only — no request context, so the published client is fine.
   const slugs = await getInsightPostSlugs();
   return slugs.map((slug) => ({ params: { slug } }));
 }
 
 const { slug } = Astro.params;
-const client = getClient(Astro);
-const [post, indexPage] = await Promise.all([
-  getInsightPostBySlug(slug as string, client),
-  getInsightsIndexPage(client),
-]);
+const post = await getInsightPostBySlug(slug as string, getClient(Astro));
 
-if (!post) {
-  return Astro.redirect("/insights");
-}
+if (!post) return Astro.redirect("/insights");
 
-const fallbackCta = indexPage?.globalCta;
-const cta = post.ctaOverride ?? fallbackCta;
-
-function formatDate(d?: string): string {
+function formatDate(d?: string) {
   if (!d) return "";
   return new Date(d).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
 }
----
 
+const SITE = "https://teamrollouts.com";
+const url = `${SITE}/insights/${slug}`;
+const heroUrl = post.heroImage?.asset
+  ? urlFor(post.heroImage).width(1200).format("webp").url()
+  : null;
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BlogPosting",
+      headline: post.title,
+      description: post.excerpt,
+      datePublished: post.publishDate,
+      dateModified: post._updatedAt ?? post.publishDate,
+      author: { "@type": "Person", name: post.authorName ?? "Team" },
+      publisher: { "@type": "Organization", name: "Team", url: SITE },
+      mainEntityOfPage: url,
+      ...(heroUrl ? { image: heroUrl } : {}),
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: `${SITE}/` },
+        { "@type": "ListItem", position: 2, name: "Insights", item: `${SITE}/insights` },
+        { "@type": "ListItem", position: 3, name: post.title, item: url },
+      ],
+    },
+  ],
+};
+---
 <BaseLayout
   title={post.title}
   description={post.excerpt}
   ogImage={post.heroImage}
   seo={post.seo}
+  chrome={false}
+  bodyClass="v2"
 >
-  <article class="insight-post">
-    <header class="insight-post__header">
-      <div class="container">
-        <a href="/insights" class="insight-post__back">← Back to Insights</a>
-        {post.category && (
-          <span class="insight-post__category" style={`color:${post.category.color ?? "#191919"};`}>
-            {post.category.title}
-          </span>
+  <V2Head slot="head" pageCss="/components/v2-prose.css" />
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(jsonLd)} />
+
+  <V2Nav active="resources" />
+
+  <main id="main">
+    <article class="post container">
+      <a class="post__back" href="/insights">← Back to Insights</a>
+      {post.category?.title && <span class="post__cat">{post.category.title}</span>}
+      <h1 class="post__title">{post.title}</h1>
+      <div class="post__meta">
+        <span>By {post.authorName ?? "Team"}</span><span class="dot"></span>
+        <span>{formatDate(post.publishDate)}</span>
+        {post.readMinutes && (
+          <>
+            <span class="dot"></span>
+            <span>{post.readMinutes} min read</span>
+          </>
         )}
-        <h1 class="headline-xl">{post.title}</h1>
-        <div class="insight-post__meta">
-          <span>By {post.authorName ?? "Team"}</span>
-          <span>•</span>
-          <span>{formatDate(post.publishDate)}</span>
-          {post.readMinutes && (
-            <>
-              <span>•</span>
-              <span>{post.readMinutes} min read</span>
-            </>
-          )}
-        </div>
       </div>
-    </header>
 
-    {post.heroImage && (
-      <div class="insight-post__hero-img">
-        <div class="container">
-          <img
-            src={urlFor(post.heroImage).width(1200).format("webp").url()}
-            alt=""
-          />
-        </div>
-      </div>
-    )}
+      {heroUrl && <img class="post__hero" src={heroUrl} alt="" loading="lazy" />}
 
-    <div class="insight-post__body">
-      <div class="container">
+      <div class="prose">
         <PortableText value={post.body} />
       </div>
-    </div>
+    </article>
 
-    <CtaBlock value={cta} />
-
-    {post.relatedPosts && post.relatedPosts.length > 0 && (
-      <section class="insight-post__related">
-        <div class="container">
-          <h2 class="headline-lg">Related</h2>
-          <ul class="related-grid">
-            {post.relatedPosts.map((p: any) => (
-              <li>
-                <a href={`/insights/${p.slug?.current}`} class="related-card">
-                  {p.heroImage && (
-                    <img
-                      src={urlFor(p.heroImage).width(640).format("webp").url()}
-                      alt=""
-                      class="related-card__img"
-                    />
-                  )}
-                  {p.category && <span class="related-card__category">{p.category.title}</span>}
-                  <h3>{p.title}</h3>
-                </a>
-              </li>
-            ))}
-          </ul>
+    <section class="section container">
+      <div class="pfinal reveal">
+        <h2 class="h2">Run your next release <em>on a brain.</em></h2>
+        <div class="ctaband__row">
+          <a class="btn btn--solid" href="/pricing">Sign up free</a>
+          <a class="btn btn--ghost" href="https://calendly.com/teamrollouts-demo/30min" target="_blank" rel="noopener">
+            Book a demo <span class="btn__arr">→</span>
+          </a>
         </div>
-      </section>
-    )}
-  </article>
-</BaseLayout>
+      </div>
+    </section>
+  </main>
 
-<style>
-  .insight-post__header {
-    padding: 6rem 0 2rem;
-    text-align: center;
-  }
-  .insight-post__back {
-    display: inline-block;
-    margin-bottom: 2rem;
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-  }
-  .insight-post__back:hover {
-    color: #111;
-  }
-  .insight-post__category {
-    display: block;
-    font-size: 0.6875rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-bottom: 1rem;
-  }
-  .insight-post__header h1 {
-    max-width: 36rem;
-    margin: 0 auto 1.5rem;
-  }
-  .insight-post__meta {
-    display: flex;
-    justify-content: center;
-    gap: 0.5rem;
-    color: var(--text-secondary);
-    font-size: 0.875rem;
-  }
-  .insight-post__hero-img {
-    margin: 2rem 0 4rem;
-  }
-  .insight-post__hero-img img {
-    width: 100%;
-    border-radius: 16px;
-  }
-  .insight-post__body {
-    padding-bottom: 4rem;
-  }
-  .insight-post__body :global(.portable-text) {
-    max-width: 36rem;
-    margin: 0 auto;
-  }
-  .insight-post__related {
-    padding: 6rem 0;
-    background: var(--bg);
-  }
-  .insight-post__related .headline-lg {
-    text-align: center;
-    margin-bottom: 3rem;
-  }
-  .related-grid {
-    list-style: none;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 1.5rem;
-  }
-  .related-card {
-    display: block;
-    border-radius: 12px;
-    overflow: hidden;
-    transition: transform 0.2s;
-  }
-  .related-card:hover {
-    transform: translateY(-2px);
-  }
-  .related-card__img {
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    object-fit: cover;
-    background: #fff;
-  }
-  .related-card__category {
-    display: block;
-    margin-top: 1rem;
-    font-size: 0.625rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--accent);
-  }
-  .related-card h3 {
-    font-size: 1rem;
-    font-weight: 500;
-    margin-top: 0.5rem;
-    line-height: 1.35;
-  }
-</style>
+  <V2Footer />
+
+  <script is:inline src={v("/components/v2-base.js")}></script>
+  <script is:inline src={v("/components/v2-chrome.js")}></script>
+</BaseLayout>

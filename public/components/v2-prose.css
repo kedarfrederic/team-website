@@ -70,3 +70,23 @@ body.v2 .post{max-width:46rem;padding-top:9rem}
 .pfinal::before{content:'';position:absolute;left:50%;top:-40%;width:130%;height:130%;transform:translateX(-50%);background:radial-gradient(ellipse 46% 42% at 50% 0%,rgba(217,250,135,.18),transparent 68%);pointer-events:none}
 .pfinal>*{position:relative}
 .pfinal .h2{max-width:20ch;margin:0 auto 1.6rem}
+
+/* ── PortableText override for v2 (dark) article pages ──
+   PortableText.astro carries its own scoped styles tuned for the CLASSIC light
+   pages: p/li at var(--text-secondary) and strong at #111. On the dark v2
+   article page #111 strong text is effectively invisible, so re-assert the v2
+   values here. Selector is body.v2 .prose .portable-text (0,3,1) so it wins
+   regardless of whether Astro scopes component styles with :where() (specificity
+   0) or a plain attribute (specificity +1). */
+body.v2 .prose .portable-text p,
+body.v2 .prose .portable-text li{color:var(--bone-dim);font-size:1.05rem;line-height:1.72}
+body.v2 .prose .portable-text h2{font-family:var(--font-display,'InterV',Inter,sans-serif);font-weight:400;font-size:clamp(1.4rem,2.8vw,1.8rem);line-height:1.25;letter-spacing:-.01em;color:var(--bone);margin-top:2.8rem}
+body.v2 .prose .portable-text h3{font-family:var(--font-display,'InterV',Inter,sans-serif);font-weight:500;font-size:1.2rem;color:var(--bone);margin-top:2rem}
+body.v2 .prose .portable-text strong{color:var(--bone);font-weight:600}
+body.v2 .prose .portable-text em{font-family:var(--font-serif,'Nyght Serif',Georgia,serif);font-style:italic}
+body.v2 .prose .portable-text a{color:var(--v2-accent);text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+body.v2 .prose .portable-text a:hover{color:var(--bone)}
+body.v2 .prose .portable-text blockquote{border-left:2px solid var(--v2-accent);padding-left:1.1rem;color:var(--bone);font-style:normal}
+body.v2 .prose .portable-text ul,body.v2 .prose .portable-text ol{margin:1.3rem 0 1.3rem 0;padding-left:1.3rem;color:var(--bone-dim)}
+body.v2 .prose .portable-text li::marker{color:var(--v2-accent)}
+body.v2 .prose .portable-text code{background:var(--ink-3);color:var(--bone);padding:.12rem .38rem;border-radius:4px}
