@@ -1,0 +1,107 @@
+/* v2-teammate.css — /teammate page styles only.
+   Ported from team-july2026-multipager/teammate.html's inline <style>.
+   Shared foundation (tokens, typography, buttons, .reveal, page ground)
+   is v2-base.css, which loads first.
+   Any rule below prefixed `body.v2` targets an element that also carries
+   .container; global.css's `.container{padding:0 1.5rem}` (bundled later,
+   equal specificity) would otherwise zero its padding-top.
+*/
+/* ═══════════════════════════════════════════════════════════════
+     TeamMate — the mind inside your operation. Story: it remembers →
+     you can ask it anything → and it works while you sleep (the signature,
+     a scrubbed overnight) → on your terms. Product-UI panels are dark-locked.
+     ═══════════════════════════════════════════════════════════════ */
+  .phero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;
+    padding-top:7rem;padding-bottom:3rem}
+  .phero .h1{font-size:clamp(3rem,7.2vw,6rem)}
+
+  /* ── shared: a labelled product panel that stays dark in both themes ── */
+  .tm-panel__bar{display:flex;align-items:center;gap:.55rem;padding:.9rem 1.2rem;border-bottom:1px solid var(--line-2);
+    font-family:var(--font-mono);font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+  .tm-panel__bar .mk{width:20px;height:20px;border-radius:6px;background:var(--ink-3);border:1px solid var(--line);display:grid;place-items:center}
+  .tm-panel__bar .mk img{width:11px}
+  .tm-panel{border:1px solid var(--line);border-radius:20px;background:var(--ink-2);overflow:clip;box-shadow:0 30px 70px var(--shadow)}
+
+  /* ── MEMORY beat ── */
+  .split{display:grid;gap:clamp(2rem,5vw,5rem);align-items:center;grid-template-columns:1fr}
+  @media(min-width:900px){.split{grid-template-columns:1fr 1.05fr}}
+  .split__copy h2{margin-bottom:1.1rem}
+  .mem__rows{padding:.9rem 1.2rem;display:flex;flex-direction:column;gap:.5rem}
+  .mem__row{display:grid;grid-template-columns:1fr auto;gap:1rem;align-items:center;padding:.7rem .9rem;border:1px solid var(--line-2);border-radius:11px;
+    opacity:0;transform:translateX(-10px);transition:opacity .55s var(--ease),transform .55s var(--ease)}
+  .mem__row.in{opacity:1;transform:none}
+  .mem__row .w{font-size:.88rem;color:var(--bone-dim)}
+  .mem__row .w b{color:var(--bone);font-weight:560}
+  .mem__row .c{font-family:var(--font-mono);font-size:.62rem;letter-spacing:.06em;color:var(--accent);white-space:nowrap}
+
+  /* ── ASK IT ANYTHING ── */
+  .ask{display:grid;gap:clamp(2rem,5vw,4.5rem);align-items:center;grid-template-columns:1fr}
+  @media(min-width:900px){.ask{grid-template-columns:1fr 1.06fr}}
+  .ask__copy h2{margin-bottom:1.1rem}
+  .ask__stack{display:flex;flex-direction:column;gap:.9rem}
+  .ask__card{border:1px solid var(--line);border-radius:16px;background:var(--ink-2);
+    padding:1.2rem 1.35rem;opacity:0;transform:translateY(14px);transition:opacity .55s var(--ease),transform .55s var(--ease)}
+  .ask__card.in{opacity:1;transform:none}
+  .ask__q{display:flex;align-items:center;gap:.6rem;font-size:.96rem;color:var(--bone);font-weight:560;margin-bottom:.7rem}
+  .ask__q .ic{width:1.6rem;height:1.6rem;border-radius:8px;background:var(--lime);display:grid;place-items:center;color:var(--on-accent);flex:none}
+  .ask__q .ic svg{width:.9rem;height:.9rem}
+  .ask__a{font-size:.92rem;line-height:1.56;color:var(--bone-dim)}
+  .ask__a b{color:var(--accent);font-weight:600}
+  .ask__src{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.85rem}
+  .ask__src span{font-family:var(--font-mono);font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;color:var(--bone-faint);
+    border:1px solid var(--line-2);border-radius:99px;padding:.3em .7em}
+
+  /* ═══ SIGNATURE — THE OVERNIGHT (scrubbed) ═══
+     Flows with the page (themed, no block). .night is tall; .night__stage pins.
+     JS sets --t (0 = 23:41, 1 = 07:00): the clock ticks, a warm morning glow
+     grows, and each action logs in as --t passes its --at. */
+  .night{position:relative;z-index:2;height:300vh}
+  .night--static{height:auto}
+  .night__stage{position:sticky;top:0;height:100vh;overflow:hidden;--t:0;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(1.4rem,3.5vh,2.4rem);padding:6rem var(--pad)}
+  .night--static .night__stage{position:relative;height:auto;padding:5rem var(--pad)}
+  /* a soft warm "morning" bloom that grows toward 07:00 — no hard block */
+  .night__glow{position:absolute;left:50%;top:42%;width:min(64rem,92vw);height:44rem;transform:translate(-50%,-50%);z-index:0;pointer-events:none;
+    background:radial-gradient(ellipse 58% 50% at 50% 50%,rgba(245,96,2,.15),transparent 68%);opacity:calc(.18 + .82*var(--t))}
+  .night__head,.night__log{position:relative;z-index:2}
+  .night__head{text-align:center;display:flex;flex-direction:column;align-items:center;gap:1rem}
+  /* clock — reuses the homepage countdown UI (display font, lime pill on the ticking unit) */
+  .night__clock{font-family:var(--font-display);font-weight:440;letter-spacing:-.03em;font-size:clamp(2.6rem,6vw,4rem);
+    color:var(--bone);display:inline-flex;align-items:baseline;font-variant-numeric:tabular-nums;line-height:1}
+  .night__clock .sep{color:var(--bone-faint);padding:0 .06em}
+  .night__clock b{font-weight:440;background:var(--lime);color:var(--on-accent);border-radius:8px;padding:0 .16em}
+  .night__cap{font-family:var(--font-display);font-weight:330;letter-spacing:-.02em;font-size:clamp(1.3rem,3vw,2rem);color:var(--bone)}
+  .night__cap em{font-style:italic;color:var(--accent)}
+  .night__log{width:min(40rem,90vw);display:flex;flex-direction:column;gap:.55rem}
+  .nlog{display:grid;grid-template-columns:auto 1fr auto;gap:1rem;align-items:center;padding:.85rem 1.1rem;
+    background:var(--glass);border:1px solid var(--line);border-radius:13px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    opacity:clamp(0, calc((var(--t) - var(--at)) * 12), 1);
+    transform:translateY(calc(16px * (1 - clamp(0, calc((var(--t) - var(--at)) * 12), 1))))}
+  .nlog .t{font-family:var(--font-mono);font-size:.72rem;color:var(--bone-faint)}
+  .nlog .w{font-size:.9rem;color:var(--bone-dim)}
+  .nlog .w u{text-decoration:none;color:var(--bone-faint);font-size:.82em}
+  .nlog .s{font-family:var(--font-mono);font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;padding:.3em .7em;border-radius:99px;white-space:nowrap}
+  .nlog .s.ok{color:var(--accent);border:1px solid var(--line)}
+  /* in light mode accent == signal (orange), so mute "Done" there to keep the
+     one "Needs you" item standing out; dark keeps its lime "Done" */
+  :root[data-theme="light"] .nlog .s.ok{color:var(--bone-dim);border-color:var(--line-2)}
+  .nlog--wait{border-style:dashed;border-color:rgba(245,96,2,.5);background:rgba(245,96,2,.06)}
+  .nlog--wait .s{color:var(--signal);border:1px solid rgba(245,96,2,.5)}
+  .night__brief{margin-top:.5rem;padding:1.1rem 1.3rem;background:var(--ink-2);border:1px solid var(--line);border-left:2px solid var(--accent);border-radius:14px;
+    font-size:.98rem;line-height:1.5;color:var(--bone);
+    opacity:clamp(0, calc((var(--t) - var(--at)) * 12), 1);
+    transform:translateY(calc(16px * (1 - clamp(0, calc((var(--t) - var(--at)) * 12), 1))))}
+  .night__brief b{font-family:var(--font-mono);font-size:.56rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:.4rem}
+  .night--static .nlog,.night--static .night__brief{opacity:1;transform:none}
+
+  /* ── TRUST — guarantees, grouped as one editorial panel (not generic tiles) ── */
+  .trust{display:grid;gap:clamp(2rem,5vw,4rem);align-items:center;grid-template-columns:1fr}
+  @media(min-width:860px){.trust{grid-template-columns:1fr 1.1fr}}
+  .guar{border:1px solid var(--line);border-radius:20px;background:var(--glass);overflow:clip}
+  .guar__item{display:grid;grid-template-columns:auto 1fr;gap:1.1rem;padding:1.5rem 1.5rem;transition:background .3s}
+  .guar__item + .guar__item{border-top:1px solid var(--line-2)}
+  .guar__item:hover{background:var(--hover-tint)}
+  .guar__ic{width:2.5rem;height:2.5rem;border-radius:11px;background:var(--ink-3);border:1px solid var(--line);display:grid;place-items:center;color:var(--accent);flex:none}
+  .guar__ic svg{width:1.15rem;height:1.15rem}
+  .guar__t{font-family:var(--font-display);font-weight:500;font-size:1.12rem;letter-spacing:-.01em;color:var(--bone)}
+  .guar__d{color:var(--bone-dim);font-size:.9rem;line-height:1.55;margin-top:.3rem}

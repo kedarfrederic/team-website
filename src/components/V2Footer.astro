@@ -7,10 +7,10 @@
  * (admin.getteamnow.com/api/v1/website-leads, source_form='newsletter'), with
  * the same `website` honeypot. Submit handling lives in v2-chrome.js.
  *
- * Unbuilt destinations (Rollouts / TeamMate / Assets / Connections / Tours)
- * carry `enabled:false` and aren't rendered, so the footer never ships a dead
- * link — same approach as V2Nav. Flip them on as the pages land; if the whole
- * Platform column is empty it's dropped rather than rendered as a bare label.
+ * Links carry an `enabled` flag; disabled ones aren't rendered and a column
+ * that ends up empty is dropped rather than shown as a bare label. All are
+ * currently enabled — the Platform pages landed. Keep the mechanism for the
+ * next designed-but-unbuilt destination.
  */
 interface Link { href: string; label: string; enabled?: boolean }
 
@@ -20,11 +20,11 @@ const COLUMNS: { heading: string; links: Link[] }[] = [
   {
     heading: "Platform",
     links: [
-      { href: "/rollouts", label: "Rollouts", enabled: false },
-      { href: "/teammate", label: "TeamMate", enabled: false },
-      { href: "/assets", label: "Assets", enabled: false },
-      { href: "/connections", label: "Connections", enabled: false },
-      { href: "/tours", label: "Tours", enabled: false },
+      { href: "/rollouts", label: "Rollouts", enabled: true },
+      { href: "/teammate", label: "TeamMate", enabled: true },
+      { href: "/assets", label: "Assets", enabled: true },
+      { href: "/connections", label: "Connections", enabled: true },
+      { href: "/tours", label: "Tours", enabled: true },
     ],
   },
   {

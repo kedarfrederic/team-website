@@ -10,10 +10,13 @@
  * Use on pages that render BaseLayout with chrome={false} (they supply their
  * own nav/footer), together with V2Footer and v2-chrome.css.
  *
- * UNBUILT DESTINATIONS: the design's Platform dropdown lists Rollouts,
- * TeamMate, Assets, Connections and Tours — none of those pages exist yet.
- * Rows carry `enabled`, and disabled ones are simply not rendered, so the nav
- * never ships a dead link. Flip `enabled: true` as each page lands.
+ * Rows carry an `enabled` flag and disabled ones are not rendered, so the nav
+ * can never ship a link to a route that doesn't exist. Every row is currently
+ * enabled — the five Platform pages (Rollouts, TeamMate, Assets, Connections,
+ * Tours) landed alongside this. Keep the flag: it's the guard for the next
+ * page that's designed before it's built. `npm run check:v2-links` verifies
+ * body links, but NOT this array, so a wrong href here must be caught by
+ * flipping enabled rather than by the checker.
  *
  * Not ported: the light/dark theme toggle (deferred as its own feature).
  */
@@ -61,11 +64,11 @@ const GROUPS: Group[] = [
     label: "Platform",
     panelLabel: "One platform, one brain",
     rows: [
-      { href: "/rollouts", icon: "rollouts", title: "Rollouts", desc: "Run a release like a campaign", enabled: false },
-      { href: "/teammate", icon: "teammate", title: "TeamMate", desc: "The intelligence across every module", pro: true, enabled: false },
-      { href: "/assets", icon: "assets", title: "Assets", desc: "The creative library, release-ready", enabled: false },
-      { href: "/connections", icon: "integrations", title: "Connections", desc: "Bring the tools you already use", pro: true, enabled: false },
-      { href: "/tours", icon: "tours", title: "Tours", desc: "Take the release to the road", pro: true, enabled: false },
+      { href: "/rollouts", icon: "rollouts", title: "Rollouts", desc: "Run a release like a campaign", enabled: true },
+      { href: "/teammate", icon: "teammate", title: "TeamMate", desc: "The intelligence across every module", pro: true, enabled: true },
+      { href: "/assets", icon: "assets", title: "Assets", desc: "The creative library, release-ready", enabled: true },
+      { href: "/connections", icon: "integrations", title: "Connections", desc: "Bring the tools you already use", pro: true, enabled: true },
+      { href: "/tours", icon: "tours", title: "Tours", desc: "Take the release to the road", pro: true, enabled: true },
       { href: "/security", icon: "security", title: "Security & trust", desc: "Why it's safe on your whole stack", enabled: true },
     ],
   },

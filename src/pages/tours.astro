@@ -1,0 +1,37 @@
+---
+/**
+ * Tours — v2, ported from team-july2026-multipager/tours.html.
+ *
+ * NEW route: this page didn't exist in team-website before, so there's no
+ * Sanity document or schema for it. Hardcoded per HANDOFF §A.8 (hardcode
+ * first, model after); BaseLayout still falls back to the siteSettings SEO
+ * defaults for anything not set here.
+ *
+ * Injection port (HANDOFF §A.5): body → src/lib/v2-tours-body.html, inline
+ * <style> → public/components/v2-tours.css. Scripts mirror the source's own
+ * tags: v2-brain.js (ambient canvas).
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import V2Head from "../components/V2Head.astro";
+import V2Nav from "../components/V2Nav.astro";
+import V2Footer from "../components/V2Footer.astro";
+import { v } from "../lib/asset-url";
+// @ts-expect-error — Astro's ?raw modifier returns a string at build time
+import bodyHtml from "../lib/v2-tours-body.html?raw";
+
+const TITLE = "Tours — tour management for the whole run | Team";
+const DESCRIPTION = "Tours is where a release hits the road — build routing, advance every show, run day sheets, and track holds, on-sales, guarantees and settlement.";
+---
+<BaseLayout title={TITLE} description={DESCRIPTION} chrome={false} bodyClass="v2">
+  <V2Head slot="head" pageCss="/components/v2-tours.css" />
+
+  <V2Nav active="platform" />
+
+  <Fragment set:html={bodyHtml} />
+
+  <V2Footer />
+
+  <script is:inline src={v("/components/v2-base.js")}></script>
+  <script is:inline src={v("/components/v2-chrome.js")}></script>
+  <script is:inline src={v("/components/v2-brain.js")}></script>
+</BaseLayout>

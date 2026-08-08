@@ -1,0 +1,37 @@
+---
+/**
+ * Connections — v2, ported from team-july2026-multipager/connections.html.
+ *
+ * NEW route: this page didn't exist in team-website before, so there's no
+ * Sanity document or schema for it. Hardcoded per HANDOFF §A.8 (hardcode
+ * first, model after); BaseLayout still falls back to the siteSettings SEO
+ * defaults for anything not set here.
+ *
+ * Injection port (HANDOFF §A.5): body → src/lib/v2-connections-body.html, inline
+ * <style> → public/components/v2-connections.css. Scripts mirror the source's own
+ * tags: v2-brain.js (ambient canvas).
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import V2Head from "../components/V2Head.astro";
+import V2Nav from "../components/V2Nav.astro";
+import V2Footer from "../components/V2Footer.astro";
+import { v } from "../lib/asset-url";
+// @ts-expect-error — Astro's ?raw modifier returns a string at build time
+import bodyHtml from "../lib/v2-connections-body.html?raw";
+
+const TITLE = "Connections — the tools you already use, connected | Team";
+const DESCRIPTION = "Team connects the tools your music operation runs on — Notion, Slack, Gmail, Drive, Dropbox, Sheets — reads across all of them, and writes back.";
+---
+<BaseLayout title={TITLE} description={DESCRIPTION} chrome={false} bodyClass="v2">
+  <V2Head slot="head" pageCss="/components/v2-connections.css" />
+
+  <V2Nav active="platform" />
+
+  <Fragment set:html={bodyHtml} />
+
+  <V2Footer />
+
+  <script is:inline src={v("/components/v2-base.js")}></script>
+  <script is:inline src={v("/components/v2-chrome.js")}></script>
+  <script is:inline src={v("/components/v2-brain.js")}></script>
+</BaseLayout>

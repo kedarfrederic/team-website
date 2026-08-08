@@ -1,0 +1,133 @@
+/* v2-rollouts.css — /rollouts page styles only.
+   Ported from team-july2026-multipager/rollouts.html's inline <style>.
+   Shared foundation (tokens, typography, buttons, .reveal, page ground)
+   is v2-base.css, which loads first.
+   Any rule below prefixed `body.v2` targets an element that also carries
+   .container; global.css's `.container{padding:0 1.5rem}` (bundled later,
+   equal specificity) would otherwise zero its padding-top.
+*/
+/* ═══════════════════════════════════════════════════════════════
+     Rollouts — the release-campaign workspace. Story: a release is a
+     dozen moving parts → Rollouts gives it one shape → the brain works
+     it overnight and hands you the decisions (signature) → every facet
+     in one place → it doesn't end at release (ecosystem) → it's free.
+     Product-UI panels are dark-locked (.ui-dark).
+     ═══════════════════════════════════════════════════════════════ */
+  .phero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;
+    padding-top:7rem;padding-bottom:3rem}
+  .phero .h1{font-size:clamp(2.9rem,7vw,5.8rem)}
+  .phero__free{margin-top:1.4rem;display:inline-flex;align-items:center;gap:.55rem;font-family:var(--font-mono);
+    font-size:.64rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+  .phero__free i{width:6px;height:6px;border-radius:50%;background:var(--lime);flex:none}
+
+  /* ── shared dark product panel ── */
+  .rw{border:1px solid var(--line);border-radius:20px;background:var(--ink-2);overflow:clip;box-shadow:0 34px 80px var(--shadow)}
+  .rw__bar{display:flex;align-items:center;gap:.55rem;padding:.85rem 1.15rem;border-bottom:1px solid var(--line-2);
+    font-family:var(--font-mono);font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--bone-dim)}
+  .rw__bar .mk{width:20px;height:20px;border-radius:6px;background:var(--ink-3);border:1px solid var(--line);display:grid;place-items:center;flex:none}
+  .rw__bar .mk img{width:11px}
+  .rw__bar i{font-style:normal;color:var(--bone-faint)}
+  .rw__bar .live{margin-left:auto;display:inline-flex;align-items:center;gap:.4em;color:var(--accent)}
+  .rw__bar .live b{width:6px;height:6px;border-radius:50%;background:var(--lime);display:inline-block}
+
+  /* ── ANATOMY: the workspace rail ── */
+  .split{display:grid;gap:clamp(2rem,5vw,5rem);align-items:center;grid-template-columns:1fr}
+  @media(min-width:900px){.split{grid-template-columns:1fr 1.02fr}}
+  .split__copy h2{margin-bottom:1.1rem}
+  .rail{padding:.7rem}
+  .rail__seg{font-family:var(--font-mono);font-size:.56rem;letter-spacing:.2em;text-transform:uppercase;color:var(--bone-faint);padding:.7rem .8rem .4rem}
+  .rail__row{display:flex;align-items:center;gap:.75rem;padding:.62rem .8rem;border-radius:10px;
+    font-size:.9rem;color:var(--bone-dim);
+    opacity:0;transform:translateX(-10px);transition:opacity .5s var(--ease),transform .5s var(--ease)}
+  .rail__row.in{opacity:1;transform:none}
+  .rail__row.on{background:var(--ink-3);color:var(--bone);font-weight:560}
+  .rail__row .ic{width:1.5rem;height:1.5rem;border-radius:7px;background:var(--ink-3);border:1px solid var(--line);display:grid;place-items:center;color:var(--accent);flex:none}
+  .rail__row.on .ic{background:var(--lime);color:var(--on-accent);border-color:transparent}
+  .rail__row .ic svg{width:.85rem;height:.85rem}
+  .rail__row u{margin-left:auto;text-decoration:none;font-family:var(--font-mono);font-size:.56rem;letter-spacing:.1em;color:var(--bone-faint)}
+
+  /* ═══ SIGNATURE — the rollout, condensed ═══ */
+  .cond{display:grid;gap:clamp(2rem,5vw,4rem);align-items:start;grid-template-columns:1fr}
+  @media(min-width:960px){.cond{grid-template-columns:.82fr 1.18fr}}
+  .cond__copy{position:sticky;top:8rem}
+  .cond__copy h2{margin-bottom:1.1rem}
+  .rw__head{padding:1.3rem 1.4rem 1.1rem;display:grid;grid-template-columns:1fr auto;gap:1.2rem;align-items:start;border-bottom:1px solid var(--line-2)}
+  .rw__meta{font-family:var(--font-mono);font-size:.56rem;letter-spacing:.16em;text-transform:uppercase;color:var(--bone-faint);margin-bottom:.5rem;display:flex;gap:.55rem;flex-wrap:wrap}
+  .rw__meta span{color:var(--accent)}
+  .rw__title{font-family:var(--font-display);font-weight:330;letter-spacing:-.02em;font-size:clamp(1.5rem,2.6vw,2.1rem);line-height:1.02;color:var(--bone)}
+  .rw__title em{font-family:var(--font-serif);font-style:italic}
+  .rw__sub{color:var(--bone-dim);font-size:.86rem;line-height:1.5;margin-top:.55rem;max-width:26rem}
+  .rw__sub em{font-style:italic;color:var(--accent)}
+  /* pulse chart */
+  .pulse{align-self:start;text-align:right;min-width:12rem}
+  .pulse__lab{font-family:var(--font-mono);font-size:.54rem;letter-spacing:.16em;text-transform:uppercase;color:var(--bone-faint)}
+  .pulse__lab b{color:var(--accent);font-weight:600}
+  .pulse svg{display:block;width:100%;height:64px;margin-top:.35rem;overflow:visible}
+  .pulse__axis{display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:.5rem;letter-spacing:.08em;color:var(--bone-faint);margin-top:.25rem}
+  .pulse__axis .liv{color:var(--accent)}
+  /* proposal */
+  .rw__body{padding:1.2rem 1.4rem 1.4rem;display:flex;flex-direction:column;gap:1rem}
+  .rw__flag{font-family:var(--font-mono);font-size:.56rem;letter-spacing:.16em;text-transform:uppercase;color:var(--signal);display:flex;align-items:center;gap:.5em}
+  .rw__flag b{width:6px;height:6px;border-radius:50%;background:var(--signal);display:inline-block}
+  .prop{border:1px solid var(--line);border-radius:14px;background:var(--ink);padding:1.05rem 1.15rem}
+  .prop__h{font-size:.95rem;font-weight:600;color:var(--bone);margin-bottom:.4rem}
+  .prop__d{font-size:.82rem;line-height:1.5;color:var(--bone-dim)}
+  .prop__act{display:flex;align-items:center;gap:.9rem;margin-top:.9rem}
+  .prop__go{background:var(--lime);color:var(--on-accent);font-weight:620;font-size:.8rem;border:0;border-radius:99px;padding:.5rem 1rem;display:inline-flex;align-items:center;gap:.4rem}
+  .prop__dis{color:var(--bone-dim);font-size:.8rem;font-weight:520}
+  .prop__why{margin-left:auto;font-family:var(--font-mono);font-size:.55rem;letter-spacing:.1em;color:var(--bone-faint)}
+  /* what the brain noticed */
+  .notice{border:1px solid var(--line-2);border-radius:14px;background:var(--ink);padding:1.05rem 1.15rem;display:grid;grid-template-columns:auto 1fr;gap:.9rem;align-items:start}
+  .notice__tag{grid-column:1/-1;font-family:var(--font-mono);font-size:.55rem;letter-spacing:.16em;text-transform:uppercase;color:var(--bone-faint);display:flex;gap:.6rem;align-items:center}
+  .notice__tag em{font-style:normal;color:var(--accent)}
+  .notice__ring{width:2.6rem;height:2.6rem;flex:none}
+  .notice__ring text{font-family:var(--font-mono)}
+  .notice__t{font-size:.9rem;font-weight:560;color:var(--bone)}
+  .notice__d{font-size:.8rem;line-height:1.5;color:var(--bone-dim);margin-top:.25rem}
+  /* teammate line */
+  .tmline{display:flex;gap:.7rem;align-items:flex-start;padding:.2rem .1rem 0}
+  .tmline .mk{width:22px;height:22px;border-radius:7px;background:var(--ink-3);border:1px solid var(--line);display:grid;place-items:center;flex:none}
+  .tmline .mk img{width:12px}
+  .tmline p{font-size:.84rem;line-height:1.5;color:var(--bone-dim)}
+  .tmline p b{color:var(--bone);font-weight:560}
+
+  /* ── FACETS: everything a release needs ── */
+  .facets{display:grid;gap:1rem;grid-template-columns:1fr}
+  @media(min-width:640px){.facets{grid-template-columns:1fr 1fr}}
+  @media(min-width:1000px){.facets{grid-template-columns:repeat(3,1fr)}}
+  .facet{border:1px solid var(--line);border-radius:16px;background:var(--ink-2);padding:1.4rem 1.4rem 1.5rem;transition:transform .5s var(--ease),border-color .5s}
+  .facet:hover{transform:translateY(-4px);border-color:var(--bone-faint)}
+  .facet__ic{width:2.4rem;height:2.4rem;border-radius:11px;background:var(--ink-3);border:1px solid var(--line);display:grid;place-items:center;color:var(--accent);margin-bottom:1rem}
+  .facet__ic svg{width:1.15rem;height:1.15rem}
+  .facet h3{font-family:var(--font-display);font-weight:500;font-size:1.14rem;letter-spacing:-.01em;color:var(--bone);margin-bottom:.4rem}
+  .facet p{color:var(--bone-dim);font-size:.9rem;line-height:1.55}
+  .facet__more{display:inline-block;margin-top:.7rem;font-size:.82rem;color:var(--accent);font-weight:560}
+
+  /* ── ECOSYSTEM ── */
+  .eco{border:1px solid var(--line);border-radius:24px;background:var(--ink-2);overflow:clip;position:relative}
+  .eco::before{content:'';position:absolute;left:50%;top:-30%;width:120%;height:90%;transform:translateX(-50%);
+    background:radial-gradient(ellipse 44% 60% at 50% 0%,var(--bloom),transparent 70%);pointer-events:none}
+  .eco__in{position:relative;padding:clamp(2.2rem,5vw,3.6rem);display:grid;gap:clamp(1.8rem,4vw,3rem);grid-template-columns:1fr}
+  @media(min-width:900px){.eco__in{grid-template-columns:1fr 1fr}}
+  .eco__copy h2{margin-bottom:1.1rem}
+  .eco__links{display:flex;flex-direction:column;gap:.7rem;align-self:center}
+  .eco__link{display:flex;align-items:center;gap:1rem;padding:1rem 1.1rem;border:1px solid var(--line);border-radius:14px;background:var(--ink);
+    color:var(--bone);transition:border-color .3s,background .3s,transform .3s}
+  .eco__link:hover{border-color:var(--bone-faint);transform:translateX(4px)}
+  .eco__link .ic{width:2.1rem;height:2.1rem;border-radius:9px;background:var(--ink-3);border:1px solid var(--line);display:grid;place-items:center;color:var(--accent);flex:none}
+  .eco__link .ic svg{width:1.05rem;height:1.05rem}
+  .eco__link b{font-weight:560;font-size:.98rem;display:block}
+  .eco__link span{font-size:.82rem;color:var(--bone-dim)}
+  .eco__link .arr{margin-left:auto;color:var(--bone-faint);transition:transform .3s,color .3s}
+  .eco__link:hover .arr{transform:translateX(3px);color:var(--accent)}
+
+  /* ── responsive: single column below the split breakpoint ── */
+  @media(max-width:959px){
+    .cond__copy{position:static}                       /* no sticky overlap when stacked */
+  }
+  @media(max-width:560px){
+    .rw__head{grid-template-columns:1fr}               /* pulse drops below the title */
+    .pulse{text-align:left;min-width:0;margin-top:.6rem}
+    .prop__act{flex-wrap:wrap}
+    .prop__why{margin-left:0;width:100%}
+  }

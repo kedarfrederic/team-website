@@ -1,0 +1,98 @@
+/* v2-assets.css — /assets page styles only.
+   Ported from team-july2026-multipager/assets.html's inline <style>.
+   Shared foundation (tokens, typography, buttons, .reveal, page ground)
+   is v2-base.css, which loads first.
+   Any rule below prefixed `body.v2` targets an element that also carries
+   .container; global.css's `.container{padding:0 1.5rem}` (bundled later,
+   equal specificity) would otherwise zero its padding-top.
+*/
+/* ═══════════════════════════════════════════════════════════════
+     Assets — the creative library, release-ready. Story: every asset
+     scattered → one library (signature: the library) → versioned,
+     shareable, wired into the rollout → the same brain reads it → free.
+     Product-UI panels dark-locked (.ui-dark).
+     ═══════════════════════════════════════════════════════════════ */
+  .phero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding-top:7rem;padding-bottom:3rem}
+  .phero .h1{font-size:clamp(2.9rem,7vw,5.8rem)}
+  .phero__free{margin-top:1.4rem;display:inline-flex;align-items:center;gap:.55rem;font-family:var(--font-mono);font-size:.64rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+  .phero__free i{width:6px;height:6px;border-radius:50%;background:var(--lime);flex:none}
+
+  .rw{border:1px solid var(--line);border-radius:20px;background:var(--ink-2);overflow:clip;box-shadow:0 34px 80px var(--shadow)}
+  .rw__bar{display:flex;align-items:center;gap:.55rem;padding:.85rem 1.15rem;border-bottom:1px solid var(--line-2);font-family:var(--font-mono);font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--bone-dim)}
+  .rw__bar .mk{width:20px;height:20px;border-radius:6px;background:var(--ink-3);border:1px solid var(--line);display:grid;place-items:center;flex:none}
+  .rw__bar .mk img{width:11px}
+  .rw__bar i{font-style:normal;color:var(--bone-faint)}
+  .rw__bar .rr{margin-left:auto;display:inline-flex;align-items:center;gap:.4em;color:var(--accent)}
+  .rw__bar .rr b{width:6px;height:6px;border-radius:50%;background:var(--lime);display:inline-block}
+
+  .split{display:grid;gap:clamp(2rem,5vw,5rem);align-items:center;grid-template-columns:1fr}
+  @media(min-width:900px){.split{grid-template-columns:1.02fr 1fr}}
+  .split__copy h2{margin-bottom:1.1rem}
+
+  /* ═══ SIGNATURE — the library ═══ */
+  .board{display:grid;gap:clamp(2rem,5vw,4rem);align-items:start;grid-template-columns:1fr}
+  @media(min-width:960px){.board{grid-template-columns:.82fr 1.18fr}}
+  .board__copy{position:sticky;top:8rem}
+  .board__copy h2{margin-bottom:1.1rem}
+  .lib__head{padding:1.2rem 1.4rem 1rem;border-bottom:1px solid var(--line-2)}
+  .lib__eyebrow{font-family:var(--font-mono);font-size:.54rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:.5rem}
+  .lib__title{font-family:var(--font-display);font-weight:330;letter-spacing:-.02em;font-size:clamp(1.7rem,3vw,2.4rem);line-height:1;color:var(--bone)}
+  .lib__title em{font-family:var(--font-serif);font-style:italic}
+  .lib__sub{color:var(--bone-dim);font-size:.85rem;margin-top:.5rem}
+  .lib__sub em{font-style:italic;color:var(--accent)}
+  .lib__cats{display:flex;flex-wrap:wrap;gap:.5rem;padding:1rem 1.4rem .3rem}
+  .lcat{display:inline-flex;align-items:center;gap:.5rem;font-family:var(--font-mono);font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--bone-dim);border:1px solid var(--line);border-radius:99px;padding:.4rem .8rem}
+  .lcat.on{background:var(--ink-3);color:var(--bone);border-color:transparent}
+  .lcat u{text-decoration:none;color:var(--bone-faint)}
+  .lib__grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;padding:1rem 1.4rem 1.4rem}
+  @media(min-width:560px){.lib__grid{grid-template-columns:repeat(3,1fr)}}
+  .acard{border:1px solid var(--line);border-radius:12px;background:var(--ink);overflow:clip;
+    opacity:0;transform:translateY(12px);transition:opacity .5s var(--ease),transform .5s var(--ease)}
+  .acard.in{opacity:1;transform:none}
+  .acard__thumb{aspect-ratio:1/.72;display:grid;place-items:center;position:relative;border-bottom:1px solid var(--line-2)}
+  .acard__thumb .badge{position:absolute;top:.4rem;right:.4rem;font-family:var(--font-mono);font-size:.5rem;letter-spacing:.06em;text-transform:uppercase;
+    background:var(--lime);color:var(--on-accent);border-radius:99px;padding:.2em .55em;font-weight:600}
+  .acard__thumb .badge.v{background:var(--ink-3);color:var(--accent)}
+  .acard__thumb svg{width:1.6rem;height:1.6rem;color:rgba(239,235,227,.7)}
+  .th-art{background:linear-gradient(135deg,#3a2a5e,#7b3f5e 55%,#c66a2e)}
+  .th-audio{background:var(--ink-3)}
+  .th-doc{background:var(--ink-3)}
+  .th-video{background:linear-gradient(135deg,#1e2b3a,#2f5560)}
+  .eqbars{display:flex;align-items:flex-end;gap:2px;height:26px}
+  .eqbars i{width:3px;background:var(--accent);border-radius:1px;opacity:.85}
+  .acard__ft{padding:.55rem .7rem}
+  .acard__ft b{display:block;font-size:.68rem;font-weight:540;color:var(--bone);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .acard__ft span{font-family:var(--font-mono);font-size:.5rem;letter-spacing:.08em;text-transform:uppercase;color:var(--bone-faint)}
+
+  /* facets */
+  .facets{display:grid;gap:1rem;grid-template-columns:1fr}
+  @media(min-width:640px){.facets{grid-template-columns:1fr 1fr}}
+  @media(min-width:1000px){.facets{grid-template-columns:repeat(3,1fr)}}
+  .facet{border:1px solid var(--line);border-radius:16px;background:var(--ink-2);padding:1.4rem 1.4rem 1.5rem;transition:transform .5s var(--ease),border-color .5s}
+  .facet:hover{transform:translateY(-4px);border-color:var(--bone-faint)}
+  .facet__ic{width:2.4rem;height:2.4rem;border-radius:11px;background:var(--ink-3);border:1px solid var(--line);display:grid;place-items:center;color:var(--accent);margin-bottom:1rem}
+  .facet__ic svg{width:1.15rem;height:1.15rem}
+  .facet h3{font-family:var(--font-display);font-weight:500;font-size:1.14rem;letter-spacing:-.01em;color:var(--bone);margin-bottom:.4rem}
+  .facet p{color:var(--bone-dim);font-size:.9rem;line-height:1.55}
+
+  /* ecosystem */
+  .eco{border:1px solid var(--line);border-radius:24px;background:var(--ink-2);overflow:clip;position:relative}
+  .eco::before{content:'';position:absolute;left:50%;top:-30%;width:120%;height:90%;transform:translateX(-50%);background:radial-gradient(ellipse 44% 60% at 50% 0%,var(--bloom),transparent 70%);pointer-events:none}
+  .eco__in{position:relative;padding:clamp(2.2rem,5vw,3.6rem);display:grid;gap:clamp(1.8rem,4vw,3rem);grid-template-columns:1fr}
+  @media(min-width:900px){.eco__in{grid-template-columns:1fr 1fr}}
+  .eco__copy h2{margin-bottom:1.1rem}
+  .eco__links{display:flex;flex-direction:column;gap:.7rem;align-self:center}
+  .eco__link{display:flex;align-items:center;gap:1rem;padding:1rem 1.1rem;border:1px solid var(--line);border-radius:14px;background:var(--ink);color:var(--bone);transition:border-color .3s,transform .3s}
+  .eco__link:hover{border-color:var(--bone-faint);transform:translateX(4px)}
+  .eco__link .ic{width:2.1rem;height:2.1rem;border-radius:9px;background:var(--ink-3);border:1px solid var(--line);display:grid;place-items:center;color:var(--accent);flex:none}
+  .eco__link .ic svg{width:1.05rem;height:1.05rem}
+  .eco__link b{font-weight:560;font-size:.98rem;display:block}
+  .eco__link span{font-size:.82rem;color:var(--bone-dim)}
+  .eco__link .arr{margin-left:auto;color:var(--bone-faint);transition:transform .3s,color .3s}
+  .eco__link:hover .arr{transform:translateX(3px);color:var(--accent)}
+
+  /* ── responsive: single column below the split breakpoint ── */
+  @media(max-width:959px){
+    .board__copy{position:static}                      /* no sticky overlap when stacked */
+  }
