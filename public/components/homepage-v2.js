@@ -63,7 +63,7 @@ $$('#menu a').forEach(a => a.addEventListener('click', () => {
 
 /* ── beta signup handler: REMOVED (2026-08-10) ──
    Upstream's onepager.js still ships the old lead-capture submit handler that
-   POSTed to the CRM's website-leads endpoint. The form it bound to is gone from
+   POSTed to the CRM's public lead intake endpoint. The form it bound to is gone from
    the delivered index.html, so the handler is unreachable dead code (it
    self-guards on the element being present) — but shipping it would leave a
    retired CRM capture path in the served bundle. /pricing is the self-serve
