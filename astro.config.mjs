@@ -95,5 +95,35 @@ export default defineConfig({
     ssr: {
       external: ["node:async_hooks"],
     },
+    /**
+     * Static-asset cachebust stamp, resolved HERE and inlined as a literal.
+     *
+     * It has to be computed in this file, at build time, for two reasons:
+     *
+     *  1. `process.env` works here (Node, during the build) but NOT inside the
+     *     deployed Worker, so this is the only place CF_PAGES_COMMIT_SHA is
+     *     actually readable. Astro/Vite only inline `import.meta.env.*` for
+     *     PUBLIC_-prefixed vars, so reading the unprefixed CF var via
+     *     import.meta.env in src/ silently yielded undefined.
+     *  2. A `Date.now()` fallback evaluated at module scope in src/ runs on
+     *     WORKER COLD START for SSR routes, so separate worker instances would
+     *     each mint a different stamp — asset URLs would churn per instance and
+     *     returning visitors would re-download every CSS/JS file. Inlining one
+     *     literal at build time makes the stamp identical everywhere.
+     *
+     * See src/lib/asset-url.ts for why the value is validated rather than
+     * defaulted (prod was shipping the constant `?v=0`).
+     */
+    define: {
+      __ASSET_VERSION__: JSON.stringify(
+        (() => {
+          const sha = process.env.CF_PAGES_COMMIT_SHA?.trim().slice(0, 8);
+          if (sha && sha !== "0" && sha.length >= 4) return sha;
+          const explicit = process.env.PUBLIC_BUILD_VERSION?.trim();
+          if (explicit && explicit !== "0" && explicit.length >= 4) return explicit;
+          return Date.now().toString(36);
+        })(),
+      ),
+    },
   },
 });
