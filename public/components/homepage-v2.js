@@ -144,7 +144,7 @@ const ACTS = [
   ['act-catch',  '06', 'While you slept'],
   ['act-who',    '07', 'Who it’s for'],
   ['act-credo',  '08', 'The credo'],
-  ['act-access', '09', 'Join the beta'],
+  ['act-access', '09', 'Get started'],
 ].map(([id, num, name]) => ({ el: document.getElementById(id), num, name, top: 0 }));
 const actName = $('#actName'), orbProg = $('#orbProg');
 const RING = 2 * Math.PI * 19;

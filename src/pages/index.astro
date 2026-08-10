@@ -64,7 +64,13 @@ const tokens: Record<string, unknown> = {
   "{{V2_HERO_SUBHEAD}}":
     heroV2.subhead ??
     "Team connects the systems your music operation already runs on, turning every tool, file, message, plan, and data point into one living intelligence layer.",
-  "{{V2_CTA_PRIMARY}}": heroV2.primaryCtaLabel ?? "Join the beta",
+  // "Join the beta" is retired positioning — signup is self-serve on /pricing
+  // now, so the hero's primary CTA matches every other v2 page. NOTE these
+  // fallbacks are what actually renders: every heroV2/betaV2 field in Sanity is
+  // currently null, so the CMS binding is inert and editing it here IS the
+  // live change. Keep scripts/seed-homepage-v2-copy.ts in sync or seeding
+  // would put the old label back.
+  "{{V2_CTA_PRIMARY}}": heroV2.primaryCtaLabel ?? "Sign up free",
   "{{V2_CTA_SECONDARY}}": heroV2.secondaryCtaLabel ?? "Book a walkthrough",
   "{{V2_BETA_TITLE_LEAD}}": betaV2.titleLead ?? "Try it on your",
   "{{V2_BETA_TITLE_EM}}": betaV2.titleEmphasis ?? "next release.",

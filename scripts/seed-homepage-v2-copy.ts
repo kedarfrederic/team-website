@@ -62,7 +62,8 @@ const heroV2 = {
   titleTail: "for music operations.",
   subhead:
     "Team connects the systems your music operation already runs on, turning every tool, file, message, plan, and data point into one living intelligence layer.",
-  primaryCtaLabel: "Join the beta",
+  // Must match the fallback in src/pages/index.astro — see the note there.
+  primaryCtaLabel: "Sign up free",
   secondaryCtaLabel: "Book a walkthrough",
 };
 
