@@ -53,6 +53,16 @@
 .nav__beta{background:var(--lime);color:var(--on-accent);font-weight:600;font-size:.86rem;padding:.6rem 1.15rem;border-radius:99px;transition:background .25s}
 .nav__beta:hover{background:var(--bone)}
 
+/* Top-level nav items must all read the same colour. The `.nav button` reset
+   above sets color:inherit at (0,1,1), which outranks `.nav__link` (0,1,0), so
+   the three dropdown BUTTONS rendered full white while the anchor-based
+   "Pricing" stayed at --bone-dim (measured rgb(239,235,227) vs
+   rgba(239,235,227,.56)). Reported as "Pricing is grey, not white".
+   Upstream fixed this by forcing the anchor to --bone (chrome.css 99bb9dc);
+   this is the same outcome, stated for BOTH element types so the rule doesn't
+   depend on which one the markup happens to use. */
+.nav__menu .nav__link,.nav__menu a.nav__link,.nav__menu button.nav__link{color:var(--bone)}
+
 /* dropdown panel */
 .nav__panel{position:absolute;top:calc(100% + .5rem);left:0;min-width:26rem;
   background:var(--ink-2);border:1px solid var(--line);border-radius:14px;padding:.6rem;

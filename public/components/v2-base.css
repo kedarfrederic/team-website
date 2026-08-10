@@ -91,6 +91,28 @@ main,.section,.container{position:relative;z-index:2}
 .section{padding-block:clamp(4rem,9vw,8rem)}
 .section--tight{padding-block:clamp(3rem,6vw,5rem)}
 
+/* ── page hero (.phero) ──
+   UNDER-PORTED ORIGINALLY: the source's base.css carries this whole family and
+   I only brought across the shared utilities, so any page relying on the base
+   .phero got NO top padding and its heading sat behind the fixed nav. That is
+   what happened to /insights (reported).
+
+   Top PADDING is deliberately NOT set here. Every v2 page already declares its
+   own hero padding (pricing 10.5rem, solutions 9.5rem, security/rollouts/
+   assets/teammate/tours 7rem), and a base value can't be made to behave: at
+   (0,1,0) it loses to global.css's later `.container{padding:0 1.5rem}` on any
+   page whose .phero is ALSO .container, and at body.v2 (0,2,0) it would
+   override the five pages that legitimately set 7rem unscoped. So padding stays
+   per-page — and where .phero co-occurs with .container it must be body.v2
+   scoped to clear global.css. */
+.phero{position:relative;overflow:clip;text-align:center}
+.phero__in{max-width:52rem;margin:0 auto;position:relative;z-index:2}
+.phero .eyebrow{margin-bottom:1.4rem}
+.phero .lede{margin:1.6rem auto 0}
+.phero__cta{margin-top:2.4rem;display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap}
+.phero__ask{font-family:var(--font-serif,'Nyght Serif',Georgia,serif);font-style:italic;font-weight:300;font-size:clamp(1.2rem,2vw,1.6rem);color:var(--bone-dim);margin-bottom:1.2rem}
+.phero__ask em{color:var(--v2-accent);font-style:italic}
+
 /* ── buttons ── */
 .btn{display:inline-flex;align-items:center;gap:.55em;justify-content:center;border-radius:99px;
   font-weight:600;font-size:.92rem;letter-spacing:.01em;padding:.95rem 1.7rem;

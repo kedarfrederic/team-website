@@ -90,3 +90,10 @@ body.v2 .prose .portable-text blockquote{border-left:2px solid var(--v2-accent);
 body.v2 .prose .portable-text ul,body.v2 .prose .portable-text ol{margin:1.3rem 0 1.3rem 0;padding-left:1.3rem;color:var(--bone-dim)}
 body.v2 .prose .portable-text li::marker{color:var(--v2-accent)}
 body.v2 .prose .portable-text code{background:var(--ink-3);color:var(--bone);padding:.12rem .38rem;border-radius:4px}
+
+/* ── /insights hero ──
+   The index markup is `class="phero container"`, so this MUST be body.v2-scoped
+   (0,2,0): global.css's `.container{padding:0 1.5rem}` is bundled after page CSS
+   and would otherwise zero padding-top, dropping the "Insights." heading behind
+   the fixed nav (reported). Value matches the source's base.css .phero. */
+body.v2 .phero{padding:9rem var(--v2-pad) clamp(3rem,6vw,5rem)}
