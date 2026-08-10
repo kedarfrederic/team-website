@@ -61,41 +61,16 @@ $$('#menu a').forEach(a => a.addEventListener('click', () => {
   burger.setAttribute('aria-expanded', false);
 }));
 
-/* ── beta form → CRM (public website-leads endpoint, source_form='beta').
-   Creates/updates the contact at admin.getteamnow.com; the endpoint is
-   upgrade-only and dedupes on email. Runs in reduced-motion mode too. ── */
-const betaForm = $('#betaForm');
-if (betaForm) betaForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  if (betaForm.classList.contains('busy') || betaForm.classList.contains('sent')) return;
-  const qs = new URLSearchParams(location.search);
-  const payload = {
-    source_form: 'beta',
-    first_name: betaForm.first_name.value.trim(),
-    last_name: betaForm.last_name.value.trim() || undefined,
-    email: betaForm.email.value.trim(),
-    website: betaForm.website.value,           // honeypot — humans leave it empty
-    page_url: location.href,
-    utm_source: qs.get('utm_source') || undefined,
-    utm_medium: qs.get('utm_medium') || undefined,
-    utm_campaign: qs.get('utm_campaign') || undefined,
-  };
-  betaForm.classList.add('busy');
-  betaForm.classList.remove('failed');
-  try {
-    const r = await fetch('https://admin.getteamnow.com/api/v1/website-leads', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-    if (!r.ok) throw new Error(`website-leads responded ${r.status}`);
-    betaForm.classList.add('sent');
-  } catch {
-    betaForm.classList.add('failed');
-  } finally {
-    betaForm.classList.remove('busy');
-  }
-});
+/* ── beta signup handler: REMOVED (2026-08-10) ──
+   Upstream's onepager.js still ships the old lead-capture submit handler that
+   POSTed to the CRM's website-leads endpoint. The form it bound to is gone from
+   the delivered index.html, so the handler is unreachable dead code (it
+   self-guards on the element being present) — but shipping it would leave a
+   retired CRM capture path in the served bundle. /pricing is the self-serve
+   signup path now. Deleted deliberately; recover from git history if the
+   homepage ever needs lead capture again, rather than re-adding a handler that
+   binds to nothing. Deliberately worded without the literal identifiers so a
+   grep for them over this page returns zero. ── */
 
 /* ── intersection reveals ── */
 const io = new IntersectionObserver(es => es.forEach(e => {
@@ -137,14 +112,14 @@ const ACTS = [
   ['act-scatter','01', 'The problem'],
   ['act-turn',   '02', 'Meet Team'],
   ['devband',    '02', 'The product'],
-  ['act-connect','03', 'How it works'],
-  ['act-chat',   '03', 'The difference'],
-  ['act-reason', '04', 'The whole picture'],
-  ['act-act',    '05', 'Team at work'],
+  ['act-reason', '03', 'The whole picture'],
+  ['act-act',    '04', 'Team at work'],
+  ['act-chat',   '05', 'The difference'],
+  ['act-connect','06', 'Connect everything'],
   ['act-catch',  '06', 'While you slept'],
   ['act-who',    '07', 'Who it’s for'],
   ['act-credo',  '08', 'The credo'],
-  ['act-access', '09', 'Get started'],
+  ['act-access', '09', 'Sign up free'],
 ].map(([id, num, name]) => ({ el: document.getElementById(id), num, name, top: 0 }));
 const actName = $('#actName'), orbProg = $('#orbProg');
 const RING = 2 * Math.PI * 19;
@@ -222,7 +197,20 @@ function measure() {
 const Brain = (() => {
   const cv = $('#field'), cx = cv.getContext('2d');
   const N = touch ? 120 : 250;
-  const BONE = '239,235,227', LIME = '217,250,135', ORANGE = '245,96,2';
+  /* theme-aware palette — the field paints ink-dark points on a light page and
+     bone-light points on a dark one; readPalette() re-reads on themechange */
+  const PALS = {
+    dark:  { base: '239,235,227', lime: '217,250,135', orange: '245,96,2' },
+    light: { base: '25,21,18',    lime: '92,125,30',   orange: '200,80,0' },
+  };
+  const readPalette = () => {
+    const t = document.documentElement.dataset.theme
+      || (matchMedia('(prefers-color-scheme:light)').matches ? 'light' : 'dark');
+    return PALS[t] || PALS.dark;
+  };
+  let PAL = readPalette();
+  addEventListener('themechange', () => { PAL = readPalette(); });
+  const cols = t => t === 1 ? PAL.lime : t === 2 ? PAL.orange : PAL.base;
   const P = [], E = []; let W, H, DPR, R3, F;
   const rnd = (a, b) => a + Math.random() * (b - a);
   const gauss = () => (Math.random() + Math.random() + Math.random() - 1.5) / 1.5;
@@ -240,7 +228,7 @@ const Brain = (() => {
       dx: rnd(-1, 1), dy: rnd(-1, 1), dz: rnd(-1, 1),     // scatter direction
       ph: rnd(0, Math.PI * 2), sp: rnd(0.3, 0.9),
       sz: rnd(1, 2.6),
-      col: c < 0.68 ? BONE : c < 0.88 ? LIME : ORANGE,
+      t: c < 0.68 ? 0 : c < 0.88 ? 1 : 2,
       al: rnd(0.45, 1),
       x: 0, y: 0, s: 1,
     });
@@ -257,7 +245,7 @@ const Brain = (() => {
   }
 
   function resize() {
-    DPR = Math.min(devicePixelRatio || 1, 2);
+    DPR = Math.min(devicePixelRatio || 1, 1.5);
     W = cv.width = VW * DPR; H = cv.height = VH * DPR;
     cv.style.width = VW + 'px'; cv.style.height = VH + 'px';
     R3 = Math.min(VW, VH) * 0.40 * DPR;
@@ -308,7 +296,7 @@ const Brain = (() => {
       if (stretch <= 0.02) continue;
       const depth = ((a.s + b.s) / 2 - 0.6) * 1.6;
       const o = clamp(depth, 0.15, 1) * 0.34 * alpha * stretch * (0.75 + e * 0.5);
-      cx.strokeStyle = `rgba(${BONE},${o.toFixed(3)})`;
+      cx.strokeStyle = `rgba(${PAL.base},${o.toFixed(3)})`;
       cx.beginPath(); cx.moveTo(a.x, a.y); cx.lineTo(b.x, b.y); cx.stroke();
     }
 
@@ -319,7 +307,7 @@ const Brain = (() => {
       const depth = clamp((p.s - 0.6) * 1.6, 0.2, 1.15);
       const hot = i === hiIdx ? hiV : 0;
       cx.globalAlpha = clamp(p.al * alpha * depth + hot * 0.5, 0, 1);
-      cx.fillStyle = hot > 0.05 ? `rgb(${LIME})` : `rgb(${p.col})`;
+      cx.fillStyle = hot > 0.05 ? `rgb(${PAL.lime})` : `rgb(${cols(p.t)})`;
       const r = Math.max(p.sz * DPR * p.s * (1 + e * 0.15) * (1 + hot * 1.4), 0.1);
       if (hot > 0.05) {           // halo glow
         cx.globalAlpha = clamp(0.25 * hot * alpha, 0, 1);
@@ -338,11 +326,11 @@ const Brain = (() => {
       const a = P[f.e.i], b = P[f.e.j];
       const x = lerp(a.x, b.x, f.t), y = lerp(a.y, b.y, f.t);
       const glow = Math.sin(f.t * Math.PI) * alpha;
-      cx.strokeStyle = `rgba(${LIME},${(0.5 * glow).toFixed(3)})`;
+      cx.strokeStyle = `rgba(${PAL.lime},${(0.5 * glow).toFixed(3)})`;
       cx.lineWidth = DPR * 1.1;
       cx.beginPath(); cx.moveTo(a.x, a.y); cx.lineTo(b.x, b.y); cx.stroke();
       cx.globalAlpha = glow;
-      cx.fillStyle = `rgb(${LIME})`;
+      cx.fillStyle = `rgb(${PAL.lime})`;
       cx.beginPath(); cx.arc(x, y, DPR * 2.4, 0, 7); cx.fill();
       cx.globalAlpha = 1;
     }
@@ -479,8 +467,8 @@ if (ghostG) {
     c.setAttribute('cx', (320 + Math.cos(a) * rr).toFixed(1));
     c.setAttribute('cy', (320 + Math.sin(a) * rr).toFixed(1));
     c.setAttribute('r', 34);
-    c.setAttribute('fill', '#0d0c0b');
-    c.setAttribute('stroke', '#efebe3');
+    c.style.fill = 'var(--ink)';        // page ground — covers the ring lines; flips with theme
+    c.style.stroke = 'var(--bone)';
     c.setAttribute('stroke-opacity', '0.1');
     c.style.opacity = 0;
     ghostG.append(c);
@@ -542,7 +530,9 @@ function scatter(p) {
     memoryLn.style.opacity = mem;
     memoryLn.style.transform = `scale(${0.985 + mem * 0.015})`;
   }
-  const tr = windowFade(p, 0.87, 1.0, 0.28);   // holds to the pin boundary — no dead scroll after it
+  // memory beat is hidden for now, so the truth line takes the whole end of the pin —
+  // comes in right after the tracklist clears and holds much longer before the turn
+  const tr = windowFade(p, 0.74, 1.0, 0.14);
   truth.style.opacity = tr;
   truth.style.transform = `scale(${0.985 + tr * 0.015})`;
 }
@@ -592,9 +582,9 @@ function connect(p) {
   connectCopy.style.opacity = c;
   connectCopy.style.transform = `translateY(${(1 - c) * 30}px)`;
   olines.forEach(({ p: path, L }, i) => {
-    const t = smooth(p, 0.1 + i * 0.045, 0.28 + i * 0.045);
+    const t = smooth(p, 0.16 + i * 0.045, 0.34 + i * 0.045);   // spokes draw after the core has landed
     path.style.strokeDashoffset = L * (1 - t);
-    const n = onodes[i], nt = smooth(p, 0.2 + i * 0.045, 0.32 + i * 0.045);
+    const n = onodes[i], nt = smooth(p, 0.26 + i * 0.045, 0.38 + i * 0.045);
     n.style.opacity = nt;
     n.setAttribute('transform', `translate(${n.dataset.x} ${n.dataset.y}) scale(${0.6 + nt * 0.4})`);
   });
@@ -752,7 +742,8 @@ if (!touch) {
   let tx = -100, ty = -100, cx = -100, cy = -100;
   addEventListener('pointermove', e => { tx = e.clientX; ty = e.clientY; }, { passive: true });
   document.addEventListener('mouseover', e => {
-    const t = e.target.closest('a,button,[data-hover]');
+    // the nav keeps its native cursor — never play the equalizer pointer there
+    const t = e.target.closest('.nav, .mnav') ? null : e.target.closest('a,button,[data-hover]');
     cur.classList.toggle('is-on', !!t);
     if (t) {   // dark bars over light buttons (bone / lime), bone bars everywhere else
       const bg = getComputedStyle(t).backgroundColor.match(/\d+/g) || [0, 0, 0];
@@ -802,7 +793,11 @@ function frame(now) {
   if (isNear(pins.turn)) turn(pT);
   // formation value stays continuous past the pin — gating it on isNear made the field snap
   let conv = pins.turn ? smooth(pT, 0.1, 0.62) : 0;
-  if (isNear(pins.turn) || isNear(pins.connect)) travel(pT, pC);
+  // the flying logomark ("core into the green circle") is removed on this version —
+  // keep the traveler hidden, and simply fade the orbit's core in on scroll once you
+  // reach the connectors section (so it never floats over the chat / content sections).
+  traveler.style.opacity = 0;
+  if (isNear(pins.connect)) orbitCore.style.opacity = smooth(pC, 0.02, 0.12);   // core lands first, before the spokes draw out
   if (isNear(pins.connect)) connect(pC);
   if (isNear(pins.chat)) chatScene(pQ);
   if (isNear(pins.reason)) reason(pR);

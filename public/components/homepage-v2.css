@@ -5,13 +5,13 @@
    FONT MASTER — change the vars below and the whole site follows.
    ═══════════════════════════════════════════════════════════════ */
 
-@font-face{font-family:'Nyght';src:url('/v2/assets/fonts/NyghtSerif-Light.woff') format('woff');font-weight:300;font-display:swap}
-@font-face{font-family:'Nyght';src:url('/v2/assets/fonts/NyghtSerif-Regular.woff') format('woff');font-weight:400;font-display:swap}
-@font-face{font-family:'Nyght';src:url('/v2/assets/fonts/NyghtSerif-Medium.woff') format('woff');font-weight:500;font-display:swap}
-@font-face{font-family:'Nyght';src:url('/v2/assets/fonts/NyghtSerif-LightItalic.woff') format('woff');font-style:italic;font-weight:300;font-display:swap}
-@font-face{font-family:'Nyght';src:url('/v2/assets/fonts/NyghtSerif-RegularItalic.woff') format('woff');font-style:italic;font-weight:400;font-display:swap}
-@font-face{font-family:'Nyght';src:url('/v2/assets/fonts/NyghtSerif-MediumItalic.woff') format('woff');font-style:italic;font-weight:500;font-display:swap}
-@font-face{font-family:'InterV';src:url('/v2/assets/fonts/Inter-Variable.ttf') format('truetype');font-weight:100 900;font-display:swap}
+@font-face{font-family:'Nyght';src:url('/v2/assets/fonts/NyghtSerif-Light.woff2') format('woff2');font-weight:300;font-display:swap}
+@font-face{font-family:'Nyght';src:url('/v2/assets/fonts/NyghtSerif-Regular.woff2') format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:'Nyght';src:url('/v2/assets/fonts/NyghtSerif-Medium.woff2') format('woff2');font-weight:500;font-display:swap}
+@font-face{font-family:'Nyght';src:url('/v2/assets/fonts/NyghtSerif-LightItalic.woff2') format('woff2');font-style:italic;font-weight:300;font-display:swap}
+@font-face{font-family:'Nyght';src:url('/v2/assets/fonts/NyghtSerif-RegularItalic.woff2') format('woff2');font-style:italic;font-weight:400;font-display:swap}
+@font-face{font-family:'Nyght';src:url('/v2/assets/fonts/NyghtSerif-MediumItalic.woff2') format('woff2');font-style:italic;font-weight:500;font-display:swap}
+@font-face{font-family:'InterV';src:url('/v2/assets/fonts/Inter-Variable.woff2') format('woff2');font-weight:100 900;font-display:swap}
 
 :root{
   /* ── FONTS: the only place typefaces are named ── */
@@ -23,21 +23,68 @@
   --head-weight:330;
   --head-track:-0.03em;
 
-  /* ── colour ── */
+  /* ── colour (dark, the default) ── */
   --ink:#0d0c0b;
   --ink-2:#161412;
+  --ink-3:#1e1a15;
   --bone:#efebe3;
   --bone-dim:rgba(239,235,227,.55);
   --bone-faint:rgba(239,235,227,.24);
   --line:rgba(239,235,227,.14);
+  --orange:#f56002;
   --signal:#f56002;
   --lime:#d9fa87;
   --glass:rgba(22,20,18,.55);
+  /* global tokens (mirror base.css so nav/footer + a light theme work here too) */
+  --on-accent:#0d0c0b;              /* text on a lime fill — dark in both themes */
+  --accent:#d9fa87;                 /* accent-as-text / active — = lime in dark */
+  --logo-invert:invert(1);          /* white-on-dark brand logos flip to black on light */
+  --scrim:rgba(13,12,11,.5);        /* presence of this token reveals the nav theme toggle */
+  --shadow:rgba(0,0,0,.4);--shadow-lg:rgba(0,0,0,.5);
+  --bloom:rgba(217,250,135,.07);
+  --nav-bg:rgba(13,12,11,.72);--mnav-bg:rgba(13,12,11,.97);
+  --hover-tint:rgba(239,235,227,.05);--wordmark:#efebe3;
 
   /* ── motion / rhythm ── */
   --ease:cubic-bezier(.16,1,.3,1);
   --ease-io:cubic-bezier(.65,0,.35,1);
   --pad:clamp(1.25rem,4vw,4rem);
+}
+
+/* ═══ LIGHT THEME ═══ overrides only — every surface/text flows through the
+   tokens above, so flipping them here re-skins the whole page. Product-UI
+   mockups (device, chat panes, teammate cards) are dark-locked below so they
+   stay dark like real app screenshots on a light page. ═══ */
+:root[data-theme="light"]{
+  --ink:#f4f0e7;--ink-2:#fbf9f4;--ink-3:#ebe5d8;
+  --bone:#191512;--bone-dim:rgba(25,21,18,.64);--bone-faint:rgba(25,21,18,.4);
+  --line:rgba(25,21,18,.13);--glass:rgba(255,255,255,.66);
+  --signal:#f56002;--accent:var(--orange);--logo-invert:invert(0);
+  --scrim:rgba(244,240,233,.46);--shadow:rgba(60,48,24,.12);--shadow-lg:rgba(60,48,24,.18);
+  --bloom:rgba(150,190,60,.12);
+  --nav-bg:rgba(246,242,234,.8);--mnav-bg:rgba(246,242,234,.97);
+  --hover-tint:rgba(25,21,18,.05);--wordmark:#191512;
+  color-scheme:light;
+}
+@media(prefers-color-scheme:light){:root:not([data-theme="dark"]){
+  --ink:#f4f0e7;--ink-2:#fbf9f4;--ink-3:#ebe5d8;
+  --bone:#191512;--bone-dim:rgba(25,21,18,.64);--bone-faint:rgba(25,21,18,.4);
+  --line:rgba(25,21,18,.13);--glass:rgba(255,255,255,.66);
+  --signal:#f56002;--accent:var(--orange);--logo-invert:invert(0);
+  --scrim:rgba(244,240,233,.46);--shadow:rgba(60,48,24,.12);--shadow-lg:rgba(60,48,24,.18);
+  --bloom:rgba(150,190,60,.12);
+  --nav-bg:rgba(246,242,234,.8);--mnav-bg:rgba(246,242,234,.97);
+  --hover-tint:rgba(25,21,18,.05);--wordmark:#191512;
+  color-scheme:light;
+}}
+/* dark-lock the product-UI mockups + the branded splash: re-pin tokens to
+   their dark values so these read like app screenshots regardless of theme. */
+.loader,.tmate,.pane,.ledger__row,.device{
+  --ink:#0d0c0b;--ink-2:#161412;--ink-3:#1e1a15;
+  --bone:#efebe3;--bone-dim:rgba(239,235,227,.56);--bone-faint:rgba(239,235,227,.3);
+  --line:rgba(239,235,227,.13);--glass:rgba(22,20,18,.6);
+  --accent:#d9fa87;--on-accent:#0d0c0b;--signal:#f56002;--lime:#d9fa87;
+  --logo-invert:invert(1);color-scheme:dark;
 }
 
 /* ── reset ── */
@@ -73,6 +120,11 @@ body.field-on .field{opacity:1}
 .cursor{position:fixed;left:0;top:0;z-index:90;pointer-events:none;display:none}
 @media (pointer:fine){.cursor{display:block}}
 html.eqcur a,html.eqcur button,html.eqcur [data-hover]{cursor:none}
+/* the shared nav + mobile menu keep the real cursor — the equalizer pointer
+   never takes over there, and it must stay legible over the dropdowns */
+html.eqcur .nav,html.eqcur .nav *,html.eqcur .mnav,html.eqcur .mnav *{cursor:auto}
+html.eqcur .nav a,html.eqcur .nav button,html.eqcur .nav [data-hover],
+html.eqcur .mnav a,html.eqcur .mnav button{cursor:pointer}
 .cursor__eq{display:flex;align-items:center;justify-content:center;gap:2.5px;height:22px;
   transform:translate(-50%,-50%) scale(.4);opacity:0;
   transition:opacity .18s ease,transform .22s var(--ease)}
@@ -177,10 +229,10 @@ body.menu-open .menu__list a{opacity:1;transform:none}
 
 .btn{display:inline-flex;align-items:center;justify-content:center;border-radius:99px;
   font-size:.9rem;font-weight:620;letter-spacing:.02em;padding:1rem 1.9rem;transition:background .3s,color .3s,border-color .3s}
-.btn--solid{background:var(--lime);color:var(--ink)}
+.btn--solid{background:var(--lime);color:var(--on-accent)}
 .btn--solid:hover{background:var(--bone)}
 .btn--ghost{border:1px solid var(--bone-faint);color:var(--bone)}
-.btn--ghost:hover{border-color:var(--lime);color:var(--lime)}
+.btn--ghost:hover{border-color:var(--accent);color:var(--accent)}
 
 [data-reveal]{opacity:0;transform:translateY(30px);transition:opacity .9s var(--ease),transform 1s var(--ease)}
 [data-reveal].in{opacity:1;transform:none}
@@ -231,7 +283,7 @@ body.menu-open .menu__list a{opacity:1;transform:none}
 .trow b{font-weight:600;font-size:.72rem;letter-spacing:.2em;color:var(--bone-faint);min-width:2rem}
 .trow span{font-family:var(--font-display);font-weight:var(--head-weight);letter-spacing:-.02em;
   font-size:clamp(1.6rem,2.7vw,2.5rem);line-height:1;flex:1}
-.trow.on b{color:var(--lime)}
+.trow.on b{color:var(--accent)}
 .truth{position:absolute;inset:0;z-index:4;display:grid;place-items:center;text-align:center;
   font-size:clamp(2.6rem,6.4vw,5.4rem);opacity:0;will-change:opacity;pointer-events:none;padding:0 var(--pad)}
 .truth em{color:var(--signal)}
@@ -249,7 +301,7 @@ body.menu-open .menu__list a{opacity:1;transform:none}
 .tile span{display:block;font-size:.86rem;font-weight:540;margin:.15rem 0 .2rem}
 .tile span em{color:var(--signal);font-family:var(--font-sans);font-style:normal;font-weight:640}
 .tile i{display:block;font-style:normal;font-size:.7rem;color:var(--bone-faint)}
-.tile u{position:absolute;top:-8px;right:-8px;text-decoration:none;background:var(--signal);color:var(--ink);
+.tile u{position:absolute;top:-8px;right:-8px;text-decoration:none;background:var(--signal);color:var(--on-accent);
   font-size:.66rem;font-weight:700;min-width:19px;height:19px;border-radius:99px;
   display:grid;place-items:center;padding:0 5px}
 @media(max-width:760px){
@@ -277,7 +329,7 @@ body.menu-open .menu__list a{opacity:1;transform:none}
 .split__copy{position:relative;z-index:2}
 .ticks{list-style:none;margin-top:1.6rem;display:flex;flex-direction:column;gap:.55rem}
 .ticks li{display:flex;gap:.8rem;align-items:baseline;color:var(--bone-dim);font-size:.98rem}
-.ticks li::before{content:'✳';color:var(--lime);font-size:.8em}
+.ticks li::before{content:'✳';color:var(--accent);font-size:.8em}
 .stat{margin-top:2.2rem;display:flex;align-items:baseline;gap:.6rem}
 .stat b{font-family:var(--font-display);font-weight:380;font-size:clamp(2.2rem,3.6vw,3.2rem);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
 .stat span{color:var(--bone-dim);font-size:.9rem}
@@ -342,7 +394,7 @@ body.menu-open .menu__list a{opacity:1;transform:none}
   radial-gradient(ellipse 80% 65% at 50% 50%,rgba(13,12,11,.25),var(--ink) 92%)}
 .catch__sheet{position:relative;z-index:2;display:flex;flex-direction:column;gap:1.4rem;max-width:1100px}
 .kline{font-size:clamp(1.7rem,4vw,3.4rem);line-height:1.1;
-  color:transparent;-webkit-text-stroke:1px rgba(239,235,227,.22);
+  color:transparent;-webkit-text-stroke:1px var(--bone-faint);
   background:linear-gradient(var(--bone),var(--bone)) no-repeat 0 0 / var(--fill,0%) 100%;
   -webkit-background-clip:text;background-clip:text}
 .catch__huge{margin-top:2.4rem;font-size:clamp(3.2rem,9vw,8rem);line-height:1;
@@ -358,7 +410,7 @@ body.menu-open .menu__list a{opacity:1;transform:none}
 .whocard{position:relative;border:1px solid var(--line);border-radius:18px;overflow:clip;background:var(--ink-2);
   transition:transform .6s var(--ease),border-color .6s}
 .whocard:hover{transform:translateY(-10px);border-color:var(--bone-faint)}
-.whocard__no{position:absolute;top:1.1rem;right:1.2rem;z-index:2;font-size:1.5rem;color:var(--lime)}
+.whocard__no{position:absolute;top:1.1rem;right:1.2rem;z-index:2;font-size:1.5rem;color:var(--accent)}
 .whocard__img{height:210px;overflow:clip;position:relative}
 .whocard__img::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 30%,var(--ink-2))}
 .whocard__img img{width:100%;height:100%;object-fit:cover;filter:brightness(.75) saturate(.85);
@@ -390,7 +442,7 @@ body.menu-open .menu__list a{opacity:1;transform:none}
 .chip.struck{color:var(--bone-faint)}
 .chip.struck::after{transform:scaleX(1)}
 .chip--lit{border-color:rgba(217,250,135,.45);color:var(--bone);gap:.7rem}
-.chip--lit i{color:var(--lime);font-size:.9rem}
+.chip--lit i{color:var(--accent);font-size:.9rem}
 .chip--lit::after{display:none}
 .chip--lit img{height:17px;width:auto;margin-left:.2rem;translate:0 2px}
 
@@ -408,17 +460,17 @@ body.menu-open .menu__list a{opacity:1;transform:none}
 .finale__form input{flex:1;background:var(--glass);border:1px solid var(--line);border-radius:99px;
   padding:1rem 1.5rem;color:var(--bone);font-family:var(--font-sans);font-size:.95rem;outline:none;
   backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:border-color .3s}
-.finale__form input:focus{border-color:var(--lime)}
+.finale__form input:focus{border-color:var(--accent)}
 .finale__form input::placeholder{color:var(--bone-faint)}
-.finale__form button{background:var(--lime);color:var(--ink);border:0;border-radius:99px;padding:1rem 1.6rem;
+.finale__form button{background:var(--lime);color:var(--on-accent);border:0;border-radius:99px;padding:1rem 1.6rem;
   font-weight:640;font-size:.9rem;letter-spacing:.02em;cursor:pointer;transition:background .3s,transform .3s;white-space:nowrap}
 .finale__form button:hover{background:var(--bone)}
 .finale__sent{position:absolute;inset:0;display:none;place-items:center;background:var(--ink);border-radius:99px;
-  border:1px solid var(--lime);color:var(--bone);font-size:.92rem}
+  border:1px solid var(--accent);color:var(--bone);font-size:.92rem}
 .finale__form.sent .finale__sent{display:grid}
 .finale__demo{display:inline-block;margin-top:1.6rem;font-size:.88rem;color:var(--bone-dim);
   border-bottom:1px solid var(--bone-faint);padding-bottom:.15rem;transition:color .3s,border-color .3s}
-.finale__demo:hover{color:var(--bone);border-color:var(--lime)}
+.finale__demo:hover{color:var(--bone);border-color:var(--accent)}
 @media(max-width:560px){.finale__form{flex-direction:column}.finale__form button{padding:1rem}}
 
 .footer{position:relative;z-index:2;margin-top:18vh;padding:3rem var(--pad) 3.4rem;border-top:1px solid var(--line);
@@ -445,7 +497,7 @@ body.menu-open .menu__list a{opacity:1;transform:none}
 }
 
 /* ── live-site logo, rendered white on dark (as teamrollouts.com does) ── */
-.loader__logo,.brand img,.turn__logo,.footer__logo,.chip--lit img{filter:brightness(0) invert(1)}
+.loader__logo,.brand img,.turn__logo,.footer__logo,.chip--lit img{filter:brightness(0) var(--logo-invert)}
 .chip--lit img{height:15px}
 .brand img{height:22px}
 .footer__logo{height:26px}
@@ -456,7 +508,7 @@ body.menu-open .menu__list a{opacity:1;transform:none}
 .loader__tag{font-size:.72rem;letter-spacing:.34em;text-transform:uppercase;color:var(--bone-dim);
   opacity:0;animation:fadeup .7s var(--ease) .45s forwards}
 
-/* ── teammate whisper card (hero) — styled on the Teammate chat UI ── */
+/* ── teammate whisper card (hero) — styled on the TeamMate chat UI ── */
 .tmate{position:absolute;z-index:5;width:272px;pointer-events:none;
   background:#141210;border:1px solid rgba(239,235,227,.12);border-radius:18px;
   padding:.85rem .9rem .8rem;box-shadow:0 30px 70px rgba(0,0,0,.5);
@@ -524,7 +576,7 @@ body.menu-open .menu__list a{opacity:1;transform:none}
 .hero__ask{font-size:clamp(1.3rem,2vw,1.7rem);margin-bottom:1.2rem}
 
 /* "miss" reads lime, not orange (both heroes) */
-.hero__title em{color:var(--lime)}
+.hero__title em{color:var(--accent)}
 
 /* brand: 1.5x logo, vertically centred against the capsule nav */
 .brand{top:1.1rem;height:54px;display:flex;align-items:center}
@@ -553,11 +605,11 @@ body.menu-open .menu__list a{opacity:1;transform:none}
 
 /* turn logomark: sits above the headline, then travels to centre for the green-circle handoff */
 .turn__mark{position:absolute;left:0;top:0;width:56px;height:56px;object-fit:contain;opacity:0;
-  filter:brightness(1.25);pointer-events:none;z-index:3;will-change:transform,opacity}
+  filter:brightness(0) var(--logo-invert);pointer-events:none;z-index:3;will-change:transform,opacity}
 @media (prefers-reduced-motion:reduce){.turn__mark{display:none}}
 
 /* ═══ insight cards, redesigned: typed icons, tinted accents, consistent live dots ═══ */
-.insight{--acc:var(--lime);--acc-soft:rgba(217,250,135,.13);
+.insight{--acc:var(--accent);--acc-soft:rgba(217,250,135,.13);
   background:#141210;border:1px solid rgba(239,235,227,.09);border-radius:16px;
   padding:1rem 1.15rem .95rem;backdrop-filter:none;-webkit-backdrop-filter:none;
   box-shadow:0 30px 70px rgba(0,0,0,.42);position:relative;overflow:clip}
@@ -633,11 +685,11 @@ body.menu-open .menu__list a{opacity:1;transform:none}
 /* credo: no top rule either */
 .credo{border-top:0}
 
-/* lime accents: truth line + connect headline */
-.truth em{color:var(--lime)}
-.pin--connect .h2 em{color:var(--lime)}
-.pin--reason .h2 em{color:var(--lime)}
-.actwork .h2 em{color:var(--lime)}
+/* accent words: truth line + connect headline (lime in dark, orange in light) */
+.truth em{color:var(--accent)}
+.pin--connect .h2 em{color:var(--accent)}
+.pin--reason .h2 em{color:var(--accent)}
+.actwork .h2 em{color:var(--accent)}
 
 /* splash tagline: original size (2x tried 2026-07-08, reverted per Simon) */
 .loader__tag{text-align:center;line-height:1.6;padding:0 1.2rem}
@@ -731,10 +783,15 @@ body.menu-open .menu__list a{opacity:1;transform:none}
 
 /* ═══ ACT 3.5 · the difference — a chat window vs Team (2026-07-09) ═══ */
 .pin--chat{height:340vh}
-.pin--chat .pin__stage{display:grid;align-content:center;justify-items:center;
-  row-gap:clamp(1.6rem,3.4vh,2.8rem);padding:0 var(--pad)}
+/* flex + auto margins: content centers when it fits, but the top margin
+   collapses on overflow so the headline anchors below the fixed nav (never
+   sliding under it) instead of clipping. padding-top reserves nav clearance. */
+.pin--chat .pin__stage{display:flex;flex-direction:column;align-items:center;
+  row-gap:clamp(1.6rem,3.4vh,2.8rem);padding:5rem var(--pad) 0}
+.pin--chat .chat__head{margin-top:auto}
+.pin--chat .chat__pro{margin-top:0;margin-bottom:auto}
 .chat__head{text-align:center}
-.chat__head em{color:var(--lime)}
+.chat__head em{color:var(--accent)}
 .chat__panes{display:grid;grid-template-columns:1fr 1fr;gap:clamp(1rem,2.2vw,1.8rem);
   width:min(1160px,100%)}
 .pane{background:#141210;border:1px solid rgba(239,235,227,.09);border-radius:20px;
@@ -942,7 +999,7 @@ body.menu-open .menu__list a{opacity:1;transform:none}
 }
 
 /* scatter: dark wordmark logos render white on the glass tiles */
-.tile>img.winv{filter:brightness(0) invert(1);opacity:.92}
+.tile>img.winv{filter:brightness(0) var(--logo-invert);opacity:.92}
 
 /* ═══ beta form → CRM (2026-07-09): names row above the email row ═══ */
 .finale__form{flex-direction:column}
@@ -963,20 +1020,20 @@ body.menu-open .menu__list a{opacity:1;transform:none}
 /* scatter lead-in: the section's thesis, above the tracklist */
 .track__lead{font-family:var(--font-display);font-weight:var(--head-weight);letter-spacing:var(--head-track);
   font-size:clamp(1.7rem,2.9vw,2.7rem);line-height:1.15;margin-bottom:2.4rem;max-width:30rem}
-.track__lead em{color:var(--lime)}
+.track__lead em{color:var(--accent)}
 /* the "one person remembers everything" beat — full stage weight, same
    grammar as the truth line that follows (bone body, lime Nyght italic) */
 .truth--memory{font-size:clamp(2.2rem,5.2vw,4.4rem)}
 /* turn line wraps to two lines; "operational brain" in lime Nyght */
 .turn__title--plain{white-space:normal;max-width:56rem;margin:0 auto}
 .turn__title--plain em{display:inline;font-family:var(--font-serif);font-style:italic;font-weight:300;
-  letter-spacing:-.01em;color:var(--lime)}
+  letter-spacing:-.01em;color:var(--accent)}
 /* chat comparison: the just-ask-Team line under the headline */
 .chat__sub{max-width:46rem;margin:0 auto;text-align:center;
   font-size:clamp(.95rem,1.2vw,1.1rem);color:var(--bone-dim)}
 /* who header: Inter h2 with the Nyght pair, Kedar's deck line as sub-copy */
 .who__head{text-align:center;margin-bottom:1.2rem}
-.who__head em{color:var(--lime)}
+.who__head em{color:var(--accent)}
 .who__sub{max-width:46rem;margin:0 auto 4.5rem;text-align:center;
   font-size:clamp(.95rem,1.2vw,1.1rem);color:var(--bone-dim)}
 @media(max-width:900px){
@@ -988,11 +1045,20 @@ body.menu-open .menu__list a{opacity:1;transform:none}
 /* turn line: sized to break across two lines, not three */
 .turn__title--plain{font-size:clamp(1.6rem,3.4vw,3rem);max-width:72rem}
 
-/* short viewports: the chat sub added ~50px — tuck the stage in further */
-@media(min-width:901px) and (max-height:840px){
-  .pin--chat .pin__stage{row-gap:.9rem}
-  .pane__tags{padding:.65rem 1.25rem}
-  .pane__brands{padding:.6rem 1.25rem .75rem}
+/* short viewports: the two tall panes + head + sub + Pro line don't fit a
+   pinned 100vh. Reclaim height from the (generous) pane internals so the whole
+   comparison stays visible below the fixed nav rather than clipping. */
+@media(min-width:901px) and (max-height:900px){
+  .pin--chat .pin__stage{row-gap:.9rem;padding-top:4.5rem}
+  .chat__head{font-size:clamp(1.9rem,3.4vw,2.7rem)}
+  .chat__sub{font-size:.88rem}
+  .chat__pro{margin-top:.5rem;font-size:.82rem}
+  .pane__bar{padding:.68rem 1.25rem}
+  .pane__body{padding:.85rem 1.25rem;gap:.7rem}
+  .strata{gap:.32rem}
+  .stratum{padding:.36rem .8rem}
+  .pane__tags{padding:.6rem 1.25rem}
+  .pane__brands{padding:.55rem 1.25rem .7rem}
 }
 
 /* connect lede: the keep-your-tools closer breathes as its own para */
@@ -1012,32 +1078,57 @@ body.menu-open .menu__list a{opacity:1;transform:none}
 .cursor.is-on .cursor__eq i:nth-child(4){animation:eqb4 1.43s ease-in-out infinite}
 .cursor.is-on .cursor__eq i:nth-child(5){animation:eqb5 1.16s ease-in-out infinite}
 
-/* ═══ prod-embed hardening (2026-07-10): the site's global.css also loads
-   on this page and paints body #fff — `html body` outranks its `body`
-   selector regardless of order, so the page owns its own ground. ═══ */
+/* homepage: the who-cards are doorways into the Solutions pages */
+.whocard-link{display:block;color:inherit}
+
+/* homepage: the finale had padding-bottom:0 for its own (now-hidden) footer;
+   the shared site footer follows it, so give it real breathing room */
+.finale{padding-bottom:clamp(5rem,10vw,9rem)}
+
+/* ═══ light-theme touch-ups ═══ the primary CTAs hover to --bone (a warm
+   cream on dark); on light that token is near-black, so hover to a deeper
+   lime instead — keeps the dark on-accent label legible. */
+:root[data-theme="light"] .btn--solid:hover,
+:root[data-theme="light"] .finale__form button:hover{background:#c9e97a}
+@media(prefers-color-scheme:light){
+  :root:not([data-theme="dark"]) .btn--solid:hover,
+  :root:not([data-theme="dark"]) .finale__form button:hover{background:#c9e97a}
+}
+/* the ambient-field photos read heavy on paper; soften them a touch */
+:root[data-theme="light"] .hero__bg{opacity:.08}
+:root[data-theme="light"] .catch__bg img{opacity:.32}
+@media(prefers-color-scheme:light){
+  :root:not([data-theme="dark"]) .hero__bg{opacity:.08}
+  :root:not([data-theme="dark"]) .catch__bg img{opacity:.32}
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   ASTRO-EMBED OVERRIDES — appended by the port, NOT from onepager.css.
+   A wholesale re-port overwrites everything above this banner, so anything
+   this page needs that upstream doesn't must live down here or it is lost.
+   (Re-applied by scratchpad/port_assets.py — keep the two in sync.)
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* BaseLayout imports src/styles/global.css, which is bundled AFTER this file
+   and paints body #fff. `html body` (0,0,2 on elements) outranks its `body`
+   regardless of order, so the page keeps its own ground without !important. */
 html body{background:var(--ink);color:var(--bone);max-width:none;overflow-x:clip}
 
 /* ── capsule offset for the site nav ──
-   The homepage now renders the shared V2Nav (matching the delivered design,
-   whose index.html loads chrome.js). The nav is a full-width fixed bar at
-   top:0 (~69px tall, z-index 100); the capsule was authored at top:1.1rem
-   pinned right, which puts it directly under the nav's "Sign in / Sign up
-   free" cluster — measured overlap x1190-1384 vs x1019-1382. Because the nav
-   sits above it, the capsule's links and burger became unclickable.
-
-   This conflict exists in the source too (its onepager.css positions the
-   capsule identically while chrome.js injects the nav), so it isn't something
-   the port introduced. Dropping the capsule below the nav keeps BOTH usable
-   and reads correctly: the capsule is a scroll narrator, not a header. */
+   This page renders the shared V2Nav server-side (upstream gets the same nav by
+   loading chrome.js). The nav is a full-width fixed bar at top:0, ~69px tall,
+   z-index 100; the capsule is authored at top:1.1rem pinned right, which lands
+   it under the nav's "Sign in / Sign up free" cluster and made the capsule's
+   links and burger unclickable. The conflict exists upstream too, so the port
+   didn't introduce it. Dropping the capsule below the nav keeps both usable and
+   reads correctly — the capsule is a scroll narrator, not a header. */
 .capsule{top:5rem}
 @media(max-width:940px){
-  /* Mobile nav is shorter (burger only) but the same height class; keep the
-     same clearance so the two never touch. */
+  /* Mobile nav is burger-only but the same height; keep equal clearance. */
   .capsule{top:4.8rem}
 }
 
-/* The page's own fixed brand mark is redundant now that V2Nav renders one:
-   both pinned top-left (.brand at left:var(--pad) top:1.35rem, the nav's at
-   the same corner), so they overlapped as a doubled wordmark. The nav's is
-   kept — it links to / rather than #top and belongs to the site nav. */
+/* The page's own fixed brand mark is redundant beside V2Nav's — both pin to the
+   same top-left corner and rendered as a doubled wordmark. Keep the nav's: it
+   links to / rather than #top and belongs to the site nav. */
 .brand{display:none}

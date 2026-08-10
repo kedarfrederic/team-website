@@ -56,26 +56,30 @@ const betaV2 = page?.betaV2 ?? {};
 const esc = (s: unknown) =>
   String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
+// NOTE these fallbacks are what actually renders today: every heroV2/betaV2
+// field in Sanity is currently null, so the CMS binding is inert and editing a
+// fallback here IS the live change. Keep scripts/seed-homepage-v2-copy.ts in
+// sync, or a future seed would push the older copy back over the top.
+//
+// Every token below must exist in homepage-v2-body.html. A token defined here
+// but absent from the body is silently a no-op, which is how V2_BETA_SUBMIT
+// outlived the form it labelled — reconcile both lists after any re-port.
 const tokens: Record<string, unknown> = {
   "{{V2_HERO_EYEBROW}}": heroV2.eyebrow ?? "Meet Team.",
   "{{V2_HERO_TITLE_LEAD}}": heroV2.titleLead ?? "A",
   "{{V2_HERO_TITLE_EM}}": heroV2.titleEmphasis ?? "brain",
   "{{V2_HERO_TITLE_TAIL}}": heroV2.titleTail ?? "for music operations.",
-  "{{V2_HERO_SUBHEAD}}":
-    heroV2.subhead ??
-    "Team connects the systems your music operation already runs on, turning every tool, file, message, plan, and data point into one living intelligence layer.",
-  // "Join the beta" is retired positioning — signup is self-serve on /pricing
-  // now, so the hero's primary CTA matches every other v2 page. NOTE these
-  // fallbacks are what actually renders: every heroV2/betaV2 field in Sanity is
-  // currently null, so the CMS binding is inert and editing it here IS the
-  // live change. Keep scripts/seed-homepage-v2-copy.ts in sync or seeding
-  // would put the old label back.
+  // heroV2.subhead is intentionally NOT bound: the delivered copy carries an
+  // inline <br class="bp-md"> responsive break, and esc() below would render
+  // that tag as visible text. The subhead is literal in the body instead.
   "{{V2_CTA_PRIMARY}}": heroV2.primaryCtaLabel ?? "Sign up free",
   "{{V2_CTA_SECONDARY}}": heroV2.secondaryCtaLabel ?? "Book a walkthrough",
   "{{V2_BETA_TITLE_LEAD}}": betaV2.titleLead ?? "Try it on your",
   "{{V2_BETA_TITLE_EM}}": betaV2.titleEmphasis ?? "next release.",
-  "{{V2_BETA_SUBHEAD}}": betaV2.subhead ?? "The Team beta program is now open. Sign up today.",
-  "{{V2_BETA_SUBMIT}}": betaV2.submitLabel ?? "Sign me up",
+  "{{V2_BETA_SUBHEAD}}":
+    betaV2.subhead ?? "Free, forever, for the whole platform — no card required.",
+  // V2_BETA_SUBMIT removed with the beta signup form — /pricing is the
+  // self-serve path now and the homepage posts nothing to the CRM.
 };
 
 let body = bodyHtml as string;
@@ -91,8 +95,11 @@ for (const [token, value] of Object.entries(tokens)) {
   navTheme="dark"
   chrome={false}
 >
-  <link slot="head" rel="preload" href="/v2/assets/fonts/NyghtSerif-LightItalic.woff" as="font" type="font/woff" crossorigin />
-  <link slot="head" rel="preload" href="/v2/assets/fonts/Inter-Variable.ttf" as="font" type="font/ttf" crossorigin />
+  {/* woff2, matching what homepage-v2.css now @font-face's. The delivered CSS
+      moved to woff2; preloading the old .woff/.ttf would have fetched files the
+      page never uses while the real fonts waited on CSS parse. */}
+  <link slot="head" rel="preload" href="/v2/assets/fonts/NyghtSerif-LightItalic.woff2" as="font" type="font/woff2" crossorigin />
+  <link slot="head" rel="preload" href="/v2/assets/fonts/Inter-Variable.woff2" as="font" type="font/woff2" crossorigin />
   <link slot="head" rel="stylesheet" href={v("/components/v2-chrome.css")} />
   <link slot="head" rel="stylesheet" href={v("/components/homepage-v2.css")} />
 

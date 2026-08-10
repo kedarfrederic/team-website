@@ -60,18 +60,24 @@ const heroV2 = {
   titleLead: "A",
   titleEmphasis: "brain",
   titleTail: "for music operations.",
+  // Seeded for completeness, but the page does NOT read heroV2.subhead: the
+  // delivered copy contains an inline <br class="bp-md"> that token escaping
+  // would show as text, so the subhead stays literal in the body. See the note
+  // in src/pages/index.astro.
   subhead:
-    "Team connects the systems your music operation already runs on, turning every tool, file, message, plan, and data point into one living intelligence layer.",
-  // Must match the fallback in src/pages/index.astro — see the note there.
+    "Team remembers the history, reasons across everything your operation runs on, and shows you what changed, what matters, and what to do next.",
+  // Must match the fallbacks in src/pages/index.astro — see the note there.
   primaryCtaLabel: "Sign up free",
   secondaryCtaLabel: "Book a walkthrough",
 };
 
+// Still named betaV2 for schema compatibility, but this is now just the closing
+// CTA section — the beta signup form and its CRM post were removed on
+// 2026-08-10. submitLabel is gone with the form it labelled.
 const betaV2 = {
   titleLead: "Try it on your",
   titleEmphasis: "next release.",
-  subhead: "The Team beta program is now open. Sign up today.",
-  submitLabel: "Sign me up",
+  subhead: "Free, forever, for the whole platform — no card required.",
 };
 
 // Patch both the published doc and its draft (if one exists) — Studio
