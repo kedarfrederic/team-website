@@ -140,7 +140,31 @@
        Pixel are loaded by the app, and both read Consent Mode / fbq consent
        signals, so send those too — harmless when the libraries are absent, and
        correct the moment ads start running. */
+    /* Withdrawal has to actually remove things. Anyone who visited before the
+       consent gate existed already carries ph_*, _ga* and _fbp; switching
+       PostHog to memory persistence stops it WRITING a cookie but does not
+       delete the one already on the device, so a rejection would otherwise be
+       cosmetic for exactly the visitors who most need it to work.
+       Necessary cookies are never touched — Clerk's session and csrf_token are
+       what keep someone signed in. */
+    const drop = (name) => {
+      const bases = [
+        'Path=/',
+        'Path=/; Domain=.teamrollouts.com',
+        'Path=/; Domain=teamrollouts.com',
+      ];
+      bases.forEach((b) => { document.cookie = name + '=; Max-Age=0; ' + b; });
+    };
+    const dropByPrefix = (prefixes) => {
+      document.cookie.split(';').forEach((raw) => {
+        const n = raw.trim().split('=')[0];
+        if (n && prefixes.some((p) => n.startsWith(p))) drop(n);
+      });
+    };
+
     const apply = (c) => {
+      if (!c.analytics) dropByPrefix(['ph_', '_ga']);
+      if (!c.marketing) dropByPrefix(['_fbp', '_fbc']);
       if (window.posthog && c.analytics) {
         try { window.posthog.set_config({ persistence: 'localStorage+cookie' }); } catch {}
       }
