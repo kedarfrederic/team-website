@@ -92,7 +92,18 @@ const canonicalUrl =
   canonical ?? new URL(Astro.url.pathname, Astro.site ?? "https://teamrollouts.com").toString();
 ---
 <!doctype html>
-<html lang="en">
+{/* data-theme="dark" HOLDS THE SITE'S DARK LOCK — don't remove it casually.
+    The v2 design ships a real light theme keyed off BOTH
+    `:root[data-theme="light"]` AND
+    `@media(prefers-color-scheme:light) :root:not([data-theme="dark"])`.
+    Shipping light is deferred as its own feature (it needs a toggle, and the
+    interior pages' CSS has no light variants at all), so this attribute — the
+    source's own opt-out — pins every page dark regardless of the visitor's OS.
+    It is load-bearing: homepage-v2.css carries those light blocks, so without
+    it a light-mode visitor got a LIGHT homepage (cream ground under a nav logo
+    that's force-inverted to white) while every other page stayed dark. When the
+    toggle is built, this becomes its default value. */}
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
