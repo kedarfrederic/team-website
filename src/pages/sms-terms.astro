@@ -1,135 +1,49 @@
 ---
+/**
+ * SMS Terms — v2 restyle.
+ *
+ * This page is NOT from team-july2026-multipager: the delivered design has no
+ * SMS terms page. It's an old-site page kept deliberately (it's the SMS
+ * compliance document, referenced by the app's messaging opt-in), and it was
+ * still rendering the classic light chrome long after every other page moved to
+ * v2 — visibly the old site, reachable from the new footer.
+ *
+ * A restyle, NOT a change to the operative terms: the copy is the same text
+ * already published, moved out of Tailwind utility classes into the shared
+ * `.legal` + `.prose` shell that /privacy and /terms use. Two incidental fixes
+ * came with it:
+ *   - the "Privacy Policy" link was an absolute https://teamrollouts.com/privacy
+ *     URL, now root-relative like every other internal link, so it stays on the
+ *     current origin (it broke local and preview navigation).
+ *   - the body carried a JSX `{" "}` space expression, which is meaningless in a
+ *     raw HTML body and rendered literally; replaced with a real space.
+ *
+ * The old page's ~50-line scoped <style> block is gone: it restyled h1/h2/p/
+ * strong for a light theme, which v2-prose.css already does for dark.
+ */
 import BaseLayout from "../layouts/BaseLayout.astro";
+import V2Head from "../components/V2Head.astro";
+import V2Nav from "../components/V2Nav.astro";
+import V2Footer from "../components/V2Footer.astro";
+import { v } from "../lib/asset-url";
+// @ts-expect-error — Astro's ?raw modifier returns a string at build time
+import bodyHtml from "../lib/v2-sms-terms-body.html?raw";
 ---
+<BaseLayout
+  title="SMS Terms | Team"
+  description="Terms for account-related and customer support text messages sent by Team. SMS is optional, never marketing, and you can reply STOP at any time."
+  chrome={false}
+  bodyClass="v2"
+>
+  <V2Head slot="head" pageCss="/components/v2-sms-terms.css" />
+  <link slot="head" rel="stylesheet" href={v("/components/v2-prose.css")} />
 
-<BaseLayout title="SMS Terms">
-  <main class="legal-page">
-    {/* Top spacer */}
-          <div class="h-12 md:h-[71.1111px]" />
+  <V2Nav />
 
-          <div class="max-w-full mx-auto px-5 md:max-w-[1400px] md:px-[35.5556px]">
-            <div class="max-w-3xl mx-auto">
-              <h1 class="text-3xl tracking-tight leading-8 md:text-5xl md:tracking-tighter md:leading-none font-bold text-foreground mb-8">
-                SMS Terms – Team
-              </h1>
+  <Fragment set:html={bodyHtml} />
 
-              <div class="prose prose-gray max-w-none">
-                <p class="text-foreground mb-8">
-                  These SMS Terms apply to text messages sent by Team, a service operated by Team Rollouts, Inc..
-                </p>
+  <V2Footer />
 
-                <section class="mb-8">
-                  <h2 class="text-lg tracking-tight leading-snug md:text-xl md:tracking-tight md:leading-tight font-semibold text-foreground mb-4">Opt-In and Consent</h2>
-                  <p class="text-foreground mb-4">
-                    Users may opt in to receive text messages by providing their mobile phone number during account registration or within authenticated account settings on the Team platform. By submitting a phone number, users expressly consent to receive account-related and customer support text messages from Team.
-                  </p>
-                  <p class="text-foreground mb-4">
-                    SMS is completely optional and not required to use Team Rollouts.
-                  </p>
-                  <p class="text-foreground">
-                    Consent to receive text messages is not a condition of purchase.
-                  </p>
-                </section>
-
-                <section class="mb-8">
-                  <h2 class="text-lg tracking-tight leading-snug md:text-xl md:tracking-tight md:leading-tight font-semibold text-foreground mb-4">Purpose of Messages</h2>
-                  <p class="text-foreground">
-                    Text messages are sent solely for account-related notifications and customer support related to release planning, coordination, and execution. Team does not send marketing or promotional text messages.
-                  </p>
-                </section>
-
-                <section class="mb-8">
-                  <h2 class="text-lg tracking-tight leading-snug md:text-xl md:tracking-tight md:leading-tight font-semibold text-foreground mb-4">Message Frequency</h2>
-                  <p class="text-foreground">
-                    Message frequency varies depending on user activity and account interactions.
-                  </p>
-                </section>
-
-                <section class="mb-8">
-                  <h2 class="text-lg tracking-tight leading-snug md:text-xl md:tracking-tight md:leading-tight font-semibold text-foreground mb-4">Opt-Out and Help</h2>
-                  <p class="text-foreground mb-2">
-                    Users may opt out of receiving text messages at any time by replying <strong>STOP</strong>.
-                  </p>
-                  <p class="text-foreground">
-                    For assistance, users may reply <strong>HELP</strong>.
-                  </p>
-                </section>
-
-                <section class="mb-8">
-                  <h2 class="text-lg tracking-tight leading-snug md:text-xl md:tracking-tight md:leading-tight font-semibold text-foreground mb-4">Fees and Carriers</h2>
-                  <p class="text-foreground">
-                    Message and data rates may apply depending on your mobile carrier and plan. Mobile carriers are not liable for delayed or undelivered messages.
-                  </p>
-                </section>
-
-                <section class="mb-8">
-                  <h2 class="text-lg tracking-tight leading-snug md:text-xl md:tracking-tight md:leading-tight font-semibold text-foreground mb-4">Data Use and Privacy</h2>
-                  <p class="text-foreground mb-4">
-                    Mobile phone numbers and messaging data are used only to support account-related communications. Mobile information will not be shared with third parties for marketing or promotional purposes.
-                  </p>
-                  <p class="text-foreground">
-                    For additional details on how data is handled, please review our{" "}
-                    <a href="https://teamrollouts.com/privacy" class="text-primary hover:underline">
-                      Privacy Policy
-                    </a>.
-                  </p>
-                </section>
-              </div>
-            </div>
-          </div>
-
-          {/* Bottom spacer */}
-          <div class="h-12 md:h-[71.1111px]" />
-  </main>
+  <script is:inline src={v("/components/v2-base.js")}></script>
+  <script is:inline src={v("/components/v2-chrome.js")}></script>
 </BaseLayout>
-
-<style>
-  .legal-page {
-    background: var(--bg);
-    padding: 6rem 2rem 4rem;
-  }
-  .legal-page :global(h1) {
-    font-size: clamp(2rem, 4vw, 3rem);
-    font-weight: 500;
-    letter-spacing: -0.02em;
-    line-height: 1.1;
-    color: var(--black);
-    margin-bottom: 0.5rem;
-  }
-  .legal-page :global(h2) {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--black);
-    margin: 2.5rem 0 1rem;
-  }
-  .legal-page :global(h3) {
-    font-size: 1.0625rem;
-    font-weight: 500;
-    color: var(--black);
-    margin: 1.5rem 0 0.75rem;
-  }
-  .legal-page :global(p),
-  .legal-page :global(li) {
-    color: var(--text-secondary);
-    line-height: 1.6;
-    font-size: 0.9375rem;
-    margin-bottom: 0.75rem;
-  }
-  .legal-page :global(ul) {
-    padding-left: 1.5rem;
-    margin-bottom: 1rem;
-  }
-  .legal-page :global(strong) {
-    color: var(--black);
-    font-weight: 600;
-  }
-  .legal-page :global(.max-w-3xl) {
-    max-width: 48rem;
-    margin-inline: auto;
-  }
-  .legal-page :global(.text-xs) {
-    font-size: 0.75rem;
-    color: var(--text-secondary);
-    margin-bottom: 2rem;
-  }
-</style>

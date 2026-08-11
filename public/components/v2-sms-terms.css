@@ -1,0 +1,11 @@
+/* v2-sms-terms.css — /sms-terms page styles.
+   Byte-identical to v2-privacy.css / v2-terms.css: the `.legal` block is the
+   shared long-form legal shell, copied per page by this project's convention
+   rather than extracted. If a fourth legal page appears, extract it instead.
+*/
+.legal{max-width:48rem}
+  .legal .post__title{font-size:clamp(1.9rem,4vw,2.7rem)}
+  .legal__updated{margin-top:.9rem;font-family:var(--font-mono);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--bone-faint)}
+  .legal .prose{margin-top:2.6rem}
+  .legal .prose>section+section{margin-top:2.4rem;padding-top:2.4rem;border-top:1px solid var(--line)}
+  .legal .prose section h2{margin-top:0}
