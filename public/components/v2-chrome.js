@@ -86,4 +86,41 @@
       if (btn) btn.textContent = 'Subscribed';
     });
   }
+
+  /* ── shared motion engine (window.TM) ──
+     PORTED VERBATIM from chrome.js. Dropping it was a real defect, not a
+     simplification: v2-solutions.js makes 8 TM calls and every page-specific
+     inline animation script upstream is built on it. Worse, the consumers guard
+     with `window.TM || {stub}`, and that stub's `seq()` returns no-op play/reset
+     — so with TM missing the animations silently did nothing, with no console
+     error and nothing visibly broken except the motion itself. If you ever find
+     yourself trimming this file again, TM is not chrome: it is the animation
+     contract the pages depend on. ── */
+/* ── shared motion: one consistent scroll-choreography for every page ──
+     TM.replay(el, onEnter, onExit, threshold) fires onEnter each time el
+     scrolls into view and onExit each time it leaves, so animated UI plays
+     coming down and resets going back up — the homepage behaviour. */
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  window.TM = {
+    reduced,
+    replay(el, onEnter, onExit, threshold = .35) {
+      if (!el) return;
+      if (reduced) { onEnter && onEnter(); return; }   // no scrub, just settle open
+      let inView = false;
+      new IntersectionObserver((es) => es.forEach(e => {
+        if (e.isIntersecting && !inView) { inView = true; onEnter && onEnter(); }
+        else if (!e.isIntersecting && inView) { inView = false; onExit && onExit(); }
+      }), { threshold }).observe(el);
+    },
+    // sequential class-toggle for a set of children; returns {play, reset}
+    seq(items, cls, gap, delay = 0) {
+      const list = [...items]; let timers = [];
+      const clear = () => { timers.forEach(t => { clearTimeout(t); }); timers = []; };
+      return {
+        play() { if (reduced) { list.forEach(el => el.classList.add(cls)); return; }
+          clear(); list.forEach((el, i) => timers.push(setTimeout(() => el.classList.add(cls), delay + i * gap))); },
+        reset() { clear(); list.forEach(el => el.classList.remove(cls)); }
+      };
+    }
+  };
 })();

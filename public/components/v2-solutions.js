@@ -13,6 +13,17 @@
    ═══════════════════════════════════════════════════════════════ */
 (() => {
   'use strict';
+  /* The stub below is a degraded fallback, NOT a substitute: its `seq()` returns
+     no-op play/reset, so every staggered animation on this page does nothing —
+     silently, with no console error. That is exactly how the solutions pages
+     shipped with dead motion once (v2-chrome.js had been ported without
+     window.TM). Say so out loud rather than degrading quietly. */
+  if (!window.TM) {
+    console.warn(
+      "[v2-solutions] window.TM is missing — v2-chrome.js must load first and must " +
+      "define it. Falling back to a stub: staggered animations will NOT play.",
+    );
+  }
   const TM = window.TM || { reduced:false, replay:(el,f)=>f&&f(), seq:()=>({play(){},reset(){}}) };
 
   /* hero TeamMate notifications — post in one by one, reset on scroll-out */
