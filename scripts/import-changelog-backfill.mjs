@@ -4,19 +4,18 @@
  *   SANITY_WRITE_TOKEN=<editor-token> node scripts/import-changelog-backfill.mjs          # dry run
  *   SANITY_WRITE_TOKEN=<editor-token> node scripts/import-changelog-backfill.mjs --write  # apply
  *
- * WHY THIS EXISTS
- * The page already prefers Sanity and only renders its hardcoded FALLBACK_ENTRIES
- * when the collection is empty (changelog.astro). So this script is the whole
- * migration: populate `changelogEntry` and Sanity takes over on the next request.
- * No page change, and the fallback stays as a genuine safety net rather than
- * being deleted.
+ * The page reads `changelogEntry` from Sanity and only renders its hardcoded
+ * FALLBACK_ENTRIES if that collection comes back empty. It does not, so adding
+ * documents here is immediately live. No page change.
  *
- * TWO SETS OF ENTRIES
- *  1. The existing 52, PARSED OUT OF changelog.astro rather than retyped, so the
- *     migration cannot silently reword or drop one. If the array moves or its
- *     shape changes, the parse fails loudly instead of importing a subset.
- *  2. The 77 backfill entries below, distilled from 1,127 `feat` commits in the
- *     gap (the live changelog stopped at 17 March 2026).
+ * SCOPE: the 77 backfill entries below ONLY, distilled from 1,127 `feat` commits
+ * in the gap (the live changelog stopped at 17 March 2026).
+ *
+ * It does NOT import the pre-existing 52 — they are already in Sanity as
+ * `chg-0`…`chg-51`, which is why the page has been rendering Sanity all along.
+ * `FALLBACK_ENTRIES` in changelog.astro is a redundant mirror of them, not the
+ * source. Importing them again under different ids would have duplicated every
+ * one in production content; the pre-flight check below is what caught that.
  *
  * IDEMPOTENT: ids are derived deterministically from date + title, so re-running
  * updates in place instead of duplicating. Safe to run twice.
@@ -217,7 +216,14 @@ function toDocs(rows, { headlines = false } = {}) {
     const n = seen.get(r.releaseDate) ?? 0;
     seen.set(r.releaseDate, n + 1);
     const doc = {
-      _id: `changelogEntry.${r.releaseDate}-${slug(r.title)}`,
+      // NO DOT IN THE ID. Sanity treats any document whose `_id` contains a `.`
+      // as private — the same mechanism that hides `drafts.`-prefixed docs — so
+      // it is readable with a token and INVISIBLE to anonymous readers. The
+      // public site reads anonymously, so a `changelogEntry.<date>-<slug>` id
+      // published 77 entries that the page could never render: the token saw
+      // 129, the site saw 52, and the doc endpoint said `"reason":"permission"`.
+      // The pre-existing entries use dot-free `chg-N`; match that.
+      _id: `chg-${r.releaseDate}-${slug(r.title)}`,
       _type: "changelogEntry",
       releaseDate: r.releaseDate,
       type: r.type,
@@ -234,8 +240,40 @@ function toDocs(rows, { headlines = false } = {}) {
   });
 }
 
-const existing = parseExisting();
-const docs = [...toDocs(existing), ...toDocs(BACKFILL, { headlines: true })];
+/* ── pre-flight: what is ALREADY in Sanity ─────────────────────────────────
+   The collection is NOT empty and never was. Sanity already holds the 52
+   pre-existing entries (ids `chg-0`…), so the live page has been rendering
+   Sanity all along and `FALLBACK_ENTRIES` in the page is a redundant mirror,
+   not the source. This script therefore ONLY adds the gap; importing the
+   existing 52 again under different ids would have duplicated every one of
+   them in production content.
+   parseExisting() is still used, but as a CHECK: if the page's mirror and the
+   collection disagree on how many pre-gap entries exist, something has drifted
+   and that is worth knowing before writing. */
+const GAP_START = "2026-03-18";
+const already = await client.fetch(
+  `{"pre": count(*[_type=="changelogEntry" && releaseDate < $g]),
+     "inGap": count(*[_type=="changelogEntry" && releaseDate >= $g])}`,
+  { g: GAP_START },
+);
+const mirrored = parseExisting();
+console.log(`  already in Sanity before ${GAP_START} : ${already.pre}`);
+console.log(`  already in Sanity within the gap      : ${already.inGap}`);
+console.log(`  page's fallback mirror holds          : ${mirrored.length}`);
+if (already.pre !== mirrored.length) {
+  console.log(
+    `  ! the collection and the page's fallback disagree (${already.pre} vs ${mirrored.length}).` +
+      " Not fatal — the fallback only renders if the collection is empty — but they have drifted.",
+  );
+}
+if (already.inGap > 0) {
+  console.log(
+    `  ! ${already.inGap} entries already exist on or after ${GAP_START}.` +
+      " Re-running is safe (ids are deterministic), but check for near-duplicates from another source.",
+  );
+}
+
+const docs = toDocs(BACKFILL, { headlines: true });
 
 const ids = new Set();
 for (const d of docs) {
@@ -246,9 +284,7 @@ for (const d of docs) {
 const byMonth = {};
 for (const d of docs) (byMonth[d.releaseDate.slice(0, 7)] ??= []).push(d);
 
-console.log(`  existing parsed from the page : ${existing.length}`);
-console.log(`  backfill entries              : ${BACKFILL.length}`);
-console.log(`  total to upsert               : ${docs.length}`);
+console.log(`  backfill entries to upsert            : ${docs.length}`);
 console.log("  by month:");
 for (const m of Object.keys(byMonth).sort()) console.log(`    ${m}  ${byMonth[m].length}`);
 const missing = [...new Set(BACKFILL.map((b) => b.releaseDate))].filter((d) => !HEADLINES[d]);
@@ -259,9 +295,33 @@ if (!WRITE) {
   process.exit(0);
 }
 
+/* Clean up the dotted ids from the first, broken run — see the note on `_id`
+   above. Deliberately narrow: only ids matching the exact prefix this script
+   used, only where a dot-free replacement now exists, and never anything
+   `drafts.`-prefixed (deleting a draft for a new id destroyed a real document
+   once). Anything unexpected is reported and left alone. */
+// Filter in JS, not GROQ: `_id match "changelogEntry.*"` returns NOTHING because
+// GROQ's `match` is token-based and a `.` is a token separator, so it never
+// behaves as a prefix glob. That silently found 0 stale ids and left 77
+// unreadable documents in place on the first attempt.
+const allIds = await client.fetch(`*[_type=="changelogEntry"]._id`);
+const stale = allIds.filter((id) => id.startsWith("changelogEntry."));
+const wanted = new Set(docs.map((d) => d._id));
+const removable = stale.filter(
+  (id) => id.startsWith("changelogEntry.") && !id.startsWith("drafts.") && wanted.has(`chg-${id.slice("changelogEntry.".length)}`),
+);
+const skipped = stale.filter((id) => !removable.includes(id));
+if (stale.length) {
+  console.log(`\n  stale dotted ids found : ${stale.length}`);
+  console.log(`  will delete            : ${removable.length}`);
+  if (skipped.length) console.log(`  LEFT ALONE (unmatched) : ${skipped.join(", ")}`);
+}
+
 const tx = docs.reduce((t, d) => t.createOrReplace(d), client.transaction());
+for (const id of removable) tx.delete(id);
 await tx.commit();
 console.log(`\n  ✓ upserted ${docs.length} changelogEntry documents`);
+if (removable.length) console.log(`  ✓ deleted ${removable.length} unreadable dotted-id documents`);
 
 const live = await client.fetch(`count(*[_type == "changelogEntry"])`);
 console.log(`  ✓ collection now holds ${live} entries`);
