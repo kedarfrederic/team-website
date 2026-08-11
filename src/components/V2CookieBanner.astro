@@ -1,0 +1,199 @@
+---
+/**
+ * Cookie consent banner — marketing site.
+ *
+ * WHY THIS EXISTS: the app (app.teamrollouts.com) has asked for consent for a
+ * while; the marketing site never did, while still loading PostHog with cookie
+ * persistence on first paint. This closes that gap.
+ *
+ * THE CONSENT RECORD IS A COOKIE, NOT localStorage:
+ *   cookie_consent = {"necessary":true,"analytics":bool,"marketing":bool}
+ *   Domain=.teamrollouts.com; Path=/; SameSite=Lax; Secure; Max-Age=180d
+ *
+ * localStorage is ORIGIN-scoped, so teamrollouts.com, www.teamrollouts.com and
+ * app.teamrollouts.com would each prompt separately — three prompts on the way
+ * from a landing page to signup. One cookie on the parent domain covers all
+ * three, and it survives Safari's 7-day cap on script-writable storage, which
+ * is why the app's banner appeared to re-prompt.
+ *
+ * The name and JSON shape deliberately match the app's `useCookieConsent`, so
+ * when that switches from localStorage to this cookie the two agree with no
+ * migration. Until it does, the app keeps its own record and a visitor may be
+ * asked twice — degraded, not broken.
+ *
+ * Categories match the app's: necessary (always on), analytics, marketing.
+ * Nothing non-essential loads or persists before an explicit choice; "necessary"
+ * covers Clerk's session cookies and the app's csrf_token, which is why it has
+ * no toggle. No dark patterns: Reject is as prominent as Accept.
+ *
+ * Self-contained on purpose — inline CSS with literal colours rather than v2
+ * tokens, because this renders on BOTH the v2 pages and the classic-chrome ones,
+ * and the token sets differ between them.
+ */
+---
+<div id="ckBanner" class="ck" role="dialog" aria-modal="false" aria-label="Cookie preferences" hidden>
+  <div class="ck__in">
+    <div class="ck__copy">
+      <p class="ck__title">Cookies</p>
+      <p class="ck__body">
+        We use cookies that are necessary to run the site, and — only if you agree —
+        analytics to understand what's useful and marketing cookies to measure our ads.
+        <a href="/cookies">What we use</a> · <a href="/privacy">Privacy</a>
+      </p>
+    </div>
+
+    <div class="ck__opts" id="ckOpts" hidden>
+      <label class="ck__opt is-locked">
+        <input type="checkbox" checked disabled />
+        <span><b>Necessary</b> — sign-in, security. Always on.</span>
+      </label>
+      <label class="ck__opt">
+        <input type="checkbox" id="ckAnalytics" />
+        <span><b>Analytics</b> — which pages get used, so we can improve them.</span>
+      </label>
+      <label class="ck__opt">
+        <input type="checkbox" id="ckMarketing" />
+        <span><b>Marketing</b> — measuring whether our ads reach the right people.</span>
+      </label>
+    </div>
+
+    <div class="ck__actions">
+      <button type="button" class="ck__btn ck__btn--ghost" id="ckCustomise">Choose</button>
+      <button type="button" class="ck__btn ck__btn--ghost" id="ckReject">Reject non-essential</button>
+      <button type="button" class="ck__btn ck__btn--solid" id="ckAccept">Accept all</button>
+      <button type="button" class="ck__btn ck__btn--solid" id="ckSave" hidden>Save choices</button>
+    </div>
+  </div>
+</div>
+
+<style is:global>
+  .ck{position:fixed;left:0;right:0;bottom:0;z-index:9999;
+      background:rgba(13,12,11,.96);border-top:1px solid rgba(239,235,227,.14);
+      color:#efebe3;backdrop-filter:blur(10px);
+      font-family:Inter,-apple-system,BlinkMacSystemFont,sans-serif}
+  .ck[hidden]{display:none}
+  .ck__in{max-width:78rem;margin:0 auto;padding:1.1rem clamp(1.3rem,5vw,4.5rem);
+          display:flex;flex-wrap:wrap;gap:1rem 1.6rem;align-items:center}
+  .ck__copy{flex:1 1 22rem;min-width:0}
+  .ck__title{margin:0 0 .25rem;font-size:.72rem;font-weight:600;letter-spacing:.12em;
+             text-transform:uppercase;color:rgba(239,235,227,.5)}
+  .ck__body{margin:0;font-size:.88rem;line-height:1.5;color:rgba(239,235,227,.72)}
+  .ck__body a{color:#d9fa87;text-decoration:underline;text-underline-offset:2px}
+  .ck__opts{flex:1 1 100%;display:flex;flex-direction:column;gap:.55rem;
+            padding:.4rem 0 .2rem;border-top:1px solid rgba(239,235,227,.09)}
+  .ck__opts[hidden]{display:none}
+  .ck__opt{display:flex;gap:.6rem;align-items:flex-start;font-size:.85rem;
+           line-height:1.45;color:rgba(239,235,227,.72);cursor:pointer}
+  .ck__opt.is-locked{cursor:default;color:rgba(239,235,227,.5)}
+  .ck__opt b{color:#efebe3;font-weight:600}
+  .ck__opt input{margin-top:.2rem;accent-color:#d9fa87;flex:none}
+  .ck__actions{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;flex:0 0 auto}
+  .ck__btn{font:inherit;font-size:.82rem;font-weight:560;padding:.6rem 1.1rem;
+           border-radius:99px;cursor:pointer;white-space:nowrap;
+           transition:background .2s,border-color .2s,color .2s}
+  .ck__btn--ghost{background:transparent;color:rgba(239,235,227,.8);
+                  border:1px solid rgba(239,235,227,.28)}
+  .ck__btn--ghost:hover{color:#efebe3;border-color:rgba(239,235,227,.55)}
+  .ck__btn--solid{background:#d9fa87;color:#0d0c0b;border:1px solid #d9fa87}
+  .ck__btn--solid:hover{background:#e6ffa0}
+  .ck__btn[hidden]{display:none}
+  @media(max-width:720px){
+    .ck__in{padding:1rem 1.3rem}
+    .ck__actions{flex:1 1 100%}
+    .ck__btn{flex:1 1 auto;text-align:center}
+  }
+</style>
+
+<script is:inline>
+  (() => {
+    'use strict';
+    const NAME = 'cookie_consent';
+    const MAX_AGE = 60 * 60 * 24 * 180; // 180 days
+    const el = (id) => document.getElementById(id);
+    const banner = el('ckBanner');
+    if (!banner) return;
+
+    const read = () => {
+      const m = document.cookie.match(/(?:^|;\s*)cookie_consent=([^;]*)/);
+      if (!m) return null;
+      try {
+        const p = JSON.parse(decodeURIComponent(m[1]));
+        return { necessary: true, analytics: !!p.analytics, marketing: !!p.marketing };
+      } catch { return null; }   // malformed → treat as no decision, ask again
+    };
+
+    const write = (c) => {
+      // Domain is only set on the real site: on localhost or a *.pages.dev
+      // preview a .teamrollouts.com cookie is silently rejected, which would
+      // make the banner reappear on every load while looking like a bug.
+      const onSite = /(^|\.)teamrollouts\.com$/.test(location.hostname);
+      const parts = [
+        NAME + '=' + encodeURIComponent(JSON.stringify(c)),
+        'Path=/', 'Max-Age=' + MAX_AGE, 'SameSite=Lax',
+      ];
+      if (onSite) parts.push('Domain=.teamrollouts.com');
+      if (location.protocol === 'https:') parts.push('Secure');
+      document.cookie = parts.join('; ');
+    };
+
+    /* Apply. Only PostHog lives on the marketing site today; GA4 and the Meta
+       Pixel are loaded by the app, and both read Consent Mode / fbq consent
+       signals, so send those too — harmless when the libraries are absent, and
+       correct the moment ads start running. */
+    const apply = (c) => {
+      if (window.posthog && c.analytics) {
+        try { window.posthog.set_config({ persistence: 'localStorage+cookie' }); } catch {}
+      }
+      if (typeof window.gtag === 'function') {
+        window.gtag('consent', 'update', {
+          analytics_storage: c.analytics ? 'granted' : 'denied',
+          ad_storage: c.marketing ? 'granted' : 'denied',
+          ad_user_data: c.marketing ? 'granted' : 'denied',
+          ad_personalization: c.marketing ? 'granted' : 'denied',
+        });
+      }
+      if (typeof window.fbq === 'function') {
+        window.fbq('consent', c.marketing ? 'grant' : 'revoke');
+      }
+    };
+
+    const decide = (c) => { write(c); apply(c); banner.hidden = true; };
+
+    const existing = read();
+    if (existing) {
+      apply(existing);
+    } else {
+      banner.hidden = false;
+    }
+
+    el('ckAccept').addEventListener('click', () =>
+      decide({ necessary: true, analytics: true, marketing: true }));
+    el('ckReject').addEventListener('click', () =>
+      decide({ necessary: true, analytics: false, marketing: false }));
+
+    el('ckCustomise').addEventListener('click', () => {
+      el('ckOpts').hidden = false;
+      el('ckCustomise').hidden = true;
+      el('ckSave').hidden = false;
+      const c = read();
+      if (c) { el('ckAnalytics').checked = c.analytics; el('ckMarketing').checked = c.marketing; }
+    });
+
+    el('ckSave').addEventListener('click', () => decide({
+      necessary: true,
+      analytics: el('ckAnalytics').checked,
+      marketing: el('ckMarketing').checked,
+    }));
+
+    /* Re-open from the footer: any element with [data-cookie-prefs]. Consent has
+       to be withdrawable as easily as it was given, so this is the footer link
+       rather than a buried setting. */
+    document.addEventListener('click', (e) => {
+      const t = e.target.closest('[data-cookie-prefs]');
+      if (!t) return;
+      e.preventDefault();
+      banner.hidden = false;
+      el('ckCustomise').click();
+    });
+  })();
+</script>

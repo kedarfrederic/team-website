@@ -6,6 +6,7 @@ import { getClient, isPreviewRequest, urlFor } from "../lib/sanity";
 import VisualEditing from "../components/VisualEditing.astro";
 import Footer from "../components/Footer.astro";
 import Nav from "../components/Nav.astro";
+import V2CookieBanner from "../components/V2CookieBanner.astro";
 import { v } from "../lib/asset-url";
 
 interface SeoBlock {
@@ -190,8 +191,29 @@ const canonicalUrl =
   */}
   <script is:inline set:html={`
     !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src=s.api_host+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchingSurveys getSurveys onSessionId".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
-    posthog.init('phc_rbP43MvbYyuKY4snFXECD7QA5qyUZd9dsVu89pWnf7wC',{api_host:'https://us.i.posthog.com',autocapture:true,capture_pageview:true,capture_pageleave:true});
+    /* COOKIELESS UNTIL CONSENT. persistence:'memory' means no cookie and no
+       cross-session identity, matching what the app already does in
+       client/src/lib/posthog.ts. Before this, the marketing site initialised
+       with default (cookie) persistence plus autocapture and pageview capture,
+       so it set the ph_* cookie on first paint with no consent collected
+       anywhere — the app asked, the marketing site never did. */
+    posthog.init('phc_rbP43MvbYyuKY4snFXECD7QA5qyUZd9dsVu89pWnf7wC',{api_host:'https://us.i.posthog.com',autocapture:true,capture_pageview:true,capture_pageleave:true,persistence:'memory',disable_session_recording:true});
     posthog.register({ surface: 'marketing', site: 'team-website' });
+
+    /* Upgrade to persistent storage only once analytics consent exists.
+       The consent record is a COOKIE scoped to .teamrollouts.com, not
+       localStorage: localStorage is origin-scoped, so apex, www and
+       app.teamrollouts.com would each have prompted separately. One cookie on
+       the parent domain covers all three, and it survives Safari's 7-day cap on
+       script-writable storage better than localStorage does. Keep the name and
+       shape in sync with the app's useCookieConsent. */
+    try {
+      var m = document.cookie.match(/(?:^|;\\s*)cookie_consent=([^;]*)/);
+      if (m) {
+        var c = JSON.parse(decodeURIComponent(m[1]));
+        if (c && c.analytics) posthog.set_config({ persistence: 'localStorage+cookie' });
+      }
+    } catch (e) { /* malformed cookie → stay cookieless, which is the safe side */ }
   `} />
 
   {/* Chromeless pages ship their own nav/footer — the site chrome CSS
@@ -277,6 +299,10 @@ const canonicalUrl =
     errors. Inside the iframe, the preview client emits stega and the
     overlay attaches pencils as expected.
   */}
+  {/* Outside the `chrome` guard on purpose: consent is not site chrome, and
+      the chromeless v2 pages (the homepage especially) load PostHog too. */}
+  <V2CookieBanner />
+
   <VisualEditing />
 </body>
 </html>

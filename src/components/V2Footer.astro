@@ -59,6 +59,7 @@ const COLUMNS: { heading: string; links: Link[] }[] = [
       // SMS compliance doc. It was live but linked from nowhere on the site,
       // which is the opposite of what a compliance page is for.
       { href: "/sms-terms", label: "SMS Terms" },
+      { href: "/cookies", label: "Cookies" },
     ],
   },
 ];
@@ -109,6 +110,10 @@ const SOCIAL = [
 
     <div class="foot__bot">
       <span class="mono">© 2026 Team Rollouts</span>
+      {/* Consent has to be as easy to withdraw as it was to give, so the
+          re-open trigger lives here rather than buried in a settings page.
+          V2CookieBanner listens for [data-cookie-prefs] anywhere on the page. */}
+      <a class="mono" href="/cookies" data-cookie-prefs>Cookie preferences</a>
       <span class="mono">Operational Intelligence for Music Releases</span>
     </div>
   </div>

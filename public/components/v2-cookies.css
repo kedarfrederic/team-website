@@ -1,0 +1,28 @@
+/* v2-cookies.css — /cookies page styles.
+   Ported from team-july2026-multipager/privacy.html's inline <style>.
+*/
+.legal{max-width:48rem}
+  .legal .post__title{font-size:clamp(1.9rem,4vw,2.7rem)}
+  .legal__updated{margin-top:.9rem;font-family:var(--font-mono);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--bone-faint)}
+  .legal .prose{margin-top:2.6rem}
+  .legal .prose>section+section{margin-top:2.4rem;padding-top:2.4rem;border-top:1px solid var(--line)}
+  .legal .prose section h2{margin-top:0}
+
+/* ── cookie inventory table ──
+   The substance of a cookie policy is a table, not prose. Scrolls inside its own
+   container so a narrow viewport never makes the page scroll sideways. */
+body.v2 .ck-tablewrap{margin-top:1.6rem;overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+body.v2 .ck-table{width:100%;border-collapse:collapse;font-size:.86rem;min-width:44rem}
+body.v2 .ck-table th,body.v2 .ck-table td{padding:.7rem .85rem;text-align:left;vertical-align:top;
+  border-bottom:1px solid var(--line-2)}
+body.v2 .ck-table thead th{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:.62rem;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--bone-faint);white-space:nowrap}
+body.v2 .ck-table tbody tr:last-child td{border-bottom:0}
+body.v2 .ck-table td code{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:.8rem;color:var(--bone)}
+body.v2 .ck-table td{color:var(--bone-dim)}
+body.v2 .ck-cat{display:inline-block;padding:.12rem .42rem;border-radius:4px;border:1px solid currentColor;
+  font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:.58rem;letter-spacing:.08em;text-transform:uppercase}
+body.v2 .ck-cat--nec{color:var(--bone-dim)}
+body.v2 .ck-cat--ana{color:var(--v2-accent)}
+body.v2 .ck-cat--mkt{color:var(--orange)}
+body.v2 .ck-note{margin-top:1.1rem;font-size:.82rem;color:var(--bone-faint)}

@@ -1,0 +1,50 @@
+---
+/**
+ * Cookie Policy.
+ *
+ * NOT ported from team-july2026-multipager — the delivered design has no cookie
+ * page. Written from a measured audit of what the site actually sets, not from a
+ * template: every row in the table was confirmed by reading `document.cookie`,
+ * the `Set-Cookie` response headers, and the code that loads each tool. That
+ * matters because a cookie policy which lists cookies you don't set (or misses
+ * ones you do) is worse than none.
+ *
+ * Verified at the time of writing:
+ *   - the marketing site sets NOTHING server-side; the app sets `csrf_token`
+ *     (measured Max-Age=86400)
+ *   - PostHog is the only tracker the marketing site loads itself
+ *   - `_ga`, `_ga_*`, `_fbp` and Clerk's `__client_uat*` are scoped to
+ *     `.teamrollouts.com` by the app and readable across all subdomains
+ *   - `tm-intro` is sessionStorage, not a cookie — listed anyway, because what
+ *     matters to a reader is "what do you store on my device", not the mechanism
+ *
+ * Third-party RETENTION values are the providers' documented defaults, which we
+ * cannot measure from our side; the page says so rather than implying we
+ * verified them. HubSpot is deliberately absent — it is being removed.
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import V2Head from "../components/V2Head.astro";
+import V2Nav from "../components/V2Nav.astro";
+import V2Footer from "../components/V2Footer.astro";
+import { v } from "../lib/asset-url";
+// @ts-expect-error — Astro's ?raw modifier returns a string at build time
+import bodyHtml from "../lib/v2-cookies-body.html?raw";
+---
+<BaseLayout
+  title="Cookie Policy | Team"
+  description="Every cookie Team uses, what it's for, and how long it lasts. Only necessary cookies are set without asking; analytics and marketing require your consent."
+  chrome={false}
+  bodyClass="v2"
+>
+  <V2Head slot="head" pageCss="/components/v2-cookies.css" />
+  <link slot="head" rel="stylesheet" href={v("/components/v2-prose.css")} />
+
+  <V2Nav />
+
+  <Fragment set:html={bodyHtml} />
+
+  <V2Footer />
+
+  <script is:inline src={v("/components/v2-base.js")}></script>
+  <script is:inline src={v("/components/v2-chrome.js")}></script>
+</BaseLayout>
