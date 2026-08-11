@@ -27,6 +27,7 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const LIB = join(ROOT, "src/lib");
 const PAGES = join(ROOT, "src/pages");
 const PUBLIC = join(ROOT, "public");
+const COMPONENTS = join(ROOT, "public/components");
 
 // Routes that exist as Astro pages, plus known dynamic ones.
 const routes = new Set(
@@ -70,9 +71,39 @@ for (const file of bodies) {
   }
 }
 
+/* ── the same check over the SHIPPED SCRIPTS ──
+   This existed only for the body HTML, and that gap shipped 29 broken images:
+   v2-connections.js builds its tile logos at runtime as
+   `src="assets/logos/${…}.svg"`, which resolves against the ROUTE (/connections)
+   and 404s. The bodies were clean, so the check passed and reported success
+   while a page was visibly broken. A guard that only looks where the bug isn't
+   is worse than no guard, because it certifies.
+
+   Only flags string literals that look like an asset path, so template
+   expressions inside the path (`${slug}.svg`) are still caught by the
+   leading-`assets/` test without needing to resolve the interpolation. */
+const scripts = readdirSync(COMPONENTS).filter((f) => /^(v2-|homepage-v2).*\.js$/.test(f));
+for (const file of scripts) {
+  const js = readFileSync(join(COMPONENTS, file), "utf8");
+  for (const m of js.matchAll(/["'`](assets\/[^"'`]+)["'`]/g)) {
+    problems++;
+    console.error(
+      `  ✗ ${file}: RELATIVE asset path in JS ${JSON.stringify(m[1])} —` +
+        " resolves against the route and 404s; prefix with /v2/",
+    );
+  }
+  // Root-relative literals with no interpolation must also exist on disk.
+  for (const m of js.matchAll(/["'`](\/v2\/assets\/[^"'`${]+\.[a-z0-9]{2,5})["'`]/gi)) {
+    if (!existsSync(join(PUBLIC, m[1]))) {
+      problems++;
+      console.error(`  ✗ ${file}: MISSING asset ${JSON.stringify(m[1])} — no file at public${m[1]}`);
+    }
+  }
+}
+
 console.log(
   problems === 0
-    ? `✓ v2 link check passed (${bodies.length} bodies, ${routes.size} known routes)`
-    : `\n${problems} problem(s) found across ${bodies.length} v2 bodies.`
+    ? `✓ v2 link check passed (${bodies.length} bodies, ${scripts.length} scripts, ${routes.size} known routes)`
+    : `\n${problems} problem(s) found across ${bodies.length} v2 bodies and ${scripts.length} scripts.`
 );
 process.exit(problems === 0 ? 0 : 1);

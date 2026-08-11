@@ -52,7 +52,7 @@ const BRAND = { eventbrite:{ fg:'#f05537', ch:'e' } }; // no square icon — bra
 const icon = (slug,name) => BRAND[slug]
   ? `<span class="icard__ic" style="font-family:var(--font-display);font-weight:700;font-size:1.4rem;color:${BRAND[slug].fg}">${BRAND[slug].ch}</span>`
   : HAVE.has(slug)
-    ? `<span class="icard__ic"><img decoding="async" src="assets/logos/${TILE[slug]||slug}.svg" alt="" loading="lazy"></span>`
+    ? `<span class="icard__ic"><img decoding="async" src="/v2/assets/logos/${TILE[slug]||slug}.svg" alt="" loading="lazy"></span>`
     : `<span class="icard__mono">${name[0]}</span>`;
 
 /* render the directory */
@@ -93,7 +93,7 @@ const WHITE = new Set(['notion','gmail','googlecalendar','airtable','linear','go
 const wallTiles = all.filter(i=>i[2] && HAVE.has(i[1]))
   .map(([name,slug]) => {
     const w = WHITE.has(slug);
-    const src = w ? `assets/logos/white/${slug}.svg` : `assets/logos/${slug}.svg`;
+    const src = w ? `/v2/assets/logos/white/${slug}.svg` : `/v2/assets/logos/${slug}.svg`;
     return `<span class="tile"><img decoding="async" class="${w?'':'mono'}" src="${src}" alt="${name}" loading="lazy"></span>`;
   }).join('');
 /* each group must be wider than the viewport, or the loop shows empty space at
