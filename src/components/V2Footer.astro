@@ -44,6 +44,10 @@ const COLUMNS: { heading: string; links: Link[] }[] = [
       { href: "/about", label: "About" },
       { href: "/pricing", label: "Pricing" },
       { href: "/contact", label: "Contact" },
+      // Changelog is a Resources-shaped page, not a legal one. It already
+      // existed and was reachable only by typing the URL — the footer is the
+      // one place it belongs.
+      { href: "/changelog", label: "Changelog" },
     ],
   },
   {
@@ -52,6 +56,9 @@ const COLUMNS: { heading: string; links: Link[] }[] = [
       { href: "/privacy", label: "Privacy" },
       { href: "/terms", label: "Terms" },
       { href: "/security", label: "Security" },
+      // SMS compliance doc. It was live but linked from nowhere on the site,
+      // which is the opposite of what a compliance page is for.
+      { href: "/sms-terms", label: "SMS Terms" },
     ],
   },
 ];

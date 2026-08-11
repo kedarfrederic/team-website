@@ -38,6 +38,7 @@
 
 import BaseLayout from "../layouts/BaseLayout.astro";
 import V2Nav from "../components/V2Nav.astro";
+import V2Footer from "../components/V2Footer.astro";
 import { v } from "../lib/asset-url";
 import { getHomepage } from "../lib/queries";
 // @ts-expect-error — Astro's ?raw modifier returns a string at build time
@@ -106,6 +107,12 @@ for (const [token, value] of Object.entries(tokens)) {
   <V2Nav />
 
   <Fragment set:html={body} />
+
+  {/* The delivered index.html ends with a minimal inline footer carrying no
+      links at all, so the homepage was the one page with no route to Privacy,
+      Terms or SMS terms. Render the shared footer the interior pages use; the
+      inline one is hidden in homepage-v2.css. */}
+  <V2Footer />
 
   <script is:inline src={v("/components/v2-chrome.js")}></script>
   <script is:inline src={v("/components/homepage-v2.js")}></script>

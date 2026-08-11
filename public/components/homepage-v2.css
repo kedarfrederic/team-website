@@ -1132,3 +1132,22 @@ html body{background:var(--ink);color:var(--bone);max-width:none;overflow-x:clip
    same top-left corner and rendered as a doubled wordmark. Keep the nav's: it
    links to / rather than #top and belongs to the site nav. */
 .brand{display:none}
+
+/* ── duplicate "Sign up free" (reported 2026-08-11) ──
+   V2Nav renders the site's primary CTA at top-right (.nav__beta, y≈14) and the
+   capsule renders a second identical one directly below it (.capsule__cta,
+   y≈87) — same label, same /pricing target, stacked in the same corner. The
+   capsule predates the shared nav: upstream's index.html gets its nav injected
+   by chrome.js, so the duplication exists in the delivered design too and isn't
+   something the port introduced.
+   Hide the capsule's link list, not the capsule: the orb progress ring, the act
+   name and the burger are the scroll narrator's actual job and stay. */
+.capsule__links{display:none}
+
+/* ── site footer on the homepage ──
+   The delivered index.html ends with a minimal inline <footer class="footer">:
+   logo, tagline, copyright, and ZERO links — so the homepage offered no route
+   to Privacy, Terms or SMS terms while every interior page did. The homepage now
+   renders the shared V2Footer instead (same as interior pages), so this inline
+   one would be a second, poorer footer stacked above it. */
+.finale > .footer{display:none}
