@@ -47,6 +47,21 @@
   --v2-ease-io:cubic-bezier(.65,0,.35,1);
   --v2-pad:clamp(1.3rem,5vw,4.5rem);
   --v2-maxw:78rem;
+
+  /* ── font stacks — MUST name the families @font-face actually declares ──
+     global.css declares 'InterV' and 'Nyght'. Rules below reach for these as
+     `var(--font-serif,'Nyght Serif',Georgia,serif)` — and that fallback names
+     'Nyght SERIF', a family NOTHING declares. With these custom properties
+     undefined the fallback won, so every serif-italic accent on the v2 interior
+     pages (heading <em>, .phero__ask, .prose em, blockquotes) silently rendered
+     in GEORGIA instead of the brand serif. It also made V2Head's NyghtSerif
+     preload dead weight — the browser warned "preloaded but not used" because
+     nothing ever requested a declared family. Defining them fixes the type and
+     the preload together.
+     The homepage is unaffected: it does not load this file and ships its own
+     @font-face plus token block. */
+  --font-display:'InterV',Inter,-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-serif:'Nyght',Georgia,serif;
 }
 
 /* ── page ground ──
