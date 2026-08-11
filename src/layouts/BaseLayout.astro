@@ -90,19 +90,26 @@ const ogImageUrl = finalOgImage?.asset?._ref
 const noIndex = seo?.noIndex === true || previewMode;
 const canonicalUrl =
   canonical ?? new URL(Astro.url.pathname, Astro.site ?? "https://teamrollouts.com").toString();
+
+/* The <html> tag below carries data-theme="dark", which HOLDS THE SITE'S DARK
+   LOCK — don't remove it casually. The v2 design ships a real light theme keyed
+   off BOTH `:root[data-theme="light"]` AND
+   `@media(prefers-color-scheme:light) :root:not([data-theme="dark"])`.
+   Shipping light is deferred as its own feature (it needs a toggle, and the
+   interior pages' CSS has no light variants at all), so this attribute — the
+   source's own opt-out — pins every page dark regardless of the visitor's OS.
+   It is load-bearing: homepage-v2.css carries those light blocks, so without it
+   a light-mode visitor got a LIGHT homepage (cream ground under a nav logo
+   force-inverted to white) while every other page stayed dark. When the toggle
+   is built, this becomes its default value.
+
+   KEEP `<!doctype html>` IMMEDIATELY ADJACENT TO `<html>`: putting anything
+   between them — even an Astro template comment — breaks Astro's whole-document
+   detection, and it then silently emits the page with NO html and NO head
+   element at all, dropping lang="en" with them. That shipped once. Which is why
+   this note lives up here in the frontmatter instead of down there. */
 ---
 <!doctype html>
-{/* data-theme="dark" HOLDS THE SITE'S DARK LOCK — don't remove it casually.
-    The v2 design ships a real light theme keyed off BOTH
-    `:root[data-theme="light"]` AND
-    `@media(prefers-color-scheme:light) :root:not([data-theme="dark"])`.
-    Shipping light is deferred as its own feature (it needs a toggle, and the
-    interior pages' CSS has no light variants at all), so this attribute — the
-    source's own opt-out — pins every page dark regardless of the visitor's OS.
-    It is load-bearing: homepage-v2.css carries those light blocks, so without
-    it a light-mode visitor got a LIGHT homepage (cream ground under a nav logo
-    that's force-inverted to white) while every other page stayed dark. When the
-    toggle is built, this becomes its default value. */}
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
