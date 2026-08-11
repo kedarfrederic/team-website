@@ -1,0 +1,161 @@
+/* ────────────────────────────────────────────────────────────
+   v2-changelog.css — /changelog in the v2 editorial idiom.
+
+   REPLACES changelog-inline.css, which was 687 lines of the classic
+   LIGHT theme (29 `#fff` surfaces, 35 `var(--black)`, plus
+   `--text-secondary` / `--bg` from the old token set). This is a
+   rewrite rather than a dark-remap of that file: the whole page is
+   only 16 classes, and several of those `#fff` values were card
+   surfaces we don't want back — see below.
+
+   Loads AFTER v2-base.css, so every token here (--bone, --line,
+   --v2-accent, --font-display, --v2-pad …) comes from there.
+
+   NO CARD PANELS. The old design boxed every entry in a white
+   rounded panel with a shadow. House style is hairline rules and
+   type hierarchy, so entries are separated rows on the page ground.
+
+   DOM CONTRACT — changelog-inline.js drives search + filtering and
+   depends on all of this. Renaming any of it silently breaks the
+   page while it still looks fine:
+     .cl-entry / .cl-date   toggled via `style.display = '' | 'none'`,
+                            so a `display` here must be the resting
+                            value the empty string reverts to.
+     .cl-filter / .is-active   filter buttons
+     #clSearch                 the input
+     #clEmpty + .is-visible    the no-results line
+     .cl-entry__title / .cl-entry__desc   read for text matching
+   ──────────────────────────────────────────────────────────── */
+
+/* ── hero ──
+   body.v2-scoped: this is the nav-clearance padding, and global.css
+   is bundled after page CSS, so an unscoped rule here loses to it on
+   any page whose element also carries .container. Same reasoning as
+   the .phero rules in v2-prose.css. */
+body.v2 .cl-hero{
+  padding:9rem var(--v2-pad) clamp(2.5rem,5vw,4rem);
+  max-width:var(--v2-maxw);margin-inline:auto;text-align:center;
+}
+.cl-hero h1{
+  font-family:var(--font-display);font-weight:330;letter-spacing:-.03em;
+  line-height:1.04;font-size:clamp(2.4rem,5.4vw,4rem);color:var(--bone);
+}
+.cl-hero h1 .nyght{
+  font-family:var(--font-serif);font-style:italic;font-weight:300;
+  color:var(--v2-accent);letter-spacing:-.01em;
+}
+.cl-hero p{
+  margin:1.4rem auto 0;max-width:38rem;
+  font-size:clamp(1rem,1.4vw,1.15rem);line-height:1.55;color:var(--bone-dim);
+}
+
+/* ── controls ── */
+.cl-search{
+  position:relative;max-width:26rem;
+  margin:0 auto clamp(1.4rem,3vw,2rem);padding-inline:var(--v2-pad);
+}
+.cl-search__icon{
+  position:absolute;left:calc(var(--v2-pad) + .95rem);top:50%;
+  transform:translateY(-50%);width:15px;height:15px;
+  fill:none;stroke:var(--bone-faint);stroke-width:2;
+  stroke-linecap:round;pointer-events:none;
+}
+.cl-search__input{
+  width:100%;padding:.8rem 1rem .8rem 2.5rem;
+  background:transparent;color:var(--bone);
+  border:1px solid var(--line);border-radius:99px;
+  font:inherit;font-size:.92rem;
+  transition:border-color .28s var(--v2-ease);
+}
+.cl-search__input::placeholder{color:var(--bone-faint)}
+.cl-search__input:focus{outline:none;border-color:var(--v2-accent)}
+
+.cl-filters{
+  display:flex;flex-wrap:wrap;gap:.45rem;justify-content:center;
+  max-width:var(--v2-maxw);margin:0 auto clamp(2.5rem,5vw,4rem);
+  padding-inline:var(--v2-pad);
+}
+.cl-filter{
+  padding:.45rem 1rem;border-radius:99px;cursor:pointer;
+  background:transparent;color:var(--bone-dim);
+  border:1px solid var(--line);
+  font:inherit;font-size:.8rem;font-weight:500;
+  transition:color .28s var(--v2-ease),border-color .28s var(--v2-ease);
+}
+.cl-filter:hover{color:var(--bone);border-color:var(--bone-faint)}
+.cl-filter.is-active{
+  color:var(--on-accent);background:var(--v2-accent);border-color:var(--v2-accent);
+}
+
+/* ── timeline ──
+   One hairline runs down the left; each date group hangs off it. */
+.cl-timeline{
+  max-width:52rem;margin:0 auto;
+  padding:0 var(--v2-pad) clamp(4rem,9vw,7rem);
+}
+.cl-date{
+  position:relative;
+  padding-left:clamp(1.1rem,3vw,2rem);
+  border-left:1px solid var(--line);
+}
+.cl-date + .cl-date{padding-top:clamp(2.2rem,4vw,3.2rem)}
+/* The marker sits ON the rule, so it must track the same top as the
+   label text rather than the padded box. */
+.cl-date::before{
+  content:'';position:absolute;left:-3.5px;top:.55em;
+  width:6px;height:6px;border-radius:50%;
+  background:var(--v2-accent);
+}
+.cl-date + .cl-date::before{top:calc(clamp(2.2rem,4vw,3.2rem) + .55em)}
+.cl-date__label{
+  font-family:ui-monospace,'SF Mono','JetBrains Mono',Menlo,monospace;
+  font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--bone-faint);
+}
+.cl-date__title{
+  margin-top:.5rem;
+  font-family:var(--font-display);font-weight:400;letter-spacing:-.01em;
+  font-size:clamp(1.15rem,2.2vw,1.5rem);line-height:1.25;color:var(--bone);
+}
+
+/* ── entries ── */
+.cl-entry{margin-top:1.6rem}
+.cl-entry + .cl-entry{
+  margin-top:1.4rem;padding-top:1.4rem;border-top:1px solid var(--line-2);
+}
+.cl-entry__header{
+  display:flex;align-items:baseline;gap:.7rem;flex-wrap:wrap;
+}
+.cl-entry__title{
+  font-size:1rem;font-weight:540;line-height:1.4;color:var(--bone);
+}
+.cl-entry__desc{
+  margin-top:.45rem;font-size:.94rem;line-height:1.65;color:var(--bone-dim);
+}
+
+/* Badges: outline pills, micro mono type. Colour carries the meaning,
+   so each type keeps a distinct hue but none of them shout. */
+.cl-entry__badge{
+  flex:none;padding:.2rem .5rem;border-radius:4px;
+  border:1px solid currentColor;
+  font-family:ui-monospace,'SF Mono','JetBrains Mono',Menlo,monospace;
+  font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;
+  line-height:1.5;
+}
+.cl-entry__badge--new{color:var(--v2-accent)}
+.cl-entry__badge--improved{color:#7cc4ff}
+.cl-entry__badge--fixed{color:var(--orange)}
+.cl-entry__badge--performance{color:#e9c46a}
+
+/* ── empty state ──
+   display:none is the resting state; the script adds .is-visible. */
+.cl-empty{
+  display:none;text-align:center;padding:3rem 1rem;
+  color:var(--bone-faint);font-size:.98rem;
+}
+.cl-empty.is-visible{display:block}
+
+@media(max-width:768px){
+  body.v2 .cl-hero{padding-top:7.5rem}
+  .cl-entry__header{gap:.5rem}
+}

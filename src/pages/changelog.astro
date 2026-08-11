@@ -1,5 +1,8 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import V2Head from "../components/V2Head.astro";
+import V2Nav from "../components/V2Nav.astro";
+import V2Footer from "../components/V2Footer.astro";
 import SplitHeadline from "../components/SplitHeadline.astro";
 import { getChangelogPage, getChangelogEntries } from "../lib/queries";
 import { getClient } from "../lib/sanity";
@@ -135,9 +138,14 @@ function formatDate(iso: string): string {
   title={hero.headlineTop ? `${hero.headlineTop} ${hero.headlineBottom ?? ""}`.trim() : "Changelog"}
   description={heroSubhead}
   seo={page?.seo}
+  chrome={false}
+  bodyClass="v2"
 >
-  <link slot="head" rel="stylesheet" href={v("/components/changelog-inline.css")} />
+  <V2Head slot="head" pageCss="/components/v2-changelog.css" />
 
+  <V2Nav />
+
+  <main id="main">
   <section class="cl-hero">
     <SplitHeadline as="h1" top={heroTop} bottom={heroBottom} />
     <p>{heroSubhead}</p>
@@ -179,6 +187,11 @@ function formatDate(iso: string): string {
 
     <div class="cl-empty" id="clEmpty">No updates found matching your search</div>
   </div>
+  </main>
 
+  <V2Footer />
+
+  <script is:inline src={v("/components/v2-base.js")}></script>
+  <script is:inline src={v("/components/v2-chrome.js")}></script>
   <script is:inline src={v("/components/changelog-inline.js")}></script>
 </BaseLayout>
