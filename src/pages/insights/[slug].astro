@@ -87,6 +87,9 @@ const jsonLd = {
   seo={post.seo}
   chrome={false}
   bodyClass="v2"
+  {/* This page emits its own BreadcrumbList using the article's real title
+      from Sanity, not the slug. Two on one page is a validation error. */}
+  breadcrumb={false}
 >
   <V2Head slot="head" pageCss="/components/v2-prose.css" />
   <script type="application/ld+json" slot="head" set:html={JSON.stringify(jsonLd)} />

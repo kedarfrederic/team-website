@@ -54,11 +54,19 @@ interface Props {
    * is set, which stays the editor-controlled source of truth.
    */
   ogImageUrl?: string;
+  /**
+   * Emit BreadcrumbList structured data. Default true for every page except the
+   * site root. Set false on a page that builds its own richer trail — currently
+   * only insights/[slug].astro, which appends the article title from Sanity.
+   * Two BreadcrumbLists on one page is a validation error, not a bonus.
+   */
+  breadcrumb?: boolean;
 }
 
 const {
   title, description, ogImage, seo, canonical,
   navTheme = "light", chrome = true, bodyClass, ogImageUrl: ogImageUrlProp,
+  breadcrumb = true,
 } = Astro.props;
 const previewMode = isPreviewRequest(Astro);
 const settings = await getSiteSettings(getClient(Astro));
@@ -92,6 +100,44 @@ const noIndex = seo?.noIndex === true || previewMode;
 const canonicalUrl =
   canonical ?? new URL(Astro.url.pathname, Astro.site ?? "https://teamrollouts.com").toString();
 
+/**
+ * BreadcrumbList — emitted here rather than per page so every route gets one and
+ * none can be forgotten. Derived from the URL path, with a label map because
+ * de-slugging gives the wrong words ("For artists", "Sms terms") and a breadcrumb
+ * that reads differently from the nav is worse than none.
+ *
+ * Nested paths build the full trail, so /insights/<slug> would produce
+ * Home > Insights > <slug>. The article page passes breadcrumb={false} and emits
+ * its own, using the real title from Sanity instead of the slug.
+ */
+const CRUMB_LABELS: Record<string, string> = {
+  rollouts: "Rollouts", teammate: "TeamMate", assets: "Assets",
+  connections: "Connections", tours: "Tours", security: "Security & trust",
+  pricing: "Pricing", about: "About", contact: "Contact", insights: "Insights",
+  enterprise: "Enterprise", changelog: "Changelog",
+  "for-artists": "Solo artists", "for-managers": "Managers",
+  "for-labels": "Labels", "for-partners": "Distributors",
+  privacy: "Privacy", terms: "Terms", cookies: "Cookies", "sms-terms": "SMS Terms",
+};
+const crumbSegments = Astro.url.pathname.replace(/^\/|\/$/g, "").split("/").filter(Boolean);
+const siteRoot = (Astro.site ?? new URL("https://teamrollouts.com")).origin;
+const breadcrumbJsonLd =
+  breadcrumb && crumbSegments.length > 0
+    ? {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: `${siteRoot}/` },
+          ...crumbSegments.map((seg, i) => ({
+            "@type": "ListItem",
+            position: i + 2,
+            name: CRUMB_LABELS[seg] ?? seg.replace(/-/g, " "),
+            item: `${siteRoot}/${crumbSegments.slice(0, i + 1).join("/")}`,
+          })),
+        ],
+      }
+    : null;
+
 /* The <html> tag below carries data-theme="dark", which HOLDS THE SITE'S DARK
    LOCK — don't remove it casually. The v2 design ships a real light theme keyed
    off BOTH `:root[data-theme="light"]` AND
@@ -119,6 +165,9 @@ const canonicalUrl =
   <meta name="description" content={finalDescription} />
   {noIndex && <meta name="robots" content="noindex" />}
   <link rel="canonical" href={canonicalUrl} />
+  {breadcrumbJsonLd && (
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
+  )}
 
   <!-- Open Graph -->
   <meta property="og:title" content={finalTitle} />
@@ -133,16 +182,18 @@ const canonicalUrl =
   <meta name="twitter:description" content={finalDescription} />
   <meta name="twitter:image" content={ogImageUrl} />
 
-  <!-- Preconnect for fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  {/* Warm the DNS / TCP for the integrations marquee CDNs so the 36 logo
-      images don't burn a fresh handshake each when the marquee scrolls
-      into view. dns-prefetch (cheap, no TLS) for the long-tail; preconnect
-      (TLS handshake too) for the most-used origin. */}
-  <link rel="preconnect" href="https://cdn.simpleicons.org" crossorigin />
-  <link rel="dns-prefetch" href="https://svgl.app" />
-  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
+  {/* Font/CDN preconnects REMOVED (2026-08-12). All five were dead weight:
+      - fonts.googleapis.com / fonts.gstatic.com: the v2 fonts are self-hosted
+        from /v2/assets/fonts (see the @font-face block in v2-base.css), and
+        neither host is referenced anywhere outside this file. Preconnecting to
+        Google Fonts also discloses every visitor's IP to Google for no benefit,
+        which matters now that we ask for consent.
+      - cdn.simpleicons.org / svgl.app / cdn.jsdelivr.net: warmed for the old
+        integrations marquee, which only exists in homepage-body.html — the
+        PRE-v2 homepage body that no live route imports. The v2 marquee serves
+        its logos first-party from /v2/assets/logos.
+      A preconnect to a host you never call costs a DNS lookup and a TLS
+      handshake per page and buys nothing. */}
 
   {/*
     Scroll position preservation across Visual Editing reloads.
