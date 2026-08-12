@@ -1,0 +1,33 @@
+# Team
+
+> Team is the operational brain for music releases. It connects the tools a music operation already runs on — releases, creative assets, and touring — into one living picture, and adds TeamMate, an AI layer that remembers the history, reasons across everything, and tells you what changed, what matters, and what to do next. The platform (Rollouts, Assets) is free; the Pro tier adds Tours, TeamMate and connections to your wider stack.
+
+## Platform
+- [Rollouts](https://teamrollouts.com/rollouts): Run a music release like a campaign — timeline, budget, tracks, assets and territories in one workspace.
+- [Assets](https://teamrollouts.com/assets): The creative library for a release — artwork, audio, video, documents and links, versioned and release-ready.
+- [Tours](https://teamrollouts.com/tours): Tour management for the whole run — routing, show advancing, day sheets and settlement (Pro).
+- [TeamMate](https://teamrollouts.com/teammate): The AI intelligence across every module — memory, reasoning and answers over your whole operation (Pro).
+- [Connections](https://teamrollouts.com/connections): Bring the tools you already use — Notion, Slack, Gmail, Drive, Dropbox, Sheets and more (Pro).
+- [Security & trust](https://teamrollouts.com/security): Encryption, permissioned and revocable connections, and data that stays yours.
+
+## Plans
+- [Pricing](https://teamrollouts.com/pricing): Compare Free and Pro side by side. Free = Rollouts + Assets (no card); Pro adds Tours, TeamMate + connections, at beta pricing during early access.
+
+## Solutions
+- [Solo artists](https://teamrollouts.com/for-artists): A label-grade rollout, run solo.
+- [Artist managers](https://teamrollouts.com/for-managers): The whole roster in one place.
+- [Labels](https://teamrollouts.com/for-labels): Every release across the slate as one living picture.
+- [Distributors & partners](https://teamrollouts.com/for-partners): The whole book, pre-flighted.
+- [Enterprise](https://teamrollouts.com/enterprise): Controls, deployment and scale for larger operations.
+
+## Company
+- [About](https://teamrollouts.com/about): Why we built the operational brain for music.
+- [Insights](https://teamrollouts.com/insights): Playbooks and strategy on shipping music releases.
+
+## Insights
+- [The 88% Problem: Why Most Music Fails Before Anyone Hears It](https://teamrollouts.com/insights/the-88-percent-problem)
+- [The Real AI Problem in Music Has Nothing to Do With Music](https://teamrollouts.com/insights/real-ai-problem-in-music)
+- [Music Release Management Software: What It Is and How to Choose](https://teamrollouts.com/insights/music-release-management-software)
+- [The Music Industry's Relationship With AI Is More Nuanced Than You Think](https://teamrollouts.com/insights/ai-music-industry-nuanced)
+- [Stop Treating Your Release Like a Project](https://teamrollouts.com/insights/stop-treating-release-as-project)
+- [The Release Day Checklist for Independent Artists](https://teamrollouts.com/insights/release-day-checklist)

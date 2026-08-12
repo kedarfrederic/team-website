@@ -87,6 +87,79 @@ let body = bodyHtml as string;
 for (const [token, value] of Object.entries(tokens)) {
   body = body.split(token).join(esc(value));
 }
+
+/**
+ * Homepage structured data — ported from the source's index.html.
+ *
+ * The site had ZERO JSON-LD on the homepage. Organization + WebSite give search
+ * engines the entity and the publisher relationship; SoftwareApplication is what
+ * makes this legible as a product rather than a brochure; WebPage ties the page
+ * to both. @id values are stable fragment URIs so the nodes can reference each
+ * other, which is how the source does it.
+ *
+ * TWO DELIBERATE DEPARTURES FROM THE SOURCE:
+ *
+ * 1. `logo` points at /v2/assets/… . The source says /assets/logo/…, which is
+ *    correct in that repo's layout and a 404 here — a broken logo URL in
+ *    structured data is worse than none, because it's what search surfaces pull.
+ *
+ * 2. The AggregateOffer block is OMITTED. The source declares
+ *    highPrice "49.95", but our live /pricing advertises figures up to $99.95
+ *    after the base-plus-seat cutover. Price markup that contradicts the page is
+ *    a real risk (search engines can display it), and I can't infer from the page
+ *    alone which figure is the per-month ceiling versus a yearly total. Add it
+ *    back once someone confirms the exact tier prices — the shape is in the
+ *    source, it just needs correct numbers.
+ *
+ * `dateModified` is also dropped rather than hardcoded: the source pins
+ * 2026-08-07, which is already stale, and a date asserted here that nobody
+ * updates is misinformation with a timestamp.
+ */
+const SITE = "https://teamrollouts.com";
+const homeJsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${SITE}/#organization`,
+      name: "Team",
+      alternateName: "Team Rollouts",
+      url: `${SITE}/`,
+      logo: `${SITE}/v2/assets/logo/team-logomark-black.png`,
+      description: "The operational brain for music releases.",
+      sameAs: [
+        "https://www.instagram.com/teamrollouts/",
+        "https://x.com/Teamrollouts",
+        "https://www.linkedin.com/company/teamrollouts",
+      ],
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${SITE}/#website`,
+      url: `${SITE}/`,
+      name: "Team",
+      publisher: { "@id": `${SITE}/#organization` },
+    },
+    {
+      "@type": "SoftwareApplication",
+      name: "Team",
+      applicationCategory: "BusinessApplication",
+      operatingSystem: "Web",
+      url: `${SITE}/`,
+      description:
+        "Team connects the tools your music operation already runs on — releases, assets, and tours — and adds TeamMate, an AI layer that reasons across all of it.",
+      publisher: { "@id": `${SITE}/#organization` },
+    },
+    {
+      "@type": "WebPage",
+      "@id": `${SITE}/#webpage`,
+      url: `${SITE}/`,
+      name: "Team — A Brain for Music Operations",
+      isPartOf: { "@id": `${SITE}/#website` },
+      about: { "@id": `${SITE}/#organization` },
+    },
+  ],
+};
 ---
 
 <BaseLayout
@@ -96,6 +169,7 @@ for (const [token, value] of Object.entries(tokens)) {
   navTheme="dark"
   chrome={false}
 >
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(homeJsonLd)} />
   {/* woff2, matching what homepage-v2.css now @font-face's. The delivered CSS
       moved to woff2; preloading the old .woff/.ttf would have fetched files the
       page never uses while the real fonts waited on CSS parse. */}
