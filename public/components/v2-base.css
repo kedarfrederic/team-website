@@ -117,6 +117,23 @@
   color-scheme:dark;
 }
 
+/* ── token collision with global.css ──
+   global.css also defines `:root{--accent:#f56002}` (orange) and, being imported
+   by BaseLayout, is bundled AFTER any page stylesheet — so at equal specificity
+   it wins, and every `var(--accent)` in the per-page CSS resolved to ORANGE. The
+   source specifies lime for this token ("accent-as-text / active"), so 93
+   references across 17 files were rendering the wrong brand colour: not missing,
+   not obviously broken, just quietly the other colour.
+   Re-declared on body.v2 (0,2,0) rather than :root (0,1,0) so it wins regardless
+   of bundle order. Custom properties inherit, so everything inside <body> picks
+   it up — same technique as the .container / .btn overrides further down.
+   Only --accent genuinely clashes; global's --ease is the identical curve with
+   different spacing, restated here so the two can't drift apart later. */
+body.v2{
+  --accent:var(--v2-accent);
+  --ease:var(--v2-ease);
+}
+
 /* ── page ground ──
    Scoped to body.v2 (0,2,0) so it outranks global.css's
    body{background:#fff;color:#111110} (0,1,0) regardless of bundle order —
