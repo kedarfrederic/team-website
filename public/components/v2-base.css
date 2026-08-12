@@ -33,6 +33,31 @@
    comment — that ends the comment early and silently kills every rule
    that follows, including the :root tokens. It happened.)
    ──────────────────────────────────────────────────────────── */
+/* ── @font-face — PORTED FROM THE SOURCE'S base.css ──
+   These were missing, and that is the whole font bug. The tokens below name
+   'Nyght' and 'InterV' (matching the source exactly), but nothing on the
+   interior pages DECLARED those families, so both fell through to their
+   fallbacks — Georgia for the serif, system sans for the display face.
+
+   The only serif faces reaching these pages came from src/styles/global.css,
+   which is legacy from the previous site: it declares the family as
+   "Nyght Serif" (a different name), only two italic weights, and loads them
+   from raw.githubusercontent.com — an external host, not a CDN, and a
+   third-party request on every page.
+
+   Self-hosted here instead, from files that are verified 200 on prod. Same
+   three faces the source ships. Do NOT rename the families: the tokens, this
+   block and the source all have to agree, and they now do.
+
+   (I previously "fixed" this by defining --font-serif:'Nyght' without adding
+   these declarations. On the homepage that worked, because homepage-v2.css
+   carries its own @font-face for 'Nyght'. On every interior page it named an
+   undeclared family and made the fallback worse, not better. The lesson: check
+   that the family a token names is actually DECLARED somewhere the page loads.) */
+@font-face{font-family:'Nyght';src:url('/v2/assets/fonts/NyghtSerif-Light.woff2') format('woff2');font-weight:300;font-display:swap}
+@font-face{font-family:'Nyght';src:url('/v2/assets/fonts/NyghtSerif-LightItalic.woff2') format('woff2');font-style:italic;font-weight:300;font-display:swap}
+@font-face{font-family:'InterV';src:url('/v2/assets/fonts/Inter-Variable.woff2') format('woff2');font-weight:100 900;font-display:swap}
+
 :root{
   --ink:#0d0c0b;--ink-2:#161412;--ink-3:#1e1a15;
   --bone:#efebe3;--bone-dim:rgba(239,235,227,.56);--bone-faint:rgba(239,235,227,.3);

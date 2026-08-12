@@ -29,8 +29,13 @@ const { pageCss } = Astro.props;
 
 <script is:inline set:html={`document.documentElement.classList.add('js-reveal')`} />
 
-<link rel="preload" href="/v2/assets/fonts/NyghtSerif-LightItalic.woff" as="font" type="font/woff" crossorigin />
-<link rel="preload" href="/v2/assets/fonts/Inter-Variable.ttf" as="font" type="font/ttf" crossorigin />
+{/* Must match the @font-face src in v2-base.css EXACTLY, or the preload fetches
+    a file the page never uses and the real font still waits on CSS parse. These
+    pointed at .woff and .ttf while the faces request .woff2 — which is what the
+    "preloaded but not used within a few seconds" console warning on every page
+    was telling us. */}
+<link rel="preload" href="/v2/assets/fonts/Inter-Variable.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="/v2/assets/fonts/NyghtSerif-LightItalic.woff2" as="font" type="font/woff2" crossorigin />
 
 <link rel="stylesheet" href={v("/components/v2-base.css")} />
 <link rel="stylesheet" href={v("/components/v2-chrome.css")} />
