@@ -7,7 +7,9 @@ import VisualEditing from "../components/VisualEditing.astro";
 import Footer from "../components/Footer.astro";
 import Nav from "../components/Nav.astro";
 import V2CookieBanner from "../components/V2CookieBanner.astro";
+import LocaleSuggestionBanner from "../components/LocaleSuggestionBanner.astro";
 import { v } from "../lib/asset-url";
+import { LOCALE_LABELS, alternateLinks, localeFromPath, normalizePath, stripLocale } from "../lib/i18n";
 
 interface SeoBlock {
   metaTitle?: string;
@@ -101,6 +103,36 @@ const canonicalUrl =
   canonical ?? new URL(Astro.url.pathname, Astro.site ?? "https://teamrollouts.com").toString();
 
 /**
+ * Locale, never from the visitor's country — see src/lib/i18n.ts for why.
+ *
+ * Falls back to deriving it from the path rather than to DEFAULT_LOCALE,
+ * because middleware DOES NOT RUN FOR PRERENDERED PAGES. Any page that opts
+ * into `export const prerender = true` gets no `locals`, so defaulting to
+ * English would silently render a Korean page as `lang="en"` with no error
+ * anywhere — correct-looking output, wrong to every screen reader and crawler.
+ * Deriving from the path makes middleware an optimisation rather than a
+ * requirement, so the two paths cannot disagree.
+ */
+const locale = Astro.locals?.locale ?? localeFromPath(Astro.url.pathname);
+const basePath = Astro.locals?.basePath ?? stripLocale(Astro.url.pathname);
+const htmlLang = LOCALE_LABELS[locale].hreflang;
+
+/**
+ * hreflang alternates. Emitted only for paths with a published translation, so
+ * an alternate can never point at a 404 — Google discards a whole annotation
+ * cluster when one link is broken, so a partial set is worse than none.
+ *
+ * Suppressed in two cases:
+ *  - noindex (which includes every preview render): telling a crawler "here are
+ *    this page's language versions" while also telling it not to index the page
+ *    is a contradiction, and preview renders would leak draft URLs.
+ *  - an explicit `canonical` prop: the page is deliberately pointing somewhere
+ *    else, so alternates derived from ITS path would annotate the wrong cluster.
+ */
+const hreflangAlternates =
+  noIndex || canonical ? [] : alternateLinks(normalizePath(Astro.url.pathname), siteOrigin);
+
+/**
  * BreadcrumbList — emitted here rather than per page so every route gets one and
  * none can be forgotten. Derived from the URL path, with a label map because
  * de-slugging gives the wrong words ("For artists", "Sms terms") and a breadcrumb
@@ -157,7 +189,7 @@ const breadcrumbJsonLd =
    this note lives up here in the frontmatter instead of down there. */
 ---
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang={htmlLang} data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -165,6 +197,9 @@ const breadcrumbJsonLd =
   <meta name="description" content={finalDescription} />
   {noIndex && <meta name="robots" content="noindex" />}
   <link rel="canonical" href={canonicalUrl} />
+  {hreflangAlternates.map((alt) => (
+    <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />
+  ))}
   {breadcrumbJsonLd && (
     <script type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
   )}
@@ -353,6 +388,11 @@ const breadcrumbJsonLd =
   {/* Outside the `chrome` guard on purpose: consent is not site chrome, and
       the chromeless v2 pages (the homepage especially) load PostHog too. */}
   <V2CookieBanner />
+
+  {/* Also outside the `chrome` guard, and for the same reason: the chromeless
+      v2 homepage is precisely the page a visitor from Korea lands on first.
+      Renders nothing unless the current path has a published translation. */}
+  <LocaleSuggestionBanner locale={locale} basePath={basePath} />
 
   <VisualEditing />
 </body>

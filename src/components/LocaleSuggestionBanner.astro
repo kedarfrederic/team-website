@@ -1,0 +1,210 @@
+---
+/**
+ * "This page is available in 한국어" — an OFFER, never a redirect.
+ *
+ * THE RULE THIS COMPONENT EXISTS TO KEEP: a visitor's country may suggest a
+ * language. It may never choose one for them, and it may never change what a
+ * URL serves.
+ *
+ * Google's multi-regional guidance is explicit that automatically redirecting
+ * between language versions is the wrong pattern, and that IP analysis is
+ * unreliable for adapting content. Since Googlebot crawls this site almost
+ * entirely from US addresses, a redirect would also mean the Korean pages are
+ * never crawled at all — invisible rather than penalised, which is harder to
+ * notice and worse.
+ *
+ * HOW IT STAYS CACHE-SAFE. The site is SSR behind Cloudflare's edge cache, so
+ * any HTML that varied by country would eventually be served to the wrong
+ * visitor. Everything rendered here is a pure function of the URL:
+ *
+ *   - whether the banner exists at all (does this page have a translation?)
+ *   - where it points
+ *   - the countries that would trigger it
+ *
+ * The visitor's actual country is never in the HTML. It is fetched at runtime
+ * from /api/geo, which is `no-store`. So the markup below ships identically to
+ * every visitor and to Googlebot, and only the client decides to reveal it.
+ *
+ * Rendered nothing-at-all when the current page has no translation, so the
+ * offer can never lead somewhere that 404s.
+ */
+import {
+  DEFAULT_LOCALE,
+  LOCALE_COOKIE,
+  LOCALE_LABELS,
+  SUGGESTED_LOCALE_BY_COUNTRY,
+  hasTranslation,
+  localizePath,
+  type Locale,
+} from "../lib/i18n";
+
+interface Props {
+  /** Current locale, from Astro.locals.locale. */
+  locale: Locale;
+  /** Locale-stripped path, from Astro.locals.basePath. */
+  basePath: string;
+}
+
+const { locale, basePath } = Astro.props;
+
+// Which other locale could we offer on this page? Only one alternative exists
+// today; when a second lands this becomes a pick rather than a find.
+const target = (Object.values(SUGGESTED_LOCALE_BY_COUNTRY) as Locale[]).find(
+  (candidate) => candidate !== locale && hasTranslation(basePath, candidate),
+);
+
+// Countries whose visitors should see this particular offer.
+const triggerCountries = target
+  ? Object.entries(SUGGESTED_LOCALE_BY_COUNTRY)
+      .filter(([, value]) => value === target)
+      .map(([country]) => country)
+  : [];
+
+const targetHref = target ? localizePath(basePath, target) : "";
+
+// Copy is written IN the language being offered — someone who reads Korean
+// should not have to read English to find the Korean version.
+const COPY: Record<string, { message: string; accept: string; dismiss: string }> = {
+  ko: {
+    message: "이 페이지는 한국어로도 볼 수 있습니다.",
+    accept: "한국어로 보기",
+    dismiss: "English로 계속",
+  },
+  en: {
+    message: "This page is also available in English.",
+    accept: "View in English",
+    dismiss: "Stay in current language",
+  },
+};
+const copy = target ? (COPY[target] ?? COPY[DEFAULT_LOCALE]) : null;
+---
+
+{/*
+  Markup AND behaviour both live inside this guard, deliberately.
+
+  The script was originally outside it, which meant every page on the site
+  shipped ~2KB of inline JavaScript whose entire job was to find an element that
+  wasn't there and return. Harmless per page, invisible in testing, and paid for
+  on every request across the whole site — the kind of cost that only ever gets
+  added, never noticed. `is:inline` scripts are emitted where they are written
+  rather than hoisted, so nesting the script here means it ships only on pages
+  that actually render the banner.
+*/}
+{target && copy && (
+  <div
+    id="localeSuggest"
+    class="lsg"
+    role="region"
+    aria-label={LOCALE_LABELS[target].name}
+    hidden
+    data-target-locale={target}
+    data-target-href={targetHref}
+    data-current-locale={locale}
+    data-countries={triggerCountries.join(",")}
+    data-cookie={LOCALE_COOKIE}
+  >
+    <div class="lsg__in">
+      <p class="lsg__msg" lang={LOCALE_LABELS[target].hreflang}>{copy.message}</p>
+      <div class="lsg__actions">
+        <a class="lsg__btn lsg__btn--solid" href={targetHref} data-lsg-accept lang={LOCALE_LABELS[target].hreflang}>
+          {copy.accept}
+        </a>
+        <button type="button" class="lsg__btn lsg__btn--ghost" data-lsg-dismiss>
+          {copy.dismiss}
+        </button>
+      </div>
+    </div>
+
+    <script is:inline>
+      (() => {
+        'use strict';
+        const banner = document.getElementById('localeSuggest');
+        if (!banner) return;
+
+        const COOKIE = banner.dataset.cookie || 'preferred_locale';
+        const MAX_AGE = 60 * 60 * 24 * 365;
+
+        const readPreference = () => {
+          const m = document.cookie.match(new RegExp('(?:^|;\\s*)' + COOKIE + '=([^;]*)'));
+          return m ? decodeURIComponent(m[1]) : null;
+        };
+
+        /* Same domain guard the consent banner uses: on localhost or a *.pages.dev
+           preview a .teamrollouts.com cookie is silently rejected, which would make
+           the banner reappear on every load while looking like a bug. The parent
+           domain matters here — the app at app.teamrollouts.com reads this same
+           cookie so a visitor who picks Korean is not asked again after signup. */
+        const writePreference = (value) => {
+          const onSite = /(^|\.)teamrollouts\.com$/.test(location.hostname);
+          const parts = [
+            COOKIE + '=' + encodeURIComponent(value),
+            'Path=/', 'Max-Age=' + MAX_AGE, 'SameSite=Lax',
+          ];
+          if (onSite) parts.push('Domain=.teamrollouts.com');
+          if (location.protocol === 'https:') parts.push('Secure');
+          document.cookie = parts.join('; ');
+        };
+
+        // An explicit choice — in either direction — ends the conversation.
+        if (readPreference()) return;
+
+        const target = banner.dataset.targetLocale;
+        const countries = (banner.dataset.countries || '')
+          .split(',').map((c) => c.trim().toUpperCase()).filter(Boolean);
+        if (!target || countries.length === 0) return;
+
+        banner.querySelector('[data-lsg-accept]')?.addEventListener('click', () => {
+          writePreference(target);       // the href navigates; this just records it
+        });
+
+        banner.querySelector('[data-lsg-dismiss]')?.addEventListener('click', () => {
+          writePreference(banner.dataset.currentLocale || 'en');
+          banner.hidden = true;
+        });
+
+        /* Country is fetched, never rendered — see the note at the top of this file.
+           Any failure (offline, blocked, endpoint down) leaves the banner hidden,
+           which is the correct quiet default: showing it to the wrong visitor is a
+           worse outcome than not showing it to the right one. */
+        fetch('/api/geo', { headers: { accept: 'application/json' }, credentials: 'omit' })
+          .then((res) => (res.ok ? res.json() : null))
+          .then((data) => {
+            const country = data && typeof data.country === 'string' ? data.country.toUpperCase() : null;
+            if (country && countries.includes(country)) banner.hidden = false;
+          })
+          .catch(() => {});
+      })();
+    </script>
+  </div>
+)}
+
+<style is:global>
+  /* Self-contained literal colours, matching V2CookieBanner's reasoning: this
+     renders on both the v2 pages and the classic-chrome ones, whose token sets
+     differ. Pinned to the TOP because the cookie banner owns the bottom — two
+     fixed bars stacking on one edge would bury one of them on mobile. */
+  .lsg{position:fixed;top:0;left:0;right:0;z-index:9998;
+       background:rgba(13,12,11,.96);border-bottom:1px solid rgba(239,235,227,.14);
+       color:#efebe3;backdrop-filter:blur(10px);
+       font-family:Inter,-apple-system,BlinkMacSystemFont,sans-serif}
+  .lsg[hidden]{display:none}
+  .lsg__in{max-width:78rem;margin:0 auto;padding:.7rem clamp(1.3rem,5vw,4.5rem);
+           display:flex;flex-wrap:wrap;gap:.6rem 1.4rem;align-items:center;
+           justify-content:space-between}
+  .lsg__msg{margin:0;font-size:.88rem;line-height:1.5;color:rgba(239,235,227,.78)}
+  .lsg__actions{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+  .lsg__btn{font:inherit;font-size:.82rem;font-weight:560;padding:.45rem 1rem;
+            border-radius:99px;cursor:pointer;white-space:nowrap;text-decoration:none;
+            display:inline-block;transition:background .2s,border-color .2s,color .2s}
+  .lsg__btn--solid{background:#d9fa87;color:#0d0c0b;border:1px solid #d9fa87}
+  .lsg__btn--solid:hover{background:#e6ffa0}
+  .lsg__btn--ghost{background:transparent;color:rgba(239,235,227,.8);
+                   border:1px solid rgba(239,235,227,.28)}
+  .lsg__btn--ghost:hover{color:#efebe3;border-color:rgba(239,235,227,.55)}
+  @media(max-width:720px){
+    .lsg__in{padding:.65rem 1.3rem}
+    .lsg__actions{flex:1 1 100%}
+    .lsg__btn{flex:1 1 auto;text-align:center}
+  }
+</style>
+

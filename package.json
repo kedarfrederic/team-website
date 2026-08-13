@@ -14,7 +14,8 @@
     "seed": "tsx scripts/seed-sanity.ts",
     "seed:homepage-v2-copy": "tsx scripts/seed-homepage-v2-copy.ts",
     "seed:pricing-v2-copy": "tsx scripts/seed-pricing-v2-copy.ts",
-    "check:v2-links": "node scripts/check-v2-links.mjs"
+    "check:v2-links": "node scripts/check-v2-links.mjs",
+    "check:i18n": "tsx scripts/check-i18n.ts"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
