@@ -355,6 +355,26 @@ const breadcrumbJsonLd =
 </head>
 <body class={bodyClass}>
   {/*
+    FIRST in <body>, deliberately.
+
+    This component carries its own inline script, and `is:inline` scripts run
+    where they are written. Mounted at the end of the document (next to the
+    cookie banner, where it started) the geo fetch did not even BEGIN until the
+    entire page had been parsed, so the bar visibly appeared late — a Korean
+    visitor saw the English page settle, then get pushed down.
+
+    Here the request goes out as soon as the parser reaches the top of the body,
+    which is roughly as early as any same-origin fetch can start without
+    blocking render. Combined with the sessionStorage cache inside the
+    component, every navigation after the first is instant.
+
+    Position is unaffected: the bar is position:fixed, so document order does
+    not determine where it sits. Outside the `chrome` guard for the same reason
+    as the cookie banner — the chromeless v2 homepage is exactly the page a
+    visitor from Korea lands on first.
+  */}
+  <LocaleSuggestionBanner locale={locale} basePath={basePath} />
+  {/*
     Legacy nav + footer — both auto-inject their CSS and build their own DOM
     into the placeholder divs below. data-theme controls nav appearance:
     "dark" = transparent over hero, "light" = solid from top of page.
@@ -404,10 +424,6 @@ const breadcrumbJsonLd =
       the chromeless v2 pages (the homepage especially) load PostHog too. */}
   <V2CookieBanner />
 
-  {/* Also outside the `chrome` guard, and for the same reason: the chromeless
-      v2 homepage is precisely the page a visitor from Korea lands on first.
-      Renders nothing unless the current path has a published translation. */}
-  <LocaleSuggestionBanner locale={locale} basePath={basePath} />
 
   <VisualEditing />
 </body>

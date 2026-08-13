@@ -159,18 +159,46 @@ const copy = target ? (COPY[target] ?? COPY[DEFAULT_LOCALE]) : null;
 
         banner.querySelector('[data-lsg-dismiss]')?.addEventListener('click', () => {
           writePreference(banner.dataset.currentLocale || 'en');
+          // Immediate. Deferring this behind an exit animation would leave the
+          // bar on screen for a beat after a deliberate dismissal, which reads
+          // as the click not having registered.
           banner.hidden = true;
         });
 
+        const reveal = (country) => {
+          if (!country || !countries.includes(country)) return;
+          // One unconditional, synchronous line. Nothing to sequence, no
+          // frame-timing dependency, and no state in which the bar can be
+          // un-hidden and invisible at once.
+          banner.hidden = false;
+        };
+
         /* Country is fetched, never rendered — see the note at the top of this file.
-           Any failure (offline, blocked, endpoint down) leaves the banner hidden,
-           which is the correct quiet default: showing it to the wrong visitor is a
-           worse outcome than not showing it to the right one. */
+           Cached in sessionStorage because it cannot change within a session and
+           the round trip is the entire reason the bar arrives late: the first
+           page pays for it, every navigation after is instant. sessionStorage
+           rather than localStorage so a visitor who travels, or switches VPN,
+           is re-evaluated next session instead of being stuck with a stale
+           country indefinitely.
+
+           Any failure (offline, blocked, endpoint down) leaves the banner
+           hidden, which is the correct quiet default: showing it to the wrong
+           visitor is worse than not showing it to the right one. */
+        const CACHE_KEY = 'geo_country';
+        let cached = null;
+        try { cached = sessionStorage.getItem(CACHE_KEY); } catch { /* private mode */ }
+
+        if (cached !== null) {
+          reveal(cached);
+          return;
+        }
+
         fetch('/api/geo', { headers: { accept: 'application/json' }, credentials: 'omit' })
           .then((res) => (res.ok ? res.json() : null))
           .then((data) => {
-            const country = data && typeof data.country === 'string' ? data.country.toUpperCase() : null;
-            if (country && countries.includes(country)) banner.hidden = false;
+            const country = data && typeof data.country === 'string' ? data.country.toUpperCase() : '';
+            try { sessionStorage.setItem(CACHE_KEY, country); } catch { /* private mode */ }
+            reveal(country);
           })
           .catch(() => {});
       })();
@@ -186,7 +214,24 @@ const copy = target ? (COPY[target] ?? COPY[DEFAULT_LOCALE]) : null;
   .lsg{position:fixed;top:0;left:0;right:0;z-index:9998;
        background:rgba(13,12,11,.96);border-bottom:1px solid rgba(239,235,227,.14);
        color:#efebe3;backdrop-filter:blur(10px);
-       font-family:Inter,-apple-system,BlinkMacSystemFont,sans-serif}
+       font-family:Inter,-apple-system,BlinkMacSystemFont,sans-serif;
+       /* NO ENTRANCE ANIMATION, deliberately.
+
+          Two were tried and both were removed. A transition from
+          translateY(-100%), and then a keyframe animation from the same start
+          state. Both fail identically in a background tab — browsers pause
+          transitions AND animations there, holding the element at its first
+          keyframe, so the bar ended up un-hidden and parked off-screen at the
+          same time. Anyone arriving via cmd-click, a restored session, or a
+          background link got a banner that existed and could not be seen.
+
+          The complaint that prompted this was that the bar arrived LATE, not
+          that it arrived abruptly. That is fixed where it actually lives: the
+          component now mounts first in <body> so the geo request starts as
+          early as a same-origin fetch can, and the answer is cached in
+          sessionStorage so every navigation after the first is instant. An
+          animation only ever addressed the cosmetics of a delay that is now
+          mostly gone, and it cost a real failure mode to do it. */
   .lsg[hidden]{display:none}
   .lsg__in{max-width:78rem;margin:0 auto;padding:.7rem clamp(1.3rem,5vw,4.5rem);
            display:flex;flex-wrap:wrap;gap:.6rem 1.4rem;align-items:center;

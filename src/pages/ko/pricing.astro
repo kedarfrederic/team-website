@@ -2,24 +2,30 @@
 /**
  * 가격 — Korean pricing page.
  *
- * PRICES ARE PLACEHOLDERS, AND THEY ARE THE US PRICES.
+ * PRICES ARE PLACEHOLDERS. They are the US prices converted to KRW.
  *
- * Every amount here is the exact figure from the English page, in USD, on
- * purpose. KRW figures exist in the platform repo's economics model
- * (₩119,000/seat, ₩219,000) but that file's own comment says to replace them
- * with the partner's contracted settlement terms, so they are not confirmed
- * prices and must not be published as if they were. Showing real USD is honest
- * and reversible; inventing KRW is neither — a screenshot of a wrong number
- * outlives the page it came from.
+ * Derived at the FX baseline already used by the platform repo's economics
+ * model — USD/KRW 1,485 (Bank of Korea, mid-Jul 2026) — then rounded to clean
+ * Korean price points. The conversion is a cross-check on itself: $79.96 x
+ * 1485 = 118,741, which rounds to the ₩119,000 that MARKET_PRESETS.korea
+ * already carries as pricePerSeat, so both were derived the same way.
  *
- * This is also what the comparable vendors do: Notion (/ko), Figma (/ko-kr)
- * and Google Workspace all serve Korean pages priced in USD, each with an
- * explicit "적용 통화: USD" note. The `priceNote` below is that note.
+ *   Pro          ₩74,000/mo   (was ₩148,000)   ₩59,000/mo yearly (was ₩119,000)
+ *   Extra seat   ₩45,000/mo   (was ₩59,000)    ₩36,000/mo yearly (was ₩47,000)
  *
- * TO SWITCH TO KRW: replace the amount strings in `tiers` and drop
- * `priceNote`. Nothing else here is currency-aware, by design — see
- * docs/KOREA-LOCALIZATION-PLAN.md §3.C in the platform repo for the
- * server-side work that has to land alongside it.
+ * The discount and yearly-saving ratios are preserved from the US page, so the
+ * "약 50% 할인" and "약 20% 절약" claims stay true after conversion.
+ *
+ * THESE ARE NOT CONTRACTED PRICES. AdminUnitEconomics.tsx says to replace its
+ * Korea figures with the partner's contracted settlement terms, and that has
+ * not happened. Anything published here becomes real the moment someone
+ * screenshots it — re-derive from the signed terms before this ships.
+ *
+ * Prices exclude VAT (부가세 별도), which is the Korean B2B convention, and the
+ * page says so. See docs/KOREA-LOCALIZATION-PLAN.md §2.1 for why a foreign
+ * seller charges no Korean VAT to a registered business, and §3.C for the
+ * server-side work needed before KRW can actually be CHARGED — this page
+ * displays KRW, but checkout is still USD until tier_prices lands.
  *
  * TRIAL LENGTH IS ALSO A PLACEHOLDER. "14일" mirrors the US page. Korea is
  * planned at 1 month, possibly 2 — open question #2 in the plan — and that
@@ -51,7 +57,7 @@ const metaDescription =
 // Korean B2B convention states tax separately (부가세 별도) rather than folding
 // it in. Kept factual: no claim about when KRW pricing arrives, because that
 // depends on the partner agreement rather than on this page.
-const priceNote = "적용 통화: 미국 달러(USD) · 부가세 별도";
+const priceNote = "표시 가격은 원화(KRW) 기준이며 부가세는 별도입니다";
 
 const yearlyLabel = "연간";
 const monthlyLabel = "월간";
@@ -86,8 +92,8 @@ const tiers: Tier[] = [
     tierKey: "free",
     name: "Free",
     who: "모든 아티스트, 매니저, 팀을 위한 핵심 플랫폼",
-    monthlyPrice: "$0",
-    yearlyPrice: "$0",
+    monthlyPrice: "₩0",
+    yearlyPrice: "₩0",
     period: "평생 무료",
     seatsIncludedNote: "1석 · 아티스트, 릴리스, 협업자 무제한",
     ctaLabel: "무료로 시작하기",
@@ -105,17 +111,17 @@ const tiers: Tier[] = [
     tierKey: "pro",
     name: "Pro",
     who: "사용 중인 모든 도구를 연결하려는 팀을 위해",
-    monthlyPrice: "$49.95",
-    yearlyPrice: "$39.96",
-    priceWasMonthly: "$99.95",
-    priceWasYearly: "$79.96",
+    monthlyPrice: "₩74,000",
+    yearlyPrice: "₩59,000",
+    priceWasMonthly: "₩148,000",
+    priceWasYearly: "₩119,000",
     period: "/월 · 연간 결제",
     periodMonthly: "/월",
     seatsIncludedNote: "2석 포함",
-    extraSeatWasMonthly: "$39.95",
-    extraSeatWasYearly: "$31.96",
-    extraSeatPriceMonthly: "$29.95/월",
-    extraSeatPriceYearly: "$23.96/월",
+    extraSeatWasMonthly: "₩59,000",
+    extraSeatWasYearly: "₩47,000",
+    extraSeatPriceMonthly: "₩45,000/월",
+    extraSeatPriceYearly: "₩36,000/월",
     badge: "베타 가격 · 약 50% 할인",
     ctaLabel: "14일 무료 체험 시작하기",
     ctaHref: "https://app.teamrollouts.com/onboarding?plan=pro",
@@ -181,8 +187,8 @@ const faqItems: { q: string; a: string }[] = [
     a: "Free는 카드가 전혀 필요 없습니다. Pro는 14일 무료 체험으로 시작하며, 체험이 끝난 뒤에도 중단 없이 이어질 수 있도록 카드를 등록합니다.",
   },
   {
-    q: "가격이 미국 달러로 표시되는 이유는 무엇인가요?",
-    a: "현재 모든 플랜은 미국 달러(USD)로 청구됩니다. 원화 결제는 한국 파트너십과 함께 준비하고 있으며, 확정되면 이 페이지에 반영됩니다.",
+    q: "부가세와 세금계산서는 어떻게 되나요?",
+    a: "표시 가격에는 부가가치세가 포함되어 있지 않습니다. 사업자 고객의 경우, 국내 사업장이 없는 해외 사업자와의 거래이므로 세금계산서는 발행되지 않으며, 청구서와 카드 매출전표 또는 결제 내역으로 비용 처리가 가능합니다. 가입 시 사업자등록번호를 입력해 주세요.",
   },
   {
     q: "제 데이터는 제 것인가요?",
