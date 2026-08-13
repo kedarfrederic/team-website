@@ -79,7 +79,10 @@ eq('stripLocale("/ko/a/b")', stripLocale("/ko/a/b"), "/a/b");
 
 // Idempotent: re-projecting an already-localised path must not stack prefixes.
 eq('localizePath("/pricing","ko")', localizePath("/pricing", "ko"), "/ko/pricing");
-eq('localizePath("/","ko")', localizePath("/", "ko"), "/ko/");
+// The locale root must match normalizePath's output, or the homepage's
+// canonical and its own hreflang self-reference disagree. See i18n.ts.
+eq('localizePath("/","ko")', localizePath("/", "ko"), "/ko");
+eq("locale root matches normalizePath", localizePath("/", "ko"), normalizePath(localizePath("/", "ko")));
 eq('localizePath("/ko/pricing","ko")', localizePath("/ko/pricing", "ko"), "/ko/pricing");
 eq('localizePath("/ko/pricing","en")', localizePath("/ko/pricing", "en"), "/pricing");
 

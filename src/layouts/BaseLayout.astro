@@ -114,8 +114,26 @@ const ogImageUrl = finalOgImage?.asset?._ref
     : "https://teamrollouts.com/og-image.png";
 
 const noIndex = seo?.noIndex === true || previewMode;
+/**
+ * Canonical URL, NORMALISED — not the raw request path.
+ *
+ * Both /ko/about and /ko/about/ serve 200, and this previously echoed whichever
+ * one the visitor arrived at. hreflang, meanwhile, is built from localizePath
+ * and is always the un-slashed form. So the trailing-slash URL declared its
+ * canonical as /ko/about/ while declaring its own ko-KR alternate as /ko/about
+ * — a DIFFERENT url, which means the required self-reference was missing and
+ * Google discards the whole annotation cluster when that happens.
+ *
+ * The sitemap emits the trailing-slash form, so the URL crawlers were being
+ * pointed at was precisely the broken one.
+ *
+ * Normalising here makes canonical, hreflang and the sitemap agree on one form
+ * per page, and collapses the duplicate rather than declaring two URLs for
+ * every page. An explicit `canonical` prop still wins, untouched.
+ */
 const canonicalUrl =
-  canonical ?? new URL(Astro.url.pathname, Astro.site ?? "https://teamrollouts.com").toString();
+  canonical ??
+  new URL(normalizePath(Astro.url.pathname), Astro.site ?? "https://teamrollouts.com").toString();
 
 /**
  * Locale, never from the visitor's country — see src/lib/i18n.ts for why.

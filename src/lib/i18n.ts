@@ -152,16 +152,25 @@ export function stripLocale(pathname: string): string {
 
 /**
  * Project an English path into a locale.
- * `("/pricing", "ko")` → `/ko/pricing`; `("/", "ko")` → `/ko/`.
+ * `("/pricing", "ko")` → `/ko/pricing`; `("/", "ko")` → `/ko`.
  *
  * Idempotent: passing an already-localised path re-projects it rather than
  * stacking prefixes, so `("/ko/pricing", "ko")` is `/ko/pricing`, not
  * `/ko/ko/pricing`.
+ *
+ * The locale root is `/ko`, NOT `/ko/`. It has to match what normalizePath
+ * produces, because BaseLayout builds the canonical URL through normalizePath
+ * and the hreflang alternates through this function. When they disagreed, the
+ * Korean homepage declared its canonical as /ko while declaring its own ko-KR
+ * alternate as /ko/ — a different URL, so the self-reference Google requires
+ * was missing and the whole annotation cluster is discarded. Every other page
+ * agreed; only the root was wrong, which is exactly the kind of single-case
+ * inconsistency that survives a page-by-page check.
  */
 export function localizePath(pathname: string, locale: Locale): string {
   const base = stripLocale(pathname);
   if (locale === DEFAULT_LOCALE) return base;
-  return base === "/" ? `/${locale}/` : `/${locale}${base}`;
+  return base === "/" ? `/${locale}` : `/${locale}${base}`;
 }
 
 /** Does this English path have a published translation in `locale`? */

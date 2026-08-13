@@ -70,6 +70,23 @@ export default defineConfig({
         !page.includes("/api/") &&
         !page.includes("/playground/") &&
         !page.includes("/home-classic"),
+      /**
+       * Emit the same URL form the pages declare as canonical.
+       *
+       * The integration appends a trailing slash by default, so the sitemap was
+       * advertising /ko/about/ while that page's canonical (and its hreflang
+       * self-reference) is /ko/about. Pointing a crawler at a URL that
+       * canonicalises somewhere else wastes crawl budget on every page and, on
+       * the trailing-slash form specifically, broke the hreflang self-reference
+       * that Google requires.
+       *
+       * Naver matters more here than Google: Yeti is the less forgiving of the
+       * two about duplicate URLs, and the sitemap is how it is told what exists.
+       */
+      serialize: (item) => ({
+        ...item,
+        url: item.url.replace(/(?<!^https?:\/)\/$/, ""),
+      }),
     }),
     sanity({
       projectId: "g1olb5am",
