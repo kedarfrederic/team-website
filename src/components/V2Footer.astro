@@ -12,6 +12,7 @@
  * currently enabled — the Platform pages landed. Keep the mechanism for the
  * next designed-but-unbuilt destination.
  */
+import LocaleSwitcher from "./LocaleSwitcher.astro";
 import { CHROME_LINK, CHROME_UI } from "../lib/ko/chrome";
 import {
   KO_BUSINESS_DISCLOSURE,
@@ -214,6 +215,10 @@ const SOCIAL = [
           re-open trigger lives here rather than buried in a settings page.
           V2CookieBanner listens for [data-cookie-prefs] anywhere on the page. */}
       <a class="mono" href="/cookies" data-cookie-prefs>{ui("Cookie preferences")}</a>
+      {/* Every page, both locales. The legal pages have no Korean version, so
+          this is the ONLY route back for a Korean reader who opened Terms —
+          and Terms is exactly what a cautious buyer opens before signing up. */}
+      <LocaleSwitcher locale={locale} />
       <span class="mono">{t.tagline}</span>
     </div>
   </div>

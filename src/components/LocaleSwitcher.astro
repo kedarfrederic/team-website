@@ -1,0 +1,146 @@
+---
+/**
+ * The way back.
+ *
+ * A Korean visitor who clicked "개인정보처리방침" in the Korean footer landed on
+ * /privacy — English page, English nav, English footer, and not one link
+ * anywhere on it pointing back into Korean. Stranded, on the page a cautious
+ * buyer is most likely to open before signing up.
+ *
+ * The suggestion bar does not rescue them: it fires on country for visitors who
+ * have not chosen yet, and someone reading the Korean site has chosen. It is an
+ * offer made once, not a control.
+ *
+ * So this is the control. Always present, both directions, on every page in
+ * both locales.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * WHY IT IS PLAIN LINKS AND NOT A PICKER
+ *
+ * The markup is identical for every visitor of a given URL. That is deliberate
+ * and it is the same constraint that shaped the whole locale design: Cloudflare
+ * edge-caches these responses for cookie-less visitors, so anything that varies
+ * the HTML per person is a cache-poisoning bug rather than a feature. Two
+ * anchors with static hrefs cache correctly and work with JavaScript off.
+ *
+ * WHERE EACH LINK GOES is decided by the registry, not by string-building: the
+ * counterpart of this page when one exists, and that locale's home when it does
+ * not. /privacy has no Korean version, so from there 한국어 goes to /ko — which
+ * is honest ("there is a Korean site, here it is") rather than a dead link to
+ * /ko/privacy. The moment the Korean legal pages land in TRANSLATED_PATHS, this
+ * starts pointing directly at them with no edit here.
+ *
+ * The click also records the choice, so the next visit opens in that language.
+ * That is an enhancement on top of a working link, not a requirement for it —
+ * with JS off the navigation still happens, it is only the memory that is lost.
+ */
+import {
+  LOCALES,
+  LOCALE_COOKIE,
+  LOCALE_LABELS,
+  DEFAULT_LOCALE,
+  hasTranslation,
+  localeFromPath,
+  localizePath,
+  normalizePath,
+  stripLocale,
+  type Locale,
+} from "../lib/i18n";
+
+interface Props {
+  /** Falls back to the path so this is correct even where locals are absent. */
+  locale?: Locale;
+}
+const { locale: localeProp } = Astro.props;
+
+const current: Locale =
+  localeProp ?? Astro.locals?.locale ?? localeFromPath(Astro.url.pathname);
+const basePath = stripLocale(normalizePath(Astro.url.pathname));
+
+/** This page in that locale, or that locale's home if this page has no version there. */
+const hrefFor = (locale: Locale): string =>
+  hasTranslation(basePath, locale) ? localizePath(basePath, locale) : localizePath("/", locale);
+
+const options = LOCALES.map((locale) => ({
+  locale,
+  label: LOCALE_LABELS[locale].name,
+  href: hrefFor(locale),
+  isCurrent: locale === current,
+  /* Marked so the label can say so. Sending someone to the Korean home when
+     they asked for this page in Korean is the right behaviour, but doing it
+     without a word is the kind of small dishonesty that makes people stop
+     trusting a switcher. */
+  isFallback: !hasTranslation(basePath, locale) && locale !== DEFAULT_LOCALE,
+}));
+
+const ARIA: Record<Locale, string> = {
+  en: "Language",
+  ko: "언어",
+};
+---
+<nav class="lsw" aria-label={ARIA[current] ?? ARIA.en} data-cookie={LOCALE_COOKIE}>
+  {options.map((o, i) => (
+    <>
+      {i > 0 && <span class="lsw__sep" aria-hidden="true">·</span>}
+      {o.isCurrent ? (
+        <span class="lsw__cur" aria-current="true" lang={LOCALE_LABELS[o.locale].hreflang}>
+          {o.label}
+        </span>
+      ) : (
+        <a
+          class="lsw__a"
+          href={o.href}
+          lang={LOCALE_LABELS[o.locale].hreflang}
+          hreflang={LOCALE_LABELS[o.locale].hreflang}
+          data-locale={o.locale}
+          title={o.isFallback
+            ? (o.locale === "ko" ? "이 페이지는 한국어판이 없습니다 — 한국어 홈으로 이동합니다" : undefined)
+            : undefined}
+        >{o.label}</a>
+      )}
+    </>
+  ))}
+</nav>
+
+<style is:global>
+  /* Literal colours, not v2 tokens: this renders on the v2 pages AND the
+     classic-chrome legal pages, and the two token sets differ. Same reasoning
+     as V2CookieBanner. */
+  .lsw{display:inline-flex;align-items:center;gap:.45rem;font-size:.62rem;
+       letter-spacing:.14em;text-transform:uppercase}
+  .lsw__a,.lsw__cur{font:inherit;letter-spacing:inherit}
+  .lsw__a{color:rgba(239,235,227,.55);text-decoration:none;
+          border-bottom:1px solid transparent;transition:color .2s,border-color .2s}
+  .lsw__a:hover{color:#efebe3;border-bottom-color:rgba(239,235,227,.4)}
+  .lsw__cur{color:rgba(239,235,227,.9)}
+  .lsw__sep{color:rgba(239,235,227,.3)}
+  /* Uppercase and tracking are meaningless on Hangul — 한국어 must render as a
+     word, not as spaced-out syllable blocks. The global KoreanTypography rule
+     only reaches pages that mount it, and the legal pages do not. */
+  .lsw [lang="ko-KR"]{text-transform:none;letter-spacing:normal;font-size:.72rem}
+</style>
+
+<script is:inline>
+  (() => {
+    'use strict';
+    const nav = document.querySelector('.lsw');
+    if (!nav) return;
+    const COOKIE = nav.dataset.cookie || 'preferred_locale';
+    nav.addEventListener('click', (e) => {
+      const a = e.target.closest('.lsw__a');
+      if (!a) return;
+      /* Record, do not intercept. The href does the navigating; if anything
+         here throws, the link still works. */
+      try {
+        const onSite = /(^|\.)teamrollouts\.com$/.test(location.hostname);
+        const parts = [
+          COOKIE + '=' + encodeURIComponent(a.dataset.locale),
+          'Path=/', 'Max-Age=' + (60 * 60 * 24 * 365), 'SameSite=Lax',
+        ];
+        if (onSite) parts.push('Domain=.teamrollouts.com');
+        if (location.protocol === 'https:') parts.push('Secure');
+        document.cookie = parts.join('; ');
+      } catch (err) { /* choice not remembered; navigation still happens */ }
+    });
+  })();
+</script>

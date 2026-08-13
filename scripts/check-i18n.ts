@@ -728,6 +728,15 @@ for (const file of ["LocaleSuggestionBanner.astro", "KoreanTypography.astro"]) {
        one of the two render sites just never asked.
        So: every interpolation of a label field must go through localeLabel or
        ui. A second render site added tomorrow fails here instead of shipping. */
+    /* The footer must carry the language switcher. On /privacy, /terms and the
+       other untranslated pages it is the ONLY route back into Korean — the
+       suggestion bar fires on country for people who have not chosen yet, and
+       someone reading the Korean site has chosen. Dropping this component
+       strands them, and nothing else in this file would notice. */
+    if (!/<LocaleSwitcher\b/.test(footerSrc)) {
+      missing.push("V2Footer.astro no longer mounts <LocaleSwitcher /> — untranslated pages have no route back to Korean");
+    }
+
     const RAW_LABEL = /\{\s*(?:r\.title|r\.desc|l\.label|c\.heading|g\.label|g\.panelLabel)\s*\}/g;
     for (const [name, src2] of [["V2Nav.astro", navSrc], ["V2Footer.astro", footerSrc]] as const) {
       for (const m of src2.matchAll(RAW_LABEL)) {
