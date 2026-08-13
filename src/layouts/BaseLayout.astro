@@ -363,6 +363,28 @@ const breadcrumbJsonLd =
     posthog.init('phc_rbP43MvbYyuKY4snFXECD7QA5qyUZd9dsVu89pWnf7wC',{api_host:'https://us.i.posthog.com',autocapture:true,capture_pageview:true,capture_pageleave:true,persistence:'memory',disable_session_recording:true});
     posthog.register({ surface: 'marketing', site: 'team-website' });
 
+    /* KOREAN PAGES DO NOT CAPTURE BEFORE CONSENT.
+       Cookieless-until-consent is a defensible GDPR position: no cookie, no
+       cross-session identity. PIPA is not the GDPR. It has no legitimate-interest
+       basis to lean on, an IP address is 개인정보, and this init sends IP, page
+       URL, user agent and autocaptured clicks to us.i.posthog.com — an overseas
+       recipient — on first paint. Dropping the cookie does not make that
+       collection consented; it makes it uncookied.
+       So on /ko we opt out of capturing entirely until a consent record says
+       otherwise, and the banner opts back in.
+       This keys on the LOCALE, which is in the URL path — not on the visitor's
+       country. A country-varying response would be uncacheable at the Cloudflare
+       edge and invisible to a crawler that reaches this site from the US. */
+    var KO_PAGE = ${JSON.stringify(locale === "ko")};
+    if (KO_PAGE) {
+      try {
+        var km = document.cookie.match(/(?:^|;\\s*)cookie_consent=([^;]*)/);
+        var kc = km ? JSON.parse(decodeURIComponent(km[1])) : null;
+        var mayCapture = !!(kc && kc.analytics && kc.overseas !== false);
+        if (!mayCapture) posthog.opt_out_capturing();
+      } catch (e) { posthog.opt_out_capturing(); }
+    }
+
     /* Upgrade to persistent storage only once analytics consent exists.
        The consent record is a COOKIE scoped to .teamrollouts.com, not
        localStorage: localStorage is origin-scoped, so apex, www and
@@ -484,7 +506,7 @@ const breadcrumbJsonLd =
   */}
   {/* Outside the `chrome` guard on purpose: consent is not site chrome, and
       the chromeless v2 pages (the homepage especially) load PostHog too. */}
-  <V2CookieBanner />
+  <V2CookieBanner locale={locale} />
 
 
   <VisualEditing />

@@ -29,39 +29,118 @@
  * Self-contained on purpose — inline CSS with literal colours rather than v2
  * tokens, because this renders on BOTH the v2 pages and the classic-chrome ones,
  * and the token sets differ between them.
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * KOREAN PAGES GET A DIFFERENT FLOW, NOT DIFFERENT WORDS
+ *
+ * PIPA requires per-item purpose, collected items and retention, plus overseas
+ * transfer as its own agreement. None of those have anywhere to go in the
+ * GDPR-shaped panel above, so /ko renders an itemised panel instead. See
+ * src/lib/ko/consent.ts for what each field is and why it says what it says.
+ *
+ * The overseas-transfer checkbox GATES the optional items rather than sitting
+ * beside them as a fourth independent choice, because that models what is
+ * actually true: the analytics endpoint is us.i.posthog.com, so analytics that
+ * may not leave the country cannot run at all. Offering them as independent
+ * would let someone consent to a combination that cannot exist.
  */
+import { KO_CONSENT_ITEMS, KO_OVERSEAS_TRANSFER, KO_CONSENT_UI } from "../lib/ko/consent";
+import { DEFAULT_LOCALE, hasTranslation, localizePath, type Locale } from "../lib/i18n";
+
+interface Props { locale?: Locale }
+const { locale = DEFAULT_LOCALE } = Astro.props;
+const ko = locale === "ko";
+
+/* I hardcoded /ko/cookies and /ko/privacy here and both 404'd — from inside the
+   consent banner, on the two links whose entire job is to let someone read what
+   they are agreeing to before agreeing. The legal pages have no Korean version
+   yet (that is counsel work, task #15), so the honest destination is the
+   English one. Same rule as the nav and footer: follow the registry, and this
+   starts pointing at the Korean pages by itself the day they land. */
+const legalHref = (path: string) =>
+  hasTranslation(path, locale) ? localizePath(path, locale) : path;
 ---
-<div id="ckBanner" class="ck" role="dialog" aria-modal="false" aria-label="Cookie preferences" hidden>
+<div id="ckBanner" class="ck" role="dialog" aria-modal="false" aria-label={ko ? KO_CONSENT_UI.title : "Cookie preferences"} lang={ko ? "ko" : undefined} hidden>
   <div class="ck__in">
     <div class="ck__copy">
-      <p class="ck__title">Cookies</p>
-      <p class="ck__body">
-        We use cookies that are necessary to run the site, and — only if you agree —
-        analytics to understand what's useful and marketing cookies to measure our ads.
-        <a href="/cookies">What we use</a> · <a href="/privacy">Privacy</a>
-      </p>
+      <p class="ck__title">{ko ? KO_CONSENT_UI.title : "Cookies"}</p>
+      {ko ? (
+        <p class="ck__body">
+          {KO_CONSENT_UI.intro}
+          <a href={legalHref("/cookies")}>{KO_CONSENT_UI.cookiesLink}</a> · <a href={legalHref("/privacy")}>{KO_CONSENT_UI.privacyLink}</a>
+        </p>
+      ) : (
+        <p class="ck__body">
+          We use cookies that are necessary to run the site, and — only if you agree —
+          analytics to understand what's useful and marketing cookies to measure our ads.
+          <a href="/cookies">What we use</a> · <a href="/privacy">Privacy</a>
+        </p>
+      )}
     </div>
 
-    <div class="ck__opts" id="ckOpts" hidden>
-      <label class="ck__opt is-locked">
-        <input type="checkbox" checked disabled />
-        <span><b>Necessary</b> — sign-in, security. Always on.</span>
-      </label>
-      <label class="ck__opt">
-        <input type="checkbox" id="ckAnalytics" />
-        <span><b>Analytics</b> — which pages get used, so we can improve them.</span>
-      </label>
-      <label class="ck__opt">
-        <input type="checkbox" id="ckMarketing" />
-        <span><b>Marketing</b> — measuring whether our ads reach the right people.</span>
-      </label>
+    <div class="ck__opts" id="ckOpts" hidden data-flow={ko ? "pipa" : "std"}>
+      {ko ? (
+        <>
+          {KO_CONSENT_ITEMS.map((it) => (
+            <label class={`ck__opt ck__opt--full${it.optional ? "" : " is-locked"}`}>
+              <input
+                type="checkbox"
+                checked={!it.optional}
+                disabled={!it.optional}
+                id={it.key === "analytics" ? "ckAnalytics" : it.key === "marketing" ? "ckMarketing" : undefined}
+              />
+              <span>
+                <b>{it.title}</b>{!it.optional && <em class="ck__req">{KO_CONSENT_UI.alwaysOn}</em>}
+                <span class="ck__meta">
+                  <span><i>{KO_CONSENT_UI.purposeLabel}</i> {it.purpose}</span>
+                  <span><i>{KO_CONSENT_UI.itemsLabel}</i> {it.items}</span>
+                  <span><i>{KO_CONSENT_UI.retentionLabel}</i> {it.retention}</span>
+                </span>
+              </span>
+            </label>
+          ))}
+
+          {/* Its own agreement, visually separated, because it is a separate
+              legal basis and not a sub-option of analytics. */}
+          <label class="ck__opt ck__opt--full ck__opt--xfer">
+            <input type="checkbox" id="ckOverseas" />
+            <span>
+              <b>{KO_OVERSEAS_TRANSFER.title}</b>
+              <span class="ck__meta">
+                {KO_OVERSEAS_TRANSFER.recipients.map((r) => (
+                  <span><i>{r.scope}</i> {r.name} · {r.country} · {r.endpoint}</span>
+                ))}
+                <span><i>이전 방법</i> {KO_OVERSEAS_TRANSFER.method}</span>
+                <span><i>이전 항목</i> {KO_OVERSEAS_TRANSFER.items}</span>
+                <span><i>보유 기간</i> {KO_OVERSEAS_TRANSFER.retention}</span>
+                <span class="ck__refuse">{KO_OVERSEAS_TRANSFER.refusal}</span>
+              </span>
+            </span>
+          </label>
+        </>
+      ) : (
+        <>
+          <label class="ck__opt is-locked">
+            <input type="checkbox" checked disabled />
+            <span><b>Necessary</b> — sign-in, security. Always on.</span>
+          </label>
+          <label class="ck__opt">
+            <input type="checkbox" id="ckAnalytics" />
+            <span><b>Analytics</b> — which pages get used, so we can improve them.</span>
+          </label>
+          <label class="ck__opt">
+            <input type="checkbox" id="ckMarketing" />
+            <span><b>Marketing</b> — measuring whether our ads reach the right people.</span>
+          </label>
+        </>
+      )}
     </div>
 
     <div class="ck__actions">
-      <button type="button" class="ck__btn ck__btn--ghost" id="ckCustomise">Choose</button>
-      <button type="button" class="ck__btn ck__btn--ghost" id="ckReject">Reject non-essential</button>
-      <button type="button" class="ck__btn ck__btn--solid" id="ckAccept">Accept all</button>
-      <button type="button" class="ck__btn ck__btn--solid" id="ckSave" hidden>Save choices</button>
+      <button type="button" class="ck__btn ck__btn--ghost" id="ckCustomise">{ko ? KO_CONSENT_UI.customise : "Choose"}</button>
+      <button type="button" class="ck__btn ck__btn--ghost" id="ckReject">{ko ? KO_CONSENT_UI.rejectAll : "Reject non-essential"}</button>
+      <button type="button" class="ck__btn ck__btn--solid" id="ckAccept">{ko ? KO_CONSENT_UI.acceptAll : "Accept all"}</button>
+      <button type="button" class="ck__btn ck__btn--solid" id="ckSave" hidden>{ko ? KO_CONSENT_UI.save : "Save choices"}</button>
     </div>
   </div>
 </div>
@@ -87,6 +166,49 @@
   .ck__opt.is-locked{cursor:default;color:rgba(239,235,227,.5)}
   .ck__opt b{color:#efebe3;font-weight:600}
   .ck__opt input{margin-top:.2rem;accent-color:#d9fa87;flex:none}
+  /* PIPA panel. The three-line 목적/항목/기간 block is the disclosure itself, so
+     it is always visible rather than behind a "details" toggle — a required
+     disclosure that needs a second click is not disclosed. */
+  .ck__opt--full{align-items:flex-start}
+  .ck__opt--full > span{display:block;flex:1}
+  .ck__req{display:inline-block;margin-left:.5rem;font-style:normal;font-size:.7rem;
+           color:rgba(239,235,227,.45)}
+  .ck__meta{display:block;margin-top:.3rem;display:flex;flex-direction:column;gap:.15rem;
+            font-size:.76rem;line-height:1.55;color:rgba(239,235,227,.6)}
+  .ck__meta i{display:inline-block;min-width:6.5rem;font-style:normal;
+              color:rgba(239,235,227,.42)}
+  .ck__opt--xfer{margin-top:.35rem;padding-top:.7rem;
+                 border-top:1px solid rgba(239,235,227,.09)}
+  .ck__refuse{margin-top:.25rem;color:rgba(239,235,227,.72)}
+  /* Hangul must not be broken mid-word, and the uppercase/letter-spaced .ck__title
+     treatment is meaningless on it. This banner is deliberately outside the v2
+     token system, so it cannot inherit KoreanTypography and states it here. */
+  .ck[lang="ko"] .ck__title{text-transform:none;letter-spacing:normal}
+  .ck[lang="ko"]{word-break:keep-all;overflow-wrap:break-word}
+  .ck[lang="ko"] .ck__meta i{min-width:5.5rem}
+  /* The itemised panel is tall by nature — three disclosure lines per item plus
+     the transfer block. Fixed to the bottom with no bound, a short viewport
+     pushes the buttons off-screen, and a consent UI whose Accept AND Refuse are
+     both unreachable is worse than none: the visitor can neither agree nor
+     decline. Cap it and scroll the content, keeping the actions in view. */
+  .ck[lang="ko"] .ck__in{max-height:100dvh;overflow-y:auto;overscroll-behavior:contain}
+  /* Capping the height alone was not enough: the actions then sat below the
+     internal scroll, so a phone showed the disclosure with no visible way to
+     accept OR refuse — the reader has to guess there is something further down.
+     Pinning them keeps both choices on screen while the disclosure scrolls
+     behind, which is the arrangement the whole panel exists to deliver. */
+  .ck[lang="ko"] .ck__actions{position:sticky;bottom:0;width:100%;
+      padding:.7rem 0 .2rem;margin-top:.2rem;background:rgba(13,12,11,.97);
+      border-top:1px solid rgba(239,235,227,.09)}
+  /* Refusal has to be as easy as agreement, which means as easy to SEE. The
+     ghost/solid pairing nudges toward Accept; on the Korean panel both actions
+     carry the same size and contrast so neither is the default-looking one. */
+  .ck[lang="ko"] .ck__btn--ghost{color:#efebe3;border-color:rgba(239,235,227,.75);
+                                 font-weight:560}
+  .ck[lang="ko"] .ck__btn--ghost:hover{border-color:#efebe3;
+                                       background:rgba(239,235,227,.08)}
+  @media(max-width:720px){.ck__meta i{display:block;min-width:0}}
+
   .ck__actions{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;flex:0 0 auto}
   .ck__btn{font:inherit;font-size:.82rem;font-weight:560;padding:.6rem 1.1rem;
            border-radius:99px;cursor:pointer;white-space:nowrap;
@@ -118,7 +240,17 @@
       if (!m) return null;
       try {
         const p = JSON.parse(decodeURIComponent(m[1]));
-        return { necessary: true, analytics: !!p.analytics, marketing: !!p.marketing };
+        /* `overseas` is preserved rather than normalised away: it is a separate
+           PIPA basis and dropping it on read would silently downgrade a recorded
+           Korean consent to an unrecorded one on the next page view. Absent on
+           records written by the English flow, which is correct — that flow
+           never asked. */
+        return {
+          necessary: true,
+          analytics: !!p.analytics,
+          marketing: !!p.marketing,
+          ...(p.overseas === undefined ? {} : { overseas: !!p.overseas }),
+        };
       } catch { return null; }   // malformed → treat as no decision, ask again
     };
 
@@ -163,10 +295,26 @@
     };
 
     const apply = (c) => {
+      /* A recorded refusal of overseas transfer overrides everything downstream,
+         including a stale `analytics:true` from a record written before the
+         Korean flow existed. The gate is enforced where the effect happens, not
+         only in the UI that collected it. */
+      if (c.overseas === false) { c = { ...c, analytics: false, marketing: false }; }
       if (!c.analytics) dropByPrefix(['ph_', '_ga']);
       if (!c.marketing) dropByPrefix(['_fbp', '_fbc']);
-      if (window.posthog && c.analytics) {
-        try { window.posthog.set_config({ persistence: 'localStorage+cookie' }); } catch {}
+      if (window.posthog) {
+        try {
+          if (c.analytics) {
+            window.posthog.set_config({ persistence: 'localStorage+cookie' });
+            /* Korean pages opt OUT at init (see BaseLayout), so granting consent
+               has to opt back in — set_config alone would leave a consenting
+               Korean visitor uncounted, which is the silent half of getting this
+               wrong and the half nobody notices. */
+            if (typeof window.posthog.opt_in_capturing === 'function') window.posthog.opt_in_capturing();
+          } else if (typeof window.posthog.opt_out_capturing === 'function') {
+            window.posthog.opt_out_capturing();
+          }
+        } catch {}
       }
       if (typeof window.gtag === 'function') {
         window.gtag('consent', 'update', {
@@ -190,24 +338,61 @@
       banner.hidden = false;
     }
 
-    el('ckAccept').addEventListener('click', () =>
-      decide({ necessary: true, analytics: true, marketing: true }));
-    el('ckReject').addEventListener('click', () =>
-      decide({ necessary: true, analytics: false, marketing: false }));
+    /* PIPA flow only. `xfer` is null on English pages, and every branch below
+       degrades to the original behaviour when it is. */
+    const xfer = el('ckOverseas');
+
+    /* Overseas transfer GATES the optional items. The analytics endpoint is
+       us.i.posthog.com, so "analytics yes, transfer no" is not a state that can
+       exist — offering it as an independent toggle would collect a consent we
+       could not honour. Unchecking clears and disables the others; the UI and
+       the record therefore agree. */
+    const syncGate = () => {
+      if (!xfer) return;
+      const on = xfer.checked;
+      ['ckAnalytics', 'ckMarketing'].forEach((id) => {
+        const box = el(id);
+        if (!box) return;
+        box.disabled = !on;
+        if (!on) box.checked = false;
+        box.closest('.ck__opt').style.opacity = on ? '' : '.5';
+      });
+    };
+    if (xfer) xfer.addEventListener('change', syncGate);
+
+    const gather = () => ({
+      necessary: true,
+      analytics: !!(el('ckAnalytics') && el('ckAnalytics').checked),
+      marketing: !!(el('ckMarketing') && el('ckMarketing').checked),
+      ...(xfer ? { overseas: xfer.checked } : {}),
+    });
+
+    el('ckAccept').addEventListener('click', () => decide({
+      necessary: true, analytics: true, marketing: true,
+      ...(xfer ? { overseas: true } : {}),
+    }));
+    /* Refusing must refuse the transfer too. Leaving `overseas` unset here would
+       record "no analytics" while recording nothing about the transfer, which is
+       the one field the Act cares most about having an answer to. */
+    el('ckReject').addEventListener('click', () => decide({
+      necessary: true, analytics: false, marketing: false,
+      ...(xfer ? { overseas: false } : {}),
+    }));
 
     el('ckCustomise').addEventListener('click', () => {
       el('ckOpts').hidden = false;
       el('ckCustomise').hidden = true;
       el('ckSave').hidden = false;
       const c = read();
-      if (c) { el('ckAnalytics').checked = c.analytics; el('ckMarketing').checked = c.marketing; }
+      if (c) {
+        if (el('ckAnalytics')) el('ckAnalytics').checked = c.analytics;
+        if (el('ckMarketing')) el('ckMarketing').checked = c.marketing;
+        if (xfer) xfer.checked = c.overseas === true;
+      }
+      syncGate();
     });
 
-    el('ckSave').addEventListener('click', () => decide({
-      necessary: true,
-      analytics: el('ckAnalytics').checked,
-      marketing: el('ckMarketing').checked,
-    }));
+    el('ckSave').addEventListener('click', () => decide(gather()));
 
     /* Re-open from the footer: any element with [data-cookie-prefs]. Consent has
        to be withdrawable as easily as it was given, so this is the footer link

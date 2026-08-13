@@ -705,6 +705,66 @@ for (const file of ["LocaleSuggestionBanner.astro", "KoreanTypography.astro"]) {
   }
 }
 
+// ── Part 3f: hardcoded /ko/ links, against the registry ─────────────────────
+
+/**
+ * I wrote `href="/ko/cookies"` and `href="/ko/privacy"` into the consent banner
+ * and both 404'd — on the two links whose whole job is letting someone read
+ * what they are agreeing to BEFORE agreeing.
+ *
+ * Every other part of this system derives Korean paths through localizePath and
+ * is gated on TRANSLATED_PATHS, so it cannot point at a page that does not
+ * exist. A typed-out literal skips both and looks completely ordinary in review.
+ * This finds them: any `/ko/...` written as a string anywhere in src/ must
+ * correspond to a registered translated path.
+ */
+{
+  const root = path.resolve(componentDir, "..", "..");
+  const srcDir = path.join(root, "src");
+  const walk = (dir: string, out: string[] = []): string[] => {
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, e.name);
+      if (e.isDirectory()) walk(full, out);
+      else if (/\.(astro|ts|tsx|js|mjs)$/.test(e.name)) out.push(full);
+    }
+    return out;
+  };
+
+  const dangling: string[] = [];
+  if (fs.existsSync(srcDir)) {
+    for (const file of walk(srcDir)) {
+      // src/pages/ko/* ARE the Korean pages; their own paths are not links.
+      if (file.includes(`${path.sep}pages${path.sep}ko${path.sep}`)) continue;
+      /* Comments first. Both baseline hits were PROSE — `/ko/anything` and
+         `/ko/ko/pricing` written inside JSDoc explaining this very system. A
+         check that flags its own documentation is one people learn to ignore,
+         which costs more than the bug it catches. The `:` guard keeps https://
+         out of the line-comment strip. */
+      const text = fs
+        .readFileSync(file, "utf8")
+        .replace(/\/\*[\s\S]*?\*\//g, "")
+        .replace(/(^|[^:])\/\/[^\n]*/g, "$1");
+      for (const m of text.matchAll(/["'`](\/ko\/[A-Za-z0-9\-/]*)["'`]/g)) {
+        const base = stripLocale(m[1]);
+        if (!TRANSLATED_PATHS.has(normalizePath(base))) {
+          dangling.push(`${path.relative(root, file)} — ${JSON.stringify(m[1])}`);
+        }
+      }
+    }
+  }
+
+  if (dangling.length > 0) {
+    assertionFailures++;
+    console.error(
+      `  FAIL ${dangling.length} hardcoded /ko/ link(s) point at a path with no Korean page —\n` +
+        `         these 404. Derive them with localizePath + hasTranslation instead of typing them:`,
+    );
+    dangling.forEach((d) => console.error(`         ${d}`));
+  } else {
+    assertionPasses++;
+  }
+}
+
 // ── Part 3e: the Korean business disclosure, reported not asserted ──────────
 
 /**
