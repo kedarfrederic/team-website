@@ -44,6 +44,10 @@ import {
   type Locale,
 } from "../src/lib/i18n";
 import { localizeHrefs } from "../src/lib/koLocalize";
+import {
+  KO_BUSINESS_DISCLOSURE,
+  missingDisclosureFields,
+} from "../src/lib/ko/businessDisclosure";
 
 // ── Part 1: path logic ──────────────────────────────────────────────────────
 
@@ -698,6 +702,36 @@ for (const file of ["LocaleSuggestionBanner.astro", "KoreanTypography.astro"]) {
       assertionPasses++;
       console.log(`  ok   chrome: every nav/footer string with a Korean destination is translated or explicitly kept`);
     }
+  }
+}
+
+// ── Part 3e: the Korean business disclosure, reported not asserted ──────────
+
+/**
+ * 전자상거래법 제10조 requires specific business details on the site. None of
+ * them are facts I can derive, so the footer block renders nothing until a
+ * human supplies them — an absent block is honestly unfinished, whereas one
+ * filled with 000-00-00000 would show Korean consumers a fabricated business
+ * registration number while looking complete.
+ *
+ * This REPORTS rather than fails. Failing the build on data nobody has supplied
+ * yet would block every other piece of work behind a decision that is not a
+ * code change, and a check everyone learns to skip protects nothing. But the
+ * gap has to stay visible: this is the exact shape of defect this project keeps
+ * producing — built, provisioned, last mile never connected, silent, green.
+ */
+{
+  const missing = missingDisclosureFields(KO_BUSINESS_DISCLOSURE);
+  if (missing.length > 0) {
+    console.log(
+      `  TODO Korean business disclosure: ${missing.length}/${KO_BUSINESS_DISCLOSURE.filter((f) => f.required).length} required field(s) unsupplied,\n` +
+        `       so the 전자상거래법 제10조 footer block does NOT render on /ko pages:`,
+    );
+    missing.forEach((f) => console.log(`         ${f.label} — ${f.needs}`));
+    console.log("       Owner/partner data. See docs/korea-partner-questions-DRAFT.md.");
+  } else {
+    assertionPasses++;
+    console.log("  ok   Korean business disclosure: all required fields supplied");
   }
 }
 

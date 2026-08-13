@@ -13,6 +13,10 @@
  * next designed-but-unbuilt destination.
  */
 import { CHROME_LINK, CHROME_UI } from "../lib/ko/chrome";
+import {
+  KO_BUSINESS_DISCLOSURE,
+  disclosureIsComplete,
+} from "../lib/ko/businessDisclosure";
 import { DEFAULT_LOCALE, hasTranslation, localizePath, type Locale } from "../lib/i18n";
 
 interface Link { href: string; label: string; enabled?: boolean }
@@ -177,6 +181,32 @@ const SOCIAL = [
         </div>
       ))}
     </div>
+
+    {/*
+      전자상거래법 제10조 — Korean business disclosure.
+
+      Korean pages only: this is an obligation of selling into Korea, and
+      bolting it onto the English footer would state Korean filing details to
+      an audience they do not describe.
+
+      Renders ONLY when every required field has a real value. The alternative
+      — shipping the block with 000-00-00000 in it — would put a fabricated
+      business registration number in front of Korean consumers, and would look
+      finished while being false. Absent is honest and visibly unfinished;
+      check:i18n names the missing fields so it does not go quiet.
+    */}
+    {locale === "ko" && disclosureIsComplete(KO_BUSINESS_DISCLOSURE) && (
+      <div class="foot__biz">
+        <dl>
+          {KO_BUSINESS_DISCLOSURE.filter((f) => f.value.trim()).map((f) => (
+            <div class="foot__biz-row">
+              <dt class="mono">{f.label}</dt>
+              <dd class="mono">{f.value}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    )}
 
     <div class="foot__bot">
       <span class="mono">© 2026 Team Rollouts</span>

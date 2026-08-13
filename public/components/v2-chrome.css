@@ -138,6 +138,18 @@ body.menu-open .mnav{opacity:1;visibility:visible}
 .foot__col p{font-family:ui-monospace,'SF Mono','JetBrains Mono',Menlo,monospace;font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--bone-faint);margin-bottom:1rem}
 .foot__col a{display:block;color:var(--bone-dim);font-size:.9rem;padding:.32rem 0;transition:color .2s}
 .foot__col a:hover{color:var(--bone)}
+/* 전자상거래법 제10조 disclosure — Korean pages only.
+   Sits above .foot__bot and reads as fine print, because that is what it is:
+   a legal identification block, not a design element. text-transform is NOT
+   uppercased here even though the neighbouring .mono rules do it — uppercase
+   is meaningless for Hangul and the Latin inside these values (a company name,
+   an email) is a proper noun that must render as filed. */
+.foot__biz{margin-top:2.4rem;padding-top:1.6rem;border-top:1px solid var(--line);color:var(--bone-faint)}
+.foot__biz dl{display:flex;flex-wrap:wrap;gap:.4rem 1.6rem;margin:0}
+.foot__biz-row{display:flex;gap:.5rem;align-items:baseline}
+.foot__biz dt{opacity:.65}
+.foot__biz dt,.foot__biz dd{margin:0;font-size:.66rem;letter-spacing:normal;text-transform:none;line-height:1.7}
+@media (max-width:640px){.foot__biz dl{flex-direction:column;gap:.3rem}}
 .foot__bot{display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:center;margin-top:3rem;padding-top:1.6rem;border-top:1px solid var(--line);color:var(--bone-faint)}
 .foot__bot .mono{letter-spacing:.14em;text-transform:uppercase;font-size:.62rem}
 
