@@ -9,7 +9,7 @@ import Nav from "../components/Nav.astro";
 import V2CookieBanner from "../components/V2CookieBanner.astro";
 import LocaleSuggestionBanner from "../components/LocaleSuggestionBanner.astro";
 import { v } from "../lib/asset-url";
-import { LOCALE_LABELS, alternateLinks, localeFromPath, normalizePath, stripLocale, type Locale } from "../lib/i18n";
+import { LOCALE_LABELS, alternateLinks, hasTranslation, localeFromPath, localizePath, normalizePath, stripLocale, type Locale } from "../lib/i18n";
 
 interface SeoBlock {
   metaTitle?: string;
@@ -166,20 +166,48 @@ const CRUMB_LABELS: Record<string, string> = {
   "for-labels": "Labels", "for-partners": "Distributors",
   privacy: "Privacy", terms: "Terms", cookies: "Cookies", "sms-terms": "SMS Terms",
 };
-const crumbSegments = Astro.url.pathname.replace(/^\/|\/$/g, "").split("/").filter(Boolean);
+/**
+ * Segments come from the LOCALE-STRIPPED path, not the raw one.
+ *
+ * The raw pathname treats the locale prefix as a level of the hierarchy, so
+ * /ko/pricing produced `Home > ko > Pricing` with the middle item asserting
+ * that https://teamrollouts.com/ko exists. It does not — there is no Korean
+ * index page and no redirect covers it. That is fabricated structured data:
+ * a machine-readable claim about a resource that 404s, which Google discards
+ * (taking the whole trail with it) and which nothing in a build reports.
+ *
+ * `ko` is also not a level a reader ever navigates through. The Korean pricing
+ * page sits under Home, exactly like the English one — the locale is which
+ * VERSION of the trail you are on, not a step within it.
+ */
+const crumbSegments = basePath.replace(/^\/|\/$/g, "").split("/").filter(Boolean);
 const siteRoot = (Astro.site ?? new URL("https://teamrollouts.com")).origin;
+
+/** Item URLs stay in the reader's locale where that version exists, English otherwise. */
+const crumbUrl = (segments: string[]) => {
+  const path = `/${segments.join("/")}`;
+  return `${siteRoot}${hasTranslation(path, locale) ? localizePath(path, locale) : path}`;
+};
+
 const breadcrumbJsonLd =
   breadcrumb && crumbSegments.length > 0
     ? {
         "@context": "https://schema.org",
         "@type": "BreadcrumbList",
         itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Home", item: `${siteRoot}/` },
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            // Falls back to the English root while no Korean index exists,
+            // rather than inventing /ko/.
+            item: crumbUrl([]),
+          },
           ...crumbSegments.map((seg, i) => ({
             "@type": "ListItem",
             position: i + 2,
             name: CRUMB_LABELS[seg] ?? seg.replace(/-/g, " "),
-            item: `${siteRoot}/${crumbSegments.slice(0, i + 1).join("/")}`,
+            item: crumbUrl(crumbSegments.slice(0, i + 1)),
           })),
         ],
       }

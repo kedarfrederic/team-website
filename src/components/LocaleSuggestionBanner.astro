@@ -153,6 +153,21 @@ const copy = target ? (COPY[target] ?? COPY[DEFAULT_LOCALE]) : null;
           .split(',').map((c) => c.trim().toUpperCase()).filter(Boolean);
         if (!target || countries.length === 0) return;
 
+        const root = document.documentElement;
+
+        /* Publish the bar's height so the CSS above can move the fixed nav and
+           the page body out from under it. Re-measured on resize because the
+           bar wraps to two rows on narrow viewports, and a stale height would
+           either leave a gap or put the nav back underneath it. */
+        const syncOffset = () => {
+          root.style.setProperty('--lsg-h', banner.offsetHeight + 'px');
+        };
+        const clearOffset = () => {
+          root.classList.remove('has-lsg');
+          root.style.removeProperty('--lsg-h');
+          window.removeEventListener('resize', syncOffset);
+        };
+
         banner.querySelector('[data-lsg-accept]')?.addEventListener('click', () => {
           writePreference(target);       // the href navigates; this just records it
         });
@@ -163,14 +178,19 @@ const copy = target ? (COPY[target] ?? COPY[DEFAULT_LOCALE]) : null;
           // bar on screen for a beat after a deliberate dismissal, which reads
           // as the click not having registered.
           banner.hidden = true;
+          // Release the offset too, or the nav stays pushed down against a bar
+          // that is no longer there.
+          clearOffset();
         });
 
         const reveal = (country) => {
           if (!country || !countries.includes(country)) return;
-          // One unconditional, synchronous line. Nothing to sequence, no
-          // frame-timing dependency, and no state in which the bar can be
-          // un-hidden and invisible at once.
+          // Unhide first so offsetHeight is measurable — it is 0 while the
+          // element is display:none.
           banner.hidden = false;
+          syncOffset();
+          root.classList.add('has-lsg');
+          window.addEventListener('resize', syncOffset);
         };
 
         /* Country is fetched, never rendered — see the note at the top of this file.
@@ -211,28 +231,45 @@ const copy = target ? (COPY[target] ?? COPY[DEFAULT_LOCALE]) : null;
      renders on both the v2 pages and the classic-chrome ones, whose token sets
      differ. Pinned to the TOP because the cookie banner owns the bottom — two
      fixed bars stacking on one edge would bury one of them on mobile. */
+  /* NO ENTRANCE ANIMATION, deliberately.
+
+     Two were tried and both removed: a transition from translateY(-100%), then
+     a keyframe animation from the same start state. Browsers pause transitions
+     AND animations in background tabs, holding the element at its first
+     keyframe — so both left the bar un-hidden and parked off-screen at once for
+     anyone arriving via cmd-click, a restored session, or a background link.
+
+     The complaint was that the bar arrived LATE, not abruptly. That is fixed
+     where it actually lives: the component mounts first in <body> so the geo
+     request starts as early as a same-origin fetch can, and the answer is
+     cached in sessionStorage so every navigation after the first is instant.
+
+     KEEP THIS COMMENT OUTSIDE THE RULE. It previously sat inside the
+     declaration block, and removing the animation took the block's closing
+     brace with it — leaving `.lsg{` unterminated, which silently swallowed
+     every rule after it (including the nav offset below). astro build reported
+     no error. CSS fails quietly; a comment between a selector and its brace is
+     an easy way to make it do so. */
   .lsg{position:fixed;top:0;left:0;right:0;z-index:9998;
        background:rgba(13,12,11,.96);border-bottom:1px solid rgba(239,235,227,.14);
        color:#efebe3;backdrop-filter:blur(10px);
-       font-family:Inter,-apple-system,BlinkMacSystemFont,sans-serif;
-       /* NO ENTRANCE ANIMATION, deliberately.
-
-          Two were tried and both were removed. A transition from
-          translateY(-100%), and then a keyframe animation from the same start
-          state. Both fail identically in a background tab — browsers pause
-          transitions AND animations there, holding the element at its first
-          keyframe, so the bar ended up un-hidden and parked off-screen at the
-          same time. Anyone arriving via cmd-click, a restored session, or a
-          background link got a banner that existed and could not be seen.
-
-          The complaint that prompted this was that the bar arrived LATE, not
-          that it arrived abruptly. That is fixed where it actually lives: the
-          component now mounts first in <body> so the geo request starts as
-          early as a same-origin fetch can, and the answer is cached in
-          sessionStorage so every navigation after the first is instant. An
-          animation only ever addressed the cosmetics of a delay that is now
-          mostly gone, and it cost a real failure mode to do it. */
+       font-family:Inter,-apple-system,BlinkMacSystemFont,sans-serif}
   .lsg[hidden]{display:none}
+
+  /* THE BAR MUST NOT COVER THE NAV.
+     `.nav` is also position:fixed at top:0 (v2-chrome.css:35) but at z-index
+     100 against this bar's 9998, so simply sharing the band meant the bar
+     painted straight over it: 90px of bar over a 69px nav, with
+     elementFromPoint at the logo and at Sign in both returning the bar. Every
+     nav control — brand, all three menus, Sign in, Sign up, and the mobile
+     burger — was invisible AND unclickable, and only for visitors from Korea,
+     which is the entire audience this feature exists for.
+
+     So the bar claims its own band and everything else moves down by exactly
+     its height. The height is measured at runtime rather than hardcoded
+     because the bar wraps to two rows under 720px. */
+  :root.has-lsg .nav{top:var(--lsg-h,0px)}
+  :root.has-lsg body{padding-top:var(--lsg-h,0px)}
   .lsg__in{max-width:78rem;margin:0 auto;padding:.7rem clamp(1.3rem,5vw,4.5rem);
            display:flex;flex-wrap:wrap;gap:.6rem 1.4rem;align-items:center;
            justify-content:space-between}

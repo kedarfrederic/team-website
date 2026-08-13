@@ -12,7 +12,28 @@
  * currently enabled — the Platform pages landed. Keep the mechanism for the
  * next designed-but-unbuilt destination.
  */
+import { DEFAULT_LOCALE, hasTranslation, localizePath, type Locale } from "../lib/i18n";
+
 interface Link { href: string; label: string; enabled?: boolean }
+
+interface Props {
+  /**
+   * Locale of the page this footer is rendered on. Destinations only — the
+   * labels stay English until the pages behind them are translated.
+   *
+   * V2Nav got this first, and the footer not having it produced a page with
+   * TWO "Pricing" links going to different language versions: the nav's to
+   * /ko/pricing, the footer's to /pricing. A Korean reader who scrolled past
+   * the nav was silently dropped back into English by the same site, on the
+   * same page, with no indication anything had changed.
+   */
+  locale?: Locale;
+}
+const { locale = DEFAULT_LOCALE } = Astro.props;
+
+/** Localise an internal path if a translation exists; leave anything else alone. */
+const localeHref = (path: string) =>
+  path.startsWith("/") && hasTranslation(path, locale) ? localizePath(path, locale) : path;
 
 const LOGO = "/v2/assets/logo/team-logo-live.svg";
 
@@ -103,7 +124,7 @@ const SOCIAL = [
       {columns.map((c) => (
         <div class="foot__col">
           <p>{c.heading}</p>
-          {c.links.map((l) => <a href={l.href}>{l.label}</a>)}
+          {c.links.map((l) => <a href={localeHref(l.href)}>{l.label}</a>)}
         </div>
       ))}
     </div>

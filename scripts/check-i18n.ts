@@ -151,6 +151,40 @@ eq(
   }
 }
 
+/**
+ * PART 1b — the i18n components' <style> blocks must have balanced braces.
+ *
+ * An unterminated CSS rule does not fail a build, does not warn, and does not
+ * throw in the browser. It silently swallows every rule after it as part of the
+ * malformed declaration. That is exactly what happened here: removing an
+ * animation took a rule's closing brace with it, which killed the rule that
+ * stops the locale bar covering the site nav — `astro build` stayed green
+ * throughout and the page looked fine until it was hit-tested.
+ *
+ * Comments are stripped before counting, because these files deliberately carry
+ * long explanatory comments (which may contain braces) inside the style block.
+ */
+const componentDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "src", "components");
+for (const file of ["LocaleSuggestionBanner.astro", "KoreanTypography.astro"]) {
+  const full = path.join(componentDir, file);
+  if (!fs.existsSync(full)) continue;
+  const src = fs.readFileSync(full, "utf8");
+  const styleMatch = src.match(/<style[^>]*>([\s\S]*?)<\/style>/);
+  if (!styleMatch) continue;
+  const withoutComments = styleMatch[1].replace(/\/\*[\s\S]*?\*\//g, "");
+  const open = (withoutComments.match(/\{/g) ?? []).length;
+  const close = (withoutComments.match(/\}/g) ?? []).length;
+  if (open !== close) {
+    assertionFailures++;
+    console.error(
+      `  FAIL ${file} — unbalanced CSS braces in <style>: ${open} '{' vs ${close} '}'.\n` +
+        `         An unterminated rule silently swallows every rule after it, and the build stays green.`,
+    );
+  } else {
+    assertionPasses++;
+  }
+}
+
 if (assertionFailures > 0) {
   console.error(`\nFAILED — ${assertionFailures} path-logic assertion(s) failed.`);
   process.exit(1);
