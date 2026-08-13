@@ -1114,35 +1114,8 @@ body.menu-open .menu__list a{opacity:1;transform:none}
    regardless of order, so the page keeps its own ground without !important. */
 html body{background:var(--ink);color:var(--bone);max-width:none;overflow-x:clip}
 
-/* ── capsule offset for the site nav ──
-   This page renders the shared V2Nav server-side (upstream gets the same nav by
-   loading chrome.js). The nav is a full-width fixed bar at top:0, ~69px tall,
-   z-index 100; the capsule is authored at top:1.1rem pinned right, which lands
-   it under the nav's "Sign in / Sign up free" cluster and made the capsule's
-   links and burger unclickable. The conflict exists upstream too, so the port
-   didn't introduce it. Dropping the capsule below the nav keeps both usable and
-   reads correctly — the capsule is a scroll narrator, not a header. */
-.capsule{top:5rem}
-@media(max-width:940px){
-  /* Mobile nav is burger-only but the same height; keep equal clearance. */
-  .capsule{top:4.8rem}
-}
 
-/* The page's own fixed brand mark is redundant beside V2Nav's — both pin to the
-   same top-left corner and rendered as a doubled wordmark. Keep the nav's: it
-   links to / rather than #top and belongs to the site nav. */
-.brand{display:none}
 
-/* ── duplicate "Sign up free" (reported 2026-08-11) ──
-   V2Nav renders the site's primary CTA at top-right (.nav__beta, y≈14) and the
-   capsule renders a second identical one directly below it (.capsule__cta,
-   y≈87) — same label, same /pricing target, stacked in the same corner. The
-   capsule predates the shared nav: upstream's index.html gets its nav injected
-   by chrome.js, so the duplication exists in the delivered design too and isn't
-   something the port introduced.
-   Hide the capsule's link list, not the capsule: the orb progress ring, the act
-   name and the burger are the scroll narrator's actual job and stay. */
-.capsule__links{display:none}
 
 /* ── site footer on the homepage ──
    The delivered index.html ends with a minimal inline <footer class="footer">:
@@ -1151,3 +1124,34 @@ html body{background:var(--ink);color:var(--bone);max-width:none;overflow-x:clip
    renders the shared V2Footer instead (same as interior pages), so this inline
    one would be a second, poorer footer stacked above it. */
 .finale > .footer{display:none}
+
+/* ══ SOURCE PARITY: hide the page's own chrome ══
+   Ported from the inline <style> in the source's index.html <head>, which the
+   body port never picked up — I took the <body> and missed a rule that lived in
+   the <head>.
+
+   The source hides the capsule outright. Ours was showing it, which is the
+   reported "✳ Intro" pill top-right, and it was also the root of three
+   workarounds I'd stacked up: .capsule{top:5rem} to stop it colliding with
+   V2Nav, .capsule__links{display:none} to kill the duplicate "Sign up free",
+   and .brand{display:none} for the doubled wordmark. All three existed to make a
+   visible capsule coexist with the site nav. The source's answer is simply not
+   to show it — so those are deleted and this replaces them.
+
+   .finale .footer goes too: the page renders the shared V2Footer instead of the
+   delivered minimal one. ══ */
+.capsule,.brand,.menu,.finale .footer{display:none !important}
+
+/* ══ --accent must be LIME here ══
+   This page does NOT load v2-base.css, so the body.v2 token block never reaches
+   it and --accent falls through to global.css's :root{--accent:#f56002} —
+   orange. The hero's italic ("A *brain* for music operations") resolves through
+   var(--accent) at homepage-v2.css:579, so it rendered orange where the source
+   renders lime.
+   Declared on `html body` (0,0,2 + element) rather than :root (0,1,0) because
+   global.css is bundled AFTER this file and would otherwise win. Custom
+   properties inherit, so everything inside <body> picks it up. --signal stays
+   orange: the source keeps it that way and it's a distinct brand role. ══ */
+html body{
+  --accent:#d9fa87;
+}
