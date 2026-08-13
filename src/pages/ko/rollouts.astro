@@ -1,0 +1,51 @@
+---
+/**
+ * Rollouts — Korean.
+ *
+ * Mirrors src/pages/rollouts.astro and shares its body HTML, stylesheet and
+ * scripts. Only the words differ; see ../../lib/ko/rollouts.ts.
+ *
+ * `localizePage` runs both passes — text nodes, then hrefs. The second is not
+ * optional: the body carries links to /pricing, /teammate, /assets, /tours and
+ * /connections, and without the href pass those render Korean labels and
+ * navigate to English pages, which is exactly what shipped on the homepage
+ * before 8fe83ff. It is gated on TRANSLATED_PATHS, so links to pages that have
+ * no Korean version stay English rather than 404ing, and start pointing at
+ * Korean automatically the moment those pages land.
+ *
+ * v2-rollouts.js and v2-brain.js were checked for hardcoded copy before this
+ * page was written: the brain script is an ambient canvas and the page script
+ * writes no text. Nothing to extract, unlike the homepage.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import V2Head from "../../components/V2Head.astro";
+import V2Nav from "../../components/V2Nav.astro";
+import V2Footer from "../../components/V2Footer.astro";
+import KoreanTypography from "../../components/KoreanTypography.astro";
+import { v } from "../../lib/asset-url";
+import { localizePage } from "../../lib/koLocalize";
+import { KO_ROLLOUTS } from "../../lib/ko/rollouts";
+// @ts-expect-error — Astro's ?raw modifier returns a string at build time
+import bodyHtml from "../../lib/v2-rollouts-body.html?raw";
+
+const TITLE = "Rollouts — 브레인이 함께하는 릴리스 관리 | Team";
+const DESCRIPTION =
+  "Rollouts는 릴리스가 하나로 모이는 작업 공간입니다. 일정, 예산, 트랙, 에셋, 지역, DSP 피칭까지 — 모든 부분에 브레인이 함께합니다.";
+
+const body = localizePage(bodyHtml as string, KO_ROLLOUTS, "ko");
+---
+<BaseLayout title={TITLE} description={DESCRIPTION} chrome={false} bodyClass="v2">
+  <V2Head slot="head" pageCss="/components/v2-rollouts.css" />
+  <KoreanTypography />
+
+  <V2Nav active="platform" locale="ko" />
+
+  <Fragment set:html={body} />
+
+  <V2Footer locale="ko" />
+
+  <script is:inline src={v("/components/v2-base.js")}></script>
+  <script is:inline src={v("/components/v2-chrome.js")}></script>
+  <script is:inline src={v("/components/v2-rollouts.js")}></script>
+  <script is:inline src={v("/components/v2-brain.js")}></script>
+</BaseLayout>

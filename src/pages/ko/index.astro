@@ -30,7 +30,7 @@ import V2Nav from "../../components/V2Nav.astro";
 import V2Footer from "../../components/V2Footer.astro";
 import KoreanTypography from "../../components/KoreanTypography.astro";
 import { v } from "../../lib/asset-url";
-import { localizeBody, localizeHrefs } from "../../lib/koHomepageCopy";
+import { KO_HOMEPAGE_COPY, KO_HOMEPAGE_ATTRS, localizeBody, localizeHrefs } from "../../lib/koHomepageCopy";
 // @ts-expect-error — Astro's ?raw modifier returns a string at build time
 import bodyHtml from "../../lib/homepage-v2-body.html?raw";
 
@@ -61,7 +61,7 @@ const tokens: Record<string, unknown> = {
 };
 
 // Localise first, substitute second — see the note above.
-let body = localizeBody(bodyHtml as string);
+let body = localizeBody(bodyHtml as string, KO_HOMEPAGE_COPY, KO_HOMEPAGE_ATTRS);
 
 /* Links baked into the injected body never pass through the nav/footer's
    localeHref, so without this the hero and finale CTAs rendered Korean labels

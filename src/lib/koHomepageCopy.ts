@@ -29,7 +29,11 @@
  * accumulate.
  */
 
-import { DEFAULT_LOCALE, TRANSLATED_PATHS, localizePath, type Locale } from "./i18n";
+/* localizeBody / localizeHrefs moved to ./koLocalize when the product pages
+   needed the same pair. Re-exported here so the homepage's call sites — and
+   scripts/check-i18n.ts, which greps for a localizeHrefs CALL — keep working
+   from one import. */
+export { localizeBody, localizeHrefs, localizePage } from "./koLocalize";
 
 export const KO_HOMEPAGE_COPY: Readonly<Record<string, string>> = {
   // ── document + capsule narrator ──
@@ -335,71 +339,3 @@ export const KO_HOMEPAGE_ATTRS: Readonly<Record<string, string>> = {
   "Team interface preview": "Team 인터페이스 미리보기",
   "Your tools connected to one core": "하나의 코어에 연결된 도구들",
 };
-
-/**
- * Point internal links at their Korean versions, where those exist.
- *
- * `localizeBody` deliberately only touches text BETWEEN tags, so it never sees
- * an href — which meant the body's five hardcoded `href="/pricing"` links kept
- * sending Korean readers to the English page while the nav and footer, on the
- * same page, sent the identical Korean label to /ko/pricing. Two buttons, same
- * words, different languages. That is the exact defect V2Footer's docstring
- * records as already fixed once; it came back here because the body is injected
- * rather than composed, so it never passed through localeHref.
- *
- * Gated on TRANSLATED_PATHS rather than rewriting every href: /connections and
- * the /for-* pages have no Korean version, so rewriting those would trade a
- * language switch for a 404. Because the gate is the registry, this extends
- * itself as pages land — same rule as the nav and footer.
- *
- * Longest path first, so /pricing cannot partially match a longer route that
- * shares its prefix.
- */
-export function localizeHrefs(html: string, locale: Locale): string {
-  if (locale === DEFAULT_LOCALE) return html;
-  let out = html;
-  const paths = [...TRANSLATED_PATHS].sort((a, b) => b.length - a.length);
-  for (const path of paths) {
-    if (path === "/") continue; // bare href="/" is the logo; localizePath("/") is /ko/
-    const localized = localizePath(path, locale);
-    if (localized === path) continue;
-    out = out.split(`href="${path}"`).join(`href="${localized}"`);
-  }
-  return out;
-}
-
-/**
- * Swap English text nodes for Korean ones, leaving markup untouched.
- *
- * Matches only the text BETWEEN two tags (`>…<`), so a phrase that also occurs
- * inside a class name, id, url or data attribute is never touched — the thing a
- * naive whole-document replace would get wrong, silently and structurally.
- *
- * Anything with no entry renders in English. That is the intended failure mode:
- * a half-finished translation should look half-finished, not broken.
- *
- * Call once at module scope, not per request — the result is identical for
- * every visitor.
- */
-export function localizeBody(
-  html: string,
-  copy: Readonly<Record<string, string>> = KO_HOMEPAGE_COPY,
-  attrs: Readonly<Record<string, string>> = KO_HOMEPAGE_ATTRS,
-): string {
-  let out = html.replace(/>([^<>]+)</g, (whole, inner: string) => {
-    const trimmed = inner.trim();
-    if (!trimmed) return whole;
-    const ko = copy[trimmed];
-    if (ko === undefined) return whole;
-    // Preserve the original surrounding whitespace so inline layout (and the
-    // spacing between adjacent inline elements) is unchanged.
-    return ">" + inner.replace(trimmed, ko) + "<";
-  });
-
-  for (const [en, ko] of Object.entries(attrs)) {
-    for (const name of ["aria-label", "alt", "placeholder", "title"]) {
-      out = out.split(`${name}="${en}"`).join(`${name}="${ko}"`);
-    }
-  }
-  return out;
-}
