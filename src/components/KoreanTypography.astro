@@ -66,10 +66,31 @@
       'Apple SD Gothic Neo', 'Pretendard', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
   }
 
-  /* Serif display line — upright, not a sheared synthetic italic. */
-  :lang(ko) .nyght {
+  /* Serif display line — upright, not a sheared synthetic italic.
+     BOTH selectors are needed and neither is redundant: the pricing page
+     emphasises with `.nyght`, the homepage with a bare `em` carrying its own
+     font-family and font-style:italic. `.nyght` does not occur ANYWHERE in
+     homepage-v2-body.html, so targeting it alone meant this component was
+     mounted on the Korean homepage and did nothing for its ~20 accent words —
+     the page believed it was protected while every Hangul emphasis rendered as
+     sheared synthetic italic in a font with no Korean glyphs at all. */
+  :lang(ko) .nyght,
+  :lang(ko) em,
+  :lang(ko) .capsule__name {
     font-family: 'Nyght', 'Apple SD Gothic Neo', 'Noto Serif KR', 'Batang', serif;
-    font-style: normal;
+    /* !important, deliberately, and this is the case it exists for.
+
+       The design italicises `em` through at least six rules of varying
+       specificity — `.foot__news h3 em` (0,1,2) already beats `:lang(ko) em`
+       (0,1,1), and it was the one Hangul emphasis still shearing after the
+       first fix. The alternative is enumerating every one of those selectors
+       here, which breaks silently the next time the design adds a seventh.
+
+       Synthetic italic on Hangul is not a style preference being overridden.
+       There is no italic Hangul face, so the browser shears the glyphs, and
+       sheared Hangul reads as a rendering fault. This has to win against
+       arbitrary specificity we do not control. */
+    font-style: normal !important;
   }
 
   /* The small-caps label treatment. Same list of selectors the design applies

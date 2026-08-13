@@ -29,6 +29,8 @@
  * accumulate.
  */
 
+import { DEFAULT_LOCALE, TRANSLATED_PATHS, localizePath, type Locale } from "./i18n";
+
 export const KO_HOMEPAGE_COPY: Readonly<Record<string, string>> = {
   // ── document + capsule narrator ──
   "Operational Intelligence for Music Releases": "음악 릴리스를 위한 운영 인텔리전스",
@@ -333,6 +335,38 @@ export const KO_HOMEPAGE_ATTRS: Readonly<Record<string, string>> = {
   "Team interface preview": "Team 인터페이스 미리보기",
   "Your tools connected to one core": "하나의 코어에 연결된 도구들",
 };
+
+/**
+ * Point internal links at their Korean versions, where those exist.
+ *
+ * `localizeBody` deliberately only touches text BETWEEN tags, so it never sees
+ * an href — which meant the body's five hardcoded `href="/pricing"` links kept
+ * sending Korean readers to the English page while the nav and footer, on the
+ * same page, sent the identical Korean label to /ko/pricing. Two buttons, same
+ * words, different languages. That is the exact defect V2Footer's docstring
+ * records as already fixed once; it came back here because the body is injected
+ * rather than composed, so it never passed through localeHref.
+ *
+ * Gated on TRANSLATED_PATHS rather than rewriting every href: /connections and
+ * the /for-* pages have no Korean version, so rewriting those would trade a
+ * language switch for a 404. Because the gate is the registry, this extends
+ * itself as pages land — same rule as the nav and footer.
+ *
+ * Longest path first, so /pricing cannot partially match a longer route that
+ * shares its prefix.
+ */
+export function localizeHrefs(html: string, locale: Locale): string {
+  if (locale === DEFAULT_LOCALE) return html;
+  let out = html;
+  const paths = [...TRANSLATED_PATHS].sort((a, b) => b.length - a.length);
+  for (const path of paths) {
+    if (path === "/") continue; // bare href="/" is the logo; localizePath("/") is /ko/
+    const localized = localizePath(path, locale);
+    if (localized === path) continue;
+    out = out.split(`href="${path}"`).join(`href="${localized}"`);
+  }
+  return out;
+}
 
 /**
  * Swap English text nodes for Korean ones, leaving markup untouched.

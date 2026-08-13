@@ -53,6 +53,7 @@ const FOOTER_COPY: Record<string, Record<string, string>> = {
     emailPlaceholder: "you@label.com",
     emailLabel: "Email address",
     subscribe: "Subscribe",
+    subscribed: "Subscribed",
     brandBlurb: "Team connects the systems your music operation already runs on, turning every tool, file, message, plan, and data point into one living intelligence layer.",
     homeAria: "Team — home",
     tagline: "Operational Intelligence for Music Releases",
@@ -64,6 +65,7 @@ const FOOTER_COPY: Record<string, Record<string, string>> = {
     emailPlaceholder: "you@label.com",
     emailLabel: "이메일 주소",
     subscribe: "구독하기",
+    subscribed: "구독 완료",
     brandBlurb: "Team은 이미 사용 중인 음악 운영 시스템을 연결하여, 모든 도구와 파일, 메시지, 계획, 데이터를 하나의 살아 있는 인텔리전스 레이어로 만듭니다.",
     homeAria: "Team — 홈",
     tagline: "음악 릴리스를 위한 운영 인텔리전스",
@@ -153,7 +155,7 @@ const SOCIAL = [
       <form class="foot__form" id="v2FootNews" novalidate>
         <input type="email" name="email" placeholder={t.emailPlaceholder} aria-label={t.emailLabel} required />
         <input type="text" name="website" class="foot__hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
-        <button type="submit">{t.subscribe}</button>
+        <button type="submit" data-done-label={t.subscribed}>{t.subscribe}</button>
       </form>
     </div>
 

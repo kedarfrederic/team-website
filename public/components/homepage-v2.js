@@ -61,6 +61,21 @@ const COPY = (() => {
       ["Vinyl lead time is 11 weeks; street date is 9 out. I flagged it before the PO was placed.", '8m ago'],
       ["Press embargo confirmed for Friday. I've re-briefed the whole list.", 'just now'],
     ],
+    /* The #devband app-screen conversation: [side, header, message] where side
+       0 = TeamMate and 1 = the user. A SECOND chat demo, distinct from
+       chatQ/chatBot above — it was missed when this block was first extracted,
+       and because it appends a message every 4.2s and trims the panel to four
+       children, it silently overwrote the messages the page HAD translated with
+       English ones a few seconds after load. */
+    chat: [
+      [0, 'TEAMMATE · 12:53', "Pulled 3 past releases. Ava's pre-save pushes in week 2 outperformed week 4 by 31%."],
+      [1, '12:54 · YOU', 'Move the pre-save blast earlier then.'],
+      [0, 'TEAMMATE · 12:54', 'Done. Moved to Thu 25 and assigned to Maya. Budget untouched.'],
+      [1, '12:56 · YOU', "What's still unassigned this week?"],
+      [0, 'TEAMMATE · 12:56', 'Two tasks: the country playlist pitch and the venue shortlist. Want owners on both?'],
+      [1, '12:57 · YOU', 'Yes, assign them.'],
+      [0, 'TEAMMATE · 12:57', 'Assigned. Playlist pitch to Sam, venues to Maya. Timeline updated.'],
+    ],
     /* Rotating task cards: [title, tag]. The colour class stays in POOL. */
     pool: [
       ['Master v10 QC Check', 'AUDIO'],
@@ -79,7 +94,7 @@ const COPY = (() => {
      never the literal string "undefined" rendered into the scroll narrator,
      which is what a bare COPY.acts[i] lookup produces against a short array.
      Degrade to mixed language, never to broken output. */
-  for (const key of ['acts', 'tmsgs', 'pool']) {
+  for (const key of ['acts', 'tmsgs', 'pool', 'chat']) {
     const supplied = Array.isArray(override[key]) ? override[key] : [];
     merged[key] = EN[key].map((fallback, i) => supplied[i] ?? fallback);
   }
@@ -769,15 +784,8 @@ function catchScene(p) {
 
   /* the conversation carries on */
   const scroll = $('.app__scroll');
-  const CHAT = [
-    [0, 'TEAMMATE · 12:53', "Pulled 3 past releases. Ava's pre-save pushes in week 2 outperformed week 4 by 31%."],
-    [1, '12:54 · YOU', 'Move the pre-save blast earlier then.'],
-    [0, 'TEAMMATE · 12:54', 'Done. Moved to Thu 25 and assigned to Maya. Budget untouched.'],
-    [1, '12:56 · YOU', "What's still unassigned this week?"],
-    [0, 'TEAMMATE · 12:56', 'Two tasks: the country playlist pitch and the venue shortlist. Want owners on both?'],
-    [1, '12:57 · YOU', 'Yes, assign them.'],
-    [0, 'TEAMMATE · 12:57', 'Assigned. Playlist pitch to Sam, venues to Maya. Timeline updated.'],
-  ];
+  const CHAT = COPY.chat;
+
   let ci = 0;
   setInterval(() => {
     if (!live || document.hidden) return;

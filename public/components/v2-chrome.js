@@ -83,7 +83,12 @@
            subscribe shouldn't surface an error on a marketing page. */
       }
       form.classList.add('done');
-      if (btn) btn.textContent = 'Subscribed';
+      /* Follows the document language. This is the ONLY string this shared
+         script writes into the footer form, and it was hardcoded English — so
+         a Korean reader saw 구독하기, clicked it, and got "Subscribed". The
+         label reads from a data attribute the footer supplies rather than a
+         locale table here, so the copy stays with the rest of the footer's. */
+      if (btn) btn.textContent = btn.dataset.doneLabel || 'Subscribed';
     });
   }
 

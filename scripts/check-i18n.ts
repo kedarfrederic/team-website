@@ -185,6 +185,104 @@ for (const file of ["LocaleSuggestionBanner.astro", "KoreanTypography.astro"]) {
   }
 }
 
+// ── Part 3: the homepage translation map, against the page it translates ────
+
+/**
+ * Two files told maintainers this check covered them, and it did not — a
+ * comment asserting a guard that does not exist is worse than no comment,
+ * because it stops the next person looking. So the guard now exists.
+ *
+ * ORPHAN KEYS. A map key that matches no text node is inert: the translation
+ * was written, is carried forever, and renders nothing. Usually it means the
+ * body copy changed underneath it, which also means that sentence is now
+ * silently English on the Korean page.
+ *
+ * UNSUBSTITUTED TOKENS. Any {{V2_*}} left in the body after the page's token
+ * map is applied renders as literal braces to the reader.
+ *
+ * LEAKED HREFS. A link to a path that HAS a Korean version but is still
+ * pointing at the English one — the defect that shipped Korean CTAs into the
+ * English pricing page.
+ */
+{
+  // Derived from componentDir (declared above) rather than projectRoot, which
+  // is initialised further down in Part 2 — referencing it here is a TDZ error.
+  const root = path.resolve(componentDir, "..", "..");
+  const bodyPath = path.join(root, "src", "lib", "homepage-v2-body.html");
+  const mapPath = path.join(root, "src", "lib", "koHomepageCopy.ts");
+  const pagePath = path.join(root, "src", "pages", "ko", "index.astro");
+
+  if (fs.existsSync(bodyPath) && fs.existsSync(mapPath) && fs.existsSync(pagePath)) {
+    const body = fs.readFileSync(bodyPath, "utf8");
+    const mapSrc = fs.readFileSync(mapPath, "utf8");
+    const pageSrc = fs.readFileSync(pagePath, "utf8");
+
+    const textNodes = new Set(
+      [...body.matchAll(/>([^<>]+)</g)].map((m) => m[1].trim()).filter(Boolean),
+    );
+
+    // Keys from KO_HOMEPAGE_COPY only — stop at the closing brace so the
+    // separate attribute map is not counted as text-node keys.
+    const copyStart = mapSrc.indexOf("export const KO_HOMEPAGE_COPY");
+    const copyEnd = mapSrc.indexOf("\n};", copyStart);
+    const copyBlock = mapSrc.slice(copyStart, copyEnd);
+    // Unescape via JSON so \n, \u2019 and \" all resolve to the characters the
+    // text node actually contains. A naive replace of \" only would report a
+    // multi-line key as an orphan purely because it never unescaped the newline.
+    const keys = [...copyBlock.matchAll(/\n  "((?:[^"\\]|\\.)*)":/g)].map((m) => {
+      try {
+        return JSON.parse(`"${m[1]}"`) as string;
+      } catch {
+        return m[1];
+      }
+    });
+
+    const orphans = keys.filter((k) => !textNodes.has(k));
+    if (orphans.length > 0) {
+      assertionFailures++;
+      console.error(
+        `  FAIL koHomepageCopy has ${orphans.length} orphan key(s) — translated, carried, and rendering nothing:`,
+      );
+      orphans.slice(0, 10).forEach((o) => console.error(`         ${JSON.stringify(o.slice(0, 70))}`));
+      console.error("         The body copy likely changed; that sentence is now English on /ko/.");
+    } else {
+      assertionPasses++;
+    }
+
+    // Every token in the body must have a value in the Korean page.
+    const bodyTokens = new Set([...body.matchAll(/\{\{V2_[A-Z_]*\}\}/g)].map((m) => m[0]));
+    const missingTokens = [...bodyTokens].filter((t) => !pageSrc.includes(t));
+    if (missingTokens.length > 0) {
+      assertionFailures++;
+      console.error(
+        `  FAIL src/pages/ko/index.astro leaves ${missingTokens.length} token(s) unsubstituted — they render as literal braces:`,
+      );
+      missingTokens.forEach((t) => console.error(`         ${t}`));
+    } else {
+      assertionPasses++;
+    }
+
+    // Any body href whose path has a Korean version must be rewritten.
+    /* Match a CALL, not the identifier. Checking `pageSrc.includes(
+       "localizeHrefs")` passed even with the call deleted, because the import
+       statement still contained the word — a guard that reported success on
+       the exact defect it existed to catch. */
+    const callsLocalizeHrefs = /localizeHrefs\s*\(/.test(pageSrc);
+    const leaked = callsLocalizeHrefs
+      ? []
+      : [...TRANSLATED_PATHS].filter((p2) => p2 !== "/" && body.includes(`href="${p2}"`));
+    if (leaked.length > 0) {
+      assertionFailures++;
+      console.error(
+        `  FAIL the Korean homepage injects href(s) to ${leaked.join(", ")} without localizeHrefs —\n` +
+          `         Korean labels would navigate to the English page.`,
+      );
+    } else {
+      assertionPasses++;
+    }
+  }
+}
+
 if (assertionFailures > 0) {
   console.error(`\nFAILED — ${assertionFailures} path-logic assertion(s) failed.`);
   process.exit(1);

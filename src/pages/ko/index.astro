@@ -30,7 +30,7 @@ import V2Nav from "../../components/V2Nav.astro";
 import V2Footer from "../../components/V2Footer.astro";
 import KoreanTypography from "../../components/KoreanTypography.astro";
 import { v } from "../../lib/asset-url";
-import { localizeBody } from "../../lib/koHomepageCopy";
+import { localizeBody, localizeHrefs } from "../../lib/koHomepageCopy";
 // @ts-expect-error — Astro's ?raw modifier returns a string at build time
 import bodyHtml from "../../lib/homepage-v2-body.html?raw";
 
@@ -62,6 +62,13 @@ const tokens: Record<string, unknown> = {
 
 // Localise first, substitute second — see the note above.
 let body = localizeBody(bodyHtml as string);
+
+/* Links baked into the injected body never pass through the nav/footer's
+   localeHref, so without this the hero and finale CTAs rendered Korean labels
+   and navigated to the ENGLISH /pricing — two buttons on one page, identical
+   Korean words, different languages. Gated on TRANSLATED_PATHS, so untranslated
+   destinations stay English rather than 404ing. */
+body = localizeHrefs(body, "ko");
 for (const [token, value] of Object.entries(tokens)) {
   body = body.split(token).join(esc(value));
 }
@@ -92,6 +99,19 @@ const homepageCopyKo = {
     ["새 마스터가 Dropbox에 도착해, 참조된 모든 곳에서 v9를 v10으로 교체했습니다.", "방금 전"],
     ["바이닐 제작 기간이 11주인데 발매일은 9주 뒤입니다. 발주 전에 알려드립니다.", "8분 전"],
     ["보도 엠바고가 금요일로 확정되어, 전체 리스트에 다시 안내했습니다.", "방금 전"],
+  ],
+  /* The #devband app-screen conversation — a SECOND chat demo, separate from
+     chatQ/chatBot. It appends a message every 4.2s and trims the panel to four,
+     so leaving it English did not just add English: it actively overwrote the
+     messages the body HAD translated, a few seconds after load. */
+  chat: [
+    [0, "TEAMMATE · 12:53", "지난 릴리스 3건을 확인했습니다. Ava의 프리세이브 푸시는 4주차보다 2주차에 31% 더 좋은 성과를 냈습니다."],
+    [1, "12:54 · 나", "그럼 프리세이브 확산을 앞당겨 주세요."],
+    [0, "TEAMMATE · 12:54", "완료했습니다. 25일 목요일로 옮기고 Maya에게 배정했습니다. 예산은 그대로입니다."],
+    [1, "12:56 · 나", "이번 주에 아직 담당자가 없는 건 뭐가 있나요?"],
+    [0, "TEAMMATE · 12:56", "두 건입니다. 컨트리 플레이리스트 피칭과 공연장 후보 선정. 둘 다 담당자를 지정할까요?"],
+    [1, "12:57 · 나", "네, 배정해 주세요."],
+    [0, "TEAMMATE · 12:57", "배정했습니다. 플레이리스트 피칭은 Sam, 공연장은 Maya. 타임라인도 업데이트했습니다."],
   ],
   pool: [
     ["마스터 v10 QC 검수", "오디오"],
