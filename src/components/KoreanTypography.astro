@@ -137,4 +137,26 @@
   :lang(ko) * {
     letter-spacing: normal !important;
   }
+
+  /*  3. SYNTHETIC ITALIC, structurally, for the same reason.
+        The `em`/`.nyght`/`.capsule__name` rule above was the third enumeration
+        in this file and it missed three more shapes: a bare `<i>` in the
+        overnight strip (담당자 없음), a classless `<p>` on the homepage
+        (지금까지는), and `.insight__tag` (변경 감지, 일정 리스크, 시그널,
+        연결됨). Seven Hangul elements were still shearing across /ko and
+        /ko/about while the file's own comment explained why enumeration fails.
+
+        There is no italic Hangul face. Every synthetic italic on Hangul is the
+        browser shearing glyphs, which reads as a rendering fault — so this is
+        not a style preference being overridden and there is no case where the
+        enumerated version is more correct than the general one. Same tradeoff
+        the tracking rule already accepts and documents: deliberately-Latin
+        italic on a Korean page also goes upright, which is cosmetic, against
+        Hangul that currently looks broken.
+
+        The font-family half of the `.nyght`/`em` rule above stays — that one is
+        about WHICH face renders the serif display line, not about the shear. */
+  :lang(ko) * {
+    font-style: normal !important;
+  }
 </style>
