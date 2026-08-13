@@ -171,7 +171,50 @@ for (const file of ["LocaleSuggestionBanner.astro", "KoreanTypography.astro"]) {
   const src = fs.readFileSync(full, "utf8");
   const styleMatch = src.match(/<style[^>]*>([\s\S]*?)<\/style>/);
   if (!styleMatch) continue;
-  const withoutComments = styleMatch[1].replace(/\/\*[\s\S]*?\*\//g, "");
+  const raw = styleMatch[1];
+
+  /* Comment delimiters FIRST. A brace count alone misses the failure that
+     actually shipped twice: an early `*​/` closes the comment, the prose after
+     it becomes CSS garbage, and the parser swallows the NEXT rule during error
+     recovery. Braces stay balanced throughout, so the brace check passes while
+     a rule silently does nothing. */
+  const opens = (raw.match(/\/\*/g) ?? []).length;
+  const closes = (raw.match(/\*\//g) ?? []).length;
+  if (opens !== closes) {
+    assertionFailures++;
+    console.error(
+      `  FAIL ${file} — unbalanced CSS comments in <style>: ${opens} '/*' vs ${closes} '*/'.\n` +
+        `         Prose left outside a comment is parsed as CSS and eats the rule after it.`,
+    );
+  } else {
+    assertionPasses++;
+  }
+
+  const withoutComments = raw.replace(/\/\*[\s\S]*?\*\//g, "");
+
+  /* Anything left that is not a rule, an at-rule or whitespace is stray prose —
+     the residue of a mis-closed comment even when the delimiters happen to
+     balance. */
+  let flattened = withoutComments;
+  // Collapse innermost blocks repeatedly so nested at-rules (@media { .x{} })
+  // reduce cleanly — a single pass leaves the wrapper's closing brace behind
+  // and reports valid CSS as stray text.
+  for (let i = 0; i < 20; i++) {
+    const next = flattened.replace(/[^{}]*\{[^{}]*\}/g, "");
+    if (next === flattened) break;
+    flattened = next;
+  }
+  const residue = flattened.trim();
+  if (residue.length > 0) {
+    assertionFailures++;
+    console.error(
+      `  FAIL ${file} — text outside any CSS rule in <style>: ${JSON.stringify(residue.slice(0, 70))}\n` +
+        `         Almost always a comment closed early; the parser discards the following rule.`,
+    );
+  } else {
+    assertionPasses++;
+  }
+
   const open = (withoutComments.match(/\{/g) ?? []).length;
   const close = (withoutComments.match(/\}/g) ?? []).length;
   if (open !== close) {

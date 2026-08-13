@@ -93,26 +93,48 @@
     font-style: normal !important;
   }
 
-  /* The small-caps label treatment. Same list of selectors the design applies
-     it to; tracking neutralised and a Hangul-bearing face named, since the mono
-     stack has no Korean glyphs at all. */
-  :lang(ko) .phero__note,
-  :lang(ko) .bill .save,
-  :lang(ko) .plan__badge,
-  :lang(ko) .plan__inclab,
-  :lang(ko) .ctable thead th,
-  :lang(ko) .ctable .grp td,
-  :lang(ko) .pfinal__note {
-    font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo',
-      'Pretendard', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
-    letter-spacing: 0;
+  /* ── The small-caps label treatment ────────────────────────────────────
+     TWO STRUCTURAL FIXES, NOT A LIST. Enumerating selectors has now failed
+     twice in this component: first `.nyght`, which occurs nowhere in the
+     homepage body, and then this block, which named only pricing-page classes
+     and so did nothing on the five product pages that mount it. Both times the
+     page believed it was protected. There are 92 distinct selectors in this
+     design carrying positive letter-spacing; a list will be wrong again by the
+     tenth page.
+
+     1. FONT, at the token. 76 rules resolve their mono stack through
+        --font-mono, so redefining it once under :lang(ko) reaches all of them
+        and every rule added later. Latin still resolves to the mono faces
+        listed first; only Hangul, which has no glyphs in any of them, falls
+        through to the Korean faces appended after. (19 rules hardcode a literal
+        mono stack instead of the token — those degrade to the OS default
+        Korean face, which is acceptable and is why the token list ends in a
+        generic.) */
+  :lang(ko) {
+    --font-mono: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo,
+      'Apple SD Gothic Neo', 'Pretendard', 'Noto Sans KR', 'Malgun Gothic', monospace;
   }
 
-  /* Headlines carry tight negative tracking tuned for Inter's Latin shapes;
-     on Hangul that crowds the syllable blocks into each other. */
-  :lang(ko) .h1,
-  :lang(ko) .h2,
-  :lang(ko) .plan__name {
-    letter-spacing: 0;
+  /*  2. TRACKING, for anything carrying a class. Every letter-spacing value in
+        this design is tuned for Latin — the positive ones for uppercase
+        small-caps labels, the negative ones for Inter's display shapes. None is
+        correct for Hangul, whose syllable blocks carry their own rhythm:
+        tracked out they read as "포 함  사 항", separate characters rather than
+        a word.
+
+        `!important` for the same reason as the `em` rule above: this has to
+        beat arbitrary specificity across 92 rules in stylesheets this component
+        does not own, and the alternative is the enumeration that has already
+        failed twice. The cost is that a deliberately-Latin element on a Korean
+        page also loses its tracking — a cosmetic loss, against Hangul that
+        currently reads as broken.
+
+        `*` rather than `[class]`: the first attempt scoped this to elements
+        carrying a class, which missed bare tags — a classless <u> in the
+        product mock still rendered 요약 tracked out at 0.9px. Since the
+        declaration is already !important, specificity is moot, so there is no
+        reason to bound the selector and every reason not to. */
+  :lang(ko) * {
+    letter-spacing: normal !important;
   }
 </style>
