@@ -1,0 +1,358 @@
+---
+/**
+ * 가격 — Korean pricing page.
+ *
+ * PRICES ARE PLACEHOLDERS, AND THEY ARE THE US PRICES.
+ *
+ * Every amount here is the exact figure from the English page, in USD, on
+ * purpose. KRW figures exist in the platform repo's economics model
+ * (₩119,000/seat, ₩219,000) but that file's own comment says to replace them
+ * with the partner's contracted settlement terms, so they are not confirmed
+ * prices and must not be published as if they were. Showing real USD is honest
+ * and reversible; inventing KRW is neither — a screenshot of a wrong number
+ * outlives the page it came from.
+ *
+ * This is also what the comparable vendors do: Notion (/ko), Figma (/ko-kr)
+ * and Google Workspace all serve Korean pages priced in USD, each with an
+ * explicit "적용 통화: USD" note. The `priceNote` below is that note.
+ *
+ * TO SWITCH TO KRW: replace the amount strings in `tiers` and drop
+ * `priceNote`. Nothing else here is currency-aware, by design — see
+ * docs/KOREA-LOCALIZATION-PLAN.md §3.C in the platform repo for the
+ * server-side work that has to land alongside it.
+ *
+ * TRIAL LENGTH IS ALSO A PLACEHOLDER. "14일" mirrors the US page. Korea is
+ * planned at 1 month, possibly 2 — open question #2 in the plan — and that
+ * decision interacts with a Stripe Korea rule requiring consent at least 30
+ * days before charging for a previously-free service. Update the CTA and FAQ
+ * together when it is settled; they state the same fact twice.
+ *
+ * NOT Sanity-bound, unlike the English page. Sanity has no localization plugin
+ * installed and the singletons are pinned to fixed _ids, so a Korean document
+ * is its own decision (plan §3.B). Copy is inline here until then.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import V2Head from "../../components/V2Head.astro";
+import V2Nav from "../../components/V2Nav.astro";
+import V2Footer from "../../components/V2Footer.astro";
+import SplitHeadline from "../../components/SplitHeadline.astro";
+import KoreanTypography from "../../components/KoreanTypography.astro";
+import { v } from "../../lib/asset-url";
+
+const heroHeadlineTop = "무료로 시작하세요.";
+const heroHeadlineBottom = "준비되면 업그레이드하세요.";
+const heroSubhead =
+  "Rollouts와 Assets는 언제까지나 무료로 사용할 수 있습니다. 더 나아갈 준비가 되셨나요? Pro는 Tours와 AI 브레인 TeamMate를 더하고, 이미 사용 중인 모든 도구를 연결합니다.";
+const heroNote = "지금 한정 베타 가격으로 시작하세요";
+
+const metaDescription =
+  "Team 플랫폼의 Rollouts와 Assets는 카드 등록 없이 무료입니다. Pro는 Tours와 TeamMate AI를 더하고 사용 중인 모든 도구를 연결하며, 베타 가격으로 제공됩니다.";
+
+// Korean B2B convention states tax separately (부가세 별도) rather than folding
+// it in. Kept factual: no claim about when KRW pricing arrives, because that
+// depends on the partner agreement rather than on this page.
+const priceNote = "적용 통화: 미국 달러(USD) · 부가세 별도";
+
+const yearlyLabel = "연간";
+const monthlyLabel = "월간";
+const yearlySaveTag = "약 20% 절약";
+
+interface Feature { text: string; pro?: boolean }
+interface Tier {
+  tierKey: string;
+  name: string;
+  who: string;
+  monthlyPrice: string;
+  yearlyPrice: string;
+  priceWasMonthly?: string;
+  priceWasYearly?: string;
+  period: string;
+  periodMonthly?: string;
+  seatsIncludedNote?: string;
+  extraSeatWasMonthly?: string;
+  extraSeatWasYearly?: string;
+  extraSeatPriceMonthly?: string;
+  extraSeatPriceYearly?: string;
+  badge?: string;
+  ctaLabel: string;
+  ctaHref: string;
+  note: string;
+  includesLabel: string;
+  features: Feature[];
+}
+
+const tiers: Tier[] = [
+  {
+    tierKey: "free",
+    name: "Free",
+    who: "모든 아티스트, 매니저, 팀을 위한 핵심 플랫폼",
+    monthlyPrice: "$0",
+    yearlyPrice: "$0",
+    period: "평생 무료",
+    seatsIncludedNote: "1석 · 아티스트, 릴리스, 협업자 무제한",
+    ctaLabel: "무료로 시작하기",
+    ctaHref: "https://app.teamrollouts.com/onboarding?plan=free",
+    note: "카드 등록이 필요 없습니다.",
+    includesLabel: "포함 사항",
+    features: [
+      { text: "Rollouts — 릴리스 관리" },
+      { text: "Assets — 크리에이티브 라이브러리" },
+      { text: "아티스트 및 릴리스 무제한" },
+      { text: "협업자 및 워크스페이스 무제한" },
+    ],
+  },
+  {
+    tierKey: "pro",
+    name: "Pro",
+    who: "사용 중인 모든 도구를 연결하려는 팀을 위해",
+    monthlyPrice: "$49.95",
+    yearlyPrice: "$39.96",
+    priceWasMonthly: "$99.95",
+    priceWasYearly: "$79.96",
+    period: "/월 · 연간 결제",
+    periodMonthly: "/월",
+    seatsIncludedNote: "2석 포함",
+    extraSeatWasMonthly: "$39.95",
+    extraSeatWasYearly: "$31.96",
+    extraSeatPriceMonthly: "$29.95/월",
+    extraSeatPriceYearly: "$23.96/월",
+    badge: "베타 가격 · 약 50% 할인",
+    ctaLabel: "14일 무료 체험 시작하기",
+    ctaHref: "https://app.teamrollouts.com/onboarding?plan=pro",
+    note: "언제든지 해지할 수 있습니다.",
+    includesLabel: "Free의 모든 기능에 더해",
+    features: [
+      { text: "Tours — 투어 관리", pro: true },
+      { text: "TeamMate AI — 인텔리전스 레이어", pro: true },
+      { text: "Connections — 모든 도구 연결", pro: true },
+      { text: "TeamMate 이메일 & 문자", pro: true },
+      { text: "새로운 베타 기능 우선 이용", pro: true },
+      { text: "우선 지원", pro: true },
+    ],
+  },
+];
+
+interface ComparisonCell { type: "check" | "dash" | "text"; text?: string }
+interface ComparisonRow { label: string; isGroupHeader?: boolean; valueByColumn?: ComparisonCell[] }
+
+const compareHeadTop = "Free와 Pro를";
+const compareHeadBottom = "비교해 보세요.";
+const compareColumns = ["Free", "Pro"];
+
+const compareRows: ComparisonRow[] = [
+  { label: "플랫폼", isGroupHeader: true },
+  { label: "Rollouts — 릴리스 관리", valueByColumn: [{ type: "check" }, { type: "check" }] },
+  { label: "Assets — 크리에이티브 라이브러리", valueByColumn: [{ type: "check" }, { type: "check" }] },
+  { label: "Tours — 투어 관리", valueByColumn: [{ type: "dash" }, { type: "check" }] },
+  { label: "아티스트 / 로스터", valueByColumn: [{ type: "text", text: "무제한" }, { type: "text", text: "무제한" }] },
+  { label: "릴리스", valueByColumn: [{ type: "text", text: "무제한" }, { type: "text", text: "무제한" }] },
+  { label: "협업자", valueByColumn: [{ type: "text", text: "무제한" }, { type: "text", text: "무제한" }] },
+  { label: "워크스페이스", valueByColumn: [{ type: "text", text: "무제한" }, { type: "text", text: "무제한" }] },
+  { label: "포함 좌석", valueByColumn: [{ type: "text", text: "1석" }, { type: "text", text: "2석, 이후 좌석당 과금" }] },
+  { label: "브레인 — Pro", isGroupHeader: true },
+  { label: "TeamMate AI", valueByColumn: [{ type: "dash" }, { type: "check" }] },
+  { label: "Connections", valueByColumn: [{ type: "dash" }, { type: "check" }] },
+  { label: "TeamMate 이메일 & 문자", valueByColumn: [{ type: "dash" }, { type: "check" }] },
+  { label: "종합 인텔리전스", valueByColumn: [{ type: "dash" }, { type: "check" }] },
+  { label: "새로운 베타 기능 우선 이용", valueByColumn: [{ type: "dash" }, { type: "check" }] },
+  { label: "지원", valueByColumn: [{ type: "text", text: "일반" }, { type: "text", text: "우선" }] },
+];
+
+const faqHeadlineTop = "궁금한 점이";
+const faqHeadlineBottom = "있으신가요?";
+const faqCtaHref = "https://calendly.com/teamrollouts-demo/30min";
+const faqCtaLabel = "창업자와 이야기하기";
+
+const faqItems: { q: string; a: string }[] = [
+  {
+    q: "정말 무료인가요?",
+    a: "네. Rollouts와 Assets는 무료입니다. 아티스트, 릴리스, 협업자, 워크스페이스 모두 무제한이며 카드 등록도 필요 없습니다. 기능을 덜어낸 체험판이 아니라 실제 플랫폼 그대로입니다.",
+  },
+  {
+    q: "Pro에는 무엇이 포함되나요?",
+    a: "Pro는 Tours와 AI 브레인 TeamMate, 사용 중인 모든 도구를 연결하는 Connections, TeamMate 이메일 & 문자, 종합 인텔리전스, 그리고 새로운 베타 기능 우선 이용 권한을 더합니다.",
+  },
+  {
+    q: "‘베타 가격’은 무엇인가요?",
+    a: "Team은 얼리 액세스 단계이므로 Pro를 정가에서 할인된 베타 가격으로 제공합니다. 지금 가입하시면 해당 얼리 액세스 요금이 계속 적용됩니다. 두 플랜 모두 14일 무료 체험으로 시작합니다.",
+  },
+  {
+    q: "시작할 때 카드가 필요한가요?",
+    a: "Free는 카드가 전혀 필요 없습니다. Pro는 14일 무료 체험으로 시작하며, 체험이 끝난 뒤에도 중단 없이 이어질 수 있도록 카드를 등록합니다.",
+  },
+  {
+    q: "가격이 미국 달러로 표시되는 이유는 무엇인가요?",
+    a: "현재 모든 플랜은 미국 달러(USD)로 청구됩니다. 원화 결제는 한국 파트너십과 함께 준비하고 있으며, 확정되면 이 페이지에 반영됩니다.",
+  },
+  {
+    q: "제 데이터는 제 것인가요?",
+    a: "언제나 그렇습니다. 연동은 권한 기반이며 언제든 해제할 수 있고, 어떤 데이터도 모델 학습에 사용되지 않으며, 만드신 모든 것은 내보내고 옮길 수 있습니다.",
+  },
+];
+
+// FAQPage structured data mirrors the rendered items exactly. `inLanguage` is
+// set so the annotation is not read as Korean text on an English-language page.
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  inLanguage: "ko-KR",
+  mainEntity: faqItems.map((it) => ({
+    "@type": "Question",
+    name: it.q,
+    acceptedAnswer: { "@type": "Answer", text: it.a },
+  })),
+};
+
+const finalHeadlineTop = "다음 릴리스를";
+const finalHeadlineBottom = "Team에서 무료로.";
+const finalPrimary = { label: "무료로 시작하기", href: "https://app.teamrollouts.com/onboarding?plan=free" };
+const finalSecondary = { label: "데모 예약하기", href: "https://calendly.com/teamrollouts-demo/30min" };
+const finalFootnote = "무료 플랫폼 · 카드 등록 불필요";
+---
+<BaseLayout
+  title="가격 — 무료 플랫폼, Pro 브레인 | Team"
+  description={metaDescription}
+  chrome={false}
+  bodyClass="v2"
+>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(faqJsonLd)} />
+  <V2Head slot="head" pageCss="/components/pricing-v2.css" />
+  <KoreanTypography />
+
+  <V2Nav active="plans" locale="ko" />
+
+  <main id="main">
+    <section class="phero container">
+      <div class="phero__in">
+        <SplitHeadline as="h1" class="h1 reveal" top={heroHeadlineTop} bottom={heroHeadlineBottom} />
+        <p class="lede reveal" style="transition-delay:.08s;margin-inline:auto">{heroSubhead}</p>
+        <p class="phero__note reveal" style="transition-delay:.14s">{heroNote}</p>
+        <div class="bill reveal" id="bill" role="tablist" aria-label="결제 주기" style="transition-delay:.2s">
+          <button class="on" data-period="yearly" role="tab" type="button">{yearlyLabel} <span class="save">{yearlySaveTag}</span></button>
+          <button data-period="monthly" role="tab" type="button">{monthlyLabel}</button>
+        </div>
+        <p class="phero__note reveal" style="transition-delay:.24s">{priceNote}</p>
+      </div>
+    </section>
+
+    <section class="section container" style="padding-top:0">
+      <div class="plans reveal">
+        {tiers.map((tier) => {
+          const isPro = tier.tierKey !== "free";
+          const hasSeatOverage = !!(tier.extraSeatPriceYearly || tier.extraSeatPriceMonthly);
+          return (
+            <div class={`plan${isPro ? " plan--pro" : ""}`}>
+              {tier.badge && <span class="plan__badge">{tier.badge}</span>}
+              <p class="plan__name">{tier.name}</p>
+              <p class="plan__who">{tier.who}</p>
+              <div class="plan__price">
+                {(tier.priceWasYearly || tier.priceWasMonthly) && (
+                  <span class="plan__was" data-yearly={tier.priceWasYearly} data-monthly={tier.priceWasMonthly}>{tier.priceWasYearly ?? tier.priceWasMonthly}</span>
+                )}
+                <span class="plan__amount" data-yearly={tier.yearlyPrice} data-monthly={tier.monthlyPrice}>{tier.yearlyPrice}</span>
+                <span class="plan__period" data-yearly={tier.period} data-monthly={tier.periodMonthly ?? tier.period}>{tier.period}</span>
+              </div>
+              {tier.seatsIncludedNote && (
+                <p class="plan__seat">
+                  {tier.seatsIncludedNote}
+                  {/*
+                    Korean puts the qualifier BEFORE the amount, so this reads
+                    "· 추가 좌석당 <was> <now>" rather than the English page's
+                    "· then <was> <now> per extra seat". Translating that
+                    sentence word-for-word would produce something no Korean
+                    reader would write.
+                  */}
+                  {hasSeatOverage && (
+                    <>
+                      {" "}· 추가 좌석당{" "}
+                      <s data-yearly={tier.extraSeatWasYearly} data-monthly={tier.extraSeatWasMonthly}>{tier.extraSeatWasYearly}</s>{" "}
+                      <b data-yearly={tier.extraSeatPriceYearly} data-monthly={tier.extraSeatPriceMonthly}>{tier.extraSeatPriceYearly}</b>
+                    </>
+                  )}
+                </p>
+              )}
+              <p class="plan__note">{tier.note}</p>
+              <a class="btn btn--solid" href={tier.ctaHref} data-cta data-plan={tier.tierKey}>{tier.ctaLabel}</a>
+              <p class="plan__inclab">{tier.includesLabel}</p>
+              <ul class="plan__feats">
+                {tier.features.map((feat) => (
+                  <li class={feat.pro ? "pro" : undefined}>{feat.text}</li>
+                ))}
+              </ul>
+            </div>
+          );
+        })}
+      </div>
+      <p class="plans__compare reveal"><a class="txtlink" href="#compare"><span class="tl">모든 기능 비교하기</span><span class="arr">→</span></a></p>
+    </section>
+
+    <section class="section container" id="compare">
+      <div style="max-width:44rem;margin:0 auto 1rem;text-align:center" class="reveal">
+        <SplitHeadline as="h2" class="h2" top={compareHeadTop} bottom={compareHeadBottom} />
+      </div>
+      <div class="ctable-wrap reveal">
+        <table class="ctable">
+          <thead>
+            <tr>
+              <th></th>
+              {compareColumns.map((col, i) => (
+                <th class={i === compareColumns.length - 1 ? "pro" : undefined}>{col}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {compareRows.map((row) =>
+              row.isGroupHeader ? (
+                <tr class="grp"><td colspan={compareColumns.length + 1}>{row.label}</td></tr>
+              ) : (
+                <tr>
+                  <td>{row.label}</td>
+                  {(row.valueByColumn ?? []).map((cell) => {
+                    if (cell.type === "check") return <td class="val"><span class="yes">✓</span></td>;
+                    if (cell.type === "dash") return <td class="val"><span class="no">–</span></td>;
+                    return <td class="val">{cell.text}</td>;
+                  })}
+                </tr>
+              )
+            )}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section container">
+      <div style="max-width:44rem;margin:0 auto 2.4rem;text-align:center" class="reveal">
+        <SplitHeadline as="h2" class="h2" top={faqHeadlineTop} bottom={faqHeadlineBottom} />
+      </div>
+      <div class="faq reveal">
+        {faqItems.map((item) => (
+          <details>
+            <summary>{item.q}<span class="pl"></span></summary>
+            <div><p>{item.a}</p></div>
+          </details>
+        ))}
+      </div>
+      <div class="faq__foot reveal">
+        <a class="btn btn--ghost" href={faqCtaHref} target="_blank" rel="noopener">{faqCtaLabel} <span class="btn__arr">→</span></a>
+      </div>
+    </section>
+
+    {/* Hidden, matching the English page's "hidden for now per Simon". */}
+    <section class="section container" style="display:none">
+      <div class="pfinal reveal">
+        <SplitHeadline as="h2" class="h2" top={finalHeadlineTop} bottom={finalHeadlineBottom} />
+        <div class="ctaband__row">
+          <a class="btn btn--solid" href={finalPrimary.href}>{finalPrimary.label}</a>
+          <a class="btn btn--ghost" href={finalSecondary.href} target="_blank" rel="noopener">{finalSecondary.label} <span class="btn__arr">→</span></a>
+        </div>
+        <p class="pfinal__note">{finalFootnote}</p>
+      </div>
+    </section>
+  </main>
+
+  <V2Footer />
+
+  <script is:inline src={v("/components/v2-base.js")}></script>
+  <script is:inline src={v("/components/v2-chrome.js")}></script>
+  <script is:inline src={v("/components/pricing-v2.js")}></script>
+</BaseLayout>

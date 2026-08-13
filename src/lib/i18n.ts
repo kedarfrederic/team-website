@@ -77,8 +77,9 @@ export const LOCALE_LABELS: Readonly<Record<Locale, { name: string; hreflang: st
  * no trailing slash except for the root.
  */
 export const TRANSLATED_PATHS: ReadonlySet<string> = new Set<string>([
-  // Populated as Korean pages land. Empty is correct while none exist —
-  // it means no hreflang is emitted, which is the honest state.
+  "/pricing",
+  // Add an entry only once the page file exists — `pnpm check:i18n` fails
+  // otherwise, because an hreflang alternate that 404s costs the whole cluster.
 ]);
 
 const NON_DEFAULT_LOCALES = LOCALES.filter((l) => l !== DEFAULT_LOCALE);

@@ -20,6 +20,8 @@
  *
  * Not ported: the light/dark theme toggle (deferred as its own feature).
  */
+import { DEFAULT_LOCALE, hasTranslation, localizePath, type Locale } from "../lib/i18n";
+
 interface Row {
   href: string;
   icon: keyof typeof IC;
@@ -39,8 +41,28 @@ interface Group {
 interface Props {
   /** Matches Group.key to light the active top-level item (source used <body data-nav>). */
   active?: string;
+  /**
+   * Locale of the page this nav is rendered on.
+   *
+   * Only affects DESTINATIONS, not labels. Every internal href goes through
+   * `localizePath` when — and only when — that path has a published
+   * translation, so a reader on a Korean page who clicks something that exists
+   * in Korean stays in Korean, and one that doesn't falls back to English
+   * rather than 404ing. Driven by the same registry as hreflang, so the nav and
+   * the annotations cannot drift apart.
+   *
+   * Labels stay English deliberately. Translating them while the pages behind
+   * them are still English would promise Korean and deliver English — worse
+   * than a nav that is plainly English. They become locale-aware when the pages
+   * do.
+   */
+  locale?: Locale;
 }
-const { active = "" } = Astro.props;
+const { active = "", locale = DEFAULT_LOCALE } = Astro.props;
+
+/** Localise an internal path if a translation exists; leave anything else alone. */
+const localeHref = (path: string) =>
+  path.startsWith("/") && hasTranslation(path, locale) ? localizePath(path, locale) : path;
 
 const IC = {
   rollouts: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>',
@@ -110,13 +132,13 @@ const groups = GROUPS.map((g) => ({ ...g, rows: g.rows?.filter((r) => r.enabled)
 
 <header class="nav v2-chrome" id="v2Nav">
   <div class="nav__in">
-    <a class="nav__brand" href="/" aria-label="Team — home"><img src={LOGO} alt="Team" /></a>
+    <a class="nav__brand" href={localeHref("/")} aria-label="Team — home"><img src={LOGO} alt="Team" /></a>
 
     <nav class="nav__menu" aria-label="Primary">
       {groups.map((g) => (
         <div class="nav__item">
           {g.href ? (
-            <a class={`nav__link${active === g.key ? " is-active" : ""}`} href={g.href}>{g.label}</a>
+            <a class={`nav__link${active === g.key ? " is-active" : ""}`} href={g.href && localeHref(g.href)}>{g.label}</a>
           ) : (
             <>
               <button type="button" class={`nav__link${active === g.key ? " is-active" : ""}`} aria-haspopup="true">
@@ -125,7 +147,7 @@ const groups = GROUPS.map((g) => ({ ...g, rows: g.rows?.filter((r) => r.enabled)
               <div class="nav__panel" role="menu">
                 {g.panelLabel && <p class="nav__plabel">{g.panelLabel}</p>}
                 {(g.rows ?? []).map((r) => (
-                  <a class="nav__prow" href={r.href} role="menuitem">
+                  <a class="nav__prow" href={localeHref(r.href)} role="menuitem">
                     <span class="ic" set:html={IC[r.icon]} />
                     <span><b>{r.title}</b><span>{r.desc}</span></span>
                     {r.pro && <span class="nav__pro">Pro</span>}
@@ -141,7 +163,7 @@ const groups = GROUPS.map((g) => ({ ...g, rows: g.rows?.filter((r) => r.enabled)
     <div class="nav__spacer"></div>
     <div class="nav__cta">
       <a class="nav__signin" href={SIGNIN}>Sign in</a>
-      <a class="nav__beta" href={BETA}>Sign up free</a>
+      <a class="nav__beta" href={localeHref(BETA)}>Sign up free</a>
     </div>
     <button class="nav__burger" id="v2Burger" aria-label="Menu" aria-expanded="false" aria-controls="v2Mnav">
       <i></i><i></i><i></i>
@@ -152,18 +174,18 @@ const groups = GROUPS.map((g) => ({ ...g, rows: g.rows?.filter((r) => r.enabled)
 <div class="mnav v2-chrome" id="v2Mnav">
   {groups.map((g) =>
     g.href ? (
-      <div class="mnav__grp"><a href={g.href}>{g.label}</a></div>
+      <div class="mnav__grp"><a href={g.href && localeHref(g.href)}>{g.label}</a></div>
     ) : (
       <div class="mnav__grp">
         <p>{g.label}</p>
         {(g.rows ?? []).map((r) => (
-          <a href={r.href}>{r.title}{r.pro && <span class="nav__pro">Pro</span>}</a>
+          <a href={localeHref(r.href)}>{r.title}{r.pro && <span class="nav__pro">Pro</span>}</a>
         ))}
       </div>
     )
   )}
   <div class="mnav__cta">
     <a class="btn btn--ghost" href={SIGNIN}>Sign in</a>
-    <a class="btn btn--solid" href={BETA}>Sign up free</a>
+    <a class="btn btn--solid" href={localeHref(BETA)}>Sign up free</a>
   </div>
 </div>

@@ -1,0 +1,97 @@
+---
+/**
+ * Korean typography corrections.
+ *
+ * The v2 design was built for Latin text and every rule in it assumes Latin.
+ * Dropping Hangul into those rules produces four specific, visible failures.
+ * This fixes them without touching a single English page: everything is scoped
+ * to `:lang(ko)`, which matches `<html lang="ko-KR">` (CSS language matching is
+ * prefix-based) and therefore never applies on the English site.
+ *
+ * Include on any Korean page. Cheap to add, and the alternative is discovering
+ * each of these one screenshot at a time.
+ *
+ * ── 1. Line breaking. THE important one. ──────────────────────────────────
+ * Korean has spaces between 어절 (eojeol, word-phrases), but the CSS default
+ * lets a browser break Hangul at ANY syllable. So "업그레이드하세요" wraps as
+ * "업그레이드하세 / 요." — a single word split across lines with an orphaned
+ * syllable. To a Korean reader that is not a subtle kerning nit; it reads as
+ * broken. `word-break: keep-all` restricts breaks to spaces, which is the
+ * correct behaviour and what every Korean site sets.
+ *
+ * There was no `word-break` rule anywhere in this codebase before this file,
+ * so every Korean line was breaking wrongly by default.
+ *
+ * ── 2. Fonts. ────────────────────────────────────────────────────────────
+ * 'InterV' and 'Nyght' are the site's own webfonts and neither contains Hangul,
+ * so Korean silently falls through to whatever the OS picks. Naming the Korean
+ * faces explicitly — AFTER the Latin ones — makes the fallback deliberate:
+ * Latin still renders in Inter/Nyght, and only Hangul reaches the Korean face.
+ * System fonts only, so this adds no network request.
+ *
+ * ── 3. Synthetic italic. ─────────────────────────────────────────────────
+ * SplitHeadline's second line uses `.nyght`, a serif ITALIC. There is no
+ * italic Hangul face, so the browser synthesises one by shearing the glyphs.
+ * Sheared Hangul looks like a rendering error. Korean typography does not use
+ * italic for emphasis at all, so the honest equivalent is upright.
+ *
+ * ── 4. Letter-spacing on the small-caps labels. ──────────────────────────
+ * The design's label treatment is monospace + `letter-spacing:.14em` +
+ * uppercase — right for a short Latin string, wrong for Hangul, whose syllable
+ * blocks already carry their own visual rhythm. Tracked-out Hangul reads as
+ * "포 함  사 항" — spaced-out characters rather than a word. Uppercase is kept:
+ * it correctly capitalises embedded Latin ("Free의" → "FREE의") and is a no-op
+ * on Hangul.
+ */
+---
+
+<style is:global>
+  /* Korean-capable system faces, listed after the Latin webfonts so Latin is
+     unaffected and only Hangul falls through to them. */
+  :lang(ko) {
+    word-break: keep-all;
+    overflow-wrap: break-word; /* safety valve: a single unbreakable run still wraps */
+  }
+
+  :lang(ko) body,
+  :lang(ko) .lede,
+  :lang(ko) .plan__who,
+  :lang(ko) .plan__seat,
+  :lang(ko) .plan__note,
+  :lang(ko) .plan__feats li,
+  :lang(ko) .ctable td,
+  :lang(ko) .faq summary,
+  :lang(ko) .faq p {
+    font-family: 'InterV', Inter, -apple-system, BlinkMacSystemFont,
+      'Apple SD Gothic Neo', 'Pretendard', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+  }
+
+  /* Serif display line — upright, not a sheared synthetic italic. */
+  :lang(ko) .nyght {
+    font-family: 'Nyght', 'Apple SD Gothic Neo', 'Noto Serif KR', 'Batang', serif;
+    font-style: normal;
+  }
+
+  /* The small-caps label treatment. Same list of selectors the design applies
+     it to; tracking neutralised and a Hangul-bearing face named, since the mono
+     stack has no Korean glyphs at all. */
+  :lang(ko) .phero__note,
+  :lang(ko) .bill .save,
+  :lang(ko) .plan__badge,
+  :lang(ko) .plan__inclab,
+  :lang(ko) .ctable thead th,
+  :lang(ko) .ctable .grp td,
+  :lang(ko) .pfinal__note {
+    font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo',
+      'Pretendard', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+    letter-spacing: 0;
+  }
+
+  /* Headlines carry tight negative tracking tuned for Inter's Latin shapes;
+     on Hangul that crowds the syllable blocks into each other. */
+  :lang(ko) .h1,
+  :lang(ko) .h2,
+  :lang(ko) .plan__name {
+    letter-spacing: 0;
+  }
+</style>
