@@ -13,6 +13,44 @@
    light theme, which is the dark-lock defect fixed in BaseLayout. The
    site is deliberately dark-locked; see the note on <html> there.
    ═══════════════════════════════════════════════════════════════ */
+/* ── copy ─────────────────────────────────────────────────────────
+   Every user-visible string this file renders. It is SHARED by every
+   locale, and these strings are injected by JS, so they do NOT appear in
+   v2-connections-body.html — a fully translated body would still render
+   an English connector directory, with nothing in the translated file to
+   suggest anything was missing. Same trap as homepage-v2.js (see the
+   COPY block there); found by auditing every v2-*.js before translating
+   rather than in review afterwards.
+
+   Overrides are keyed BY SLUG, not by array position. Positional arrays
+   misalign silently the moment a connector is added or reordered, and a
+   misaligned description is worse than an untranslated one — it is
+   confidently wrong. Merging by key also gives per-item fallback for
+   free: an untranslated connector stays English rather than blank.
+
+   Connector NAMES (Notion, Slack, Google Drive) are absent on purpose —
+   third-party product names are not translated.
+
+   A page overrides via window.__TEAM_CONNECTIONS_COPY before this runs. */
+const COPY = (() => {
+  const EN = {
+    cats: {
+      productivity: 'Productivity',
+      files: 'Files',
+      social: 'Social',
+      commerce: 'Commerce & Events',
+    },
+    ui: { all: 'All', live: 'live', coming: 'coming', soon: 'Soon', availableNow: 'Available now' },
+    desc: {},   // English descriptions stay inline in INT below, as the fallback
+  };
+  const o = (typeof window !== 'undefined' && window.__TEAM_CONNECTIONS_COPY) || {};
+  return {
+    cats: Object.assign({}, EN.cats, o.cats || {}),
+    ui: Object.assign({}, EN.ui, o.ui || {}),
+    desc: Object.assign({}, EN.desc, o.desc || {}),
+  };
+})();
+
 /* ── integrations data — matches the product's connector catalogue ── */
 const INT = [
   { cat:'Productivity', slug:'productivity', items:[
@@ -58,14 +96,14 @@ const icon = (slug,name) => BRAND[slug]
 /* render the directory */
 document.getElementById('cats').innerHTML = INT.map(c => `
   <div class="cat" data-cat="${c.slug}">
-    <div class="cat__head"><span class="t">${c.cat}</span><span class="n">${c.items.filter(i=>i[2]).length} live · ${c.items.filter(i=>!i[2]).length} coming</span></div>
+    <div class="cat__head"><span class="t">${COPY.cats[c.slug] ?? c.cat}</span><span class="n">${c.items.filter(i=>i[2]).length} ${COPY.ui.live} · ${c.items.filter(i=>!i[2]).length} ${COPY.ui.coming}</span></div>
     <div class="igrid">
       ${c.items.map(([name,slug,live,desc]) => `
         <div class="icard${live?'':' icard--soon'}">
           ${icon(slug,name)}
           <div class="icard__b">
-            <div class="icard__top"><b>${name}</b>${live?'<span class="icard__live" title="Available now"></span>':'<span class="icard__soon">Soon</span>'}</div>
-            <p class="icard__d">${desc}</p>
+            <div class="icard__top"><b>${name}</b>${live?`<span class="icard__live" title="${COPY.ui.availableNow}"></span>`:`<span class="icard__soon">${COPY.ui.soon}</span>`}</div>
+            <p class="icard__d">${COPY.desc[slug] ?? desc}</p>
           </div>
         </div>`).join('')}
     </div>
@@ -73,8 +111,8 @@ document.getElementById('cats').innerHTML = INT.map(c => `
 
 /* filter chips */
 const cats = [...document.querySelectorAll('#cats .cat')];
-const chips = ['<button class="dchip on" data-f="all">All</button>']
-  .concat(INT.map(c => `<button class="dchip" data-f="${c.slug}">${c.cat}</button>`)).join('');
+const chips = [`<button class="dchip on" data-f="all">${COPY.ui.all}</button>`]
+  .concat(INT.map(c => `<button class="dchip" data-f="${c.slug}">${COPY.cats[c.slug] ?? c.cat}</button>`)).join('');
 document.getElementById('dfilter').innerHTML = chips;
 document.querySelectorAll('#dfilter .dchip').forEach(ch => ch.addEventListener('click', () => {
   document.querySelectorAll('#dfilter .dchip').forEach(x => x.classList.remove('on'));

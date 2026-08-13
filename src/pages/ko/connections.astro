@@ -1,0 +1,54 @@
+---
+/**
+ * Connections — Korean.
+ *
+ * The only product page needing TWO copy sources. v2-connections.js renders the
+ * whole connector directory at runtime — 24 descriptions, four category names
+ * and five UI labels — none of which appear in v2-connections-body.html. A
+ * body-only translation would have produced a fully Korean page wrapped around
+ * an English directory, with nothing in the translated file to show for it.
+ * That is the same trap as the homepage (see #18); this time it was caught by
+ * auditing every v2-*.js before writing the page rather than in review after.
+ *
+ * The override is keyed BY SLUG, not array position: positional data misaligns
+ * silently when a connector is added or reordered, and a misaligned connector
+ * description is worse than an untranslated one, because it is confidently
+ * wrong about a third-party product.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import V2Head from "../../components/V2Head.astro";
+import V2Nav from "../../components/V2Nav.astro";
+import V2Footer from "../../components/V2Footer.astro";
+import KoreanTypography from "../../components/KoreanTypography.astro";
+import { v } from "../../lib/asset-url";
+import { localizePage } from "../../lib/koLocalize";
+import { KO_CONNECTIONS, KO_CONNECTIONS_JS } from "../../lib/ko/connections";
+// @ts-expect-error — Astro's ?raw modifier returns a string at build time
+import bodyHtml from "../../lib/v2-connections-body.html?raw";
+
+const TITLE = "Connections — 이미 쓰는 스택을 그대로 | Team";
+const DESCRIPTION =
+  "Connections는 이미 사용 중인 도구의 파일과 메시지, 계획, 데이터를 Team의 브레인으로 보내고 다시 써 넣습니다. 이전할 것도, 걷어낼 것도 없습니다.";
+
+const body = localizePage(bodyHtml as string, KO_CONNECTIONS, "ko");
+---
+<BaseLayout title={TITLE} description={DESCRIPTION} chrome={false} bodyClass="v2">
+  <V2Head slot="head" pageCss="/components/v2-connections.css" />
+  <KoreanTypography />
+
+  {/* Must precede v2-connections.js, which reads this at module scope. An
+      `is:inline` script is emitted where it is written, so document order is
+      the ordering guarantee — do not move it below the script tags. */}
+  <script is:inline set:html={`window.__TEAM_CONNECTIONS_COPY = ${JSON.stringify(KO_CONNECTIONS_JS)};`} />
+
+  <V2Nav active="platform" locale="ko" />
+
+  <Fragment set:html={body} />
+
+  <V2Footer locale="ko" />
+
+  <script is:inline src={v("/components/v2-base.js")}></script>
+  <script is:inline src={v("/components/v2-chrome.js")}></script>
+  <script is:inline src={v("/components/v2-connections.js")}></script>
+  <script is:inline src={v("/components/v2-brain.js")}></script>
+</BaseLayout>
