@@ -15,6 +15,81 @@ const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 const lerp  = (a, b, t) => a + (b - a) * t;
 const smooth = (p, a, b) => { const t = clamp((p - a) / (b - a)); return t * t * (3 - 2 * t); };
 
+/* ── copy ─────────────────────────────────────────────────────────
+   Every user-visible string this file renders lives here, not inline
+   at its point of use.
+
+   This file is SHARED by every locale — one 38KB script, loaded by the
+   English homepage and the Korean one alike. The strings below are
+   injected into the DOM by JS, so they do NOT appear in
+   homepage-v2-body.html and are invisible to anyone translating it.
+   Before this block existed, a fully translated Korean body would still
+   have rendered English act names in the scroll narrator, an English
+   chat demo, and English teammate messages — with nothing in the body
+   file to suggest anything was missing.
+
+   A page overrides by setting window.__TEAM_HOMEPAGE_COPY before this
+   script runs. Partial overrides are fine; anything absent falls back
+   to English, so a locale that translates half of it degrades to mixed
+   rather than to blank.
+
+   Structure stays in JS: element ids, act numbers and card colour
+   classes are not copy and must not be translated. Only the strings
+   below are. ── */
+const COPY = (() => {
+  const EN = {
+    /* Act names in the pinned scroll narrator. Order matches ACTS below —
+       index-aligned, so keep the two lists the same length. */
+    acts: [
+      'Intro', 'The problem', 'Meet Team', 'The product',
+      'The whole picture', 'Team at work', 'The difference',
+      'Connect everything', 'While you slept', 'Who it’s for',
+      'The credo', 'Sign up free',
+    ],
+    /* The bot-vs-Team chat demo. Both are revealed CHARACTER BY CHARACTER
+       against scroll progress, so a language that carries more meaning per
+       character finishes the reveal earlier over the same scroll distance.
+       If a translation reads as finishing too soon, that is why. */
+    chatQ: "Where's the final master?",
+    chatBot: "I don't have access to your files, but here are some best practices for organizing masters: use clear naming conventions, keep a single source of truth, and archive old versions…",
+    /* Rotating teammate messages: [message, relative timestamp]. The
+       timestamps are copy too — "2m ago" is not a format string. */
+    tmsgs: [
+      ["The video budget moved to $3,100 in Sheets — I've updated the one-sheet and the Notion plan to match.", 'just now'],
+      ["Pre-save velocity doubled overnight. I've moved the playlist pitch up a week.", '2m ago'],
+      ["A new master just landed in Dropbox — v10 now replaces v9 everywhere it's referenced.", 'just now'],
+      ["Vinyl lead time is 11 weeks; street date is 9 out. I flagged it before the PO was placed.", '8m ago'],
+      ["Press embargo confirmed for Friday. I've re-briefed the whole list.", 'just now'],
+    ],
+    /* Rotating task cards: [title, tag]. The colour class stays in POOL. */
+    pool: [
+      ['Master v10 QC Check', 'AUDIO'],
+      ['Pre-Save Link Goes Live', 'DSP_ACTIVATION'],
+      ['Vinyl PO Sign-off', 'OPS'],
+      ['EPK Refresh + Press Shots', 'PRESS'],
+      ['Lyric Video Teaser Cut', 'CONTENT'],
+      ['Radio One-Sheet Draft', 'RADIO'],
+    ],
+  };
+  const override = (typeof window !== 'undefined' && window.__TEAM_HOMEPAGE_COPY) || {};
+  const merged = Object.assign({}, EN, override);
+
+  /* Fall back PER ITEM, not per key. A locale that supplies eight of the
+     twelve act names should get eight Korean names and four English ones —
+     never the literal string "undefined" rendered into the scroll narrator,
+     which is what a bare COPY.acts[i] lookup produces against a short array.
+     Degrade to mixed language, never to broken output. */
+  for (const key of ['acts', 'tmsgs', 'pool']) {
+    const supplied = Array.isArray(override[key]) ? override[key] : [];
+    merged[key] = EN[key].map((fallback, i) => supplied[i] ?? fallback);
+  }
+  return merged;
+})();
+
+/* APPS is deliberately NOT in COPY: these are third-party product names
+   and their icon filenames. Proper nouns are not translated, and the
+   second element is an asset path, not text. */
+
 /* ── loader ── */
 addEventListener('load', () => setTimeout(() => {
   document.body.removeAttribute('data-loading');
@@ -108,19 +183,11 @@ if (counter) new IntersectionObserver((es, o) => es.forEach(e => {
 
 /* ── the narrating capsule ── */
 const ACTS = [
-  ['act-hero',   '00', 'Intro'],
-  ['act-scatter','01', 'The problem'],
-  ['act-turn',   '02', 'Meet Team'],
-  ['devband',    '02', 'The product'],
-  ['act-reason', '03', 'The whole picture'],
-  ['act-act',    '04', 'Team at work'],
-  ['act-chat',   '05', 'The difference'],
-  ['act-connect','06', 'Connect everything'],
-  ['act-catch',  '06', 'While you slept'],
-  ['act-who',    '07', 'Who it’s for'],
-  ['act-credo',  '08', 'The credo'],
-  ['act-access', '09', 'Sign up free'],
-].map(([id, num, name]) => ({ el: document.getElementById(id), num, name, top: 0 }));
+  ['act-hero',   '00'], ['act-scatter','01'], ['act-turn',   '02'],
+  ['devband',    '02'], ['act-reason', '03'], ['act-act',    '04'],
+  ['act-chat',   '05'], ['act-connect','06'], ['act-catch',  '06'],
+  ['act-who',    '07'], ['act-credo',  '08'], ['act-access', '09'],
+].map(([id, num], i) => ({ el: document.getElementById(id), num, name: COPY.acts[i], top: 0 }));
 const actName = $('#actName'), orbProg = $('#orbProg');
 const RING = 2 * Math.PI * 19;
 let actIdx = -1, docH = 1;
@@ -138,8 +205,8 @@ function narrate(y, vh) {
 }
 
 /* — the difference: shared copy for both motion paths — */
-const CHAT_Q = "Where's the final master?";
-const CHAT_BOT = "I don't have access to your files, but here are some best practices for organizing masters: use clear naming conventions, keep a single source of truth, and archive old versions…";
+const CHAT_Q = COPY.chatQ;
+const CHAT_BOT = COPY.chatBot;
 
 if (reduced) {
   // chat panes render complete — no typing
@@ -350,13 +417,7 @@ const Brain = (() => {
 
 /* ═══ the teammate whisper — a node lights up, teammate reports in ═══ */
 const tmate = $('#tmate'), tmateMsg = $('#tmateMsg'), tmateTime = $('#tmateTime');
-const TMSGS = [
-  ["The video budget moved to $3,100 in Sheets — I've updated the one-sheet and the Notion plan to match.", 'just now'],
-  ["Pre-save velocity doubled overnight. I've moved the playlist pitch up a week.", '2m ago'],
-  ["A new master just landed in Dropbox — v10 now replaces v9 everywhere it's referenced.", 'just now'],
-  ["Vinyl lead time is 11 weeks; street date is 9 out. I flagged it before the PO was placed.", '8m ago'],
-  ["Press embargo confirmed for Friday. I've re-briefed the whole list.", 'just now'],
-];
+const TMSGS = COPY.tmsgs;
 const Whisper = {
   state: 'idle', t: 0.6, idx: -1, msg: 0, cx: 0, cy: 0, side: 1, lastY: -1,
   place(nx) {   // card hugs the brain's column on its node's side — never touches the copy,
@@ -689,14 +750,8 @@ function catchScene(p) {
 
   /* tasks keep landing on the timeline */
   const days = $$('.app__day');
-  const POOL = [
-    ['tcard--blue',  'Master v10 QC Check', 'AUDIO'],
-    ['tcard--teal',  'Pre-Save Link Goes Live', 'DSP_ACTIVATION'],
-    ['tcard--amber', 'Vinyl PO Sign-off', 'OPS'],
-    ['tcard--dark',  'EPK Refresh + Press Shots', 'PRESS'],
-    ['tcard--purple','Lyric Video Teaser Cut', 'CONTENT'],
-    ['tcard--blue',  'Radio One-Sheet Draft', 'RADIO'],
-  ];
+  const POOL = ['tcard--blue', 'tcard--teal', 'tcard--amber', 'tcard--dark', 'tcard--purple', 'tcard--blue']
+    .map((cls, i) => [cls, (COPY.pool[i] || [])[0] || '', (COPY.pool[i] || [])[1] || '']);
   let ti = 0;
   setInterval(() => {
     if (!live || document.hidden) return;
