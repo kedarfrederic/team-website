@@ -88,6 +88,39 @@ export function localizeHrefs(html: string, locale: Locale): string {
   return out;
 }
 
+/**
+ * Tell the app which language the visitor was just reading in.
+ *
+ * A Korean visitor read the whole Korean site, clicked "무료로 시작하기", and
+ * arrived at app.teamrollouts.com in English. The app now reads the
+ * `preferred_locale` cookie, which covers the ordinary case — but a cookie is
+ * exactly the thing that goes missing when it matters: ITP and cross-site
+ * partitioning, privacy settings, a fresh browser, someone opening the link
+ * from a messenger's in-app browser. In Korea most of that traffic arrives via
+ * KakaoTalk, so this is not a rare edge.
+ *
+ * So the language also travels in the URL, where nothing can silently drop it.
+ * The app treats `?lang=` as the highest-priority signal precisely because it
+ * is the freshest and most explicit one.
+ *
+ * A pass over the HTML rather than an edit to each link, for the same reason
+ * localizeHrefs is: these CTAs live in injected bodies, in the nav, in the
+ * footer and in per-page scripts, and a list of them would be wrong by the next
+ * page. English pages are untouched — `?lang=en` on every link would be noise,
+ * since English is what the app already defaults to.
+ */
+export function localizeAppLinks(html: string, locale: Locale): string {
+  if (locale === DEFAULT_LOCALE) return html;
+  return html.replace(
+    /href="(https:\/\/app\.teamrollouts\.com\/[^"]*)"/g,
+    (whole, url: string) => {
+      // Already carries one (hand-written, or this ran twice) — leave it alone.
+      if (/[?&]lang=/.test(url)) return whole;
+      return `href="${url}${url.includes("?") ? "&" : "?"}lang=${locale}"`;
+    },
+  );
+}
+
 /** Localise a body end to end: words first, then destinations. */
 export function localizePage(
   html: string,
@@ -95,5 +128,5 @@ export function localizePage(
   locale: Locale,
   attrs: CopyMap = {},
 ): string {
-  return localizeHrefs(localizeBody(html, copy, attrs), locale);
+  return localizeAppLinks(localizeHrefs(localizeBody(html, copy, attrs), locale), locale);
 }

@@ -847,6 +847,49 @@ for (const file of ["LocaleSuggestionBanner.astro", "KoreanTypography.astro"]) {
   }
 }
 
+// ── Part 3g: hand-written app links skip the locale handoff ────────────────
+
+/**
+ * The Korean pricing page wrote its three CTAs out by hand, so the pass that
+ * appends ?lang= to app links in injected bodies never saw them — a Korean
+ * visitor clicking "무료로 시작하기" arrived at an app with no idea what
+ * language they had been reading.
+ *
+ * Same shape as the mobile nav: a rule that was correct, applied at one of two
+ * places that needed it. So the rule is a function now (appLink), and this
+ * fails on any Korean page that writes the URL out instead of calling it.
+ *
+ * English pages are exempt — they legitimately hold the bare URL, since the app
+ * defaults to English and ?lang=en would be noise.
+ */
+{
+  const root = path.resolve(componentDir, "..", "..");
+  const koPagesDir = path.join(root, "src", "pages", "ko");
+  const bare: string[] = [];
+
+  if (fs.existsSync(koPagesDir)) {
+    for (const file of fs.readdirSync(koPagesDir).filter((f) => f.endsWith(".astro"))) {
+      const src = fs
+        .readFileSync(path.join(koPagesDir, file), "utf8")
+        .replace(/\/\*[\s\S]*?\*\//g, "");
+      for (const m of src.matchAll(/["'`](https:\/\/app\.teamrollouts\.com\/[^"'`]*)["'`]/g)) {
+        if (!/[?&]lang=/.test(m[1])) bare.push(`${file} — ${JSON.stringify(m[1])}`);
+      }
+    }
+  }
+
+  if (bare.length > 0) {
+    assertionFailures++;
+    console.error(
+      `  FAIL ${bare.length} hand-written app link(s) on Korean pages carry no locale —\n` +
+        `         a Korean visitor lands in an English app. Use appLink(path, locale):`,
+    );
+    bare.forEach((b) => console.error(`         ${b}`));
+  } else {
+    assertionPasses++;
+  }
+}
+
 // ── Part 3e: the Korean business disclosure, reported not asserted ──────────
 
 /**

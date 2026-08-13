@@ -21,7 +21,7 @@
  * Not ported: the light/dark theme toggle (deferred as its own feature).
  */
 import { CHROME_LINK, CHROME_UI } from "../lib/ko/chrome";
-import { DEFAULT_LOCALE, hasTranslation, localizePath, type Locale } from "../lib/i18n";
+import { appLink, DEFAULT_LOCALE, hasTranslation, localizePath, type Locale } from "../lib/i18n";
 
 interface Row {
   href: string;
@@ -171,7 +171,9 @@ const GROUPS: Group[] = [
   { key: "plans", label: "Pricing", href: "/pricing" },
 ];
 
-const SIGNIN = "https://app.teamrollouts.com/sign-in";
+/* The nav's app links are built here, not in an injected body, so the
+   localizeAppLinks pass never sees them. Same rule, applied at the source. */
+const SIGNIN = appLink("/sign-in", locale);
 const BETA = "/pricing"; // "Sign up free" → the pricing page (Free / Pro)
 const LOGO = "/v2/assets/logo/team-logo-live.svg";
 

@@ -207,6 +207,34 @@ export interface AlternateLink {
  * `x-default` points at the English version: it is the fallback for a visitor
  * whose language matches nothing, which is what English is here.
  */
+/**
+ * A link into the app that carries the language the visitor is reading in.
+ *
+ * The app resolves its language from `?lang=` first, then its own localStorage,
+ * then the shared `preferred_locale` cookie. The cookie covers the ordinary
+ * case; the query parameter covers the cases where a cookie silently is not
+ * there — cross-site partitioning, ITP, a fresh browser, or a messenger's
+ * in-app browser. In Korea a large share of traffic arrives through KakaoTalk,
+ * so that last one is routine rather than exotic.
+ *
+ * English links are returned unchanged: `?lang=en` on every CTA is noise, since
+ * English is what the app already defaults to.
+ *
+ * Use this instead of writing the URL out. The three CTAs on the Korean pricing
+ * page were hand-written and therefore missed the pass that fixes the injected
+ * bodies — which is the same shape of gap as the mobile nav, and the reason
+ * there is now one function rather than a habit.
+ */
+export const APP_ORIGIN = "https://app.teamrollouts.com";
+
+export function appLink(pathAndQuery: string, locale: Locale): string {
+  const url = pathAndQuery.startsWith("http")
+    ? pathAndQuery
+    : `${APP_ORIGIN}${pathAndQuery.startsWith("/") ? "" : "/"}${pathAndQuery}`;
+  if (locale === DEFAULT_LOCALE || /[?&]lang=/.test(url)) return url;
+  return `${url}${url.includes("?") ? "&" : "?"}lang=${locale}`;
+}
+
 export function alternateLinks(pathname: string, siteOrigin: string): AlternateLink[] {
   const base = stripLocale(pathname);
   const translated = LOCALES.filter((locale) => hasTranslation(base, locale));
