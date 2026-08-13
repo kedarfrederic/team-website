@@ -1,5 +1,5 @@
 import { defineMiddleware } from "astro:middleware";
-import { localeFromPath, stripLocale } from "./lib/i18n";
+import { DEFAULT_LOCALE, localeFromPath, stripLocale } from "./lib/i18n";
 
 /**
  * Canonical host: redirect www.teamrollouts.com → teamrollouts.com.
@@ -50,6 +50,24 @@ export const onRequest = defineMiddleware((context, next) => {
   if (url.hostname === "www.teamrollouts.com") {
     url.hostname = "teamrollouts.com";
     return context.redirect(url.toString(), 301);
+  }
+
+  /**
+   * Absurd paths skip the locale work entirely.
+   *
+   * Defence in depth, not the fix: the quadratic blowup that made this matter
+   * was removed from normalizePath. But this middleware is now unconditional
+   * work on an anonymous, unrate-limited surface — it runs before route
+   * matching, so even a 404 pays for it — and Cloudflare accepts URLs up to
+   * 16KB. Anything the locale layer does per-request is therefore something an
+   * attacker can invoke with a single ordinary GET. No legitimate route here is
+   * within two orders of magnitude of 1KB, so this costs real traffic nothing
+   * and caps what any future addition to this path can be made to cost.
+   */
+  if (url.pathname.length > 1024) {
+    context.locals.locale = DEFAULT_LOCALE;
+    context.locals.basePath = "/";
+    return next();
   }
 
   // Derived purely from the path, so a given URL renders identically for every

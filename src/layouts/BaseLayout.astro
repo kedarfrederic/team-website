@@ -9,7 +9,7 @@ import Nav from "../components/Nav.astro";
 import V2CookieBanner from "../components/V2CookieBanner.astro";
 import LocaleSuggestionBanner from "../components/LocaleSuggestionBanner.astro";
 import { v } from "../lib/asset-url";
-import { LOCALE_LABELS, alternateLinks, localeFromPath, normalizePath, stripLocale } from "../lib/i18n";
+import { LOCALE_LABELS, alternateLinks, localeFromPath, normalizePath, stripLocale, type Locale } from "../lib/i18n";
 
 interface SeoBlock {
   metaTitle?: string;
@@ -63,12 +63,27 @@ interface Props {
    * Two BreadcrumbLists on one page is a validation error, not a bonus.
    */
   breadcrumb?: boolean;
+  /**
+   * Override the language of the RENDERED CONTENT, when it differs from the
+   * language the URL asks for.
+   *
+   * Locale normally comes from the path, which is right for a page that has a
+   * translation. It is wrong for a page that is served for ANY path — 404.astro
+   * renders for `/ko/anything`, so it would inherit `lang="ko-KR"` while its
+   * body is entirely English. `lang` is a promise about the words on the page,
+   * not about the URL, and a screen reader keeps that promise literally: it
+   * would read English copy with Korean pronunciation rules.
+   *
+   * Set this only when the content genuinely cannot follow the URL's locale.
+   * The real fix for a catch-all page is a translated version of it.
+   */
+  lang?: Locale;
 }
 
 const {
   title, description, ogImage, seo, canonical,
   navTheme = "light", chrome = true, bodyClass, ogImageUrl: ogImageUrlProp,
-  breadcrumb = true,
+  breadcrumb = true, lang: langOverride,
 } = Astro.props;
 const previewMode = isPreviewRequest(Astro);
 const settings = await getSiteSettings(getClient(Astro));
@@ -115,7 +130,7 @@ const canonicalUrl =
  */
 const locale = Astro.locals?.locale ?? localeFromPath(Astro.url.pathname);
 const basePath = Astro.locals?.basePath ?? stripLocale(Astro.url.pathname);
-const htmlLang = LOCALE_LABELS[locale].hreflang;
+const htmlLang = LOCALE_LABELS[langOverride ?? locale].hreflang;
 
 /**
  * hreflang alternates. Emitted only for paths with a published translation, so

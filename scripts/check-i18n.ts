@@ -110,6 +110,47 @@ eq(
   [],
 );
 
+/**
+ * normalizePath must stay LINEAR.
+ *
+ * It previously stripped trailing slashes with `replace(/\/+$/, "")`, which has
+ * no start anchor and so backtracks quadratically over a run of slashes: 16k
+ * slashes took ~115ms. Middleware calls this on every request before route
+ * matching, and BaseLayout several more times, so one 16KB URL — well within
+ * what Cloudflare accepts — could burn most a second of Worker CPU from a
+ * single anonymous GET.
+ *
+ * This asserts the shape of the cost, not a wall-clock number: 16x the input
+ * must not cost anywhere near 16x-squared the time. A regex reintroduced here
+ * fails this rather than being discovered as a Worker CPU-limit incident.
+ */
+{
+  const measure = (n: number) => {
+    const input = "/".repeat(n) + "a";
+    const start = process.hrtime.bigint();
+    for (let i = 0; i < 20; i++) normalizePath(input);
+    return Number(process.hrtime.bigint() - start) / 1e6;
+  };
+  measure(1000); // warm up, so JIT compilation isn't counted as growth
+
+  const small = Math.max(measure(1000), 0.001);
+  const large = measure(16000);
+  const growth = large / small;
+
+  // Linear would be ~16x. Quadratic is ~256x. 40x is comfortably clear of
+  // measurement noise on a loaded machine while still catching the real thing.
+  if (growth > 40) {
+    assertionFailures++;
+    console.error(
+      `  FAIL normalizePath is super-linear — 16x input cost ${growth.toFixed(0)}x time ` +
+        `(${small.toFixed(2)}ms → ${large.toFixed(2)}ms).\n` +
+        `         A backtracking regex was almost certainly reintroduced. See src/lib/i18n.ts.`,
+    );
+  } else {
+    assertionPasses++;
+  }
+}
+
 if (assertionFailures > 0) {
   console.error(`\nFAILED — ${assertionFailures} path-logic assertion(s) failed.`);
   process.exit(1);
