@@ -1,0 +1,44 @@
+---
+/**
+ * For solo artists — Korean.
+ *
+ * Mirrors src/pages/for-artists.astro. The page's argument is that an independent
+ * artist is three roles at once, so the Korean keeps that structure literally —
+ * 아티스트 / 레이블 / 매니저 as three separate hats — rather than smoothing it
+ * into one phrase, which would lose the point of the section.
+ *
+ * v2-solutions.js writes only animated counter digits, so there is no hidden
+ * copy to extract here (checked across every v2-*.js before starting #3).
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import V2Head from "../../components/V2Head.astro";
+import V2Nav from "../../components/V2Nav.astro";
+import V2Footer from "../../components/V2Footer.astro";
+import KoreanTypography from "../../components/KoreanTypography.astro";
+import { v } from "../../lib/asset-url";
+import { localizePage } from "../../lib/koLocalize";
+import { KO_FOR_ARTISTS } from "../../lib/ko/for-artists";
+// @ts-expect-error — Astro's ?raw modifier returns a string at build time
+import bodyHtml from "../../lib/v2-for-artists-body.html?raw";
+
+const TITLE = "솔로 아티스트를 위한 Team — 혼자서도 레이블 수준의 롤아웃";
+const DESCRIPTION =
+  "Team은 릴리스 전체를 한곳에 담고, 모든 버전과 마감을 기억하며, 잡무를 대신합니다. 혼자여도 팀이 있는 것처럼 움직일 수 있습니다.";
+
+const body = localizePage(bodyHtml as string, KO_FOR_ARTISTS, "ko");
+---
+<BaseLayout title={TITLE} description={DESCRIPTION} chrome={false} bodyClass="v2">
+  <V2Head slot="head" pageCss="/components/v2-solutions.css" />
+  <KoreanTypography />
+
+  <V2Nav active="solutions" locale="ko" />
+
+  <Fragment set:html={body} />
+
+  <V2Footer locale="ko" />
+
+  <script is:inline src={v("/components/v2-base.js")}></script>
+  <script is:inline src={v("/components/v2-chrome.js")}></script>
+  <script is:inline src={v("/components/v2-brain.js")}></script>
+  <script is:inline src={v("/components/v2-solutions.js")}></script>
+</BaseLayout>
