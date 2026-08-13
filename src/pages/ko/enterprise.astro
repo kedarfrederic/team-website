@@ -1,0 +1,49 @@
+---
+/**
+ * Enterprise — Korean.
+ *
+ * Mirrors src/pages/enterprise.astro. Identity and access vocabulary stays English —
+ * SSO, SAML, SCIM, RBAC, IdP — because those appear verbatim in Korean security
+ * questionnaires and procurement checklists, which is the document this page
+ * has to survive contact with.
+ *
+ * "Imprint" is 산하 레이블 (sub-label under a parent), not a transliteration:
+ * 임프린트 reads as a printing term in Korean, and the page's whole structure is
+ * a parent org containing several of them.
+ *
+ * This page makes procurement-facing CLAIMS — audit export, data residency,
+ * SCIM provisioning. The Korean states exactly what the English does and no
+ * more, since a Korean buyer may hold us to it in a questionnaire.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import V2Head from "../../components/V2Head.astro";
+import V2Nav from "../../components/V2Nav.astro";
+import V2Footer from "../../components/V2Footer.astro";
+import KoreanTypography from "../../components/KoreanTypography.astro";
+import { v } from "../../lib/asset-url";
+import { localizePage } from "../../lib/koLocalize";
+import { KO_ENTERPRISE } from "../../lib/ko/enterprise";
+// @ts-expect-error — Astro's ?raw modifier returns a string at build time
+import bodyHtml from "../../lib/v2-enterprise-body.html?raw";
+
+const TITLE = "엔터프라이즈 | Team — 조직 규모에 맞춘 브레인";
+const DESCRIPTION =
+  "조직 전체에 걸친 배포, 구매 부서가 요구하는 통제 장치, 그리고 함께하는 파트너. 릴리스마다 하나의 브레인과 전체를 아우르는 하나의 관리 화면.";
+
+const body = localizePage(bodyHtml as string, KO_ENTERPRISE, "ko");
+---
+<BaseLayout title={TITLE} description={DESCRIPTION} chrome={false} bodyClass="v2">
+  <V2Head slot="head" pageCss="/components/v2-solutions.css" />
+  <KoreanTypography />
+
+  <V2Nav active="solutions" locale="ko" />
+
+  <Fragment set:html={body} />
+
+  <V2Footer locale="ko" />
+
+  <script is:inline src={v("/components/v2-base.js")}></script>
+  <script is:inline src={v("/components/v2-chrome.js")}></script>
+  <script is:inline src={v("/components/v2-brain.js")}></script>
+  <script is:inline src={v("/components/v2-solutions.js")}></script>
+</BaseLayout>

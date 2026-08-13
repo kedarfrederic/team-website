@@ -205,6 +205,27 @@ const copy = target ? (COPY[target] ?? COPY[DEFAULT_LOCALE]) : null;
            hidden, which is the correct quiet default: showing it to the wrong
            visitor is worse than not showing it to the right one. */
         const CACHE_KEY = 'geo_country';
+
+        /* DEV OVERRIDE: ?geo=KR forces a country, on localhost and preview
+           deploys only.
+
+           Without it the bar is untestable by anyone not physically in Korea —
+           you have to hand-write sessionStorage in a console, which is exactly
+           the kind of friction that means a feature ships unverified. It is
+           gated to non-production hosts by the same check the cookie uses, so
+           the live site cannot be nudged into showing a bar it should not.
+
+           Cache-safe either way: this runs client-side and the server never
+           sees it, so no response varies by it. */
+        const isProdHost = /(^|\.)teamrollouts\.com$/.test(location.hostname);
+        if (!isProdHost) {
+          const forced = new URLSearchParams(location.search).get('geo');
+          if (forced) {
+            reveal(forced.toUpperCase());
+            return;
+          }
+        }
+
         let cached = null;
         try { cached = sessionStorage.getItem(CACHE_KEY); } catch { /* private mode */ }
 

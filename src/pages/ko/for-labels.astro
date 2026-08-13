@@ -1,0 +1,47 @@
+---
+/**
+ * For labels — Korean.
+ *
+ * Mirrors src/pages/for-labels.astro. "Slate" is the load-bearing concept here and
+ * has no single Korean equivalent — it means the portfolio of releases in
+ * flight, not a schedule. Rendered 릴리스 슬레이트 on first use and 슬레이트
+ * after, which is what Korean label staff say; 일정 (schedule) or 목록 (list)
+ * both lose the sense of a portfolio being actively managed.
+ *
+ * A&R and DSP stay as they are: standard terms in Korean label operations, and
+ * spelling them out reads as explaining the industry to someone who works in it.
+ *
+ * v2-solutions.js writes only animated counter digits: no hidden copy.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import V2Head from "../../components/V2Head.astro";
+import V2Nav from "../../components/V2Nav.astro";
+import V2Footer from "../../components/V2Footer.astro";
+import KoreanTypography from "../../components/KoreanTypography.astro";
+import { v } from "../../lib/asset-url";
+import { localizePage } from "../../lib/koLocalize";
+import { KO_FOR_LABELS } from "../../lib/ko/for-labels";
+// @ts-expect-error — Astro's ?raw modifier returns a string at build time
+import bodyHtml from "../../lib/v2-for-labels-body.html?raw";
+
+const TITLE = "레이블을 위한 Team — 모든 릴리스를 하나의 살아 있는 그림으로";
+const DESCRIPTION =
+  "Team은 A&R, 마케팅, 제작, 유통 전반을 종합해 추론하고, 한 릴리스가 다음에 미치는 영향을 추적하며, 슬레이트 전체를 하나의 그림으로 유지합니다.";
+
+const body = localizePage(bodyHtml as string, KO_FOR_LABELS, "ko");
+---
+<BaseLayout title={TITLE} description={DESCRIPTION} chrome={false} bodyClass="v2">
+  <V2Head slot="head" pageCss="/components/v2-solutions.css" />
+  <KoreanTypography />
+
+  <V2Nav active="solutions" locale="ko" />
+
+  <Fragment set:html={body} />
+
+  <V2Footer locale="ko" />
+
+  <script is:inline src={v("/components/v2-base.js")}></script>
+  <script is:inline src={v("/components/v2-chrome.js")}></script>
+  <script is:inline src={v("/components/v2-brain.js")}></script>
+  <script is:inline src={v("/components/v2-solutions.js")}></script>
+</BaseLayout>
