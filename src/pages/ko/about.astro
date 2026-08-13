@@ -1,0 +1,45 @@
+---
+/**
+ * about — Korean.
+ *
+ * Mirrors src/pages/about.astro and shares its body HTML, stylesheet and
+ * scripts. Only the words differ; see ../../lib/ko/about.ts.
+ *
+ * v2-app-preview.js injects the task board and chat at runtime (#19); its Korean comes from the shared src/lib/ko/appPreview.ts, the same source the homepage uses.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import V2Head from "../../components/V2Head.astro";
+import V2Nav from "../../components/V2Nav.astro";
+import V2Footer from "../../components/V2Footer.astro";
+import KoreanTypography from "../../components/KoreanTypography.astro";
+import { v } from "../../lib/asset-url";
+import { localizePage } from "../../lib/koLocalize";
+import { KO_ABOUT } from "../../lib/ko/about";
+import { KO_APP_PREVIEW } from "../../lib/ko/appPreview";
+// @ts-expect-error — Astro's ?raw modifier returns a string at build time
+import bodyHtml from "../../lib/v2-about-body.html?raw";
+
+const TITLE = "회사 소개 | Team";
+const DESCRIPTION =
+  "음악에서 가장 중요한 일이 여전히 뒤엉킨 도구와 한 사람의 기억에 의존하고 있었기에 Team을 시작했습니다. 그 일에는 브레인이 필요하다고 믿습니다.";
+
+const body = localizePage(bodyHtml as string, KO_ABOUT, "ko");
+---
+<BaseLayout title={TITLE} description={DESCRIPTION} chrome={false} bodyClass="v2">
+  <V2Head slot="head" pageCss="/components/v2-about.css" />
+  <KoreanTypography />
+
+  {/* Must precede v2-app-preview.js, which reads this at module scope. */}
+  <script is:inline set:html={`window.__TEAM_APP_PREVIEW_COPY = ${JSON.stringify(KO_APP_PREVIEW)};`} />
+
+  <V2Nav locale="ko" />
+
+  <Fragment set:html={body} />
+
+  <V2Footer locale="ko" />
+
+  <script is:inline src={v("/components/v2-base.js")}></script>
+  <script is:inline src={v("/components/v2-chrome.js")}></script>
+  <script is:inline src={v("/components/v2-story.js")}></script>
+  <script is:inline src={v("/components/v2-app-preview.js")}></script>
+</BaseLayout>

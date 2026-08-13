@@ -1,0 +1,40 @@
+---
+/**
+ * security — Korean.
+ *
+ * Mirrors src/pages/security.astro and shares its body HTML, stylesheet and
+ * scripts. Only the words differ; see ../../lib/ko/security.ts.
+ *
+ * v2-security.js writes no user-visible text — checked before writing this page.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import V2Head from "../../components/V2Head.astro";
+import V2Nav from "../../components/V2Nav.astro";
+import V2Footer from "../../components/V2Footer.astro";
+import KoreanTypography from "../../components/KoreanTypography.astro";
+import { v } from "../../lib/asset-url";
+import { localizePage } from "../../lib/koLocalize";
+import { KO_SECURITY } from "../../lib/ko/security";
+// @ts-expect-error — Astro's ?raw modifier returns a string at build time
+import bodyHtml from "../../lib/v2-security-body.html?raw";
+
+const TITLE = "보안 & 신뢰 | Team";
+const DESCRIPTION =
+  "Team은 파일과 메시지, 비용, 계획까지 운영 전반을 추론합니다. 데이터가 비공개로, 권한 아래, 당신의 것으로 남도록 하는 방법을 정리했습니다.";
+
+const body = localizePage(bodyHtml as string, KO_SECURITY, "ko");
+---
+<BaseLayout title={TITLE} description={DESCRIPTION} chrome={false} bodyClass="v2">
+  <V2Head slot="head" pageCss="/components/v2-security.css" />
+  <KoreanTypography />
+
+  <V2Nav locale="ko" />
+
+  <Fragment set:html={body} />
+
+  <V2Footer locale="ko" />
+
+  <script is:inline src={v("/components/v2-base.js")}></script>
+  <script is:inline src={v("/components/v2-chrome.js")}></script>
+  <script is:inline src={v("/components/v2-security.js")}></script>
+</BaseLayout>
