@@ -35,6 +35,52 @@ const { locale = DEFAULT_LOCALE } = Astro.props;
 const localeHref = (path: string) =>
   path.startsWith("/") && hasTranslation(path, locale) ? localizePath(path, locale) : path;
 
+/**
+ * Footer PROSE, per locale.
+ *
+ * Distinct from the link labels above, which stay English until the pages they
+ * point at are translated. These are not labels — they are marketing sentences
+ * and an accessible form label. Leaving them English on a Korean page is not a
+ * deferred decision, it is a half-translated page: the footer carries the
+ * product's one-line description and the newsletter pitch, so it is the last
+ * thing a reader sees and the first thing that looks unfinished.
+ */
+const FOOTER_COPY: Record<string, Record<string, string>> = {
+  en: {
+    newsletterHeadLead: "Operational intelligence for ",
+    newsletterHeadEm: "every release.",
+    newsletterBody: "The occasional email on where music operations are heading, and what we're shipping in Team.",
+    emailPlaceholder: "you@label.com",
+    emailLabel: "Email address",
+    subscribe: "Subscribe",
+    brandBlurb: "Team connects the systems your music operation already runs on, turning every tool, file, message, plan, and data point into one living intelligence layer.",
+    homeAria: "Team — home",
+    tagline: "Operational Intelligence for Music Releases",
+  },
+  ko: {
+    newsletterHeadLead: "모든 릴리스를 위한 ",
+    newsletterHeadEm: "운영 인텔리전스.",
+    newsletterBody: "음악 운영이 어디로 향하고 있는지, 그리고 Team이 무엇을 만들고 있는지 가끔 전해 드립니다.",
+    emailPlaceholder: "you@label.com",
+    emailLabel: "이메일 주소",
+    subscribe: "구독하기",
+    brandBlurb: "Team은 이미 사용 중인 음악 운영 시스템을 연결하여, 모든 도구와 파일, 메시지, 계획, 데이터를 하나의 살아 있는 인텔리전스 레이어로 만듭니다.",
+    homeAria: "Team — 홈",
+    tagline: "음악 릴리스를 위한 운영 인텔리전스",
+  },
+};
+const t = FOOTER_COPY[locale] ?? FOOTER_COPY.en;
+
+/** Same rule as the nav: a link label follows the page language only where its
+    destination actually exists in that language. */
+const LINK_LABELS: Record<string, Record<string, string>> = {
+  ko: { "Pricing": "가격" },
+};
+const localeLabel = (label: string, href: string) =>
+  href.startsWith("/") && hasTranslation(href, locale)
+    ? (LINK_LABELS[locale]?.[label] ?? label)
+    : label;
+
 const LOGO = "/v2/assets/logo/team-logo-live.svg";
 
 const COLUMNS: { heading: string; links: Link[] }[] = [
@@ -101,20 +147,20 @@ const SOCIAL = [
   <div class="foot__in">
     <div class="foot__news">
       <div class="foot__news-copy">
-        <h3>Operational intelligence for <em>every release.</em></h3>
-        <p>The occasional email on where music operations are heading, and what we're shipping in Team.</p>
+        <h3>{t.newsletterHeadLead}<em>{t.newsletterHeadEm}</em></h3>
+        <p>{t.newsletterBody}</p>
       </div>
       <form class="foot__form" id="v2FootNews" novalidate>
-        <input type="email" name="email" placeholder="you@label.com" aria-label="Email address" required />
+        <input type="email" name="email" placeholder={t.emailPlaceholder} aria-label={t.emailLabel} required />
         <input type="text" name="website" class="foot__hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
-        <button type="submit">Subscribe</button>
+        <button type="submit">{t.subscribe}</button>
       </form>
     </div>
 
     <div class="foot__grid">
       <div class="foot__brand">
-        <a href="/" aria-label="Team — home"><img src={LOGO} alt="Team" /></a>
-        <p>Team connects the systems your music operation already runs on, turning every tool, file, message, plan, and data point into one living intelligence layer.</p>
+        <a href={localeHref("/")} aria-label={t.homeAria}><img src={LOGO} alt="Team" /></a>
+        <p>{t.brandBlurb}</p>
         <div class="foot__social">
           {SOCIAL.map((s) => (
             <a href={s.href} target="_blank" rel="noopener" aria-label={s.label} set:html={s.svg} />
@@ -124,7 +170,7 @@ const SOCIAL = [
       {columns.map((c) => (
         <div class="foot__col">
           <p>{c.heading}</p>
-          {c.links.map((l) => <a href={localeHref(l.href)}>{l.label}</a>)}
+          {c.links.map((l) => <a href={localeHref(l.href)}>{localeLabel(l.label, l.href)}</a>)}
         </div>
       ))}
     </div>
@@ -135,7 +181,7 @@ const SOCIAL = [
           re-open trigger lives here rather than buried in a settings page.
           V2CookieBanner listens for [data-cookie-prefs] anywhere on the page. */}
       <a class="mono" href="/cookies" data-cookie-prefs>Cookie preferences</a>
-      <span class="mono">Operational Intelligence for Music Releases</span>
+      <span class="mono">{t.tagline}</span>
     </div>
   </div>
 </footer>

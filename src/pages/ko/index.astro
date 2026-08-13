@@ -1,0 +1,132 @@
+---
+/**
+ * 홈 — Korean homepage.
+ *
+ * Mirrors src/pages/index.astro and shares its body HTML, stylesheet and
+ * choreography script rather than forking any of them. Three layers supply the
+ * Korean, and all three are needed — miss one and the page looks finished while
+ * a third of it is still English:
+ *
+ *  1. src/lib/koHomepageCopy.ts — a text-node map applied to the English body.
+ *     Structure stays in one place; only the words differ per locale.
+ *  2. The Sanity token values below, substituted AFTER localisation so the two
+ *     passes cannot interact (the English token fallbacks are themselves keys
+ *     in the map, so running them in the other order would work only by
+ *     coincidence).
+ *  3. window.__TEAM_HOMEPAGE_COPY — the strings homepage-v2.js injects at
+ *     runtime: the scroll narrator's act names, the chat demo, the teammate
+ *     messages, the rotating task cards. NONE of these appear in the body HTML,
+ *     so translating the body alone leaves them English with nothing to show
+ *     for it. See the COPY block in public/components/homepage-v2.js.
+ *
+ * The page is deliberately NOT Sanity-bound the way the English one is: those
+ * documents are pinned to fixed _ids with no localization plugin installed, so
+ * a Korean variant is its own decision (plan §3.B). The tokens below carry the
+ * Korean copy directly.
+ */
+
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import V2Nav from "../../components/V2Nav.astro";
+import V2Footer from "../../components/V2Footer.astro";
+import KoreanTypography from "../../components/KoreanTypography.astro";
+import { v } from "../../lib/asset-url";
+import { localizeBody } from "../../lib/koHomepageCopy";
+// @ts-expect-error — Astro's ?raw modifier returns a string at build time
+import bodyHtml from "../../lib/homepage-v2-body.html?raw";
+
+const esc = (s: unknown) =>
+  String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+/**
+ * Korean values for the tokens the body carries. Same keys as index.astro —
+ * a token present here but absent from the body is silently inert, and one
+ * present in the body but absent here renders as a literal {{V2_…}}, so the
+ * two lists must stay in step. `pnpm check:i18n` reports any token left
+ * unsubstituted.
+ *
+ * The hero reads "음악 운영을 위한 브레인" — Korean puts the emphasised noun
+ * last, so LEAD carries the qualifier and TAIL is intentionally empty rather
+ * than a translation of "for music operations."
+ */
+const tokens: Record<string, unknown> = {
+  "{{V2_HERO_EYEBROW}}": "Team을 만나보세요.",
+  "{{V2_HERO_TITLE_LEAD}}": "음악 운영을 위한",
+  "{{V2_HERO_TITLE_EM}}": "브레인",
+  "{{V2_HERO_TITLE_TAIL}}": "",
+  "{{V2_CTA_PRIMARY}}": "무료로 시작하기",
+  "{{V2_CTA_SECONDARY}}": "데모 예약하기",
+  "{{V2_BETA_TITLE_LEAD}}": "다음 릴리스에서",
+  "{{V2_BETA_TITLE_EM}}": "직접 사용해 보세요.",
+  "{{V2_BETA_SUBHEAD}}": "플랫폼 전체를 카드 등록 없이, 언제까지나 무료로.",
+};
+
+// Localise first, substitute second — see the note above.
+let body = localizeBody(bodyHtml as string);
+for (const [token, value] of Object.entries(tokens)) {
+  body = body.split(token).join(esc(value));
+}
+
+/**
+ * Strings homepage-v2.js injects at runtime. Order in `acts` is index-aligned
+ * with the ACTS list in that file; anything omitted falls back to English per
+ * item rather than rendering "undefined".
+ *
+ * chatQ/chatBot are revealed CHARACTER BY CHARACTER against scroll progress.
+ * Korean carries far more meaning per character, so these are kept close to
+ * the English character count — a much shorter string finishes the reveal long
+ * before the scroll does, which reads as the animation being broken.
+ */
+const homepageCopyKo = {
+  acts: [
+    "인트로", "문제", "Team 소개", "제품",
+    "전체 그림", "실제 작동", "차이점",
+    "모두 연결", "잠든 사이에", "누구를 위한 도구인가",
+    "우리의 원칙", "무료로 시작하기",
+  ],
+  chatQ: "최종 마스터는 어디에 있나요?",
+  chatBot:
+    "파일에 접근할 수는 없지만, 마스터를 정리하는 일반적인 방법을 알려드릴게요. 명확한 파일명 규칙을 정하고, 단일 원본을 유지하며, 예전 버전은 따로 보관하세요…",
+  tmsgs: [
+    ["비디오 예산이 Sheets에서 $3,100로 변경되어, 원시트와 Notion 계획을 함께 수정했습니다.", "방금 전"],
+    ["프리세이브 증가 속도가 밤사이 두 배가 되어, 플레이리스트 피칭을 한 주 앞당겼습니다.", "2분 전"],
+    ["새 마스터가 Dropbox에 도착해, 참조된 모든 곳에서 v9를 v10으로 교체했습니다.", "방금 전"],
+    ["바이닐 제작 기간이 11주인데 발매일은 9주 뒤입니다. 발주 전에 알려드립니다.", "8분 전"],
+    ["보도 엠바고가 금요일로 확정되어, 전체 리스트에 다시 안내했습니다.", "방금 전"],
+  ],
+  pool: [
+    ["마스터 v10 QC 검수", "오디오"],
+    ["프리세이브 링크 오픈", "DSP_활성화"],
+    ["바이닐 발주 승인", "운영"],
+    ["EPK 갱신 + 프레스 사진", "홍보"],
+    ["리릭 비디오 티저 편집", "콘텐츠"],
+    ["라디오 원시트 초안", "라디오"],
+  ],
+};
+---
+<BaseLayout
+  title="Team — 음악 운영을 위한 브레인"
+  description="Team은 음악 기업과 아티스트 팀, 현대 음악 비즈니스를 위한 운영 브레인입니다. 이미 사용 중인 시스템을 연결해 하나의 살아 있는 인텔리전스 레이어로 만듭니다."
+  ogImageUrl="/v2/og-brain.png"
+  navTheme="dark"
+  chrome={false}
+>
+  <link slot="head" rel="preload" href="/v2/assets/fonts/NyghtSerif-LightItalic.woff2" as="font" type="font/woff2" crossorigin />
+  <link slot="head" rel="preload" href="/v2/assets/fonts/Inter-Variable.woff2" as="font" type="font/woff2" crossorigin />
+  <link slot="head" rel="stylesheet" href={v("/components/v2-chrome.css")} />
+  <link slot="head" rel="stylesheet" href={v("/components/homepage-v2.css")} />
+  <KoreanTypography />
+
+  {/* Must run BEFORE homepage-v2.js, which reads this at module scope. An
+      `is:inline` script is emitted where it is written, so document order is
+      the ordering guarantee — do not move it below the script tags. */}
+  <script is:inline set:html={`window.__TEAM_HOMEPAGE_COPY = ${JSON.stringify(homepageCopyKo)};`} />
+
+  <V2Nav locale="ko" />
+
+  <Fragment set:html={body} />
+
+  <V2Footer locale="ko" />
+
+  <script is:inline src={v("/components/v2-chrome.js")}></script>
+  <script is:inline src={v("/components/homepage-v2.js")}></script>
+</BaseLayout>

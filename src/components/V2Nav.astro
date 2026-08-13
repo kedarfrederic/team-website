@@ -60,6 +60,44 @@ interface Props {
 }
 const { active = "", locale = DEFAULT_LOCALE } = Astro.props;
 
+/* The skip link is an accessibility control, not a nav label — it is the first
+   thing a screen-reader user hears, so it follows the page's language even
+   while the menu labels are still English. */
+const SKIP_LABEL: Record<string, string> = { en: "Skip to content", ko: "본문으로 건너뛰기" };
+
+/**
+ * Translated labels, applied under a rule rather than a judgement call.
+ *
+ *  - CTA CONTROLS (Sign in, Sign up free) always follow the page language.
+ *    They are interface, not a promise about a destination.
+ *  - LINK LABELS follow the page language ONLY when the page they point at has
+ *    a Korean version. Translating "Connections" while /connections is still
+ *    English promises Korean and delivers English, which is worse than an
+ *    obviously-English label.
+ *
+ * Because the condition is `hasTranslation`, the nav localises itself further
+ * with every page that lands — no second pass to remember.
+ */
+const LABELS: Record<string, Record<string, string>> = {
+  ko: {
+    "Pricing": "가격",
+    "Platform": "플랫폼",
+    "Solutions": "솔루션",
+    "Resources": "자료",
+  },
+};
+const CTA_LABELS: Record<string, { signIn: string; signUp: string }> = {
+  en: { signIn: "Sign in", signUp: "Sign up free" },
+  ko: { signIn: "로그인", signUp: "무료로 시작하기" },
+};
+const cta = CTA_LABELS[locale] ?? CTA_LABELS.en;
+
+/** Translate a link label only where its destination exists in this locale. */
+const localeLabel = (label: string, href?: string) =>
+  href && href.startsWith("/") && hasTranslation(href, locale)
+    ? (LABELS[locale]?.[label] ?? label)
+    : label;
+
 /** Localise an internal path if a translation exists; leave anything else alone. */
 const localeHref = (path: string) =>
   path.startsWith("/") && hasTranslation(path, locale) ? localizePath(path, locale) : path;
@@ -128,7 +166,7 @@ const groups = GROUPS.map((g) => ({ ...g, rows: g.rows?.filter((r) => r.enabled)
 );
 ---
 
-<a class="skip-link" href="#main">Skip to content</a>
+<a class="skip-link" href="#main">{SKIP_LABEL[locale] ?? SKIP_LABEL.en}</a>
 
 <header class="nav v2-chrome" id="v2Nav">
   <div class="nav__in">
@@ -138,7 +176,7 @@ const groups = GROUPS.map((g) => ({ ...g, rows: g.rows?.filter((r) => r.enabled)
       {groups.map((g) => (
         <div class="nav__item">
           {g.href ? (
-            <a class={`nav__link${active === g.key ? " is-active" : ""}`} href={g.href && localeHref(g.href)}>{g.label}</a>
+            <a class={`nav__link${active === g.key ? " is-active" : ""}`} href={g.href && localeHref(g.href)}>{localeLabel(g.label, g.href)}</a>
           ) : (
             <>
               <button type="button" class={`nav__link${active === g.key ? " is-active" : ""}`} aria-haspopup="true">
@@ -162,8 +200,8 @@ const groups = GROUPS.map((g) => ({ ...g, rows: g.rows?.filter((r) => r.enabled)
 
     <div class="nav__spacer"></div>
     <div class="nav__cta">
-      <a class="nav__signin" href={SIGNIN}>Sign in</a>
-      <a class="nav__beta" href={localeHref(BETA)}>Sign up free</a>
+      <a class="nav__signin" href={SIGNIN}>{cta.signIn}</a>
+      <a class="nav__beta" href={localeHref(BETA)}>{cta.signUp}</a>
     </div>
     <button class="nav__burger" id="v2Burger" aria-label="Menu" aria-expanded="false" aria-controls="v2Mnav">
       <i></i><i></i><i></i>
@@ -174,7 +212,7 @@ const groups = GROUPS.map((g) => ({ ...g, rows: g.rows?.filter((r) => r.enabled)
 <div class="mnav v2-chrome" id="v2Mnav">
   {groups.map((g) =>
     g.href ? (
-      <div class="mnav__grp"><a href={g.href && localeHref(g.href)}>{g.label}</a></div>
+      <div class="mnav__grp"><a href={g.href && localeHref(g.href)}>{localeLabel(g.label, g.href)}</a></div>
     ) : (
       <div class="mnav__grp">
         <p>{g.label}</p>
@@ -185,7 +223,7 @@ const groups = GROUPS.map((g) => ({ ...g, rows: g.rows?.filter((r) => r.enabled)
     )
   )}
   <div class="mnav__cta">
-    <a class="btn btn--ghost" href={SIGNIN}>Sign in</a>
-    <a class="btn btn--solid" href={localeHref(BETA)}>Sign up free</a>
+    <a class="btn btn--ghost" href={SIGNIN}>{cta.signIn}</a>
+    <a class="btn btn--solid" href={localeHref(BETA)}>{cta.signUp}</a>
   </div>
 </div>
