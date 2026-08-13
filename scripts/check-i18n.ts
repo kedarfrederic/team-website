@@ -31,8 +31,9 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import {
-  DEFAULT_LOCALE,
   LOCALES,
+  LOCALE_LABELS,
+  DEFAULT_LOCALE,
   TRANSLATED_PATHS,
   alternateLinks,
   hasTranslation,
@@ -332,6 +333,32 @@ for (const file of ["LocaleSuggestionBanner.astro", "KoreanTypography.astro"]) {
       assertionPasses++;
     }
   }
+}
+
+// ── Part 3z: og:locale is its own format, not a reformatted hreflang ────────
+
+/**
+ * Open Graph wants language_TERRITORY with the territory REQUIRED. hreflang
+ * wants a language with an OPTIONAL region, and English deliberately uses the
+ * region-less "en" because that is the broader, correct signal.
+ *
+ * Deriving one from the other — `hreflang.replace("-", "_")` — therefore
+ * produced `og:locale="en"`, which is not a valid Open Graph locale. It looked
+ * right, and it was right for Korean, which is exactly why it survived being
+ * eyeballed.
+ *
+ * This matters for KakaoTalk specifically. It is on most Korean phones and
+ * builds its link preview from these tags, so a share into a group chat is a
+ * bigger distribution path here than it is in most markets.
+ */
+{
+  for (const locale of LOCALES) {
+    const og = LOCALE_LABELS[locale].ogLocale;
+    eq(`og:locale for "${locale}" is language_TERRITORY`, /^[a-z]{2}_[A-Z]{2}$/.test(og), true);
+    eq(`og:locale for "${locale}" is not just the hreflang with an underscore`, og.includes("_"), true);
+  }
+  eq("English og:locale carries a territory even though its hreflang does not",
+     [LOCALE_LABELS.en.hreflang, LOCALE_LABELS.en.ogLocale], ["en", "en_US"]);
 }
 
 // ── Part 3a: localizeHrefs, on the shapes that actually appear in a body ────

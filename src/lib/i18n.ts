@@ -52,13 +52,23 @@ export const SUGGESTED_LOCALE_BY_COUNTRY: Readonly<Record<string, Locale>> = {
   KR: "ko",
 };
 
-export const LOCALE_LABELS: Readonly<Record<Locale, { name: string; hreflang: string }>> = {
+export const LOCALE_LABELS: Readonly<
+  Record<Locale, { name: string; hreflang: string; ogLocale: string }>
+> = {
   // `hreflang` is deliberately NOT the same string as the locale. Google
   // requires ISO 639-1 language with an optional ISO 3166-1 Alpha-2 region,
   // and a bare region code ("KR") is invalid. "ko-KR" is what we want indexed
   // for Korea, while the URL segment stays the shorter "ko".
-  en: { name: "English", hreflang: "en" },
-  ko: { name: "한국어", hreflang: "ko-KR" },
+  //
+  // `ogLocale` is a THIRD string and not a reformat of hreflang. Open Graph
+  // wants language_TERRITORY with the territory required, so English is
+  // "en_US" — while its hreflang stays a bare "en" on purpose, because
+  // region-less is the broader and correct signal for a page we want served to
+  // English readers everywhere, not only in the States. Deriving one from the
+  // other by swapping the hyphen produced a bare `og:locale="en"`, which is not
+  // a valid Open Graph locale.
+  en: { name: "English", hreflang: "en", ogLocale: "en_US" },
+  ko: { name: "한국어", hreflang: "ko-KR", ogLocale: "ko_KR" },
 };
 
 /**

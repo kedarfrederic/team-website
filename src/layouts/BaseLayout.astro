@@ -9,7 +9,7 @@ import Nav from "../components/Nav.astro";
 import V2CookieBanner from "../components/V2CookieBanner.astro";
 import LocaleSuggestionBanner from "../components/LocaleSuggestionBanner.astro";
 import { v } from "../lib/asset-url";
-import { LOCALE_LABELS, alternateLinks, hasTranslation, localeFromPath, localizePath, normalizePath, stripLocale, type Locale } from "../lib/i18n";
+import { LOCALES, LOCALE_LABELS, alternateLinks, hasTranslation, localeFromPath, localizePath, normalizePath, stripLocale, type Locale } from "../lib/i18n";
 
 interface SeoBlock {
   metaTitle?: string;
@@ -150,6 +150,11 @@ const canonicalUrl =
  * where a noindex page should point somewhere.
  */
 const emitCanonical = canonical !== undefined || !noIndex;
+
+/* Public, not secret — it is served in the HTML by design. Read from the
+   environment so the partner's token is a deploy setting rather than a commit. */
+const naverVerification =
+  import.meta.env.PUBLIC_NAVER_SITE_VERIFICATION?.trim() || "";
 
 /**
  * Locale, never from the visitor's country — see src/lib/i18n.ts for why.
@@ -294,6 +299,39 @@ const breadcrumbJsonLd =
   <meta property="og:image" content={ogImageUrl} />
   {emitCanonical && <meta property="og:url" content={canonicalUrl} />}
   <meta property="og:type" content="website" />
+  {/*
+    og:locale — for KakaoTalk more than for Facebook.
+
+    KakaoTalk is on ~93% of Korean smartphones and is how a link actually
+    travels between people in this market: a share into a group chat is closer
+    to how the site spreads here than a search result is. It builds its preview
+    from these same OG tags, and with no locale on them a Korean page is a page
+    whose language has to be guessed from its content.
+
+    The alternates are listed too, which is the pair hreflang already declares —
+    same claim, stated where a social crawler reads it rather than where a
+    search crawler does.
+  */}
+  <meta property="og:locale" content={LOCALE_LABELS[locale].ogLocale} />
+  {LOCALES.filter((l) => l !== locale && hasTranslation(basePath, l)).map((l) => (
+    <meta property="og:locale:alternate" content={LOCALE_LABELS[l].ogLocale} />
+  ))}
+
+  {/*
+    Naver site verification.
+
+    Naver will not accept a sitemap until the site's ownership is proven, and
+    the meta-tag method is the one their guide recommends. The token comes from
+    the partner's Naver Search Advisor account — we cannot generate it, and it
+    is not a secret.
+
+    It reads from config rather than being typed in, so that handing it over is
+    a deploy variable and not a code change made under time pressure on the day
+    the partner is waiting. Nothing renders while it is unset, which is correct:
+    an empty verification tag is worse than none, because Naver reads it and
+    fails the check.
+  */}
+  {naverVerification && <meta name="naver-site-verification" content={naverVerification} />}
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
