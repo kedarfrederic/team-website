@@ -30,5 +30,27 @@ export const KO_ICP_COMMON: CopyMap = {
   "live": "실시간",
   "looks like.": "어떤 모습인지.",
   "Early access · in beta": "얼리 액세스 · 베타",
+
+  /* The stat tiles start at zero in the markup and only animate on scroll-in,
+     so this text node is what a reader actually sees until the band enters the
+     viewport — and all of it, if the tab never scrolls that far. The unit in
+     the data-suffix attribute is handled separately by KO_ICP_ATTRS; both have
+     to change together or the tile flips language mid-animation. */
+  "0 hrs": "0시간",
+  "0 wks": "0주",
   "TeamMate": "TeamMate",
+};
+
+/**
+ * Units rendered by v2-solutions.js from `data-suffix`, not from a text node.
+ *
+ * The script writes `Math.round(to*e) + el.dataset.suffix` on scroll-in, so the
+ * unit is copy that only the attribute pass can reach. "%" and "×" are
+ * language-neutral and deliberately absent. The leading space is part of the
+ * attribute value and must be preserved — the match is on the whole
+ * name="value" pair.
+ */
+export const KO_ICP_ATTRS: CopyMap = {
+  " hrs": "시간",
+  " wks": "주",
 };

@@ -11,7 +11,12 @@
  * literal translation and means an accounting ledger; 목록 loses the sense of
  * scale that is the page's entire argument.
  *
- * v2-solutions.js writes only animated counter digits: no hidden copy.
+ * v2-solutions.js DOES carry copy: it renders each stat tile as
+ * `Math.round(to*e) + el.dataset.suffix`, so the unit (" hrs", " wks") lives in
+ * an attribute the text pass cannot see. KO_ICP_ATTRS below covers it. The
+ * pre-animation text node ("0 hrs") is separately in KO_ICP_COMMON — both are
+ * needed, because the static one is what a reader sees until the band scrolls
+ * into view.
  */
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import V2Head from "../../components/V2Head.astro";
@@ -21,6 +26,7 @@ import KoreanTypography from "../../components/KoreanTypography.astro";
 import { v } from "../../lib/asset-url";
 import { localizePage } from "../../lib/koLocalize";
 import { KO_FOR_PARTNERS } from "../../lib/ko/for-partners";
+import { KO_ICP_ATTRS } from "../../lib/ko/icpCommon";
 // @ts-expect-error — Astro's ?raw modifier returns a string at build time
 import bodyHtml from "../../lib/v2-for-partners-body.html?raw";
 
@@ -28,7 +34,7 @@ const TITLE = "유통사 & 파트너를 위한 Team — 전체 물량의 리스�
 const DESCRIPTION =
   "Team은 전체 물량을 종합해 추론하고, 누락된 마스터나 잘못된 메타데이터를 DSP에 닿기 전에 잡아내며, 실제 리스크가 어디에 있는지 보여줍니다.";
 
-const body = localizePage(bodyHtml as string, KO_FOR_PARTNERS, "ko");
+const body = localizePage(bodyHtml as string, KO_FOR_PARTNERS, "ko", KO_ICP_ATTRS);
 ---
 <BaseLayout title={TITLE} description={DESCRIPTION} chrome={false} bodyClass="v2">
   <V2Head slot="head" pageCss="/components/v2-solutions.css" />

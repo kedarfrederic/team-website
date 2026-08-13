@@ -329,6 +329,246 @@ for (const file of ["LocaleSuggestionBanner.astro", "KoreanTypography.astro"]) {
   }
 }
 
+// ── Part 3b: every OTHER Korean copy map, against the pages that consume it ──
+
+/**
+ * Part 3 checks the homepage map and nothing else, so fourteen maps — every ICP
+ * and product page — shipped with no orphan guard at all. That is exactly the
+ * hole the homepage guard was written to close, left open for the pages added
+ * after it.
+ *
+ * The pairing is DERIVED, not listed: each ko page declares its own body via
+ * `?raw` and its own maps via import, so a page added tomorrow is covered with
+ * no edit here. A hand-maintained table would have been one more thing to
+ * forget, which is the failure this whole check exists to catch.
+ *
+ * A key is judged against every body that consumes it, not just one, because
+ * the shared maps (icpCommon, appPreview) are deliberately supersets — "0 wks"
+ * belongs on /for-labels and nowhere else. Dead ANYWHERE is the real defect;
+ * absent from one consumer is by design.
+ *
+ * Attribute maps are matched against `="value"` rather than text nodes: their
+ * keys are attribute values (data-suffix, aria-label), which by construction
+ * never appear between two tags.
+ */
+{
+  const root = path.resolve(componentDir, "..", "..");
+  const koPagesDir = path.join(root, "src", "pages", "ko");
+  const koLibDir = path.join(root, "src", "lib", "ko");
+
+  if (fs.existsSync(koPagesDir) && fs.existsSync(koLibDir)) {
+    // page → the body it injects, and the map files it imports
+    const bodiesByMapFile = new Map<string, Set<string>>();
+
+    for (const file of fs.readdirSync(koPagesDir).filter((f) => f.endsWith(".astro"))) {
+      const src = fs.readFileSync(path.join(koPagesDir, file), "utf8");
+
+      const bodyMatch = src.match(/import\s+bodyHtml\s+from\s+"([^"]+)\?raw"/);
+      if (!bodyMatch) continue;
+      const bodyPath = path.resolve(koPagesDir, bodyMatch[1]);
+      if (!fs.existsSync(bodyPath)) continue;
+
+      for (const m of src.matchAll(/from\s+"\.\.\/\.\.\/lib\/ko\/([A-Za-z-]+)"/g)) {
+        const mapFile = path.join(koLibDir, `${m[1]}.ts`);
+        if (!bodiesByMapFile.has(mapFile)) bodiesByMapFile.set(mapFile, new Set());
+        bodiesByMapFile.get(mapFile)!.add(bodyPath);
+      }
+    }
+
+    const textNodesOf = new Map<string, Set<string>>();
+    const attrValuesOf = new Map<string, Set<string>>();
+    const loadBody = (p2: string) => {
+      if (!textNodesOf.has(p2)) {
+        const html = fs.readFileSync(p2, "utf8");
+        textNodesOf.set(
+          p2,
+          new Set([...html.matchAll(/>([^<>]+)</g)].map((m) => m[1].trim()).filter(Boolean)),
+        );
+        attrValuesOf.set(p2, new Set([...html.matchAll(/="([^"]*)"/g)].map((m) => m[1])));
+      }
+    };
+
+    let filesChecked = 0;
+    const dead: string[] = [];
+
+    for (const [mapFile, bodies] of bodiesByMapFile) {
+      if (!fs.existsSync(mapFile)) continue;
+      const src = fs.readFileSync(mapFile, "utf8");
+      bodies.forEach(loadBody);
+      filesChecked++;
+
+      /* Split on top-level `const NAME`, so each block's keys are attributed to
+         the const that owns them — icpCommon declares a text map AND an
+         attribute map, and they are judged against different things. */
+      const blocks = [...src.matchAll(/(?:export\s+)?const\s+([A-Z_a-z0-9]+)[^=]*=\s*\{/g)];
+      for (let i = 0; i < blocks.length; i++) {
+        const name = blocks[i][1];
+        const start = blocks[i].index!;
+        const end = i + 1 < blocks.length ? blocks[i + 1].index! : src.length;
+        const block = src.slice(start, end);
+
+        /* Two-space indent only. Nested maps (KO_CONNECTIONS_JS, KO_APP_PREVIEW)
+           key their groups unquoted at this level and their copy deeper, so they
+           yield nothing and skip themselves — those are injected into scripts,
+           not matched against the body at all. */
+        const keys = [...block.matchAll(/\n  "((?:[^"\\]|\\.)*)":/g)].map((m) => {
+          try {
+            return JSON.parse(`"${m[1]}"`) as string;
+          } catch {
+            return m[1];
+          }
+        });
+        if (keys.length === 0) continue;
+
+        const isAttrs = name.endsWith("_ATTRS");
+        const haystacks = [...bodies].map((b) => (isAttrs ? attrValuesOf : textNodesOf).get(b)!);
+        for (const k of keys) {
+          if (!haystacks.some((h) => h.has(k))) {
+            dead.push(`${path.basename(mapFile)} · ${name} · ${JSON.stringify(k.slice(0, 60))}`);
+          }
+        }
+      }
+    }
+
+    if (dead.length > 0) {
+      assertionFailures++;
+      console.error(
+        `  FAIL ${dead.length} Korean copy key(s) match nothing in any page that uses them —\n` +
+          `         translated, carried forever, rendering nothing (and that line is English on /ko):`,
+      );
+      dead.slice(0, 15).forEach((d) => console.error(`         ${d}`));
+      if (dead.length > 15) console.error(`         …and ${dead.length - 15} more`);
+    } else {
+      assertionPasses++;
+      console.log(`  ok   ${filesChecked} Korean copy map file(s) — no dead keys`);
+    }
+  }
+}
+
+// ── Part 3c: one English string, two roles, one Korean value ────────────────
+
+/**
+ * `Delivered` occurs twice on /for-labels: as the lead of an overnight-log
+ * sentence, and as a Distribution status chip. localizeBody keys on exact text,
+ * so ONE Korean value has to serve both — and the value written for the
+ * sentence ("전달했습니다 —") rendered a past-tense clause with a dangling em
+ * dash inside a pill whose neighbours read "정상 진행" and "확정됨".
+ *
+ * English hides this: "Delivered" is a fine chip AND a fine sentence lead.
+ * Korean conjugates, so the two roles pull apart. Nothing in the type system,
+ * the build, or the orphan check above can see it — the key matches, both
+ * nodes translate, and the page renders.
+ *
+ * The discriminator is structural, not a word list. A first attempt matched
+ * class names against a list of "chip-like" tokens and did not catch the very
+ * defect it was written for. What works is asking what ELSE lives in that
+ * element: if a sentence-shaped Korean value lands in a parent whose other text
+ * nodes are 9 characters long, it is in a label slot, whatever it is called.
+ */
+{
+  const root = path.resolve(componentDir, "..", "..");
+  const koPagesDir = path.join(root, "src", "pages", "ko");
+  const koLibDir = path.join(root, "src", "lib", "ko");
+
+  const VOID = new Set(["br","img","input","hr","meta","link","source","path","circle","rect","use","area","col","embed","track","wbr"]);
+  /** text node → the signatures of every element it appears directly inside. */
+  const parentRoles = (html: string): Map<string, Set<string>> => {
+    const roles = new Map<string, Set<string>>();
+    const stack: string[] = [];
+    const token = /<(\/?)([a-zA-Z0-9]+)([^>]*?)(\/?)>|([^<]+)/g;
+    for (const m of html.matchAll(token)) {
+      if (m[5] !== undefined) {
+        const t = m[5].trim();
+        if (t && stack.length) {
+          const sig = stack[stack.length - 1];
+          if (!roles.has(t)) roles.set(t, new Set());
+          roles.get(t)!.add(sig);
+        }
+        continue;
+      }
+      const tag = m[2].toLowerCase();
+      if (m[1]) {
+        // Pop to the matching open tag; unbalanced markup must not desync the stack.
+        if (stack.some((sg) => sg.split("|")[0] === tag)) {
+          while (stack.length) if (stack.pop()!.split("|")[0] === tag) break;
+        }
+      } else if (!VOID.has(tag) && !m[4]) {
+        const cls = /class="([^"]*)"/.exec(m[3]);
+        stack.push(`${tag}|${cls ? cls[1] : ""}`);
+      }
+    }
+    return roles;
+  };
+
+  const median = (xs: number[]): number => {
+    const s2 = [...xs].sort((a, b) => a - b);
+    return s2.length % 2 ? s2[(s2.length - 1) / 2] : (s2[s2.length / 2 - 1] + s2[s2.length / 2]) / 2;
+  };
+
+  // Korean sentence endings, plus a value left hanging on a connective.
+  const SENTENCEY = /(습니다|입니다|다\.|[—·:]\s*$)/;
+  const LABEL_SLOT = 15; // chars — a parent whose other text is this short holds labels
+
+  if (fs.existsSync(koPagesDir) && fs.existsSync(koLibDir)) {
+    const conflicts: string[] = [];
+
+    for (const file of fs.readdirSync(koPagesDir).filter((f) => f.endsWith(".astro"))) {
+      const src = fs.readFileSync(path.join(koPagesDir, file), "utf8");
+      const bodyMatch = src.match(/import\s+bodyHtml\s+from\s+"([^"]+)\?raw"/);
+      if (!bodyMatch) continue;
+      const bodyPath = path.resolve(koPagesDir, bodyMatch[1]);
+      if (!fs.existsSync(bodyPath)) continue;
+
+      const copy = new Map<string, string>();
+      for (const m of src.matchAll(/from\s+"\.\.\/\.\.\/lib\/ko\/([A-Za-z-]+)"/g)) {
+        const mapFile = path.join(koLibDir, `${m[1]}.ts`);
+        if (!fs.existsSync(mapFile)) continue;
+        const mapSrc = fs.readFileSync(mapFile, "utf8");
+        for (const e of mapSrc.matchAll(/\n  "((?:[^"\\]|\\.)*)":\s*\n?\s*"((?:[^"\\]|\\.)*)"/g)) {
+          try {
+            copy.set(JSON.parse(`"${e[1]}"`) as string, JSON.parse(`"${e[2]}"`) as string);
+          } catch { /* not a plain string entry */ }
+        }
+      }
+
+      const roles = parentRoles(fs.readFileSync(bodyPath, "utf8"));
+      const lengthsBySig = new Map<string, number[]>();
+      for (const [text, sigs] of roles) {
+        for (const sig of sigs) {
+          if (!lengthsBySig.has(sig)) lengthsBySig.set(sig, []);
+          lengthsBySig.get(sig)!.push(text.length);
+        }
+      }
+
+      for (const [text, sigs] of roles) {
+        if (sigs.size < 2) continue;
+        const ko = copy.get(text);
+        if (!ko || !SENTENCEY.test(ko)) continue;
+        const medians = [...sigs].map((sg) => [sg, median(lengthsBySig.get(sg)!)] as const);
+        const tightest = Math.min(...medians.map(([, m2]) => m2));
+        if (tightest >= LABEL_SLOT) continue;
+        conflicts.push(
+          `${file} · ${JSON.stringify(text.slice(0, 45))} → ${JSON.stringify(ko.slice(0, 45))}\n` +
+            medians
+              .map(([sg, m2]) => `             in <${sg.replace("|", " class=\"")}"> — sibling text median ${m2} chars`)
+              .join("\n"),
+        );
+      }
+    }
+
+    if (conflicts.length > 0) {
+      assertionFailures++;
+      console.error(
+        `  FAIL ${conflicts.length} key(s) serve both a sentence and a label slot with one Korean value —\n` +
+          `         fine in English, which does not conjugate; a clause in a status pill in Korean:`,
+      );
+      conflicts.forEach((c) => console.error(`         ${c}`));
+    } else {
+      assertionPasses++;
+    }
+  }
+}
+
 if (assertionFailures > 0) {
   console.error(`\nFAILED — ${assertionFailures} path-logic assertion(s) failed.`);
   process.exit(1);

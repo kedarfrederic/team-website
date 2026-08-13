@@ -43,6 +43,10 @@ const PAGE: CopyMap = {
     "한 명은 Notion에, 다른 한 명은 단톡방에, 세 번째는 오직 당신의 머릿속에만. 그 사이를 오갈 때마다 흐름이 끊깁니다.",
   "alt-pop · single": "alt-pop · 싱글",
   "Context lives across": "맥락이 흩어진 곳",
+  /* Generic here, not product names — these sit in a row with "IG 계획" and
+     "분배 시트" describing where a manager's context lives. */
+  "Masters": "마스터",
+  "Calendar": "캘린더",
   "IG plan": "IG 계획",
   "Splits sheet": "분배 시트",
   "Label email": "레이블 이메일",

@@ -8,8 +8,12 @@ import { KO_ICP_COMMON } from "./icpCommon";
  * once, so the Korean keeps that structure literally — 아티스트 / 레이블 /
  * 매니저 as three separate hats rather than smoothing them into one phrase.
  *
- * Filenames, fictional figures and tool names stay as they are. Numbers in the
- * outcome band ("0 hrs") are placeholders in the English too — left alone.
+ * Filenames, fictional figures and tool names stay as they are.
+ *
+ * The outcome-band tiles are NOT placeholders: `data-to="8"` is the real claim
+ * and "0 hrs" is only the pre-animation state. The digits stay, but the unit is
+ * copy — it is in the text node here (via KO_ICP_COMMON) and in the
+ * `data-suffix` attribute (via KO_ICP_ATTRS), and both are needed.
  */
 const PAGE: CopyMap = {
   // ── hero ──

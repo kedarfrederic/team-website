@@ -7,7 +7,12 @@
  * as the through-line rather than flattening it into "manage everything in one
  * place", which is what a literal pass produces and which loses the point.
  *
- * v2-solutions.js writes only animated counter digits: no hidden copy.
+ * v2-solutions.js DOES carry copy: it renders each stat tile as
+ * `Math.round(to*e) + el.dataset.suffix`, so the unit (" hrs", " wks") lives in
+ * an attribute the text pass cannot see. KO_ICP_ATTRS below covers it. The
+ * pre-animation text node ("0 hrs") is separately in KO_ICP_COMMON — both are
+ * needed, because the static one is what a reader sees until the band scrolls
+ * into view.
  */
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import V2Head from "../../components/V2Head.astro";
@@ -17,6 +22,7 @@ import KoreanTypography from "../../components/KoreanTypography.astro";
 import { v } from "../../lib/asset-url";
 import { localizePage } from "../../lib/koLocalize";
 import { KO_FOR_MANAGERS } from "../../lib/ko/for-managers";
+import { KO_ICP_ATTRS } from "../../lib/ko/icpCommon";
 // @ts-expect-error — Astro's ?raw modifier returns a string at build time
 import bodyHtml from "../../lib/v2-for-managers-body.html?raw";
 
@@ -24,7 +30,7 @@ const TITLE = "아티스트 매니저를 위한 Team — 로스터 전체를 한
 const DESCRIPTION =
   "Team은 아티스트마다 각자의 브레인을 두고 로스터 전체를 한 화면에 유지합니다. 다른 아티스트에 집중하는 동안에도 놓치는 일이 없도록.";
 
-const body = localizePage(bodyHtml as string, KO_FOR_MANAGERS, "ko");
+const body = localizePage(bodyHtml as string, KO_FOR_MANAGERS, "ko", KO_ICP_ATTRS);
 ---
 <BaseLayout title={TITLE} description={DESCRIPTION} chrome={false} bodyClass="v2">
   <V2Head slot="head" pageCss="/components/v2-solutions.css" />

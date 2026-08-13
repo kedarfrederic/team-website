@@ -134,8 +134,11 @@ const PAGE: CopyMap = {
 
   // ── rollout ──
   "Rollout · with you": "도입 · 함께",
-  "Live in": "가동까지",
-  "weeks.": "주.",
+  /* Renders as `Live in <em>weeks.</em>` — no number between them, so a
+     literal split gives the fragment "가동까지 주." Korean puts the unit with
+     the noun, so the whole phrase moves into the emphasised half. */
+  "Live in": "몇",
+  "weeks.": "주 만에 가동.",
   "with us alongside you": "저희가 함께합니다",
   "Connect, we map your stack with you": "연결 — 스택을 함께 정리합니다",
   "Configure, roles and access set up": "설정 — 역할과 접근 권한을 구성합니다",

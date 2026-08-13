@@ -47,7 +47,12 @@ export function localizeBody(html: string, copy: CopyMap, attrs: CopyMap = {}): 
   });
 
   for (const [en, ko] of Object.entries(attrs)) {
-    for (const name of ["aria-label", "alt", "placeholder", "title"]) {
+    /* `data-suffix` is here because v2-solutions.js renders a stat tile as
+       `number + el.dataset.suffix`, so the unit (" hrs", " wks") is COPY living
+       in an attribute. It is invisible to the text-node pass and was shipping
+       "8 hrs" beside a Korean label on three ICP pages. Any attribute a script
+       reads and writes to the screen belongs in this list. */
+    for (const name of ["aria-label", "alt", "placeholder", "title", "data-suffix"]) {
       out = out.split(`${name}="${en}"`).join(`${name}="${ko}"`);
     }
   }
