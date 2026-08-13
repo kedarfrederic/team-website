@@ -398,15 +398,34 @@ for (const file of ["LocaleSuggestionBanner.astro", "KoreanTypography.astro"]) {
     // page → the body it injects, and the map files it imports
     const bodiesByMapFile = new Map<string, Set<string>>();
 
-    for (const file of fs.readdirSync(koPagesDir).filter((f) => f.endsWith(".astro"))) {
-      const src = fs.readFileSync(path.join(koPagesDir, file), "utf8");
+    /* Scan EVERY page, at any depth, not just src/pages/ko.
+       The previous version read only src/pages/ko/*.astro — so the very next
+       commit added notFound.ts, consumed by src/pages/404.astro, and it landed
+       outside the guard. That is the same hole this check was written to close,
+       reopened one commit later, which is what happens when a check enumerates
+       a location instead of following the imports. */
+    const pagesRoot = path.join(root, "src", "pages");
+    const allPages: string[] = [];
+    const walkPages = (dir: string) => {
+      for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+        const full = path.join(dir, e.name);
+        if (e.isDirectory()) walkPages(full);
+        else if (e.name.endsWith(".astro")) allPages.push(full);
+      }
+    };
+    if (fs.existsSync(pagesRoot)) walkPages(pagesRoot);
+
+    for (const pagePath of allPages) {
+      const src = fs.readFileSync(pagePath, "utf8");
+      const pageDir = path.dirname(pagePath);
 
       const bodyMatch = src.match(/import\s+bodyHtml\s+from\s+"([^"]+)\?raw"/);
       if (!bodyMatch) continue;
-      const bodyPath = path.resolve(koPagesDir, bodyMatch[1]);
+      const bodyPath = path.resolve(pageDir, bodyMatch[1]);
       if (!fs.existsSync(bodyPath)) continue;
 
-      for (const m of src.matchAll(/from\s+"\.\.\/\.\.\/lib\/ko\/([A-Za-z-]+)"/g)) {
+      // Any relative depth, so a page one level up is not silently skipped.
+      for (const m of src.matchAll(/from\s+"(?:\.\.\/)+lib\/ko\/([A-Za-z-]+)"/g)) {
         const mapFile = path.join(koLibDir, `${m[1]}.ts`);
         if (!bodiesByMapFile.has(mapFile)) bodiesByMapFile.set(mapFile, new Set());
         bodiesByMapFile.get(mapFile)!.add(bodyPath);
@@ -449,7 +468,18 @@ for (const file of ["LocaleSuggestionBanner.astro", "KoreanTypography.astro"]) {
            key their groups unquoted at this level and their copy deeper, so they
            yield nothing and skip themselves — those are injected into scripts,
            not matched against the body at all. */
-        const keys = [...block.matchAll(/\n  "((?:[^"\\]|\\.)*)":/g)].map((m) => {
+        /* Bare identifiers too (`Rollouts: "…"`), not only quoted keys — the
+           quoted-only regex made six of notFound.ts's keys invisible, so the
+           check reported a clean file while it could have been carrying dead
+           ones.
+           The trailing `\s*"` is what keeps that from over-reaching: it
+           requires the VALUE to be a string. Nested maps (KO_APP_PREVIEW,
+           KO_CONNECTIONS_JS) key their groups as bare identifiers with object
+           and array values, and admitting bare keys without this immediately
+           reported `pool`, `chat`, `cats` and `ui` as dead copy. Copy has a
+           string on the right; structure does not. */
+        const keys = [...block.matchAll(/\n  (?:"((?:[^"\\]|\\.)*)"|([A-Za-z_$][\w$]*)):\s*"/g)].map((m) => {
+          if (m[2] !== undefined) return m[2];
           try {
             return JSON.parse(`"${m[1]}"`) as string;
           } catch {
@@ -688,6 +718,22 @@ for (const file of ["LocaleSuggestionBanner.astro", "KoreanTypography.astro"]) {
       // A group that is itself a link (Pricing) goes through the link rule.
       if (linkKeys.has(t) || keepEn.has(t)) continue;
       if (!uiKeys.has(t)) missing.push(`chrome UI — ${JSON.stringify(t)}`);
+    }
+
+    /* THE TABLE BEING COMPLETE IS NOT THE SAME AS THE TEMPLATE USING IT.
+       Everything above reads the GROUPS/COLUMNS arrays. That check printed
+       "ok — every nav/footer string is translated" while the mobile menu
+       rendered `{r.title}` raw, so seven Korean-ready labels shipped in English
+       on every phone — and phones are most of this market. The data was right;
+       one of the two render sites just never asked.
+       So: every interpolation of a label field must go through localeLabel or
+       ui. A second render site added tomorrow fails here instead of shipping. */
+    const RAW_LABEL = /\{\s*(?:r\.title|r\.desc|l\.label|c\.heading|g\.label|g\.panelLabel)\s*\}/g;
+    for (const [name, src2] of [["V2Nav.astro", navSrc], ["V2Footer.astro", footerSrc]] as const) {
+      for (const m of src2.matchAll(RAW_LABEL)) {
+        const line = src2.slice(0, m.index!).split("\n").length;
+        missing.push(`${name}:${line} renders ${m[0]} raw — wrap in localeLabel() or ui()`);
+      }
     }
 
     if (missing.length > 0) {

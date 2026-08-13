@@ -137,6 +137,16 @@ export const KO_HOMEPAGE_COPY: Readonly<Record<string, string>> = {
   "ARTIST": "아티스트",
   "Home": "홈",
   "Artist DNA": "아티스트 DNA",
+  /* Same sidebar, same mock. "홈 / 아티스트 DNA / Assets / Intelligence" had two
+     of four in Korean — found by sweeping for text a sibling page already
+     translates. In here rather than in a shared map because this is the app's
+     own navigation in a product mock, not the marketing module names, which
+     stay English in the site nav on purpose (CHROME_KEEP_EN). The mobile nav's
+     "Assets" a few lines away in the same HTML is that other thing, and stays. */
+  "Assets": "에셋",
+  "Intelligence": "인텔리전스",
+  "Connectors": "커넥터",
+  "Touring": "투어",
   "Timeline": "타임라인",
   "Strategy": "전략",
   "Research": "리서치",

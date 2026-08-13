@@ -232,7 +232,7 @@ const groups = GROUPS.map((g) => ({ ...g, rows: g.rows?.filter((r) => r.enabled)
       <div class="mnav__grp">
         <p>{ui(g.label)}</p>
         {(g.rows ?? []).map((r) => (
-          <a href={localeHref(r.href)}>{r.title}{r.pro && <span class="nav__pro">Pro</span>}</a>
+          <a href={localeHref(r.href)}>{localeLabel(r.title, r.href)}{r.pro && <span class="nav__pro">Pro</span>}</a>
         ))}
       </div>
     )

@@ -29,6 +29,12 @@ export const KO_ICP_COMMON: CopyMap = {
   "Needs you": "확인 필요",
   "live": "실시간",
   "looks like.": "어떤 모습인지.",
+  /* Shared because the same chip appeared on three ICP pages and was translated
+     on some and not others — a reader crossing the audience switcher saw one
+     thing labelled two ways. Generic in every occurrence (row-mates: A&R notes,
+     Stems, Splits sheet), never the name of a tool. */
+  "Masters": "마스터",
+
   "Early access · in beta": "얼리 액세스 · 베타",
 
   /* The stat tiles start at zero in the markup and only animate on scroll-in,

@@ -42,7 +42,6 @@ const PAGE: CopyMap = {
   "You, the artist": "아티스트로서의 당신",
   "making the music": "음악을 만드는",
   "Juggling": "동시에 챙기는 것",
-  "Masters": "마스터",
   "Stems": "스템",
   "Features": "피처링",
   "Mixes": "믹스",

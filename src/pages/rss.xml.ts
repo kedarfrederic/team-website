@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro";
 import { toHTML } from "@portabletext/to-html";
 import { getInsightPosts, getInsightPostBySlug } from "../lib/queries";
-import { sanityClient } from "../lib/sanity";
+import { sanityClient, urlFor } from "../lib/sanity";
 
 /**
  * RSS feed — built primarily for Naver.
@@ -52,6 +52,33 @@ export const GET: APIRoute = async () => {
     category?: { title?: string };
   }>;
 
+/**
+ * Portable Text serializers for the feed.
+ *
+ * `image` is in the insightPost body schema, and @portabletext/to-html has NO
+ * default for it: its unknownType fallback emits a literal
+ * `Unknown block type "image", specify a component…` string. That is an English
+ * maintenance message injected into <content:encoded> — the element Naver
+ * treats as the article — and the image itself silently vanishing. No post
+ * contains an image today, so this was latent and one Studio edit away.
+ *
+ * Mirrors src/components/PortableText.astro so the feed and the page agree.
+ * `onMissingComponent` throws rather than degrading: an unhandled block type
+ * becoming visible copy is exactly what happened here, and the caller already
+ * catches per item and falls back to the excerpt.
+ */
+const RENDER = {
+  components: {
+    types: {
+      image: ({ value }: { value: Parameters<typeof urlFor>[0] & { alt?: string } }) =>
+        `<p><img src="${esc(urlFor(value).width(1200).url())}" alt="${esc(value?.alt ?? "")}" /></p>`,
+    },
+  },
+  onMissingComponent: (message: string, options: { nodeType: string }) => {
+    throw new Error(`[rss] no serializer for Portable Text type "${options.nodeType}": ${message}`);
+  },
+} as const;
+
   const items = await Promise.all(
     (posts ?? [])
       .filter((p) => p?.slug?.current)
@@ -65,8 +92,13 @@ export const GET: APIRoute = async () => {
           const full = (await getInsightPostBySlug(p.slug!.current!, sanityClient)) as {
             body?: unknown;
           };
-          if (Array.isArray(full?.body)) body = toHTML(full.body as never);
-        } catch {
+          if (Array.isArray(full?.body)) body = toHTML(full.body as never, RENDER);
+        } catch (err) {
+          /* Logged, not swallowed. The fallback below is deliberate — one bad
+             post must not take the feed down — but silence made a truncated
+             article indistinguishable from a short one in the feed Naver reads
+             as the content source, and the build still says "Complete!". */
+          console.warn(`[rss] body fetch failed for /insights/${p.slug!.current} — falling back to excerpt:`, err);
           body = "";
         }
         if (!body) body = `<p>${esc(p.excerpt ?? "")}</p>`;

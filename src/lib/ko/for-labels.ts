@@ -54,7 +54,6 @@ const PAGE: CopyMap = {
   "Tracked across": "흩어진 곳",
   "A&R notes": "A&R 메모",
   "Marketing plan": "마케팅 계획",
-  "Masters": "마스터",
   "Distro portal": "유통 포털",
   "Kite · single": "Kite · 싱글",
   "pop · Q3": "pop · 3분기",

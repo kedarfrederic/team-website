@@ -124,6 +124,7 @@ const PAGE: CopyMap = {
   "Scoped access per imprint": "산하 레이블별 접근 범위 설정",
   "People join and leave through the systems you already run.":
     "입사와 퇴사가 이미 쓰는 시스템을 통해 반영됩니다.",
+  "Audit log": "감사 로그",
   "Audit log · exportable": "감사 로그 · 내보내기 가능",
   "Master approved, Nova LP, by A. Rivera": "마스터 승인, Nova LP, A. Rivera",
   "Logged": "기록됨",

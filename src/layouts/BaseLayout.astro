@@ -223,8 +223,15 @@ const crumbUrl = (segments: string[]) => {
   return `${siteRoot}${hasTranslation(path, locale) ? localizePath(path, locale) : path}`;
 };
 
+/* `&& !noIndex` because the 404 was still publishing a BreadcrumbList that
+   asserted the missing page exists — and asserting it at the WRONG url too:
+   /ko/nope produced a trail ending at https://teamrollouts.com/nope, a second
+   page that also does not exist. Suppressing canonical while leaving structured
+   data and og:url pointing at the same phantom left three tags disagreeing
+   about whether the page was there. A page telling crawlers not to index it
+   should not simultaneously describe itself as a place. */
 const breadcrumbJsonLd =
-  breadcrumb && crumbSegments.length > 0
+  breadcrumb && !noIndex && crumbSegments.length > 0
     ? {
         "@context": "https://schema.org",
         "@type": "BreadcrumbList",
@@ -285,7 +292,7 @@ const breadcrumbJsonLd =
   <meta property="og:title" content={finalTitle} />
   <meta property="og:description" content={finalDescription} />
   <meta property="og:image" content={ogImageUrl} />
-  <meta property="og:url" content={canonicalUrl} />
+  {emitCanonical && <meta property="og:url" content={canonicalUrl} />}
   <meta property="og:type" content="website" />
 
   <!-- Twitter -->
