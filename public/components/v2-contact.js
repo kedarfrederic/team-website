@@ -27,7 +27,10 @@
     if (!first) { form.first_name.focus(); return; }
     if (!email || !form.email.checkValidity()) { form.email.focus(); return; }
 
-    if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+    if (btn) { btn.disabled = true; /* Follows the document language — the only string this script writes.
+         Reads a data attribute the form supplies rather than a locale table
+         here, so the copy stays with the rest of the page's. */
+      btn.textContent = btn.dataset.sendingLabel || 'Sending…'; }
     const interest = [...form.querySelectorAll('input[name=interest]:checked')].map((i) => i.value);
     form.classList.add('done'); // optimistic confirm — see header note
 

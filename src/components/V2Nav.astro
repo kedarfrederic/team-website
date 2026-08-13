@@ -65,6 +65,17 @@ const { active = "", locale = DEFAULT_LOCALE } = Astro.props;
    while the menu labels are still English. */
 const SKIP_LABEL: Record<string, string> = { en: "Skip to content", ko: "본문으로 건너뛰기" };
 
+/* ARIA labels follow the page language, always — like the skip link and unlike
+   the visible menu labels, they are not a promise about a destination. Leaving
+   them English also produced a page where the FOOTER's home link announced
+   "Team — 홈" and the NAV's announced "Team — home", to the same screen-reader
+   user, on the same page. */
+const ARIA: Record<string, { home: string; primary: string; menu: string }> = {
+  en: { home: "Team — home", primary: "Primary", menu: "Menu" },
+  ko: { home: "Team — 홈", primary: "주 메뉴", menu: "메뉴" },
+};
+const aria = ARIA[locale] ?? ARIA.en;
+
 /**
  * Translated labels, applied under a rule rather than a judgement call.
  *
@@ -170,9 +181,9 @@ const groups = GROUPS.map((g) => ({ ...g, rows: g.rows?.filter((r) => r.enabled)
 
 <header class="nav v2-chrome" id="v2Nav">
   <div class="nav__in">
-    <a class="nav__brand" href={localeHref("/")} aria-label="Team — home"><img src={LOGO} alt="Team" /></a>
+    <a class="nav__brand" href={localeHref("/")} aria-label={aria.home}><img src={LOGO} alt="Team" /></a>
 
-    <nav class="nav__menu" aria-label="Primary">
+    <nav class="nav__menu" aria-label={aria.primary}>
       {groups.map((g) => (
         <div class="nav__item">
           {g.href ? (
@@ -203,7 +214,7 @@ const groups = GROUPS.map((g) => ({ ...g, rows: g.rows?.filter((r) => r.enabled)
       <a class="nav__signin" href={SIGNIN}>{cta.signIn}</a>
       <a class="nav__beta" href={localeHref(BETA)}>{cta.signUp}</a>
     </div>
-    <button class="nav__burger" id="v2Burger" aria-label="Menu" aria-expanded="false" aria-controls="v2Mnav">
+    <button class="nav__burger" id="v2Burger" aria-label={aria.menu} aria-expanded="false" aria-controls="v2Mnav">
       <i></i><i></i><i></i>
     </button>
   </div>

@@ -28,16 +28,54 @@
     minsEl.textContent = String(m).padStart(2, '0');
   }, 1000);
 
+  /* ── copy ───────────────────────────────────────────────────────
+     User-visible strings this preview injects. They do NOT appear in the
+     body HTML of any page that mounts it, so a fully translated body would
+     still render an English task board and an English conversation — the
+     same trap as homepage-v2.js and v2-connections.js.
+
+     NOTE these arrays duplicate homepage-v2.js's POOL and CHAT verbatim.
+     The duplication is pre-existing; what matters here is that a locale
+     supplies ONE Korean source to both, so the same mock cannot drift into
+     two different translations. See src/lib/ko/appPreview.ts.
+
+     Per-item fallback: an untranslated row stays English rather than
+     rendering "undefined". */
+  const COPY = (() => {
+    const EN = {
+      labels: { activeNew: 'ACTIVE · NEW' },
+      pool: [
+        ['Master v10 QC Check', 'AUDIO'],
+        ['Pre-Save Link Goes Live', 'DSP_ACTIVATION'],
+        ['Vinyl PO Sign-off', 'OPS'],
+        ['EPK Refresh + Press Shots', 'PRESS'],
+        ['Lyric Video Teaser Cut', 'CONTENT'],
+        ['Radio One-Sheet Draft', 'RADIO'],
+      ],
+      chat: [
+        [0, 'TEAMMATE · 12:53', "Pulled 3 past releases. Ava's pre-save pushes in week 2 outperformed week 4 by 31%."],
+        [1, '12:54 · YOU', 'Move the pre-save blast earlier then.'],
+        [0, 'TEAMMATE · 12:54', 'Done. Moved to Thu 25 and assigned to Maya. Budget untouched.'],
+        [1, '12:56 · YOU', "What's still unassigned this week?"],
+        [0, 'TEAMMATE · 12:56', 'Two tasks: the country playlist pitch and the venue shortlist. Want owners on both?'],
+        [1, '12:57 · YOU', 'Yes, assign them.'],
+        [0, 'TEAMMATE · 12:57', 'Assigned. Playlist pitch to Sam, venues to Maya. Timeline updated.'],
+      ],
+    };
+    const o = (typeof window !== 'undefined' && window.__TEAM_APP_PREVIEW_COPY) || {};
+    const merged = Object.assign({}, EN, o);
+    merged.labels = Object.assign({}, EN.labels, o.labels || {});
+    for (const k of ['pool', 'chat']) {
+      const sup = Array.isArray(o[k]) ? o[k] : [];
+      merged[k] = EN[k].map((d, i) => sup[i] ?? d);
+    }
+    return merged;
+  })();
+
   /* tasks keep landing on the timeline */
   const days = $$('.app__day');
-  const POOL = [
-    ['tcard--blue', 'Master v10 QC Check', 'AUDIO'],
-    ['tcard--teal', 'Pre-Save Link Goes Live', 'DSP_ACTIVATION'],
-    ['tcard--amber', 'Vinyl PO Sign-off', 'OPS'],
-    ['tcard--dark', 'EPK Refresh + Press Shots', 'PRESS'],
-    ['tcard--purple', 'Lyric Video Teaser Cut', 'CONTENT'],
-    ['tcard--blue', 'Radio One-Sheet Draft', 'RADIO'],
-  ];
+  const POOL = ['tcard--blue', 'tcard--teal', 'tcard--amber', 'tcard--dark', 'tcard--purple', 'tcard--blue']
+    .map((cls, i) => [cls, (COPY.pool[i] || [])[0] || '', (COPY.pool[i] || [])[1] || '']);
   let ti = 0;
   if (days.length) setInterval(() => {
     if (!live || document.hidden) return;
@@ -46,7 +84,7 @@
     if (!day) return;
     const el = document.createElement('div');
     el.className = `tcard ${cls} tcard--pop`;
-    el.innerHTML = `<p class="mono tcard__meta">ACTIVE · NEW</p><b>${title}</b><span class="mono">${tag}</span>`;
+    el.innerHTML = `<p class="mono tcard__meta">${COPY.labels.activeNew}</p><b>${title}</b><span class="mono">${tag}</span>`;
     day.append(el);
     const mine = day.querySelectorAll('.tcard--pop');
     if (mine.length > 2) { const o = mine[0]; o.classList.add('tcard--out'); setTimeout(() => o.remove(), 550); }
@@ -54,15 +92,8 @@
 
   /* the conversation carries on */
   const scroll = $('.app__scroll');
-  const CHAT = [
-    [0, 'TEAMMATE · 12:53', "Pulled 3 past releases. Ava's pre-save pushes in week 2 outperformed week 4 by 31%."],
-    [1, '12:54 · YOU', 'Move the pre-save blast earlier then.'],
-    [0, 'TEAMMATE · 12:54', 'Done. Moved to Thu 25 and assigned to Maya. Budget untouched.'],
-    [1, '12:56 · YOU', "What's still unassigned this week?"],
-    [0, 'TEAMMATE · 12:56', 'Two tasks: the country playlist pitch and the venue shortlist. Want owners on both?'],
-    [1, '12:57 · YOU', 'Yes, assign them.'],
-    [0, 'TEAMMATE · 12:57', 'Assigned. Playlist pitch to Sam, venues to Maya. Timeline updated.'],
-  ];
+  const CHAT = COPY.chat;
+
   let ci = 0;
   if (scroll) setInterval(() => {
     if (!live || document.hidden) return;

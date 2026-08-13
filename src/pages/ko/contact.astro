@@ -1,0 +1,58 @@
+---
+/**
+ * Contact — Korean.
+ *
+ * Mirrors src/pages/contact.astro. Two things here that no earlier Korean page
+ * needed:
+ *
+ *  1. The ATTRIBUTE map. This is the first page with a real form, and a
+ *     placeholder or aria-label left in English is as visible as a heading —
+ *     more so to anyone using a screen reader, who hears the label and never
+ *     sees the surrounding Korean.
+ *  2. `data-sending-label`. v2-contact.js writes exactly one string, the
+ *     button's in-flight state. It was hardcoded English, so a Korean reader
+ *     would click 메시지 보내기 and watch it become "Sending…" — the same class
+ *     of bug as the footer's "Subscribed", fixed in 8fe83ff.
+ *
+ * Not Sanity-bound, unlike the English page: those documents are pinned to
+ * fixed _ids with no localization plugin (plan §3.B).
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import V2Head from "../../components/V2Head.astro";
+import V2Nav from "../../components/V2Nav.astro";
+import V2Footer from "../../components/V2Footer.astro";
+import KoreanTypography from "../../components/KoreanTypography.astro";
+import { v } from "../../lib/asset-url";
+import { localizePage } from "../../lib/koLocalize";
+import { KO_CONTACT, KO_CONTACT_ATTRS, KO_CONTACT_SENDING } from "../../lib/ko/contact";
+// @ts-expect-error — Astro's ?raw modifier returns a string at build time
+import bodyHtml from "../../lib/v2-contact-body.html?raw";
+
+const TITLE = "문의하기 | Team";
+const DESCRIPTION =
+  "궁금한 점, 제품 소개, 또는 로스터 전체를 Team으로 옮기는 일까지 — 무엇을 찾고 계신지 알려주시면 담당자가 회신드립니다.";
+
+let body = localizePage(bodyHtml as string, KO_CONTACT, "ko", KO_CONTACT_ATTRS);
+
+/* Hand the in-flight label to the shared script. Done here rather than in a
+   locale table inside v2-contact.js so the copy stays with the rest of this
+   page's, and so the English page needs no change at all. */
+body = body.replace(
+  /(<button[^>]*type="submit")/,
+  `$1 data-sending-label="${KO_CONTACT_SENDING}"`,
+);
+---
+<BaseLayout title={TITLE} description={DESCRIPTION} chrome={false} bodyClass="v2">
+  <V2Head slot="head" pageCss="/components/v2-contact.css" />
+  <KoreanTypography />
+
+  <V2Nav locale="ko" />
+
+  <Fragment set:html={body} />
+
+  <V2Footer locale="ko" />
+
+  <script is:inline src={v("/components/v2-base.js")}></script>
+  <script is:inline src={v("/components/v2-chrome.js")}></script>
+  <script is:inline src={v("/components/v2-contact.js")}></script>
+</BaseLayout>
