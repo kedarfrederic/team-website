@@ -1,0 +1,49 @@
+---
+/**
+ * tours — Korean.
+ *
+ * Mirrors src/pages/tours.astro and shares its body HTML, stylesheet and
+ * scripts. Only the words differ; see ../../lib/ko/tours.ts.
+ *
+ * `localizePage` runs both passes — text nodes, then hrefs. The href pass is
+ * not optional: this body links to other product pages and /pricing, and
+ * without it the page renders Korean labels that navigate to English pages.
+ * It is gated on TRANSLATED_PATHS, so links to pages with no Korean version
+ * stay English rather than 404, and switch over automatically as those land.
+ *
+ * Page scripts were checked for hardcoded copy before this was written: they
+ * write no user-visible text, so there is nothing to extract (unlike the
+ * homepage, and unlike /connections — task #19).
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import V2Head from "../../components/V2Head.astro";
+import V2Nav from "../../components/V2Nav.astro";
+import V2Footer from "../../components/V2Footer.astro";
+import KoreanTypography from "../../components/KoreanTypography.astro";
+import { v } from "../../lib/asset-url";
+import { localizePage } from "../../lib/koLocalize";
+import { KO_TOURS } from "../../lib/ko/tours";
+// @ts-expect-error — Astro's ?raw modifier returns a string at build time
+import bodyHtml from "../../lib/v2-tours-body.html?raw";
+
+const TITLE = "Tours — 릴리스를 투어로 | Team";
+const DESCRIPTION =
+  "Tours는 릴리스가 공연의 흐름이 되는 곳입니다. 라우팅, 어드밴싱, 데이시트, 홀드와 티켓 오픈, 개런티와 정산을 하나의 투어로 관리합니다.";
+
+const body = localizePage(bodyHtml as string, KO_TOURS, "ko");
+---
+<BaseLayout title={TITLE} description={DESCRIPTION} chrome={false} bodyClass="v2">
+  <V2Head slot="head" pageCss="/components/v2-tours.css" />
+  <KoreanTypography />
+
+  <V2Nav active="platform" locale="ko" />
+
+  <Fragment set:html={body} />
+
+  <V2Footer locale="ko" />
+
+  <script is:inline src={v("/components/v2-base.js")}></script>
+  <script is:inline src={v("/components/v2-chrome.js")}></script>
+  <script is:inline src={v("/components/v2-tours.js")}></script>
+  <script is:inline src={v("/components/v2-brain.js")}></script>
+</BaseLayout>

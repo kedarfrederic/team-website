@@ -80,6 +80,9 @@ export const TRANSLATED_PATHS: ReadonlySet<string> = new Set<string>([
   "/",
   "/pricing",
   "/rollouts",
+  "/teammate",
+  "/assets",
+  "/tours",
   // Add an entry only once the page file exists — `pnpm check:i18n` fails
   // otherwise, because an hreflang alternate that 404s costs the whole cluster.
 ]);

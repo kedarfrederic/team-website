@@ -1,0 +1,49 @@
+---
+/**
+ * assets — Korean.
+ *
+ * Mirrors src/pages/assets.astro and shares its body HTML, stylesheet and
+ * scripts. Only the words differ; see ../../lib/ko/assets.ts.
+ *
+ * `localizePage` runs both passes — text nodes, then hrefs. The href pass is
+ * not optional: this body links to other product pages and /pricing, and
+ * without it the page renders Korean labels that navigate to English pages.
+ * It is gated on TRANSLATED_PATHS, so links to pages with no Korean version
+ * stay English rather than 404, and switch over automatically as those land.
+ *
+ * Page scripts were checked for hardcoded copy before this was written: they
+ * write no user-visible text, so there is nothing to extract (unlike the
+ * homepage, and unlike /connections — task #19).
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import V2Head from "../../components/V2Head.astro";
+import V2Nav from "../../components/V2Nav.astro";
+import V2Footer from "../../components/V2Footer.astro";
+import KoreanTypography from "../../components/KoreanTypography.astro";
+import { v } from "../../lib/asset-url";
+import { localizePage } from "../../lib/koLocalize";
+import { KO_ASSETS } from "../../lib/ko/assets";
+// @ts-expect-error — Astro's ?raw modifier returns a string at build time
+import bodyHtml from "../../lib/v2-assets-body.html?raw";
+
+const TITLE = "Assets — 발매 준비가 끝난 크리에이티브 라이브러리 | Team";
+const DESCRIPTION =
+  "Assets는 릴리스를 위한 크리에이티브 라이브러리입니다. 아트워크, 오디오, 영상, 문서, 링크를 버전 관리와 함께 한곳에 모으고, 롤아웃에 그대로 연결합니다.";
+
+const body = localizePage(bodyHtml as string, KO_ASSETS, "ko");
+---
+<BaseLayout title={TITLE} description={DESCRIPTION} chrome={false} bodyClass="v2">
+  <V2Head slot="head" pageCss="/components/v2-assets.css" />
+  <KoreanTypography />
+
+  <V2Nav active="platform" locale="ko" />
+
+  <Fragment set:html={body} />
+
+  <V2Footer locale="ko" />
+
+  <script is:inline src={v("/components/v2-base.js")}></script>
+  <script is:inline src={v("/components/v2-chrome.js")}></script>
+  <script is:inline src={v("/components/v2-assets.js")}></script>
+  <script is:inline src={v("/components/v2-brain.js")}></script>
+</BaseLayout>

@@ -1,0 +1,49 @@
+---
+/**
+ * teammate — Korean.
+ *
+ * Mirrors src/pages/teammate.astro and shares its body HTML, stylesheet and
+ * scripts. Only the words differ; see ../../lib/ko/teammate.ts.
+ *
+ * `localizePage` runs both passes — text nodes, then hrefs. The href pass is
+ * not optional: this body links to other product pages and /pricing, and
+ * without it the page renders Korean labels that navigate to English pages.
+ * It is gated on TRANSLATED_PATHS, so links to pages with no Korean version
+ * stay English rather than 404, and switch over automatically as those land.
+ *
+ * Page scripts were checked for hardcoded copy before this was written: they
+ * write no user-visible text, so there is nothing to extract (unlike the
+ * homepage, and unlike /connections — task #19).
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import V2Head from "../../components/V2Head.astro";
+import V2Nav from "../../components/V2Nav.astro";
+import V2Footer from "../../components/V2Footer.astro";
+import KoreanTypography from "../../components/KoreanTypography.astro";
+import { v } from "../../lib/asset-url";
+import { localizePage } from "../../lib/koLocalize";
+import { KO_TEAMMATE } from "../../lib/ko/teammate";
+// @ts-expect-error — Astro's ?raw modifier returns a string at build time
+import bodyHtml from "../../lib/v2-teammate-body.html?raw";
+
+const TITLE = "TeamMate — 운영 안에 있는 지성 | Team";
+const DESCRIPTION =
+  "TeamMate는 릴리스 전반의 모든 버전과 대화, 결정을 기억하고 그 전체를 종합해 추론합니다. ‘지금 우리는 어디쯤인가’에 대한 답이 늘 질문 하나 거리에 있습니다.";
+
+const body = localizePage(bodyHtml as string, KO_TEAMMATE, "ko");
+---
+<BaseLayout title={TITLE} description={DESCRIPTION} chrome={false} bodyClass="v2">
+  <V2Head slot="head" pageCss="/components/v2-teammate.css" />
+  <KoreanTypography />
+
+  <V2Nav active="platform" locale="ko" />
+
+  <Fragment set:html={body} />
+
+  <V2Footer locale="ko" />
+
+  <script is:inline src={v("/components/v2-base.js")}></script>
+  <script is:inline src={v("/components/v2-chrome.js")}></script>
+  <script is:inline src={v("/components/v2-teammate.js")}></script>
+  <script is:inline src={v("/components/v2-brain.js")}></script>
+</BaseLayout>
