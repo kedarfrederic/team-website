@@ -569,6 +569,104 @@ for (const file of ["LocaleSuggestionBanner.astro", "KoreanTypography.astro"]) {
   }
 }
 
+// ── Part 3d: the chrome table, against the links the chrome actually renders ──
+
+/**
+ * V2Nav and V2Footer each carried a one-entry Korean table ("Pricing": "가격")
+ * while rendering 57 English strings on every Korean page — the entire
+ * mega-menu, both sets of column headings, every audience name. Nothing failed:
+ * the rule was correct, the table was simply not filled in, and an unfilled
+ * table is indistinguishable from a complete one at build time.
+ *
+ * So the table is now checked against the components that consume it. A link
+ * whose destination HAS a Korean page must have a Korean label, or be listed in
+ * CHROME_KEEP_EN as a deliberate decision. Being absent from both is the defect
+ * — and it is the only state this can be in that a reader would notice.
+ *
+ * Links to pages with no Korean version are skipped, not failed: an English
+ * label on an English destination is correct, and forcing a translation there
+ * would promise Korean and deliver English.
+ */
+{
+  const root = path.resolve(componentDir, "..", "..");
+  const chromePath = path.join(root, "src", "lib", "ko", "chrome.ts");
+  const navPath = path.join(root, "src", "components", "V2Nav.astro");
+  const footerPath = path.join(root, "src", "components", "V2Footer.astro");
+
+  if ([chromePath, navPath, footerPath].every((f) => fs.existsSync(f))) {
+    const chromeSrc = fs.readFileSync(chromePath, "utf8");
+
+    const blockKeys = (constName: string): Set<string> => {
+      const start = chromeSrc.indexOf(`export const ${constName}`);
+      if (start < 0) return new Set();
+      const end = chromeSrc.indexOf("\n};", start);
+      const block = chromeSrc.slice(start, end);
+      const out = new Set<string>();
+      // Both `"Some phrase": "…"` and bare-identifier `Pricing: "…"` forms.
+      for (const m of block.matchAll(/\n    (?:"((?:[^"\\]|\\.)*)"|([A-Za-z_$][\w$]*)):/g)) {
+        out.add(m[1] !== undefined ? (JSON.parse(`"${m[1]}"`) as string) : m[2]);
+      }
+      return out;
+    };
+    const linkKeys = blockKeys("CHROME_LINK");
+    const uiKeys = blockKeys("CHROME_UI");
+    const keepEn = new Set(
+      [...chromeSrc.slice(chromeSrc.indexOf("CHROME_KEEP_EN")).matchAll(/\n  "([^"]+)",/g)].map((m) => m[1]),
+    );
+
+    const missing: string[] = [];
+
+    // Nav mega-menu rows: `{ href: "/x", …, title: "T", desc: "D" }`
+    const navSrc = fs.readFileSync(navPath, "utf8");
+    for (const m of navSrc.matchAll(/\{\s*href:\s*"(\/[^"]*)"[^}]*?title:\s*"([^"]*)"[^}]*?desc:\s*"([^"]*)"/g)) {
+      const [, href, title, desc] = m;
+      if (!hasTranslation(href, "ko")) continue;
+      for (const label of [title, desc]) {
+        if (!linkKeys.has(label) && !keepEn.has(label)) {
+          missing.push(`V2Nav ${href} — ${JSON.stringify(label)}`);
+        }
+      }
+    }
+
+    // Footer links: `{ href: "/x", label: "L" }`
+    const footerSrc = fs.readFileSync(footerPath, "utf8");
+    for (const m of footerSrc.matchAll(/\{\s*href:\s*"(\/[^"]*)",\s*label:\s*"([^"]*)"/g)) {
+      const [, href, label] = m;
+      if (!hasTranslation(href, "ko")) continue;
+      if (!linkKeys.has(label) && !keepEn.has(label)) {
+        missing.push(`V2Footer ${href} — ${JSON.stringify(label)}`);
+      }
+    }
+
+    /* Interface strings have no destination to gate on, so every one must be
+       translated. These are the strings the old rule could never reach: it
+       asked whether the href had a Korean page, and a heading has no href. */
+    const uiStrings = [
+      ...[...navSrc.matchAll(/\n    label:\s*"([^"]*)"/g)].map((m) => m[1]),
+      ...[...navSrc.matchAll(/panelLabel:\s*"([^"]*)"/g)].map((m) => m[1]),
+      ...[...footerSrc.matchAll(/heading:\s*"([^"]*)"/g)].map((m) => m[1]),
+    ];
+    for (const t of uiStrings) {
+      // A group that is itself a link (Pricing) goes through the link rule.
+      if (linkKeys.has(t) || keepEn.has(t)) continue;
+      if (!uiKeys.has(t)) missing.push(`chrome UI — ${JSON.stringify(t)}`);
+    }
+
+    if (missing.length > 0) {
+      assertionFailures++;
+      console.error(
+        `  FAIL ${missing.length} chrome string(s) render English on a Korean page —\n` +
+          `         add to CHROME_LINK/CHROME_UI in src/lib/ko/chrome.ts, or to CHROME_KEEP_EN if that is the decision:`,
+      );
+      missing.slice(0, 20).forEach((m) => console.error(`         ${m}`));
+      if (missing.length > 20) console.error(`         …and ${missing.length - 20} more`);
+    } else {
+      assertionPasses++;
+      console.log(`  ok   chrome: every nav/footer string with a Korean destination is translated or explicitly kept`);
+    }
+  }
+}
+
 if (assertionFailures > 0) {
   console.error(`\nFAILED — ${assertionFailures} path-logic assertion(s) failed.`);
   process.exit(1);

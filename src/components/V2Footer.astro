@@ -12,6 +12,7 @@
  * currently enabled — the Platform pages landed. Keep the mechanism for the
  * next designed-but-unbuilt destination.
  */
+import { CHROME_LINK, CHROME_UI } from "../lib/ko/chrome";
 import { DEFAULT_LOCALE, hasTranslation, localizePath, type Locale } from "../lib/i18n";
 
 interface Link { href: string; label: string; enabled?: boolean }
@@ -75,12 +76,12 @@ const t = FOOTER_COPY[locale] ?? FOOTER_COPY.en;
 
 /** Same rule as the nav: a link label follows the page language only where its
     destination actually exists in that language. */
-const LINK_LABELS: Record<string, Record<string, string>> = {
-  ko: { "Pricing": "가격" },
-};
+/** Interface text — column headings and controls — always follows the page
+    language; it names a section, not a destination. */
+const ui = (text: string) => CHROME_UI[locale]?.[text] ?? text;
 const localeLabel = (label: string, href: string) =>
   href.startsWith("/") && hasTranslation(href, locale)
-    ? (LINK_LABELS[locale]?.[label] ?? label)
+    ? (CHROME_LINK[locale]?.[label] ?? label)
     : label;
 
 const LOGO = "/v2/assets/logo/team-logo-live.svg";
@@ -171,7 +172,7 @@ const SOCIAL = [
       </div>
       {columns.map((c) => (
         <div class="foot__col">
-          <p>{c.heading}</p>
+          <p>{ui(c.heading)}</p>
           {c.links.map((l) => <a href={localeHref(l.href)}>{localeLabel(l.label, l.href)}</a>)}
         </div>
       ))}
@@ -182,7 +183,7 @@ const SOCIAL = [
       {/* Consent has to be as easy to withdraw as it was to give, so the
           re-open trigger lives here rather than buried in a settings page.
           V2CookieBanner listens for [data-cookie-prefs] anywhere on the page. */}
-      <a class="mono" href="/cookies" data-cookie-prefs>Cookie preferences</a>
+      <a class="mono" href="/cookies" data-cookie-prefs>{ui("Cookie preferences")}</a>
       <span class="mono">{t.tagline}</span>
     </div>
   </div>
