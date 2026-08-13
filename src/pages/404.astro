@@ -7,29 +7,87 @@
  * default — this is a net-new page, not a port over something existing.
  *
  * Injection port (HANDOFF §A.5).
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * LOCALE
+ *
+ * This page is the one route that cannot know its own locale from its file
+ * path, because it answers for paths that have no file. It reads the locale the
+ * middleware resolved from the REQUEST path instead, so /ko/anything-at-all
+ * gets a Korean 404 and /anything-at-all gets an English one.
+ *
+ * That middleware runs before route matching, so `Astro.locals.locale` is
+ * populated here even though no route matched. `localeFromPath` is the fallback
+ * for the case where it isn't — a 404 served outside the middleware, which
+ * should be impossible but is not worth crashing over.
+ *
+ * This used to pin lang="en" unconditionally, because the body was English and
+ * shipping English words inside <html lang="ko-KR"> makes a screen reader
+ * pronounce them as Korean. The pin was the right call while it lasted; it is
+ * removed now that a Korean body exists, which is exactly what its comment said
+ * to do.
  */
 import BaseLayout from "../layouts/BaseLayout.astro";
 import V2Head from "../components/V2Head.astro";
 import V2Nav from "../components/V2Nav.astro";
 import V2Footer from "../components/V2Footer.astro";
+import KoreanTypography from "../components/KoreanTypography.astro";
 import { v } from "../lib/asset-url";
+import { DEFAULT_LOCALE, localeFromPath } from "../lib/i18n";
+import { localizePage } from "../lib/koLocalize";
+import { KO_NOT_FOUND, KO_NOT_FOUND_ATTRS } from "../lib/ko/notFound";
 // @ts-expect-error — Astro's ?raw modifier returns a string at build time
 import bodyHtml from "../lib/v2-404-body.html?raw";
+
+const locale = Astro.locals?.locale ?? localeFromPath(Astro.url.pathname);
+
+const COPY = {
+  en: {
+    title: "Page not found | Team",
+    description: "That page has moved or never existed. Head back to Team.",
+  },
+  ko: {
+    title: "페이지를 찾을 수 없습니다 | Team",
+    description: "해당 페이지는 옮겨졌거나 처음부터 없던 주소입니다. Team으로 돌아가세요.",
+  },
+} as const;
+const t = COPY[locale] ?? COPY[DEFAULT_LOCALE];
+
+const body =
+  locale === DEFAULT_LOCALE
+    ? (bodyHtml as string)
+    : localizePage(bodyHtml as string, KO_NOT_FOUND, locale, KO_NOT_FOUND_ATTRS);
+
+/**
+ * noIndex, because the URL this renders for does not exist.
+ *
+ * Without it BaseLayout emitted `<link rel="canonical">` pointing at whatever
+ * was typed — telling a crawler that /ko/definitely-not-a-page is the canonical
+ * version of itself, and inviting every typo and stale link into the index. It
+ * also suppresses hreflang, which is correct here for the same reason: there is
+ * no alternate for a page that isn't there.
+ *
+ * This matters more than usual right now because Naver's Yeti is about to crawl
+ * this site for the first time and has no history to tell a real page from a
+ * fabricated one.
+ */
 ---
-{/*
-  lang="en" is pinned because this page renders for ANY unmatched path,
-  including /ko/*. Without it the body — which is English — would ship inside
-  <html lang="ko-KR">, and a screen reader would read English words with Korean
-  pronunciation. Remove this when a Korean 404 body exists.
-*/}
-<BaseLayout lang="en" title="Page not found | Team" description="That page has moved or never existed. Head back to Team." chrome={false} bodyClass="v2">
+<BaseLayout
+  lang={locale}
+  title={t.title}
+  description={t.description}
+  seo={{ noIndex: true }}
+  chrome={false}
+  bodyClass="v2"
+>
   <V2Head slot="head" pageCss="/components/v2-notfound.css" />
+  {locale === "ko" && <KoreanTypography />}
 
-  <V2Nav />
+  <V2Nav locale={locale} />
 
-  <Fragment set:html={bodyHtml} />
+  <Fragment set:html={body} />
 
-  <V2Footer />
+  <V2Footer locale={locale} />
 
   <script is:inline src={v("/components/v2-base.js")}></script>
   <script is:inline src={v("/components/v2-chrome.js")}></script>

@@ -75,9 +75,12 @@ export function localizeHrefs(html: string, locale: Locale): string {
   let out = html;
   const paths = [...TRANSLATED_PATHS].sort((a, b) => b.length - a.length);
   for (const path of paths) {
-    // Bare href="/" is the logo; the chrome handles it, and rewriting it here
-    // would also catch every href="/…" prefix.
-    if (path === "/") continue;
+    /* "/" used to be skipped here, on the stated grounds that rewriting it
+       "would also catch every href='/…' prefix". It would not: the match
+       includes the closing quote, so `href="/"` cannot match `href="/pricing"`.
+       The cost of the unfounded skip was that the Korean 404's "홈으로
+       돌아가기" button — the one thing on the page whose whole job is to get a
+       lost reader back — sent them to the ENGLISH homepage. */
     const localized = localizePath(path, locale);
     if (localized === path) continue;
     out = out.split(`href="${path}"`).join(`href="${localized}"`);

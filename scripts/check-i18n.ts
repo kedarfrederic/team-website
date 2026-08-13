@@ -43,6 +43,7 @@ import {
   suggestLocale,
   type Locale,
 } from "../src/lib/i18n";
+import { localizeHrefs } from "../src/lib/koLocalize";
 
 // ── Part 1: path logic ──────────────────────────────────────────────────────
 
@@ -327,6 +328,39 @@ for (const file of ["LocaleSuggestionBanner.astro", "KoreanTypography.astro"]) {
       assertionPasses++;
     }
   }
+}
+
+// ── Part 3a: localizeHrefs, on the shapes that actually appear in a body ────
+
+/**
+ * "/" was skipped here for months on the stated grounds that rewriting it
+ * "would also catch every href='/…' prefix". It cannot: the replacement matches
+ * the whole attribute including its closing quote. The cost of that unfounded
+ * skip was that the Korean 404's back-to-home button sent a lost Korean reader
+ * to the English homepage — the one control on the page whose entire job is to
+ * recover them.
+ *
+ * These assert the behaviour rather than the reasoning, so restoring the skip
+ * fails here instead of shipping.
+ */
+{
+  const sample = `<a href="/">h</a><a href="/pricing">p</a><a href="/insights">i</a>`;
+  eq(
+    'localizeHrefs sends "/" to the Korean home, not the English one',
+    localizeHrefs(sample, "ko"),
+    `<a href="/ko">h</a><a href="/ko/pricing">p</a><a href="/insights">i</a>`,
+  );
+  eq(
+    "localizeHrefs leaves English untouched",
+    localizeHrefs(sample, "en"),
+    sample,
+  );
+  // The prefix hazard that justified the skip, asserted as absent.
+  eq(
+    'rewriting "/" does not touch a longer path that starts with it',
+    localizeHrefs(`<a href="/pricing">p</a>`, "ko"),
+    `<a href="/ko/pricing">p</a>`,
+  );
 }
 
 // ── Part 3b: every OTHER Korean copy map, against the pages that consume it ──

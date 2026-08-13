@@ -136,6 +136,22 @@ const canonicalUrl =
   new URL(normalizePath(Astro.url.pathname), Astro.site ?? "https://teamrollouts.com").toString();
 
 /**
+ * A noindex page declares no canonical.
+ *
+ * The 404 renders for paths that do not exist, and it was emitting
+ * `<link rel="canonical" href="…/ko/whatever-was-typed">` — telling a crawler
+ * that a page which is not there is the canonical version of itself, and
+ * inviting every typo and stale inbound link into the index as its own URL.
+ * hreflang was already suppressed for noindex pages; canonical was not, which
+ * left the two disagreeing about whether the page existed.
+ *
+ * An explicit `canonical` prop still wins: passing one on a noindex page is a
+ * deliberate "this content lives at that other URL", which is the one case
+ * where a noindex page should point somewhere.
+ */
+const emitCanonical = canonical !== undefined || !noIndex;
+
+/**
  * Locale, never from the visitor's country — see src/lib/i18n.ts for why.
  *
  * Falls back to deriving it from the path rather than to DEFAULT_LOCALE,
@@ -257,7 +273,7 @@ const breadcrumbJsonLd =
   <title>{finalTitle}</title>
   <meta name="description" content={finalDescription} />
   {noIndex && <meta name="robots" content="noindex" />}
-  <link rel="canonical" href={canonicalUrl} />
+  {emitCanonical && <link rel="canonical" href={canonicalUrl} />}
   {hreflangAlternates.map((alt) => (
     <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />
   ))}
