@@ -890,6 +890,55 @@ for (const file of ["LocaleSuggestionBanner.astro", "KoreanTypography.astro"]) {
   }
 }
 
+// ── Part 3h: the dev override must outrank the stored preference ────────────
+
+/**
+ * `?geo=KR` is the only way to see the locale-suggestion bar without being in
+ * Korea. It was written AFTER the `if (readPreference()) return` early exit, so
+ * any visitor with a `preferred_locale` cookie silently got nothing — and the
+ * footer language switcher, added later, writes that cookie on one click. So
+ * the switch whose entire job is "show me this bar" was disabled for exactly
+ * the people trying to test it, for a year, with no error.
+ *
+ * Ordering is not something a type checker or a build can see, and the failure
+ * is silence. So it is asserted here: the forced-geo read must appear before
+ * the preference early-exit in the source.
+ */
+{
+  const root = path.resolve(componentDir, "..", "..");
+  const bannerPath = path.join(root, "src", "components", "LocaleSuggestionBanner.astro");
+
+  if (fs.existsSync(bannerPath)) {
+    const src = fs.readFileSync(bannerPath, "utf8");
+    const forcedAt = src.indexOf("const forcedGeo");
+    const exitAt = src.search(/if \(!?forcedGeo? ?&*&* ?readPreference\(\)\) return;|if \(readPreference\(\)\) return;/);
+
+    if (forcedAt === -1 || exitAt === -1) {
+      assertionFailures++;
+      console.error(
+        "  FAIL LocaleSuggestionBanner: could not find the forced-geo read or the\n" +
+          "         preference early-exit. If either was renamed, update this check —\n" +
+          "         it guards an ordering that fails silently.",
+      );
+    } else if (forcedAt > exitAt) {
+      assertionFailures++;
+      console.error(
+        "  FAIL LocaleSuggestionBanner reads ?geo= AFTER the stored-preference exit —\n" +
+          "         so anyone who has ever picked a language (one click in the footer\n" +
+          "         switcher) cannot force the bar, and it fails silently.",
+      );
+    } else if (!/if \(!forcedGeo && readPreference\(\)\) return;/.test(src)) {
+      assertionFailures++;
+      console.error(
+        "  FAIL LocaleSuggestionBanner's preference exit no longer exempts a forced\n" +
+          "         geo — ?geo= will be swallowed by a stored preference.",
+      );
+    } else {
+      assertionPasses++;
+    }
+  }
+}
+
 // ── Part 3e: the Korean business disclosure, reported not asserted ──────────
 
 /**

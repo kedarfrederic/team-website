@@ -145,8 +145,33 @@ const copy = target ? (COPY[target] ?? COPY[DEFAULT_LOCALE]) : null;
           document.cookie = parts.join('; ');
         };
 
+        /* DEV OVERRIDE, read FIRST — see the long note further down for why it
+           exists. It has to be evaluated before the stored-preference check,
+           not after: this bar's whole purpose is to be shown, and gating the
+           one switch that forces it behind a cookie that any ordinary click
+           sets made it dead exactly when someone was trying to test it.
+
+           That is not hypothetical. Adding the footer language switcher gave
+           every visitor a one-click way to write `preferred_locale`, so anyone
+           who used it — which is everyone testing the site — permanently
+           disabled `?geo=` for themselves, for a year. It failed silently and
+           looked like the feature was broken. */
+        const isProdHost = /(^|\.)teamrollouts\.com$/.test(location.hostname);
+        const forcedGeo = isProdHost
+          ? null
+          : new URLSearchParams(location.search).get('geo');
+
+        /* A forced country also CLEARS the stored preference, so the tester is
+           put back into a genuine first-visit state and can walk the whole flow
+           — accept, dismiss, navigate — rather than seeing the bar once on the
+           one URL that carries the parameter. Non-production hosts only, so a
+           real visitor's choice is never discarded. */
+        if (forcedGeo) {
+          document.cookie = COOKIE + '=; Path=/; Max-Age=0';
+        }
+
         // An explicit choice — in either direction — ends the conversation.
-        if (readPreference()) return;
+        if (!forcedGeo && readPreference()) return;
 
         const target = banner.dataset.targetLocale;
         const countries = (banner.dataset.countries || '')
@@ -217,13 +242,9 @@ const copy = target ? (COPY[target] ?? COPY[DEFAULT_LOCALE]) : null;
 
            Cache-safe either way: this runs client-side and the server never
            sees it, so no response varies by it. */
-        const isProdHost = /(^|\.)teamrollouts\.com$/.test(location.hostname);
-        if (!isProdHost) {
-          const forced = new URLSearchParams(location.search).get('geo');
-          if (forced) {
-            reveal(forced.toUpperCase());
-            return;
-          }
+        if (forcedGeo) {
+          reveal(forcedGeo.toUpperCase());
+          return;
         }
 
         let cached = null;
