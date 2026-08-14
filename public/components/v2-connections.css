@@ -105,3 +105,16 @@
   .grow__stat .s span{font-family:var(--font-mono);font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--bone-faint)}
   .grow__stat .s b em{color:var(--accent);font-style:normal}
   .grow p{color:var(--bone-dim);margin:0 auto 1.7rem;max-width:36rem}
+
+/* Logo fallback.
+   The initial is painted by the wrapper and the <img> sits on top of it. When a
+   logo file is missing the img removes itself (onerror) and the letter shows
+   through — no broken-image glyph, no layout shift, and no dependence on a
+   hand-kept list of which files exist. That list was wrong for 12 of 21
+   connectors, which is what made this necessary. */
+.icard__ic--fallback{position:relative;display:inline-flex;align-items:center;justify-content:center}
+.icard__ic--fallback::before{content:attr(data-initial);position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-display,inherit);font-weight:700;font-size:1.15rem;
+  color:var(--bone-faint,rgba(239,235,227,.55));text-transform:uppercase}
+.icard__ic--fallback img{position:relative;z-index:1}

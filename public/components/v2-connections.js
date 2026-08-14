@@ -84,13 +84,28 @@ const INT = [
     ['Ticketmaster','ticketmaster',0,'Event and ticket data.'],
   ]},
 ];
-const HAVE = new Set(['airtable','asana','box','clickup','discord','dropbox','facebook','gmail','googlecalendar','googledocs','googledrive','googlesheets','instagram','linear','notion','outlook','reddit','slack','ticketmaster','trello','youtube']);
-const TILE = { notion:'notion-dark' };                 // dark mark for the white tile
+/* Slugs with a real file in public/v2/assets/logos/.
+   This list claimed 21 and only 9 of them existed, so 12 connector tiles
+   rendered a broken image instead of the letter-tile fallback three lines
+   below — which the code has always had for exactly this case. A hand-kept
+   inventory of a directory drifts from the directory; the onerror below now
+   makes that drift cosmetic rather than visible, but the list is corrected to
+   what is actually on disk so the common path does not depend on it. */
+const HAVE = new Set(['asana','dropbox','gmail','googlecalendar','googledocs','googledrive','googlesheets','notion','slack','trello']);
+/* notion.svg IS on disk; notion-dark.svg never was, so this remap pointed the
+   one Notion tile at a 404 while its file sat there unused. */
+const TILE = {};
 const BRAND = { eventbrite:{ fg:'#f05537', ch:'e' } }; // no square icon — branded letter tile
 const icon = (slug,name) => BRAND[slug]
   ? `<span class="icard__ic" style="font-family:var(--font-display);font-weight:700;font-size:1.4rem;color:${BRAND[slug].fg}">${BRAND[slug].ch}</span>`
   : HAVE.has(slug)
-    ? `<span class="icard__ic"><img decoding="async" src="/v2/assets/logos/${TILE[slug]||slug}.svg" alt="" loading="lazy"></span>`
+    /* The letter sits UNDERNEATH the logo, and onerror simply removes the image
+       to reveal it. No string surgery in an attribute — the first attempt built
+       markup inside an onerror inside a template literal, three levels of
+       nested quoting that is a silent breakage waiting to happen.
+       This makes HAVE an optimisation rather than a correctness dependency,
+       which is the whole reason 12 tiles were broken: it was the latter. */
+    ? `<span class="icard__ic icard__ic--fallback" data-initial="${name[0]}"><img decoding="async" src="/v2/assets/logos/${TILE[slug]||slug}.svg" alt="" loading="lazy" onerror="this.remove()"></span>`
     : `<span class="icard__mono">${name[0]}</span>`;
 
 /* render the directory */
@@ -132,7 +147,10 @@ const wallTiles = all.filter(i=>i[2] && HAVE.has(i[1]))
   .map(([name,slug]) => {
     const w = WHITE.has(slug);
     const src = w ? `/v2/assets/logos/white/${slug}.svg` : `/v2/assets/logos/${slug}.svg`;
-    return `<span class="tile"><img decoding="async" class="${w?'':'mono'}" src="${src}" alt="${name}" loading="lazy"></span>`;
+    /* The hero wall drops a tile whose image fails rather than showing a gap —
+       it is a decorative marquee, and a missing brand is better absent than
+       broken. Same drift as the directory: it filtered on HAVE, which lied. */
+    return `<span class="tile"><img decoding="async" class="${w?'':'mono'}" src="${src}" alt="${name}" loading="lazy" onerror="this.parentElement.remove()"></span>`;
   }).join('');
 /* each group must be wider than the viewport, or the loop shows empty space at
    the far edge before it wraps. Repeat the set until one group exceeds the
