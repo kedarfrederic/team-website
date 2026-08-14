@@ -46,13 +46,25 @@ const INT = [
     ['Ticketmaster','ticketmaster',0,'Event and ticket data.'],
   ]},
 ];
-const HAVE = new Set(['airtable','asana','box','clickup','discord','dropbox','facebook','gmail','googlecalendar','googledocs','googledrive','googlesheets','instagram','linear','notion','outlook','reddit','slack','ticketmaster','trello','youtube']);
-const TILE = { notion:'notion-dark' };                 // dark mark for the white tile
+/* Slugs with a real file in public/v2/assets/logos/.
+   This listed 21 and only 9 existed, so 12 connector tiles rendered a
+   broken-image glyph instead of the letter-tile fallback three lines below —
+   which has always been there for exactly this case. A hand-kept inventory of
+   a directory drifts from the directory; the onerror below makes that drift
+   cosmetic, but the list is corrected so the common path does not rely on it. */
+const HAVE = new Set(['asana','dropbox','gmail','googlecalendar','googledocs','googledrive','googlesheets','notion','slack','trello']);
+/* notion.svg IS on disk; notion-dark.svg never was, so this remap pointed the
+   one Notion tile at a 404 while its own file sat there unused. */
+const TILE = {};
 const BRAND = { eventbrite:{ fg:'#f05537', ch:'e' } }; // no square icon — branded letter tile
 const icon = (slug,name) => BRAND[slug]
   ? `<span class="icard__ic" style="font-family:var(--font-display);font-weight:700;font-size:1.4rem;color:${BRAND[slug].fg}">${BRAND[slug].ch}</span>`
   : HAVE.has(slug)
-    ? `<span class="icard__ic"><img decoding="async" src="/v2/assets/logos/${TILE[slug]||slug}.svg" alt="" loading="lazy"></span>`
+    /* The initial is painted by the wrapper with the <img> on top; onerror just
+       removes the image and reveals it. No broken glyph, no layout shift, and
+       HAVE becomes an optimisation rather than a correctness dependency — it
+       being the latter is why 12 tiles were broken. */
+    ? `<span class="icard__ic icard__ic--fallback" data-initial="${name[0]}"><img decoding="async" src="/v2/assets/logos/${TILE[slug]||slug}.svg" alt="" loading="lazy" onerror="this.remove()"></span>`
     : `<span class="icard__mono">${name[0]}</span>`;
 
 /* render the directory */
@@ -94,7 +106,9 @@ const wallTiles = all.filter(i=>i[2] && HAVE.has(i[1]))
   .map(([name,slug]) => {
     const w = WHITE.has(slug);
     const src = w ? `/v2/assets/logos/white/${slug}.svg` : `/v2/assets/logos/${slug}.svg`;
-    return `<span class="tile"><img decoding="async" class="${w?'':'mono'}" src="${src}" alt="${name}" loading="lazy"></span>`;
+    /* A failed tile removes itself from the marquee — decorative, and better
+       missing a brand than showing a break. Same drift: it filtered on HAVE. */
+    return `<span class="tile"><img decoding="async" class="${w?'':'mono'}" src="${src}" alt="${name}" loading="lazy" onerror="this.parentElement.remove()"></span>`;
   }).join('');
 /* each group must be wider than the viewport, or the loop shows empty space at
    the far edge before it wraps. Repeat the set until one group exceeds the
