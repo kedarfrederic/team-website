@@ -246,6 +246,14 @@
     .btn:focus-visible { outline: none; }
     .btn::-moz-focus-inner { border: 0; }
     .btn svg { width: 14px; height: 14px; display: block; }
+    .btn.zoom-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      padding: 0 8px;
+      min-width: 42px;
+      font-feature-settings: "tnum" 1;
+    }
     .btn.reset {
       font-size: 11px;
       font-weight: 500;
@@ -637,6 +645,39 @@
       this._ensureTextWrapDefaults();
       window.addEventListener('keydown', this._onKey);
       window.addEventListener('resize', this._onResize);
+      if (window.visualViewport) window.visualViewport.addEventListener('resize', this._onResize);
+      // Trackpad pinch / ctrl+wheel zooms; drag pans while zoomed past fit.
+      this._onWheelZoom = (e) => {
+        if (!e.ctrlKey) return;
+        e.preventDefault();
+        this._setZoom((this._userZoom || 1) * (e.deltaY < 0 ? 1.06 : 0.94));
+      };
+      this.shadowRoot.addEventListener('wheel', this._onWheelZoom, { passive: false });
+      this._onPanDown = (e) => {
+        if ((this._userZoom || 1) <= 1 || e.button !== 0) return;
+        const startX = e.clientX, startY = e.clientY;
+        const baseX = this._panX || 0, baseY = this._panY || 0;
+        let moved = false;
+        const stageEl = this._canvas && this._canvas.parentElement;
+        const move = (ev) => {
+          const dx = ev.clientX - startX, dy = ev.clientY - startY;
+          if (Math.abs(dx) + Math.abs(dy) > 4) moved = true;
+          if (!moved) return;
+          this._panX = baseX + dx;
+          this._panY = baseY + dy;
+          if (stageEl) stageEl.style.cursor = 'grabbing';
+          this._fit();
+        };
+        const up = () => {
+          window.removeEventListener('pointermove', move);
+          window.removeEventListener('pointerup', up);
+          if (stageEl) stageEl.style.cursor = 'grab';
+          if (moved) { this._suppressTap = true; setTimeout(() => { this._suppressTap = false; }, 0); }
+        };
+        window.addEventListener('pointermove', move);
+        window.addEventListener('pointerup', up);
+      };
+      this.shadowRoot.addEventListener('pointerdown', this._onPanDown);
       window.addEventListener('mousemove', this._onMouseMove, { passive: true });
       window.addEventListener('message', this._onMessage);
       window.addEventListener('click', this._onDocClick, true);
@@ -952,6 +993,9 @@
     disconnectedCallback() {
       window.removeEventListener('keydown', this._onKey);
       window.removeEventListener('resize', this._onResize);
+      if (window.visualViewport) window.visualViewport.removeEventListener('resize', this._onResize);
+      if (this._onWheelZoom) this.shadowRoot.removeEventListener('wheel', this._onWheelZoom);
+      if (this._onPanDown) this.shadowRoot.removeEventListener('pointerdown', this._onPanDown);
       window.removeEventListener('mousemove', this._onMouseMove);
       window.removeEventListener('message', this._onMessage);
       window.removeEventListener('click', this._onDocClick, true);
@@ -1032,12 +1076,23 @@
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg>
         </button>
         <span class="divider"></span>
+        <button class="btn zoom-out" type="button" aria-label="Zoom out" title="Zoom out (-)">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M3.5 8h9"/></svg>
+        </button>
+        <button class="btn zoom-label" type="button" aria-label="Reset zoom" title="Fit (0)">100%</button>
+        <button class="btn zoom-in" type="button" aria-label="Zoom in" title="Zoom in (+)">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M8 3.5v9M3.5 8h9"/></svg>
+        </button>
+        <span class="divider"></span>
         <button class="btn reset" type="button" aria-label="Reset to first slide" title="Reset (R)">Reset<span class="kbd">R</span></button>
       `;
 
       overlay.querySelector('.prev').addEventListener('click', () => this._advance(-1, 'click'));
       overlay.querySelector('.next').addEventListener('click', () => this._advance(1, 'click'));
       overlay.querySelector('.reset').addEventListener('click', () => this._go(0, 'click'));
+      overlay.querySelector('.zoom-in').addEventListener('click', () => this._setZoom((this._userZoom || 1) + 0.25));
+      overlay.querySelector('.zoom-out').addEventListener('click', () => this._setZoom((this._userZoom || 1) - 0.25));
+      overlay.querySelector('.zoom-label').addEventListener('click', () => { this._setZoom(1); });
 
       // Thumbnail rail + context menu. Thumbnails are populated in
       // _renderRail() after _collectSlides().
@@ -1425,10 +1480,35 @@
       // marginLeft shifts the centre by rw/2 so it lands in the middle of
       // the [rw, innerWidth] stage region.
       if (this._overlay) this._overlay.style.marginLeft = (rw / 2) + 'px';
-      const vw = window.innerWidth - rw;
-      const vh = window.innerHeight;
-      const s = Math.min(vw / this.designWidth, vh / this.designHeight);
-      this._canvas.style.transform = `scale(${s})`;
+      // Size against the VISUAL viewport, not the layout viewport: mobile
+      // browser toolbars overlap the layout viewport's bottom edge, which
+      // read as the deck being "cut off". A small fit pad keeps a visible
+      // frame around the slide so nothing ever touches the screen edges.
+      const vv = window.visualViewport;
+      const vw = (vv ? vv.width : window.innerWidth) - rw;
+      const vh = vv ? vv.height : window.innerHeight;
+      const FIT_PAD = 0.96;
+      const base = Math.min(vw / this.designWidth, vh / this.designHeight) * FIT_PAD;
+      const zoom = this._userZoom || 1;
+      const s = base * zoom;
+      // Pan only meaningful when zoomed past fit; clamp so the canvas can
+      // never be dragged fully off screen.
+      if (zoom <= 1) { this._panX = 0; this._panY = 0; }
+      const maxX = Math.max(0, (this.designWidth * s - vw) / 2 + 40);
+      const maxY = Math.max(0, (this.designHeight * s - vh) / 2 + 40);
+      this._panX = Math.max(-maxX, Math.min(maxX, this._panX || 0));
+      this._panY = Math.max(-maxY, Math.min(maxY, this._panY || 0));
+      this._canvas.style.transform = `translate(${this._panX}px, ${this._panY}px) scale(${s})`;
+      const stageEl = this._canvas.parentElement;
+      if (stageEl) stageEl.style.cursor = zoom > 1 ? 'grab' : '';
+      const zl = this._overlay && this._overlay.querySelector('.zoom-label');
+      if (zl) zl.textContent = Math.round(zoom * 100) + '%';
+    }
+
+    _setZoom(next) {
+      const z = Math.max(0.5, Math.min(3, next));
+      this._userZoom = z;
+      this._fit();
     }
 
     _onResize() {
@@ -1533,6 +1613,8 @@
     }
 
     _onTap(e) {
+      // A drag-pan that just ended must not double as a navigation tap.
+      if (this._suppressTap) { this._suppressTap = false; return; }
       // Touch-only, keyboard + the overlay toolbar cover nav on desktop.
       if (FINE_POINTER_MQ.matches) return;
       // Only taps that land on the stage (slide content or letterbox); the
@@ -1589,7 +1671,13 @@
       const key = e.key;
       let handled = true;
 
-      if (key === 'ArrowRight' || key === 'PageDown' || key === ' ' || key === 'Spacebar') {
+      if (key === '+' || key === '=') {
+        this._setZoom((this._userZoom || 1) + 0.25);
+      } else if (key === '-' || key === '_') {
+        this._setZoom((this._userZoom || 1) - 0.25);
+      } else if (key === '0') {
+        this._setZoom(1);
+      } else if (key === 'ArrowRight' || key === 'PageDown' || key === ' ' || key === 'Spacebar') {
         this._advance(1, 'keyboard');
       } else if (key === 'ArrowLeft' || key === 'PageUp') {
         this._advance(-1, 'keyboard');
