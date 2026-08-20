@@ -6,14 +6,17 @@ tap navigation and print-to-PDF (⌘P produces one page per slide).
 
 - **Visitors** see the **published** version — behind a passphrase if the
   gate is on.
-- **Admins** (Google sign-in, allowlisted email) see the **draft**, can edit
-  any text inline on the page, save, and publish. Publishing is instant — a
-  KV write, not a redeploy.
+- **Admins** — anyone signed into the platform as a `super_admin` — see the
+  **draft**, can edit any text inline on the page, save, and publish.
+  Publishing is instant — a KV write, not a redeploy.
 
 ## How editing works
 
-Open `/investors` → toolbar appears bottom-right → **Edit** → click any text
-on any slide and retype it. **Save** stores the draft; **Publish** makes it
+In the app (app.teamrollouts.com) open **Admin → Investor Deck** in the
+sidebar. That link is an admin-only platform route that signs a 2-minute
+handoff token and drops you on `/investors` already authenticated — no
+separate login. Then: toolbar bottom-right → **Edit** → click any text on
+any slide and retype it. **Save** stores the draft; **Publish** makes it
 live for visitors. *View published* shows exactly what an outsider sees.
 **Gate** toggles the visitor passphrase (changing the passphrase signs every
 current visitor out; admins are never gated).
@@ -28,28 +31,26 @@ in the editable content — edit those the normal way, then run
 > are `<slide-label>.<n>`). After a structural change, re-check any stored
 > override on that slide (open the draft, re-touch, re-publish).
 
-## One-time production setup (owner, ~10 min)
+## One-time production setup (owner, ~5 min)
 
 The page already renders the deck from its built-in defaults with no setup.
-Editing + gating in production need three things in the Cloudflare Pages
-project (**team-website**):
+Editing + gating in production need, in the Cloudflare Pages project
+(**team-website**):
 
 1. **KV binding** — Dashboard → Workers & Pages → KV → *Create namespace*
    (name it e.g. `investor-deck`). Then Pages → team-website → Settings →
    Bindings → *Add* → KV namespace, **variable name `INVESTOR_DECK`**, select
    the namespace. Applies on the next deploy.
-2. **Env vars** (Pages → Settings → Environment variables, Production):
-   - `INVESTOR_GOOGLE_CLIENT_ID` / `INVESTOR_GOOGLE_CLIENT_SECRET` — create
-     an OAuth client (Web application) at console.cloud.google.com →
-     APIs & Services → Credentials, with authorized redirect URI
-     `https://teamrollouts.com/api/investors/callback`.
-   - `INVESTOR_SESSION_SECRET` — any random 32+ character string.
-   - `INVESTOR_ADMIN_EMAILS` — optional; comma list of emails and/or
-     `@domains`. Defaults to `@teamrollouts.com,@teamforartists.com`.
-3. **Redeploy** (any push, or Retry deployment) so the binding + vars load.
+2. **One env var** (Pages → Settings → Environment variables, Production):
+   `INVESTOR_SESSION_SECRET` — random 32+ characters, and it must be the
+   **same value** as `INVESTOR_DECK_HANDOFF_SECRET` on the platform's Render
+   services (that pairing is what lets the app's admin sidebar sign you in
+   here). Staging already has the value set; add it to production Render env
+   when the platform change is promoted.
+3. **Redeploy** (any push, or Retry deployment) so the binding + var load.
 
-Then visit `/investors`, sign in with Google, and use **Gate** in the
-toolbar to set the passphrase if the deck should be private.
+Then in the app: **Admin → Investor Deck**, and use **Gate** in the toolbar
+to set the passphrase if the deck should be private.
 
 ## Local development
 
@@ -57,7 +58,7 @@ toolbar to set the passphrase if the deck should be private.
 npm run dev          # http://localhost:4321/investors
 ```
 
-Set `INVESTOR_DEV_ADMIN=1` in `.env` to get the admin toolbar without OAuth
+Set `INVESTOR_DEV_ADMIN=1` in `.env` to get the admin toolbar without the platform handoff
 (dev server only — the bypass cannot activate in a production build). Local
 drafts/config persist to `.investor-deck-dev.json` (gitignored).
 
@@ -70,7 +71,7 @@ drafts/config persist to `.investor-deck-dev.json` (gitignored).
 | `src/lib/investor-deck/compiled.json` | Generated render artifact (committed) |
 | `src/lib/investor-deck/runtime.ts` | Rendering, sanitizer, signed cookies, storage adapter, allowlist |
 | `src/pages/investors.astro` | The page: draft/published resolution + passphrase gate |
-| `src/pages/api/investors/*` | auth / callback / logout / draft / publish / gate / config |
+| `src/pages/api/investors/*` | session (platform handoff) / logout / draft / publish / gate / config |
 | `public/investors/` | deck.css, deck-stage.js (presentation engine), edit.js/css, slide images |
 
 Content overrides are sanitized to inline formatting (`em strong b i br span

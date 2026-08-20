@@ -227,25 +227,15 @@ function devFileStore(): DeckStore {
 
 /* ------------------------------------------------------------------- admin */
 
-const DEFAULT_ALLOWLIST = "@teamrollouts.com,@teamforartists.com";
-
-export function isAllowedEmail(
-  email: string,
-  env: Record<string, string | undefined>
-): boolean {
-  const raw = env.INVESTOR_ADMIN_EMAILS || DEFAULT_ALLOWLIST;
-  const needle = email.trim().toLowerCase();
-  return raw
-    .split(",")
-    .map((e) => e.trim().toLowerCase())
-    .filter(Boolean)
-    .some((e) => (e.startsWith("@") ? needle.endsWith(e) : needle === e));
-}
-
 export const ADMIN_COOKIE = "inv_admin";
 export const GATE_COOKIE = "inv_gate";
 
-/** Returns the admin email, or null. Honors the dev bypass under `astro dev` only. */
+/**
+ * Returns the admin email, or null. The only way to obtain the signed admin
+ * cookie is the platform handoff (/api/investors/session, reached from the
+ * app's Admin sidebar as a super_admin), so the cookie signature is the whole
+ * trust — no separate allowlist. Honors the dev bypass under `astro dev` only.
+ */
 export async function getAdminEmail(
   cookies: { get(name: string): { value: string } | undefined },
   env: Record<string, string | undefined>
@@ -255,7 +245,6 @@ export async function getAdminEmail(
   if (!secret) return null;
   const payload = await verifyToken(cookies.get(ADMIN_COOKIE)?.value, secret);
   if (!payload || typeof payload.e !== "string") return null;
-  if (!isAllowedEmail(payload.e, env)) return null;
   return payload.e;
 }
 
