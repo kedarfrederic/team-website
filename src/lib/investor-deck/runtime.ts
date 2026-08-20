@@ -37,6 +37,10 @@ export const SLOT_SLUGS: Set<string> = new Set(
   Object.keys((compiled as any).defaults)
 );
 
+export function slotDefault(slug: string): string | undefined {
+  return ((compiled as any).defaults as Record<string, string>)[slug];
+}
+
 /* ------------------------------------------------------------------ render */
 
 // Inline formatting only. Everything else is dropped; attributes are dropped

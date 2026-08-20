@@ -8,6 +8,7 @@ import {
   sameOriginOk,
   SLOT_SLUGS,
   MAX_SLOT_LENGTH,
+  slotDefault,
   type DeckDoc,
 } from "../../../lib/investor-deck/runtime";
 
@@ -62,7 +63,15 @@ export const PUT: APIRoute = async ({ locals, cookies, request, url }) => {
       rejected.push(slug);
       continue;
     }
-    doc.content[slug] = sanitizeFragment(raw);
+    const clean = sanitizeFragment(raw);
+    // An edit that lands back on the template default is stored as "no
+    // override" — so template updates flow through instead of being pinned
+    // by an identical stale copy.
+    if (clean === slotDefault(slug)) {
+      delete doc.content[slug];
+    } else {
+      doc.content[slug] = clean;
+    }
     applied++;
   }
 
