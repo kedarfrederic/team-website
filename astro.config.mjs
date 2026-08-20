@@ -69,7 +69,10 @@ export default defineConfig({
       filter: (page) =>
         !page.includes("/api/") &&
         !page.includes("/playground/") &&
-        !page.includes("/home-classic"),
+        !page.includes("/home-classic") &&
+        // Unlisted investor deck — noindex'd; a sitemap listing would
+        // contradict that and advertise the URL.
+        !page.includes("/investors"),
     }),
     sanity({
       projectId: "g1olb5am",

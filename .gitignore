@@ -20,3 +20,4 @@ rotato-test/
 # The web-optimized brain-1-web.mp4 is what's actually referenced in HTML.
 assets/brain-1.mov
 .sanity-backups/
+.investor-deck-dev.json

@@ -1,0 +1,220 @@
+---
+/**
+ * /investors — the pre-seed deck as a live page.
+ *
+ * Deliberately a standalone document (no BaseLayout): the deck ships its own
+ * complete design system (deck.css + the deck-stage web component), renders
+ * LIGHT, and must not inherit global.css or the site-wide data-theme="dark"
+ * pin. See project memory on the global.css collision trap.
+ *
+ * Audiences:
+ *   - Outsiders see the PUBLISHED content — behind a passphrase when the gate
+ *     is enabled — and nothing else.
+ *   - Admins (Google sign-in, allowlisted email) see the DRAFT by default,
+ *     with the inline edit toolbar (public/investors/edit.js). ?view=published
+ *     shows what outsiders see.
+ *
+ * Content = compiled template defaults + stored overrides (KV in prod, local
+ * file in dev). No storage configured -> defaults render, editing is inert.
+ *
+ * Unlisted: noindex here + _headers X-Robots-Tag; SSR routes never enter the
+ * sitemap. Explicit no-store so Cloudflare's edge cache can't pin a stale
+ * publish or serve gated content to the wrong audience.
+ */
+import {
+  renderDeck,
+  getEnv,
+  getStore,
+  getAdminEmail,
+  hasGateAccess,
+  defaultConfig,
+  type DeckConfig,
+  type DeckDoc,
+} from "../lib/investor-deck/runtime";
+
+export const prerender = false;
+
+const env = getEnv(Astro.locals);
+const store = getStore(Astro.locals);
+const adminEmail = await getAdminEmail(Astro.cookies, env);
+
+const config: DeckConfig = (await store?.get("config")) ?? defaultConfig();
+const gateOpen = adminEmail
+  ? true
+  : await hasGateAccess(Astro.cookies, env, config.gate);
+
+const view =
+  adminEmail && Astro.url.searchParams.get("view") === "published"
+    ? "published"
+    : adminEmail
+      ? "draft"
+      : "published";
+
+let deckHtml = "";
+let doc: DeckDoc | null = null;
+if (gateOpen) {
+  doc = (await store?.get(view)) ?? null;
+  deckHtml = renderDeck(doc?.content);
+}
+
+const publishedDoc = adminEmail ? ((await store?.get("published")) ?? null) : null;
+
+const ctx = adminEmail
+  ? {
+      email: adminEmail,
+      view,
+      storage: store ? store.kind : "none",
+      gateEnabled: config.gate.enabled,
+      gateHasPassword: !!config.gate.hash,
+      draftUpdatedAt: view === "draft" ? (doc?.updatedAt ?? null) : null,
+      publishedUpdatedAt: publishedDoc?.updatedAt ?? null,
+    }
+  : null;
+
+const badPass = Astro.url.searchParams.get("bad") === "1";
+
+Astro.response.headers.set("Cache-Control", "private, no-store");
+Astro.response.headers.set("X-Robots-Tag", "noindex, nofollow");
+---
+
+<!doctype html><html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Team · Pre-Seed Deck</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      deck-stage:not(:defined) {
+        visibility: hidden;
+      }
+    </style>
+    <link rel="stylesheet" href="/investors/deck.css" />
+    {ctx && <link rel="stylesheet" href="/investors/edit.css" />}
+  </head>
+  <body>
+    {
+      gateOpen ? (
+        <Fragment>
+          <Fragment set:html={deckHtml} />
+          <script src="/investors/deck-stage.js" is:inline defer />
+          {ctx && (
+            <Fragment>
+              <script
+                type="application/json"
+                id="inv-ctx"
+                set:html={JSON.stringify(ctx).replace(/</g, "\\u003c")}
+              />
+              <script src="/investors/edit.js" is:inline defer />
+            </Fragment>
+          )}
+        </Fragment>
+      ) : (
+        <main class="inv-gate">
+          <form method="post" action="/api/investors/gate">
+            <p class="inv-gate-kicker">TEAM · PRE-SEED 2026</p>
+            <h1>This deck is shared privately.</h1>
+            <p class="inv-gate-sub">
+              Enter the passphrase from your invitation to continue.
+            </p>
+            <div class="inv-gate-row">
+              <input
+                type="password"
+                name="password"
+                placeholder="Passphrase"
+                autocomplete="current-password"
+                autofocus
+              />
+              <button type="submit">View the deck</button>
+            </div>
+            {badPass && <p class="inv-gate-bad">That passphrase didn’t match. Try again.</p>}
+            <p class="inv-gate-admin">
+              On the team? <a href="/api/investors/auth">Sign in with Google</a>
+            </p>
+          </form>
+          <style>
+            .inv-gate {
+              min-height: 100vh;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              background: #fafaf7;
+              color: #1a1a1e;
+              font-family: "Inter", system-ui, sans-serif;
+              padding: 24px;
+            }
+            .inv-gate form {
+              max-width: 520px;
+              width: 100%;
+            }
+            .inv-gate-kicker {
+              font-family: "JetBrains Mono", monospace;
+              font-size: 13px;
+              letter-spacing: 0.1em;
+              color: #8c8980;
+            }
+            .inv-gate h1 {
+              font-size: 34px;
+              letter-spacing: -0.02em;
+              margin: 14px 0 0;
+            }
+            .inv-gate h1 + .inv-gate-sub {
+              margin-top: 12px;
+              color: #57544c;
+              font-size: 16px;
+              line-height: 1.5;
+            }
+            .inv-gate-row {
+              display: flex;
+              gap: 10px;
+              margin-top: 26px;
+            }
+            .inv-gate input {
+              flex: 1;
+              font: inherit;
+              font-size: 16px;
+              padding: 12px 14px;
+              border: 1px solid rgba(14, 14, 16, 0.18);
+              border-radius: 10px;
+              background: #fff;
+            }
+            .inv-gate input:focus {
+              outline: 2px solid #e83e18;
+              outline-offset: 1px;
+              border-color: transparent;
+            }
+            .inv-gate button {
+              font: inherit;
+              font-size: 15px;
+              font-weight: 600;
+              padding: 12px 20px;
+              border: none;
+              border-radius: 999px;
+              background: #e83e18;
+              color: #fff;
+              cursor: pointer;
+            }
+            .inv-gate-bad {
+              margin-top: 14px;
+              color: #e83e18;
+              font-size: 14px;
+            }
+            .inv-gate-admin {
+              margin-top: 34px;
+              font-size: 13px;
+              color: #8c8980;
+            }
+            .inv-gate-admin a {
+              color: inherit;
+            }
+          </style>
+        </main>
+      )
+    }
+  </body>
+</html>

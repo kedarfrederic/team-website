@@ -1,0 +1,179 @@
+/* Admin edit chrome for /investors. Loaded only for signed-in admins. */
+
+/* Editable-region affordances (active only while editing is on) */
+body[data-inv-editing] [data-e] {
+  cursor: text;
+  border-radius: 4px;
+  outline: 1px dashed rgba(232, 62, 24, 0);
+  outline-offset: 3px;
+  transition: outline-color 0.12s ease;
+}
+body[data-inv-editing] [data-e]:hover {
+  outline-color: rgba(232, 62, 24, 0.45);
+}
+body[data-inv-editing] [data-e]:focus {
+  outline: 2px solid #e83e18;
+  outline-offset: 3px;
+}
+body[data-inv-editing] [data-e][data-inv-dirty] {
+  background: rgba(232, 62, 24, 0.07);
+}
+
+/* Toolbar */
+.inv-bar {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 2147483000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border-radius: 999px;
+  background: rgba(23, 22, 26, 0.96);
+  border: 1px solid rgba(245, 243, 236, 0.16);
+  box-shadow: 0 18px 50px -12px rgba(0, 0, 0, 0.55);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  color: #f5f3ec;
+  -webkit-font-smoothing: antialiased;
+}
+.inv-bar b {
+  font-weight: 600;
+}
+.inv-badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(245, 243, 236, 0.22);
+  color: rgba(245, 243, 236, 0.75);
+  letter-spacing: 0.04em;
+}
+.inv-badge.draft {
+  border-color: rgba(192, 236, 95, 0.5);
+  color: #c0ec5f;
+}
+.inv-bar button,
+.inv-bar a.inv-btn {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 1px solid rgba(245, 243, 236, 0.22);
+  border-radius: 999px;
+  padding: 5px 12px;
+  cursor: pointer;
+  text-decoration: none;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+.inv-bar button:hover,
+.inv-bar a.inv-btn:hover {
+  border-color: rgba(245, 243, 236, 0.55);
+}
+.inv-bar button.primary {
+  background: #e83e18;
+  border-color: #e83e18;
+  color: #fff;
+  font-weight: 600;
+}
+.inv-bar button.primary:hover {
+  background: #f06a2e;
+  border-color: #f06a2e;
+}
+.inv-bar button.on {
+  background: #c0ec5f;
+  border-color: #c0ec5f;
+  color: #17161a;
+  font-weight: 600;
+}
+.inv-bar button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.inv-status {
+  color: rgba(245, 243, 236, 0.6);
+  min-width: 64px;
+  text-align: center;
+}
+.inv-status.warn {
+  color: #f06a2e;
+}
+
+/* Gate popover */
+.inv-pop {
+  position: fixed;
+  right: 18px;
+  bottom: 72px;
+  z-index: 2147483000;
+  width: 300px;
+  padding: 16px;
+  border-radius: 14px;
+  background: rgba(23, 22, 26, 0.98);
+  border: 1px solid rgba(245, 243, 236, 0.16);
+  box-shadow: 0 18px 50px -12px rgba(0, 0, 0, 0.55);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  color: #f5f3ec;
+  display: none;
+}
+.inv-pop[data-open] {
+  display: block;
+}
+.inv-pop h3 {
+  margin: 0 0 10px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: rgba(245, 243, 236, 0.6);
+  font-weight: 600;
+}
+.inv-pop label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+.inv-pop input[type="password"] {
+  width: 100%;
+  box-sizing: border-box;
+  font: inherit;
+  color: inherit;
+  background: rgba(245, 243, 236, 0.06);
+  border: 1px solid rgba(245, 243, 236, 0.22);
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+}
+.inv-pop .row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+.inv-pop .hint {
+  color: rgba(245, 243, 236, 0.5);
+  margin: 0 0 10px;
+  line-height: 1.45;
+}
+.inv-pop button {
+  font: inherit;
+  border-radius: 999px;
+  border: 1px solid #e83e18;
+  background: #e83e18;
+  color: #fff;
+  padding: 6px 14px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* Narrow screens: let the toolbar wrap instead of overflowing the viewport. */
+@media (max-width: 720px) {
+  .inv-bar {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    max-width: calc(100vw - 36px);
+    border-radius: 18px;
+  }
+  .inv-pop {
+    max-width: calc(100vw - 36px);
+  }
+}

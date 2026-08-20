@@ -11,3 +11,12 @@
 /*
   ! X-Frame-Options
   Content-Security-Policy: frame-ancestors 'self' https://team-cms.sanity.studio https://*.sanity.studio https://*.sanity.io
+
+# The investor deck is unlisted: belt (meta robots) and suspenders (header).
+# SSR routes never enter the sitemap, so this covers direct fetches too.
+/investors
+  X-Robots-Tag: noindex, nofollow
+/investors/*
+  X-Robots-Tag: noindex, nofollow
+/api/investors/*
+  X-Robots-Tag: noindex, nofollow
