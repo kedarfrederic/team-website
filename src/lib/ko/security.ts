@@ -56,8 +56,17 @@ export const KO_SECURITY: CopyMap = {
   "not bolted on.": "처음부터 내장된 보호.",
   "The controls underneath every connection, so the brain only ever sees what you allow, and you can prove what it did.":
     "모든 연동 아래에 놓인 통제 장치입니다. 브레인은 허용된 것만 보고, 무엇을 했는지 언제든 증명할 수 있습니다.",
-  "Encrypted": "종단 간",
-  "end to end": "암호화",
+  /* The English heading is "Encrypted <em>in transit and at rest</em>", and
+     these two entries are deliberately SWAPPED: Korean puts the qualifier
+     before the noun, so slot 1 takes the qualifier and slot 2 the noun,
+     rendering 전송 중과 저장 시 암호화.
+
+     They previously rendered 종단 간 암호화 — end-to-end encryption — which is
+     a materially stronger claim than we implement, and the English heading it
+     translated said the same thing while its own next sentence said "in
+     transit and at rest". Both languages were corrected together. */
+  "Encrypted": "전송 중과 저장 시",
+  "in transit and at rest": "암호화",
   "Your data is encrypted in transit and at rest. Credentials for your connected tools live in a dedicated secrets vault, never in plain text.":
     "데이터는 전송 중과 저장 시 모두 암호화됩니다. 연동된 도구의 자격 증명은 전용 시크릿 저장소에 보관되며, 평문으로 저장되지 않습니다.",
   "Permissioned": "권한 기반,",

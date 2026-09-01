@@ -97,6 +97,6 @@ export const KO_TOURS: CopyMap = {
   // ── final CTA ──
   "Put your next tour": "다음 투어를",
   "on the board.": "보드 위에.",
-  "Plan a tour — free": "투어 계획하기 — 무료",
+  "Start a Pro free trial": "Pro 무료 체험 시작하기",
   "Get a demo": "데모 요청하기",
 };
