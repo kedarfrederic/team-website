@@ -20,16 +20,16 @@ export const KO_CONNECTIONS: CopyMap = {
   "See the catalog": "카탈로그 보기",
 
   // ── live wire ──
-  "A connector isn't a checkbox.": "커넥터는 체크박스가 아니라,",
-  "It's a live wire.": "살아 있는 회선입니다.",
+  "A connector isn't a checkbox.": "커넥터는 단순한 체크박스가 아니라",
+  "It's a live wire.": "실시간으로 작동하는 연결 통로입니다.",
   "Most tools let you export. Team stays connected. It watches each source in real time, reasons over what changed, and acts back inside your stack, with receipts.":
     "대부분의 도구는 내보내기를 제공합니다. Team은 연결된 상태를 유지합니다. 각 소스를 실시간으로 지켜보고, 무엇이 달라졌는지 추론하며, 근거와 함께 당신의 스택 안에서 다시 실행합니다.",
   "It reads, live.": "실시간으로 읽습니다.",
   "New file, new thread, new number, Team sees it the moment it lands.":
     "새 파일, 새 대화, 새 수치 — 도착하는 순간 Team이 봅니다.",
-  "It writes back.": "다시 써 넣습니다.",
+  "It writes back.": "변경사항을 원래 도구에 다시 반영합니다.",
   "Two-way, not read-only. Team updates the doc, syncs the budget, re-briefs the partner.":
-    "읽기 전용이 아닌 양방향입니다. Team이 문서를 업데이트하고, 예산을 동기화하고, 파트너에게 다시 안내합니다.",
+    "읽기 전용이 아닌 양방향 연동으로 문서를 업데이트하고, 예산을 동기화하고, 파트너 안내 내용을 수정합니다.",
   "You stay in control.": "통제권은 당신에게.",
   "Every connection is permissioned, scoped, and revocable in a click.":
     "모든 연동은 권한 기반이고, 범위가 지정되며, 클릭 한 번으로 해제할 수 있습니다.",

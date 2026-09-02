@@ -26,7 +26,7 @@ const ABOUT_ONLY: CopyMap = {
 
   // ── the problem ──
   "Every release is": "모든 릴리스는",
-  "a small operation.": "하나의 작은 운영입니다.",
+  "a small operation.": "하나의 작은 프로젝트이자 운영 조직입니다.",
   "A dozen tools. Twice as many hands. Masters in one folder, approvals buried in a thread, the budget in a sheet, the plan in someone's head. The context that decides whether a release goes well lives everywhere, and nowhere at once.":
     "열 개가 넘는 도구, 그 두 배의 사람. 마스터는 한 폴더에, 승인은 대화 속에 묻혀 있고, 예산은 시트에, 계획은 누군가의 머릿속에 있습니다. 릴리스의 성패를 가르는 맥락이 어디에나 있으면서 동시에 어디에도 없습니다.",
   "And somehow, one person is expected to hold all of it together. Until they take a week off, and it turns out they were the system.":

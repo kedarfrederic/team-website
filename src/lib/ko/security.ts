@@ -23,20 +23,20 @@ export const KO_SECURITY: CopyMap = {
   "Request security docs": "보안 문서 요청하기",
 
   // ── never training data ──
-  "Your operation is never": "당신의 운영은 결코",
-  "anyone's training data.": "누구의 학습 데이터도 아닙니다.",
+  "Your operation is never": "고객 데이터는",
+  "anyone's training data.": "승인된 목적과 범위 안에서만 처리됩니다.",
   "TeamMate reasons over your release to help you, and only you. Your data stays inside a wall around your organization, it goes in to answer your questions, and it does not come out.":
     "TeamMate는 릴리스 운영을 지원하기 위해 승인된 데이터만 처리합니다. 데이터 접근 범위와 처리 방식은 조직별 권한 설정 및 보안 문서에 따릅니다.",
   "Works for you only.": "오직 당신을 위해서만.",
   "Your masters, threads, and numbers answer your questions, nothing more.":
     "마스터와 대화, 수치는 당신의 질문에 답하는 데에만 쓰입니다.",
-  "Never trains a model.": "모델을 학습시키지 않습니다.",
-  "Not ours, not anyone's.": "우리 것도, 다른 누구의 것도.",
+  "Never trains a model.": "모델 학습 사용 여부는",
+  "Not ours, not anyone's.": "고객 계약과 모델 제공업체 정책에 명시된 범위를 따릅니다.",
   "Never shared across customers.": "고객 간에 공유되지 않습니다.",
   "Your data is isolated to your organization.": "데이터는 조직 단위로 격리됩니다.",
-  "Gone on your say-so.": "당신의 결정으로 삭제됩니다.",
+  "Gone on your say-so.": "연동 해제 및 삭제 요청은",
   "Disconnect or delete and it's removed from the brain.":
-    "연동을 해제하거나 삭제하면 브레인에서 제거됩니다.",
+    "보안 문서에 명시된 보관·백업 정책에 따라 처리됩니다.",
   "Your organization": "당신의 조직",
   "Sealed": "봉인됨",
   "Masters": "마스터",
@@ -77,8 +77,8 @@ export const KO_SECURITY: CopyMap = {
   "access": "접근 권한",
   "Role-based controls decide who on your team sees what. The right people get the whole picture; everyone else gets exactly their slice.":
     "역할 기반 통제로 팀 내 누가 무엇을 보는지 결정합니다. 필요한 사람은 전체를 보고, 나머지는 각자의 범위만 봅니다.",
-  "A full": "완전한",
-  "audit trail": "감사 기록",
+  "A full": "전체",
+  "audit trail": "작업 기록",
   "Every action Team takes is logged with a receipt, so you can always see what changed, when, and where the answer came from.":
     "Team의 모든 작업은 근거와 함께 기록됩니다. 무엇이 언제 바뀌었고 답이 어디에서 왔는지 항상 확인할 수 있습니다.",
 

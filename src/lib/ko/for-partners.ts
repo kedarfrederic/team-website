@@ -175,9 +175,9 @@ const PAGE: CopyMap = {
   "Re-ranked the queue": "대기열을 다시 정렬해",
   "by cutoff so the team opens on what is most exposed.":
     "마감 순으로 두었고, 팀이 가장 위험한 것부터 보게 됩니다.",
-  "4 releases": "릴리스 4건",
+  "4 releases": "릴리스",
   "at risk of missing Friday's cutoff, waiting on masters from two clients. Needs a nudge.":
-    "이 금요일 마감을 놓칠 위험이 있으며, 두 클라이언트의 마스터를 기다리는 중입니다. 독촉이 필요합니다.",
+    "4건이 금요일 마감을 놓칠 위험이 있으며, 두 클라이언트의 마스터를 기다리고 있습니다. 추가 요청이 필요합니다.",
   "Ops brief:": "운영 브리프:",
   "142 checked, 138 clear, 3 fixed overnight. Four at risk for Friday, all blocked on client assets.":
     "142건 점검, 138건 이상 없음, 밤사이 3건 수정. 금요일 위험 4건은 모두 클라이언트 에셋 때문에 막혀 있습니다.",

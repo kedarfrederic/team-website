@@ -10,8 +10,8 @@ import type { CopyMap } from "../koLocalize";
 export const KO_TEAMMATE: CopyMap = {
   // ── hero ──
   "Available on": "이용 가능 플랜:",
-  "The mind inside": "당신의 운영 안에 있는",
-  "your operation.": "지성.",
+  "The mind inside": "당신의 운영을 이해하는",
+  "your operation.": "AI 브레인.",
   "TeamMate remembers every version, thread, and decision across your whole release, and reasons across all of it, so the answer to \"where do we actually stand?\" is always one question away.":
     "TeamMate는 릴리스 전반의 모든 버전과 대화, 결정을 기억하고 그 전체를 종합해 추론합니다. 그래서 ‘지금 우리는 어디쯤인가’에 대한 답이 늘 질문 하나 거리에 있습니다.",
   "Get started": "시작하기",

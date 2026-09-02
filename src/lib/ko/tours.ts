@@ -11,8 +11,8 @@ import type { CopyMap } from "../koLocalize";
  */
 export const KO_TOURS: CopyMap = {
   // ── hero ──
-  "Take the rollout": "롤아웃을",
-  "to the road.": "투어로.",
+  "Take the rollout": "릴리스의 흐름을",
+  "to the road.": "투어까지 이어가세요.",
   "Tours is where a release becomes a run of shows — build the routing, advance every date, run the day sheets, and hold the whole tour's holds, on-sales, guarantees and settlement in one place, with the same brain across all of it.":
     "Tours는 릴리스가 공연의 흐름이 되는 곳입니다. 라우팅을 짜고, 모든 날짜를 어드밴싱하고, 데이시트를 운영하며, 투어의 홀드와 티켓 오픈, 개런티와 정산을 한곳에서 관리합니다. 그 전부에 같은 브레인이 함께합니다.",
   "Plan a tour": "투어 계획하기",
@@ -20,8 +20,8 @@ export const KO_TOURS: CopyMap = {
   "Available on Pro — plan your next run": "Pro에서 이용 가능 — 다음 투어를 계획하세요",
 
   // ── a hundred details ──
-  "A tour is a hundred details": "투어는 동시에 움직이는",
-  "that all move at once.": "수백 개의 디테일입니다.",
+  "A tour is a hundred details": "투어에는 수많은 세부사항이",
+  "that all move at once.": "동시에 움직입니다.",
   "Holds and offers, routing that has to make geographic sense, advances with every venue, day sheets the crew actually reads, guarantees and settlement. Tours holds all of it in one run — so a change in one place updates everywhere it touches.":
     "홀드와 오퍼, 지리적으로 말이 되어야 하는 라우팅, 공연장마다의 어드밴싱, 크루가 실제로 읽는 데이시트, 개런티와 정산. Tours는 이 모두를 하나의 투어로 묶어, 한 곳의 변경이 관련된 모든 곳에 반영되게 합니다.",
   "Route the run and see the efficiency score move": "라우팅을 짜면 효율 점수가 함께 움직입니다",
