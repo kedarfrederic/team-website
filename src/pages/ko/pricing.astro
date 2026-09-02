@@ -91,6 +91,13 @@ interface Tier {
   priceWasYearly?: string;
   period: string;
   periodMonthly?: string;
+  /* Korean price convention leads with the qualifier and puts the list price in
+     parentheses after the current one: "연간 결제 시 월 환산 ₩59,000 (정가
+     ₩119,000)". English does the opposite — struck-through first, period last —
+     so a card carrying a discount renders in a different ORDER on /ko, not just
+     different words. Partner review, 2026-09-01. */
+  periodLeadYearly?: string;
+  periodLeadMonthly?: string;
   seatsIncludedNote?: string;
   extraSeatWasMonthly?: string;
   extraSeatWasYearly?: string;
@@ -134,6 +141,8 @@ const tiers: Tier[] = [
     priceWasYearly: "₩119,000",
     period: "/월 · 연간 결제",
     periodMonthly: "/월",
+    periodLeadYearly: "연간 결제 시 월 환산",
+    periodLeadMonthly: "월",
     seatsIncludedNote: "사용자 2명 포함",
     extraSeatWasMonthly: "₩59,000",
     extraSeatWasYearly: "₩47,000",
@@ -265,11 +274,20 @@ const finalFootnote = "무료 플랫폼 · 카드 등록 불필요";
               <p class="plan__name">{tier.name}</p>
               <p class="plan__who">{tier.who}</p>
               <div class="plan__price">
-                {(tier.priceWasYearly || tier.priceWasMonthly) && (
-                  <span class="plan__was" data-yearly={tier.priceWasYearly} data-monthly={tier.priceWasMonthly}>{tier.priceWasYearly ?? tier.priceWasMonthly}</span>
+                {/* Korean order. The billing toggle swaps every
+                    [data-yearly][data-monthly] pair by attribute
+                    (public/components/pricing-v2.js:17), not by position, so
+                    reordering these spans is safe. */}
+                {tier.periodLeadYearly && (
+                  <span class="plan__lead" data-yearly={tier.periodLeadYearly} data-monthly={tier.periodLeadMonthly ?? tier.periodLeadYearly}>{tier.periodLeadYearly}</span>
                 )}
                 <span class="plan__amount" data-yearly={tier.yearlyPrice} data-monthly={tier.monthlyPrice}>{tier.yearlyPrice}</span>
-                <span class="plan__period" data-yearly={tier.period} data-monthly={tier.periodMonthly ?? tier.period}>{tier.period}</span>
+                {!tier.periodLeadYearly && (
+                  <span class="plan__period" data-yearly={tier.period} data-monthly={tier.periodMonthly ?? tier.period}>{tier.period}</span>
+                )}
+                {(tier.priceWasYearly || tier.priceWasMonthly) && (
+                  <span class="plan__was">(정가 <s data-yearly={tier.priceWasYearly} data-monthly={tier.priceWasMonthly}>{tier.priceWasYearly ?? tier.priceWasMonthly}</s>)</span>
+                )}
               </div>
               {tier.seatsIncludedNote && (
                 <p class="plan__seat">
@@ -283,9 +301,9 @@ const finalFootnote = "무료 플랫폼 · 카드 등록 불필요";
                   */}
                   {hasSeatOverage && (
                     <>
-                      {" "}· 추가 사용자당{" "}
-                      <s data-yearly={tier.extraSeatWasYearly} data-monthly={tier.extraSeatWasMonthly}>{tier.extraSeatWasYearly}</s>{" "}
-                      <b data-yearly={tier.extraSeatPriceYearly} data-monthly={tier.extraSeatPriceMonthly}>{tier.extraSeatPriceYearly}</b>
+                      {" "}· 추가 사용자 1명당{" "}
+                      <b data-yearly={tier.extraSeatPriceYearly} data-monthly={tier.extraSeatPriceMonthly}>{tier.extraSeatPriceYearly}</b>{" "}
+                      <span class="plan__was">(정가 <s data-yearly={tier.extraSeatWasYearly} data-monthly={tier.extraSeatWasMonthly}>{tier.extraSeatWasYearly}</s>)</span>
                     </>
                   )}
                 </p>

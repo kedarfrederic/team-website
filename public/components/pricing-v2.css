@@ -35,6 +35,16 @@ body.v2 .phero{padding-top:10.5rem;min-height:0;text-align:center}
 .plan__was{font-family:var(--font-display,'InterV',Inter,-apple-system,sans-serif);font-weight:330;font-size:1.5rem;letter-spacing:-.02em;color:var(--bone-faint);text-decoration:line-through;text-decoration-thickness:1px}
 .plan__amount{font-family:var(--font-display,'InterV',Inter,-apple-system,sans-serif);font-weight:330;font-size:3.2rem;letter-spacing:-.03em;color:var(--bone);line-height:1}
 .plan__period{color:var(--bone-faint);font-size:.9rem}
+/* KOREAN PRICE ORDER (partner review 2026-09-01).
+   Korean leads with the qualifier and puts the list price in parentheses after
+   the current one — "연간 결제 시 월 환산 ₩59,000 (정가 ₩119,000)" — where
+   English struck the old price FIRST. The markup reorders on /ko; these three
+   rules are what stop that reorder looking broken.
+   The wrapper must lose its line-through, or the parentheses and the word 정가
+   render struck through as well; the strike belongs to the inner <s> only. */
+html:lang(ko) .plan__was{text-decoration:none;font-size:1rem;margin-left:.4rem}
+html:lang(ko) .plan__was s{text-decoration:line-through;text-decoration-thickness:1px}
+html:lang(ko) .plan__lead{color:var(--bone-faint);font-size:.9rem;margin-right:.35rem}
 .plan__seat{color:var(--bone-dim);font-size:.82rem;margin-top:.5rem}
 .plan__seat b{color:var(--bone);font-weight:560}
 .plan__seat s{color:var(--bone-faint);text-decoration:line-through;text-decoration-thickness:1px}
