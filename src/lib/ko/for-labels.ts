@@ -19,7 +19,7 @@ const PAGE: CopyMap = {
   "Every release,": "모든 릴리스를,",
   "one living picture.": "살아 있는 하나의 그림으로.",
   "A label runs a slate, not a single release. A&R, marketing, production and distribution each live in their own tools and their own heads.":
-    "레이블은 하나의 릴리스가 아니라 릴리스 슬레이트를 운영합니다. A&R, 마케팅, 제작, 유통이 각자의 도구와 각자의 머릿속에 흩어져 있습니다.",
+    "레이블은 하나의 릴리스가 아니라 전체 릴리스 라인업, 즉 슬레이트를 운영합니다. A&R, 마케팅, 제작, 유통 정보는 각자의 도구와 담당자에게 흩어져 있습니다.",
   "Team reasons across all of it, tracks how one release affects the next, and keeps the whole slate in one living picture.":
     "Team은 그 전부를 종합해 추론하고, 한 릴리스가 다음 릴리스에 미치는 영향을 추적하며, 슬레이트 전체를 살아 있는 하나의 그림으로 유지합니다.",
 
@@ -48,7 +48,7 @@ const PAGE: CopyMap = {
   "Right now, the slate lives": "지금 슬레이트는",
   "in a dozen places.": "열 곳이 넘는 데 흩어져 있습니다.",
   "A&R in Notion, marketing in a sheet, distribution in the DSP portals. To know where the slate stands, someone rebuilds the picture by hand, and it's stale by the meeting.":
-    "A&R은 Notion에, 마케팅은 시트에, 유통은 DSP 포털에. 슬레이트가 어디쯤인지 알려면 누군가 손으로 그림을 다시 그려야 하고, 회의 시작 전에 이미 낡습니다.",
+    "A&R은 Notion에, 마케팅은 스프레드시트에, 유통은 DSP 포털에 있습니다. 전체 릴리스 현황을 파악하려면 누군가 자료를 수작업으로 다시 만들어야 하고, 회의가 시작될 때는 이미 정보가 오래되어 있습니다.",
   "Nova · LP": "Nova · LP",
   "alt-pop · flagship": "alt-pop · 플래그십",
   "Tracked across": "흩어진 곳",
