@@ -74,7 +74,7 @@ export const KO_HOMEPAGE_COPY: Readonly<Record<string, string>> = {
     "그리고 어쩐지, 모든 것을 기억하는 단 한 사람…",
   "until they’re on vacation.": "그 사람이 휴가를 떠나기 전까지는.",
   "The truth lives": "진실은",
-  "everywhere": "어디에나 있고",
+  "everywhere": "어디에나 있으면서,",
   "and": "동시에",
   "nowhere": "어디에도 없습니다",
 
@@ -157,7 +157,7 @@ export const KO_HOMEPAGE_COPY: Readonly<Record<string, string>> = {
   "Ready to Roll": "준비 완료",
   "TIMELINE &middot; 3 TASKS &middot; RELEASE 18 SEPT":
     "타임라인 &middot; 작업 3건 &middot; 릴리스 9월 18일",
-  "drops in": "출시까지",
+  "drops in": "발매까지",
   "SEARCH TASK": "작업 검색",
   "TODAY": "오늘",
   "RELEASE &middot; SEP 18": "릴리스 &middot; 9월 18일",
@@ -180,7 +180,7 @@ export const KO_HOMEPAGE_COPY: Readonly<Record<string, string>> = {
   "Research &amp; Shortlist Intimate Venues (50&ndash;150&hellip;)":
     "소규모 공연장 리서치 및 후보 선정 (50&ndash;150&hellip;)",
   "OTHER": "기타",
-  "on Timeline": "타임라인에서",
+  "on Timeline": "타임라인의",
   "NEW": "신규",
   "Want me to build out a full task plan that assigns this $17,500 across the remaining categories with dates and owners?":
     "남은 항목에 $17,500를 배분하고 날짜와 담당자를 지정한 전체 작업 계획을 만들어 드릴까요?",
@@ -215,7 +215,7 @@ export const KO_HOMEPAGE_COPY: Readonly<Record<string, string>> = {
   "since the teaser posted. Worth moving the playlist pitch up.":
     "되었습니다. 플레이리스트 피칭을 앞당길 만합니다.",
   "source · DSP feed, last 48h": "출처 · DSP 피드, 최근 48시간",
-  "Connected": "연결됨",
+  "Connected": "처음부터 연결을 위해",
   "A distributor's Slack reply just cleared the metadata question":
     "유통사의 Slack 답변으로 금요일 납품을 막고 있던",
   "blocking Friday's delivery": "메타데이터 문제가 해결되었습니다",
@@ -244,7 +244,7 @@ export const KO_HOMEPAGE_COPY: Readonly<Record<string, string>> = {
 
   // ── act: the difference ──
   "AI chat tools": "AI 채팅 도구는",
-  "answer.": "답변합니다.",
+  "answer.": "답합니다.",
   "understands.": "이해합니다.",
   "So instead of digging through six tools to prove something everyone vaguely remembers, you can just ask Team.":
     "모두가 어렴풋이 기억하는 사실을 확인하려고 여섯 개 도구를 뒤질 필요 없이, Team에 물어보면 됩니다.",
@@ -268,11 +268,11 @@ export const KO_HOMEPAGE_COPY: Readonly<Record<string, string>> = {
   "Distro brief ✓": "유통사 브리프 ✓",
   "Built-in memory · Whole-business context · Already working":
     "내장 메모리 · 비즈니스 전체 맥락 · 이미 작동 중",
-  "TeamMate is available on": "TeamMate는 다음 플랜에서 제공됩니다:",
+  "TeamMate is available on": "TeamMate는 다음 플랜에서 이용할 수 있습니다:",
 
   // ── act: connect everything ──
-  "Replace nothing.": "무엇도 교체하지 않고,",
-  "Connect": "모두",
+  "Replace nothing.": "기존 도구는 그대로.",
+  "Connect": "모든 것을",
   "everything.": "연결합니다.",
   "Team brings together the context that usually lives everywhere and nowhere at the same time: artist strategy, campaign planning, release history, DSP priorities, budgets, approvals, performance data, partner conversations, and the decisions people swear they remember accurately.":
     "Team은 보통 어디에나 있으면서 동시에 어디에도 없는 맥락을 한데 모읍니다. 아티스트 전략, 캠페인 기획, 릴리스 기록, DSP 우선순위, 예산, 승인, 성과 데이터, 파트너와의 대화, 그리고 모두가 정확히 기억한다고 확신하는 의사결정까지.",
@@ -313,7 +313,7 @@ export const KO_HOMEPAGE_COPY: Readonly<Record<string, string>> = {
   "The roster runs while you're on the road.": "이동 중에도 로스터는 계속 굴러갑니다.",
   "Ops keep moving between flights, calls and shows. You get the three things that actually need you.":
     "비행과 통화, 공연 중에도 운영은 계속됩니다. 정말로 당신의 판단이 필요한 딱 세 가지만 전달합니다.",
-  "Indie &amp;": "인디 &amp;",
+  "Indie &amp;": "인디 및",
   "major labels": "메이저 레이블",
   "Every artist, every release — one picture.": "모든 아티스트, 모든 릴리스를 하나의 그림으로.",
   "See how the whole slate ties together: what's working, what's slipping, where to double down next.":
@@ -331,12 +331,12 @@ export const KO_HOMEPAGE_COPY: Readonly<Record<string, string>> = {
   "between them.": "입니다.",
   "Everything you already use keeps working. Team is the layer underneath — watching, reasoning, acting — so the stack finally behaves like one system.":
     "지금 쓰는 모든 것이 그대로 작동합니다. Team은 그 아래에서 지켜보고, 추론하고, 실행하는 레이어입니다. 그래서 흩어진 도구들이 마침내 하나의 시스템처럼 움직입니다.",
-  "by design": "의도적으로",
+  "by design": "설계되었습니다.",
   "Another dashboard to check": "확인해야 할 또 하나의 대시보드",
   "Another tab to keep open": "열어둬야 할 또 하나의 탭",
   "Another system to migrate to": "옮겨가야 할 또 하나의 시스템",
   "Another login to forget": "잊어버릴 또 하나의 로그인",
-  "One layer that connects them all —": "그 모두를 잇는 하나의 레이어 —",
+  "One layer that connects them all —": "모든 도구를 연결하는 하나의 레이어",
 
   // ── footer ──
   "© 2026 Team Rollouts": "© 2026 Team Rollouts",

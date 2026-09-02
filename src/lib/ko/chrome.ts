@@ -83,7 +83,7 @@ export const CHROME_LINK: Record<string, Record<string, string>> = {
     "Artist managers": "아티스트 매니저",
     Managers: "매니저",
     Labels: "레이블",
-    "Distributors & partners": "유통사 & 파트너",
+    "Distributors & partners": "유통사 및 파트너",
     Distributors: "유통사",
     Enterprise: "엔터프라이즈",
 
