@@ -191,7 +191,7 @@ export const KO_HOMEPAGE_COPY: Readonly<Record<string, string>> = {
     "Ava의 지난 기록에서 남은 문서를 불러오겠습니다.",
   "ASK ABOUT TIMELINE&hellip;": "타임라인에 대해 물어보세요&hellip;",
   "FEED THE BRAIN &middot; 7 DOCS &middot; 18 DONE TODAY":
-    "브레인에 학습시키기 &middot; 문서 7건 &middot; 오늘 18건 완료",
+    "브레인에 자료 추가 &middot; 문서 7건 &middot; 오늘 18건 완료",
 
   // ── act: the whole picture ──
   "Team holds": "Team은",

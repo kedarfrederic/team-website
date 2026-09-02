@@ -131,10 +131,10 @@ const PAGE: CopyMap = {
   ", due Friday. Marketing is briefed, launch set for t–3w. On track, bar the PO.":
     ", 금요일 마감입니다. 마케팅은 안내됐고 발매는 D-3주입니다. 발주 건을 빼면 일정대로입니다.",
   "Who still owes me assets this week?": "이번 주에 아직 에셋을 안 준 사람은 누구인가요?",
-  "Just": "한 명뿐입니다 —",
+  "Just": "",
   "Theo's editor": "Theo의 편집자",
   "— the final video cut, chased twice. Everyone else is in.":
-    "— 최종 영상 편집본이며 두 번 요청했습니다. 나머지는 모두 들어왔습니다.",
+    "한 명뿐입니다. 최종 영상 편집본을 두 차례 요청했으며, 다른 에셋은 모두 들어왔습니다.",
 
   // ── shared artist view ──
   "Nova · shared view": "Nova · 공유 화면",

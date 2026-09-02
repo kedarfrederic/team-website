@@ -17,9 +17,9 @@ import { KO_HOMEPAGE_COPY } from "../koHomepageCopy";
  */
 const ABOUT_ONLY: CopyMap = {
   // ── hero ──
-  "Music runs on releases.": "음악은 릴리스로 움직입니다.",
-  "And releases run on": "그리고 릴리스는",
-  "chaos.": "혼돈으로 움직입니다.",
+  "Music runs on releases.": "음악 산업은 릴리스로 움직입니다.",
+  "And releases run on": "하지만 릴리스 운영은",
+  "chaos.": "여전히 혼란 속에서 돌아갑니다.",
   "We started Team because the most important work in music, getting a release out into the world, still runs on a mess of tools, threads, and one person's memory. We think it deserves a brain.":
     "음악에서 가장 중요한 일 — 릴리스를 세상에 내보내는 일 — 이 여전히 뒤엉킨 도구와 대화, 그리고 한 사람의 기억에 의존하고 있었기에 Team을 시작했습니다. 그 일에는 브레인이 필요하다고 믿습니다.",
   "Read our story": "우리의 이야기 읽기",
@@ -37,12 +37,12 @@ const ABOUT_ONLY: CopyMap = {
   // ── beliefs ──
   "A few things": "우리가 믿는",
   "we believe.": "몇 가지.",
-  "Your stack isn't broken. You shouldn't have to": "당신의 스택은 고장 나지 않았습니다. 정리하기 위해",
-  "leave it": "그것을 떠날",
-  "to get organized.": "필요는 없습니다.",
-  "Holding the context should be the": "맥락을 붙잡는 일은",
-  "software's job": "소프트웨어의 몫",
-  ", not yours.": "이지, 당신의 몫이 아닙니다.",
+  "Your stack isn't broken. You shouldn't have to": "이미 사용하는 도구에 문제가 있는 것은 아닙니다. 운영을 정리하기 위해",
+  "leave it": "기존 도구를 포기할",
+  "to get organized.": "필요도 없습니다.",
+  "Holding the context should be the": "전체 맥락을 기억하고 연결하는 일은",
+  "software's job": "사용자가 아니라 소프트웨어의 역할",
+  ", not yours.": "이어야 합니다.",
   "AI should work": "AI는 사용자를",
   "for you": "위해 일해야",
   ", and never train": "하며, 고객 데이터의 모델",

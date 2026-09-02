@@ -74,7 +74,7 @@ export const KO_TEAMMATE: CopyMap = {
     "바이닐 발주 #1042는 금요일 전에 승인이 필요합니다",
   "Needs you": "확인 필요",
   "Morning. Four things moved overnight. I handled three. The fourth needs a decision only you can make.":
-    "좋은 아침입니다. 밤사이 네 가지가 진행됐고 그중 셋은 처리했습니다. 나머지 하나는 당신만 내릴 수 있는 결정이 필요합니다.",
+    "좋은 아침입니다. 밤사이 네 가지가 진행됐고 그중 셋은 처리했습니다. 나머지 하나는 당신만 내릴 수 있는 결정입니다.",
 
   // ── trust ──
   "A brain on your stack,": "이미 사용하는 도구 위에서,",

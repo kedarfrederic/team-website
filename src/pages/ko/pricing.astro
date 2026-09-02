@@ -134,7 +134,7 @@ const tiers: Tier[] = [
     priceWasYearly: "₩119,000",
     period: "/월 · 연간 결제",
     periodMonthly: "/월",
-    seatsIncludedNote: "2석 포함",
+    seatsIncludedNote: "사용자 2명 포함",
     extraSeatWasMonthly: "₩59,000",
     extraSeatWasYearly: "₩47,000",
     extraSeatPriceMonthly: "₩45,000/월",
@@ -171,7 +171,7 @@ const compareRows: ComparisonRow[] = [
   { label: "릴리스", valueByColumn: [{ type: "text", text: "무제한" }, { type: "text", text: "무제한" }] },
   { label: "협업자", valueByColumn: [{ type: "text", text: "무제한" }, { type: "text", text: "무제한" }] },
   { label: "워크스페이스", valueByColumn: [{ type: "text", text: "무제한" }, { type: "text", text: "무제한" }] },
-  { label: "포함 좌석", valueByColumn: [{ type: "text", text: "1석" }, { type: "text", text: "2석, 이후 좌석당 과금" }] },
+  { label: "포함 사용자", valueByColumn: [{ type: "text", text: "사용자 1명" }, { type: "text", text: "사용자 2명, 이후 사용자당 과금" }] },
   { label: "브레인 — Pro", isGroupHeader: true },
   { label: "TeamMate AI", valueByColumn: [{ type: "dash" }, { type: "check" }] },
   { label: "Connections", valueByColumn: [{ type: "dash" }, { type: "check" }] },
@@ -223,7 +223,7 @@ const faqJsonLd = {
 };
 
 const finalHeadlineTop = "다음 릴리스를";
-const finalHeadlineBottom = "Team에서 무료로.";
+const finalHeadlineBottom = "Team에서 무료로 운영하세요.";
 const finalPrimary = { label: "무료로 시작하기", href: appLink("/onboarding?plan=free", "ko") };
 const finalSecondary = { label: "데모 예약하기", href: "https://calendly.com/teamrollouts-demo/30min" };
 const finalFootnote = "무료 플랫폼 · 카드 등록 불필요";
@@ -276,14 +276,14 @@ const finalFootnote = "무료 플랫폼 · 카드 등록 불필요";
                   {tier.seatsIncludedNote}
                   {/*
                     Korean puts the qualifier BEFORE the amount, so this reads
-                    "· 추가 좌석당 <was> <now>" rather than the English page's
+                    "· 추가 사용자당 <was> <now>" rather than the English page's
                     "· then <was> <now> per extra seat". Translating that
                     sentence word-for-word would produce something no Korean
                     reader would write.
                   */}
                   {hasSeatOverage && (
                     <>
-                      {" "}· 추가 좌석당{" "}
+                      {" "}· 추가 사용자당{" "}
                       <s data-yearly={tier.extraSeatWasYearly} data-monthly={tier.extraSeatWasMonthly}>{tier.extraSeatWasYearly}</s>{" "}
                       <b data-yearly={tier.extraSeatPriceYearly} data-monthly={tier.extraSeatPriceMonthly}>{tier.extraSeatPriceYearly}</b>
                     </>

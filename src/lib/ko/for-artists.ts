@@ -27,7 +27,7 @@ const PAGE: CopyMap = {
   // ── overnight strip ──
   "Locked": "확정",
   "as the approved master and flagged the old file.":
-    "를 승인된 마스터로 지정하고 이전 파일을 표시했습니다.",
+    "을 승인된 최종 마스터로 확정하고 이전 파일을 별도로 표시했습니다.",
   "Drafted next week's content calendar for your approval.":
     "다음 주 콘텐츠 캘린더를 작성했습니다. 승인해 주세요.",
   "Distributor cutoff is in": "유통사 마감이",
@@ -173,7 +173,7 @@ const PAGE: CopyMap = {
     "마스터 확정, 콘텐츠 승인 대기, 피처링 확보. 남은 하나는 유통사 메타데이터 마무리입니다.",
 
   // ── outcome band ──
-  "What a release on Team": "Team에서의 릴리스가",
+  "What a release on Team": "Team에서 릴리스를",
   "You stay independent and keep all of it. Team just makes sure the rollout runs like there's a whole team behind it.":
     "당신은 계속 독립적으로 활동하고, 모든 것을 그대로 갖습니다. Team은 뒤에 팀이 있는 것처럼 롤아웃이 굴러가게 할 뿐입니다.",
   "back every week": "매주 되찾는 시간",

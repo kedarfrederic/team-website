@@ -19,7 +19,7 @@ import { KO_ICP_COMMON } from "./icpCommon";
  */
 const PAGE: CopyMap = {
   // ── hero ──
-  "Risk across": "전체 물량에 걸친",
+  "Risk across": "전체 릴리스 납품 물량의 리스크를",
   "the": "",
   "whole book.": "리스크.",
   "You deliver hundreds of releases at once, each with its own assets, metadata and deadline.":
@@ -28,11 +28,11 @@ const PAGE: CopyMap = {
     "Team은 전체 릴리스 납품 현황을 분석해, 누락된 마스터와 잘못된 메타데이터를 DSP 전송 전에 찾아내고 실제 위험 항목을 보여줍니다.",
 
   // ── overnight strip ──
-  "Pre-flighted": "사전 점검했습니다 —",
-  "releases due this week.": "건이 이번 주 마감입니다.",
-  "cleared.": "건 정리 완료.",
-  "Fixed": "수정했습니다 —",
-  "metadata mismatches against DSP spec.": "건의 메타데이터가 DSP 규격과 불일치했습니다.",
+  "Pre-flighted": "이번 주 마감인 릴리스",
+  "releases due this week.": "건을 사전 점검했고 138건은 이상 없이 정리했습니다.",
+  "cleared.": "",
+  "Fixed": "DSP 규격과 맞지 않던 메타데이터",
+  "metadata mismatches against DSP spec.": "건을 수정했습니다.",
   "releases at risk of missing Friday's cutoff.": "건이 금요일 마감을 놓칠 위험이 있습니다.",
 
   // ── the problem finds you last ──

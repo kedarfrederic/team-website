@@ -75,7 +75,7 @@ export const KO_ROLLOUTS: CopyMap = {
   "Most of your allocated spend sits in one category. Worth confirming that's intentional rather than spread across the full rollout — content, PR, distribution.":
     "배정된 지출 대부분이 한 항목에 몰려 있습니다. 콘텐츠, PR, 유통 등 롤아웃 전반에 분산하지 않고 이렇게 두는 것이 의도한 바인지 확인해 보세요.",
   "— Heads up: \"Assign a day-to-day release manager\" is 13 days overdue, and 5 others are behind. Want to knock out the overdue ones first?":
-    "— 알려드립니다: ‘일상 릴리스 매니저 지정’이 13일 지연되었고, 다른 5건도 밀려 있습니다. 지연된 항목부터 처리할까요?",
+    "— 알려드립니다. ‘릴리스 운영 담당자 지정’ 작업이 13일 지연되었고 다른 5건도 늦어지고 있습니다. 지연된 작업부터 처리할까요?",
 
   // ── everything in one workspace ──
   "Everything a release needs,": "릴리스에 필요한 모든 것을,",

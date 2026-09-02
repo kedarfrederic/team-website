@@ -40,8 +40,8 @@ const PAGE: CopyMap = {
      which this line cannot do, so it reads as a status tag followed by its
      object instead. */
   "single to the distributor ahead of cutoff.": "싱글을 마감 전에 유통사로 전달했습니다.",
-  "Two": "두 건의",
-  "Q3 releases": "3분기 릴리스가",
+  "Two": "",
+  "Q3 releases": "3분기 릴리스 두 건이",
   "now land the same week.": "같은 주에 겹치게 됐습니다.",
 
   // ── the slate lives everywhere ──
@@ -75,7 +75,7 @@ const PAGE: CopyMap = {
   "Nova LP": "Nova LP",
   "alt-pop · Q3": "alt-pop · 3분기",
   "On track": "정상 진행",
-  "Kite single": "Kite 싱글",
+  "Kite single": "Kite의 싱글을",
   "Atlas EP": "Atlas EP",
   "Vega LP": "Vega LP",
   "indie · Q4": "indie · 4분기",
@@ -169,11 +169,11 @@ const PAGE: CopyMap = {
   "master approved by A&R. Re-briefed marketing and the distributor to match.":
     "마스터가 A&R 승인을 받았습니다. 마케팅과 유통사에 맞춰 다시 안내했습니다.",
   "delivered ahead of cutoff. Metadata checked against the tracker, clean.":
-    "마감 전에 납품했습니다. 트래커와 대조한 메타데이터도 정상입니다.",
+    "마감 전에 납품했습니다. 트래커와 대조한 메타데이터도 이상 없습니다.",
   "Resynced the release calendar after two dates moved. Flagged marketing.":
     "날짜 두 건이 옮겨져 릴리스 캘린더를 다시 맞췄습니다. 마케팅에 표시해 두었습니다.",
   "now land the same week, both need radio and playlist push. Needs a call.":
-    "가 같은 주에 겹치며, 둘 다 라디오와 플레이리스트 푸시가 필요합니다. 논의가 필요합니다.",
+    "같은 주에 겹치며, 두 릴리스 모두 라디오와 플레이리스트 홍보가 필요합니다. 일정 조정 논의가 필요합니다.",
   "Leadership brief:": "경영진 브리프:",
   "two releases delivered, one calendar resynced. One decision, a Q3 clash between Atlas and Kite.":
     "릴리스 2건 납품, 캘린더 1건 재조정. 결정이 필요한 것은 하나 — Atlas와 Kite의 3분기 충돌입니다.",

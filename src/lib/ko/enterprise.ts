@@ -27,11 +27,11 @@ const PAGE: CopyMap = {
   "Talk to us": "문의하기",
 
   // ── overnight strip ──
-  "Provisioned workspaces for the": "워크스페이스를 프로비저닝했습니다 —",
+  "Provisioned workspaces for the": "",
   "new imprint's roster": "새 산하 레이블의 로스터",
   "Synced roles from your IdP.": "IdP에서 역할을 동기화했습니다.",
   "40 seats": "40석",
-  "active.": "활성화됨.",
+  "active.": "사용자 40명이 활성화되었습니다.",
   "Compiled the quarter's": "보안팀에 전달할 분기",
   "audit export": "감사 로그 내보내기",
   "for your security team.": "파일을 정리했습니다.",
@@ -161,8 +161,8 @@ const PAGE: CopyMap = {
   "applied.": "반영 완료.",
   "Compiled the": "정리했습니다 —",
   "weekly audit export": "주간 감사 로그 내보내기",
-  "data residency question": "데이터 저장 위치 관련 문의",
-  "from procurement needs your legal team.": "가 구매 부서에서 접수되어 법무팀 확인이 필요합니다.",
+  "data residency question": "구매 부서에서 데이터 저장 위치 관련 문의",
+  "from procurement needs your legal team.": "가 접수되어 법무팀의 확인이 필요합니다.",
   "Admin brief:": "관리 브리프:",
   "org synced, workspaces provisioned, audit exported. One item, a residency question for legal.":
     "조직 동기화, 워크스페이스 프로비저닝, 감사 로그 내보내기 완료. 남은 한 건은 법무팀에 전달할 데이터 저장 위치 문의입니다.",

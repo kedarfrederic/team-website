@@ -89,9 +89,9 @@ export const CHROME_LINK: Record<string, Record<string, string>> = {
 
     // ── mega-menu row descriptions ──
     "Run a release like a campaign": "릴리스를 캠페인처럼 운영하세요",
-    "The intelligence across every module": "모든 모듈을 아우르는 지성",
+    "The intelligence across every module": "모든 모듈을 연결하는 AI 브레인",
     "The creative library, release-ready": "발매 준비가 끝난 크리에이티브 라이브러리",
-    "Bring the tools you already use": "이미 쓰는 도구를 그대로",
+    "Bring the tools you already use": "이미 사용하는 도구를 그대로 연결하세요",
     "Take the release to the road": "릴리스를 투어로",
     "Why it's safe on your whole stack": "전체 스택에서 안전한 이유",
     "A label-grade rollout, solo": "혼자서도 레이블 수준의 롤아웃",

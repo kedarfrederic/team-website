@@ -42,7 +42,7 @@ export const KO_ASSETS: CopyMap = {
   "Creative library · release-ready": "크리에이티브 라이브러리 · 발매 준비 완료",
   "The": "이번",
   "library": "라이브러리",
-  "Every creative asset for this release,": "이번 릴리스의 모든 크리에이티브 에셋,",
+  "Every creative asset for this release,": "이번 릴리스의 모든 크리에이티브 에셋을",
   "All": "전체",
   "Artwork": "아트워크",
   "Audio": "오디오",
