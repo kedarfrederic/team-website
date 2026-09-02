@@ -23,15 +23,15 @@ export const KO_SECURITY: CopyMap = {
   "Request security docs": "보안 문서 요청하기",
 
   // ── never training data ──
-  "Your operation is never": "고객 데이터는",
-  "anyone's training data.": "승인된 목적과 범위 안에서만 처리됩니다.",
-  "TeamMate reasons over your release to help you, and only you. Your data stays inside a wall around your organization, it goes in to answer your questions, and it does not come out.":
-    "TeamMate는 릴리스 운영을 지원하기 위해 승인된 데이터만 처리합니다. 데이터 접근 범위와 처리 방식은 조직별 권한 설정 및 보안 문서에 따릅니다.",
+  "Your operation is never": "당신의 운영은 결코",
+  "anyone's training data.": "누구의 학습 데이터도 아닙니다.",
+  "TeamMate reasons over your release to help you, and only you. Answering a question means sending it to a model provider &mdash; Anthropic for reasoning, OpenAI for search embeddings &mdash; and neither trains on data sent through their APIs. Nothing is pooled with other customers, and nothing is sold.":
+    "TeamMate는 당신의 릴리스를 이해해 당신만을 돕습니다. 질문에 답하기 위해 데이터는 모델 제공업체로 전송됩니다 — 추론은 Anthropic, 검색 임베딩은 OpenAI — 두 곳 모두 API로 전송된 데이터를 모델 학습에 사용하지 않습니다. 다른 고객의 데이터와 합쳐지지 않으며, 판매하지 않습니다.",
   "Works for you only.": "오직 당신을 위해서만.",
   "Your masters, threads, and numbers answer your questions, nothing more.":
     "마스터와 대화, 수치는 당신의 질문에 답하는 데에만 쓰입니다.",
   "Never trains a model.": "모델 학습 사용 여부는",
-  "Not ours, not anyone's.": "고객 계약과 모델 제공업체 정책에 명시된 범위를 따릅니다.",
+  "Not ours, and not our providers' &mdash; Anthropic and OpenAI both exclude API data from training under their commercial terms.": "우리도, 우리가 사용하는 제공업체도 사용하지 않습니다 — Anthropic과 OpenAI 모두 상업 약관에 따라 API 데이터를 학습에서 제외합니다.",
   "Never shared across customers.": "고객 간에 공유되지 않습니다.",
   "Your data is isolated to your organization.": "데이터는 조직 단위로 격리됩니다.",
   "Gone on your say-so.": "연동 해제 및 삭제 요청은",
@@ -105,7 +105,7 @@ export const KO_SECURITY: CopyMap = {
   "answered.": "답합니다.",
   "Does TeamMate train on my data?": "TeamMate가 제 데이터로 학습하나요?",
   "No. TeamMate uses your connected data to answer your questions and do work for your release. We don't train models on it, and your data is never pooled with other customers'.":
-    "TeamMate는 연동된 데이터를 릴리스 관련 질문에 답하고 승인된 업무를 수행하는 데 사용합니다. 모델 학습 사용 여부와 고객 간 데이터 분리는 보안 문서와 계약에 명확히 기재해야 합니다.",
+    "아니요. TeamMate는 연동된 데이터를 질문에 답하고 릴리스 업무를 처리하는 데 사용합니다. 저희는 이를 모델 학습에 사용하지 않으며, 모델을 제공하는 Anthropic과 OpenAI도 상업 약관에 따라 API로 전송된 데이터를 학습에 사용하지 않습니다. 다른 고객의 데이터와 합쳐지지도 않습니다.",
   "Who on my team can see my data?": "팀에서 누가 제 데이터를 볼 수 있나요?",
   "Only the people you invite, at the access level you set. Role-based controls let you give the right people the whole picture while limiting everyone else to their slice.":
     "초대한 사람만, 지정한 접근 권한 범위 안에서 볼 수 있습니다. 역할 기반 통제를 통해 필요한 사람에게는 전체를, 나머지에게는 각자의 범위만 제공할 수 있습니다.",
