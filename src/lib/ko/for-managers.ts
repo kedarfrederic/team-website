@@ -24,7 +24,7 @@ const PAGE: CopyMap = {
   "Every artist you manage is a release, a team, and a tool stack of their own, and you're the thread between all of them.":
     "관리하는 아티스트마다 각자의 릴리스와 팀, 도구가 있고, 매니저는 그 모든 흐름을 연결하는 중심입니다.",
   "Team gives each artist their own brain and keeps the whole roster in one view, so nothing slips while you're focused on someone else.":
-    "Team은 아티스트마다 각자의 브레인을 두고 로스터 전체를 한 화면에 유지합니다. 다른 아티스트에 집중하는 동안에도 놓치는 일이 없도록.",
+    "Team은 아티스트마다 전용 브레인을 두고 로스터 전체를 한 화면에서 보여줍니다. 한 아티스트에게 집중하는 동안에도 다른 릴리스의 중요한 변화를 놓치지 않습니다.",
 
   // ── overnight strip ──
   "Re-briefed the distributor on": "유통사에 다시 안내했습니다 —",
@@ -67,8 +67,8 @@ const PAGE: CopyMap = {
   "It's the one you weren't.": "지켜보지 않던 쪽입니다.",
 
   // ── one mind ──
-  "One mind,": "하나의 지성이,",
-  "on every artist at once.": "모든 아티스트를 동시에.",
+  "One mind,": "하나의 브레인으로",
+  "on every artist at once.": "모든 아티스트를 동시에 관리합니다.",
   "Team keeps a live brain for each artist and moves between them the way you do, so the whole roster stays in view, always.":
     "Team은 아티스트마다 살아 있는 브레인을 유지하고 당신이 그러듯 그 사이를 오갑니다. 그래서 로스터 전체가 언제나 시야 안에 있습니다.",
   "On track": "정상 진행",
@@ -92,13 +92,13 @@ const PAGE: CopyMap = {
     "모든 아티스트를 잇는 하나의 브레인입니다. 훑어보고, 물어보고, 아티스트에게 각자의 화면을 열어주세요.",
   "Roster at a glance": "로스터 한눈에",
   "Every artist and what they're waiting on, in one live view. No rebuilding the picture each time you switch.":
-    "모든 아티스트와 각자가 기다리는 것을 하나의 실시간 화면에. 옮겨 갈 때마다 상황을 다시 파악할 필요가 없습니다.",
+    "모든 아티스트와 각 릴리스의 대기 사항을 하나의 실시간 화면에서 확인합니다. 아티스트를 전환할 때마다 상황을 다시 파악할 필요가 없습니다.",
   "Risk radar": "리스크 레이더",
   "What's about to slip, across the whole roster, ranked by what needs you first.":
-    "로스터 전체에서 밀릴 조짐이 있는 것을, 당신이 먼저 봐야 할 순서로.",
+    "로스터 전체에서 지연될 가능성이 있는 일을 찾아, 먼저 확인해야 할 순서로 정렬합니다.",
   "Ask anything": "무엇이든 물어보세요",
   "A straight answer on any artist, drawn from their tools and threads, not your recall.":
-    "당신의 기억이 아니라 각자의 도구와 대화에서 끌어낸, 어느 아티스트에 대해서든 분명한 답.",
+    "기억에 의존하지 않고 각 아티스트의 도구와 대화를 바탕으로 현재 상황을 명확하게 답합니다.",
   "The artist's view": "아티스트의 화면",
   "Give each artist their own slice of the picture, without handing over your inbox.":
     "받은편지함을 넘기지 않고도, 아티스트에게 각자의 화면을 열어줄 수 있습니다.",

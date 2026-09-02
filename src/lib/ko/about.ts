@@ -30,7 +30,7 @@ const ABOUT_ONLY: CopyMap = {
   "A dozen tools. Twice as many hands. Masters in one folder, approvals buried in a thread, the budget in a sheet, the plan in someone's head. The context that decides whether a release goes well lives everywhere, and nowhere at once.":
     "열 개가 넘는 도구, 그 두 배의 사람. 마스터는 한 폴더에, 승인은 대화 속에 묻혀 있고, 예산은 시트에, 계획은 누군가의 머릿속에 있습니다. 릴리스의 성패를 가르는 맥락이 어디에나 있으면서 동시에 어디에도 없습니다.",
   "And somehow, one person is expected to hold all of it together. Until they take a week off, and it turns out they were the system.":
-    "그런데도 한 사람이 그 모두를 붙잡고 있기를 기대받습니다. 그 사람이 일주일 자리를 비우고 나서야, 그 사람이 곧 시스템이었다는 것이 드러납니다.",
+    "그런데도 한 사람이 이 모든 흐름을 연결해야 합니다. 그 사람이 일주일 자리를 비우고 나서야, 실제로는 그 사람이 시스템 역할을 해왔다는 사실이 드러납니다.",
   "The tools were never the problem.": "문제는 도구가 아니었습니다.",
   "The gaps between them were.": "도구 사이의 틈이었습니다.",
 

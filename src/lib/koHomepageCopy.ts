@@ -194,10 +194,10 @@ export const KO_HOMEPAGE_COPY: Readonly<Record<string, string>> = {
     "브레인에 학습시키기 &middot; 문서 7건 &middot; 오늘 18건 완료",
 
   // ── act: the whole picture ──
-  "Team holds": "Team은 전체 그림을",
-  "the whole picture.": "붙잡고 있습니다.",
+  "Team holds": "Team은",
+  "the whole picture.": "전체 그림을 파악합니다.",
   "It remembers the history, reads what’s happening now, and connects it across every tool you run on — so you see what changed, what matters, and what to do next. One picture, across every artist, release, budget and decision.":
-    "지난 기록을 기억하고, 지금 벌어지는 일을 읽어내며, 사용 중인 모든 도구에 걸쳐 연결합니다. 그래서 무엇이 달라졌고, 무엇이 중요하며, 다음에 무엇을 해야 하는지 보이게 됩니다. 모든 아티스트와 릴리스, 예산과 의사결정을 하나의 그림으로.",
+    "지난 기록을 기억하고 지금 벌어지는 일을 읽어, 사용 중인 모든 도구의 정보를 연결합니다. 무엇이 달라졌고 무엇이 중요하며 다음에 무엇을 해야 하는지 한눈에 보여줍니다. 모든 아티스트와 릴리스, 예산과 의사결정을 하나의 화면에서 확인할 수 있습니다.",
   "Change detected": "변경 감지",
   "Marketing budget": "마케팅 예산",
   ". Your one-sheet and Notion plan still show the old figure.":
@@ -278,8 +278,8 @@ export const KO_HOMEPAGE_COPY: Readonly<Record<string, string>> = {
     "Team은 보통 어디에나 있으면서 동시에 어디에도 없는 맥락을 한데 모읍니다. 아티스트 전략, 캠페인 기획, 릴리스 기록, DSP 우선순위, 예산, 승인, 성과 데이터, 파트너와의 대화, 그리고 모두가 정확히 기억한다고 확신하는 의사결정까지.",
   "So you keep using all your existing tools, exactly like you do today.":
     "지금 쓰던 도구를 그대로, 지금처럼 계속 사용하면 됩니다.",
-  "Nothing to migrate": "이전할 것 없음",
-  "Nothing to rip out": "걷어낼 것 없음",
+  "Nothing to migrate": "데이터를 옮길 필요 없음",
+  "Nothing to rip out": "기존 툴을 제거할 필요 없음",
   "No new software to learn": "새로 배울 소프트웨어 없음",
   "View all connections": "모든 연동 보기",
   "DOCS": "문서",
@@ -317,7 +317,7 @@ export const KO_HOMEPAGE_COPY: Readonly<Record<string, string>> = {
   "major labels": "메이저 레이블",
   "Every artist, every release — one picture.": "모든 아티스트, 모든 릴리스를 하나의 그림으로.",
   "See how the whole slate ties together: what's working, what's slipping, where to double down next.":
-    "전체 라인업이 어떻게 맞물리는지 확인하세요. 무엇이 잘되고, 무엇이 밀리고, 어디에 더 집중할지.",
+    "전체 릴리스 라인업이 어떻게 맞물리는지 확인하세요. 잘 되고 있는 것, 지연 되는 것, 다음으로 어디에 더 집중할지 한눈에 볼 수 있습니다.",
   "Distributors &amp;": "유통사 &amp;",
   "partners": "파트너",
   "Scale without the spreadsheet sprawl.": "스프레드시트를 늘리지 않고 확장하세요.",

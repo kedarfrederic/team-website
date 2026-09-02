@@ -55,11 +55,11 @@ export const CHROME_UI: Record<string, Record<string, string>> = {
     // ── mega-menu panel blurbs ──
     "One platform, one brain": "하나의 플랫폼, 하나의 브레인",
     "One brain, for how you work": "당신의 방식에 맞는 하나의 브레인",
-    "Learn & keep up": "배우고, 따라잡기",
+    "Learn & keep up": "리소스",
 
     // ── footer column headings ──
     Company: "회사",
-    Legal: "약관",
+    Legal: "법적 고지",
 
     // ── controls ──
     "Cookie preferences": "쿠키 설정",

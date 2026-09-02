@@ -23,7 +23,7 @@ const PAGE: CopyMap = {
   "Labels and distributors running at scale need more than a tool. They need deployment across a whole org, the controls procurement expects, and a partner on the other end.":
     "대규모 레이블과 유통사에는 단순한 도구 이상이 필요합니다. 조직 전체 배포, 구매 부서가 요구하는 통제 기능, 그리고 도입을 함께 책임질 파트너가 필요합니다.",
   "Team is built to meet all three, with one brain per release and one administrative view over everything.":
-    "Team은 그 셋을 모두 충족하도록 만들어졌습니다. 릴리스마다 하나의 브레인, 그리고 전체를 아우르는 하나의 관리 화면.",
+    "Team은 이 세 가지를 모두 제공합니다. 릴리스마다 전용 브레인을 두고, 하나의 관리 화면에서 조직 전체를 확인할 수 있습니다.",
   "Talk to us": "문의하기",
 
   // ── overnight strip ──
@@ -60,10 +60,10 @@ const PAGE: CopyMap = {
   "everything you can't see at once.": "한눈에 볼 수 없는 모든 것입니다.",
 
   // ── one console ──
-  "One console,": "하나의 콘솔로,",
-  "over the whole operation.": "조직 전체를.",
+  "One console,": "하나의 관리 콘솔에서",
+  "over the whole operation.": "조직 전체를 확인하세요.",
   "Deploy Team across every imprint, team and release, with a single administrative view, the controls procurement expects, and support that knows your rollout.":
-    "모든 산하 레이블과 팀, 릴리스에 Team을 배포하세요. 하나의 관리 화면, 구매 부서가 요구하는 통제 장치, 그리고 당신의 롤아웃을 아는 지원과 함께.",
+    "모든 산하 레이블, 팀, 릴리스에 Team을 배포하고 하나의 관리 화면에서 통합 관리하세요. 구매 부서가 요구하는 통제 기능과 롤아웃을 이해하는 전담 지원도 함께 제공합니다.",
   "pop label": "pop 레이블",
   "Live": "운영 중",
   "electronic label": "electronic 레이블",
@@ -80,18 +80,18 @@ const PAGE: CopyMap = {
   "Support": "지원",
   "Named contact": "전담 담당자",
   "Fully deployed, one brain per release across the label.":
-    "전면 배포 완료. 레이블 전체에서 릴리스마다 하나의 브레인.",
+    "전면 배포가 완료되어 레이블 전체의 각 릴리스에 전용 브레인이 운영되고 있습니다.",
   "28 seats": "28석",
-  "Live across the team, audit logging on.": "팀 전체 운영 중, 감사 로깅 활성화.",
+  "Live across the team, audit logging on.": "팀 전체에 배포되었으며 감사 로그가 활성화되었습니다.",
   "Onboarding": "온보딩",
   "Rolling out this month, the delivery pipeline is connecting now.":
     "이번 달 도입 중이며, 납품 파이프라인을 연결하고 있습니다.",
   "12 seats": "12석",
-  "Connected, one view across the whole roster.": "연결 완료, 로스터 전체를 하나의 화면으로.",
+  "Connected, one view across the whole roster.": "연결이 완료되어 로스터 전체를 하나의 화면에서 확인할 수 있습니다.",
 
   // ── built for the org ──
-  "Built for the whole org,": "조직 전체를 위해,",
-  "on your terms.": "당신의 조건으로.",
+  "Built for the whole org,": "조직의 요구사항에 맞춰",
+  "on your terms.": "전체 조직에 적용할 수 있도록 설계했습니다.",
   "One brain across every release, with the deployment, controls and paperwork a large operation runs on.":
     "모든 릴리스를 아우르는 하나의 브레인에, 대규모 조직이 필요로 하는 배포와 통제, 문서를 더했습니다.",
   "Deploy across the roster": "로스터 전체에 배포",
@@ -105,7 +105,7 @@ const PAGE: CopyMap = {
     "모든 작업이 근거와 함께 기록되며, 보안 및 컴플라이언스 팀이 필요할 때 내보낼 수 있습니다.",
   "A partner, not a portal": "포털이 아니라 파트너",
   "Dedicated onboarding, a named point of contact and hands-on rollout, with us alongside you.":
-    "전담 온보딩과 지정된 담당자, 그리고 직접 함께하는 도입 과정.",
+    "전담 온보딩, 지정 담당자, 실무 중심의 도입 지원을 제공합니다.",
 
   // ── admin console ──
   "Organisation · admin": "조직 · 관리",
@@ -139,7 +139,7 @@ const PAGE: CopyMap = {
      literal split gives the fragment "가동까지 주." Korean puts the unit with
      the noun, so the whole phrase moves into the emphasised half. */
   "Live in": "몇",
-  "weeks.": "주 만에 가동.",
+  "weeks.": "주 안에 운영을 시작할 수 있습니다.",
   "with us alongside you": "저희가 함께합니다",
   "Connect, we map your stack with you": "연결 — 스택을 함께 정리합니다",
   "Configure, roles and access set up": "설정 — 역할과 접근 권한을 구성합니다",
@@ -186,7 +186,7 @@ const PAGE: CopyMap = {
   "Bring the brain to": "조직 전체에",
   "your whole operation.": "브레인을 도입하세요.",
   "We're onboarding a small group of labels and distributors as design partners, with early access, direct input on the roadmap, and hands-on rollout.":
-    "소수의 레이블과 유통사를 디자인 파트너로 모시고 있습니다. 얼리 액세스와 로드맵에 대한 직접적인 의견 제시, 그리고 직접 함께하는 도입 과정을 제공합니다.",
+    "현재 소수의 레이블과 유통사를 디자인 파트너로 모집하고 있습니다. 얼리 액세스, 로드맵에 대한 직접적인 의견 제시 기회, 전담 도입 지원을 제공합니다.",
 };
 
 export const KO_ENTERPRISE: CopyMap = { ...KO_ICP_COMMON, ...PAGE };

@@ -22,11 +22,11 @@ export const KO_ROLLOUTS: CopyMap = {
     "Rollouts는 아이디어에서 발매까지 릴리스가 완성되는 작업 공간입니다. 일정, 예산, 트랙, 아트워크, 지역, DSP 피칭을 한곳에 모으고, 브레인이 모든 움직임을 지켜보며 당신의 판단이 필요한 결정만 전달합니다.",
   "Start a release": "릴리스 시작하기",
   "See a rollout": "롤아웃 살펴보기",
-  "Rollouts is free — bring your next release": "Rollouts는 무료입니다 — 다음 릴리스를 가져오세요",
+  "Rollouts is free — bring your next release": "Rollouts는 무료입니다 — 다음 음원 릴리스부터 시작하세요.",
 
   // ── one shape ──
-  "A release is a dozen moving parts.": "릴리스는 수십 개의 움직이는 조각입니다.",
-  "Give it one shape.": "하나의 형태로 만드세요.",
+  "A release is a dozen moving parts.": "음원 릴리스에는 수많은 요소가 동시에 움직입니다.",
+  "Give it one shape.": "하나의 구조로 관리하세요.",
   "Masters, artwork, budget, the timeline, the pitch, the territories, the people. On most releases they live in ten tools and one person's head. A rollout puts every part in one workspace — so the whole release has a shape you can actually see.":
     "마스터, 아트워크, 예산, 일정, 피칭, 지역, 그리고 사람. 대부분의 릴리스에서 이 모든 것은 열 개의 도구와 한 사람의 머릿속에 흩어져 있습니다. 롤아웃은 모든 조각을 하나의 작업 공간에 모아, 릴리스 전체를 눈으로 볼 수 있는 형태로 만듭니다.",
   "Open a rollout and the whole release is right there": "롤아웃을 열면 릴리스 전체를 한눈에 볼 수 있습니다.",
@@ -95,14 +95,14 @@ export const KO_ROLLOUTS: CopyMap = {
   "Where it lands and where it's growing. Prioritise the markets that matter and line up the playlists and editorial that actually move the needle.":
     "어디에 닿고 어디에서 성장하는지 봅니다. 중요한 시장에 우선순위를 두고, 실제로 성과를 움직이는 플레이리스트와 에디토리얼을 준비하세요.",
   "The pre-flight check. Nothing ships until every box that matters is green — masters delivered, metadata clean, distributor confirmed, pitch out.":
-    "최종 점검입니다. 마스터 전달, 메타데이터 정리, 유통사 확인, 피칭 발송 — 중요한 항목이 모두 초록불이 되기 전에는 아무것도 나가지 않습니다.",
+    "최종 점검입니다. 마스터 전달, 메타데이터 정리, 유통사 확인, 피칭 발송 등 중요한 항목이 모두 완료되기 전에는 릴리스를 전송하지 않습니다.",
 
   // ── beyond release ──
   "A rollout doesn't end": "롤아웃은 발매에서",
   "at release.": "끝나지 않습니다.",
   "The same brain that ran the campaign reads your whole catalog, remembers every decision, and carries into the road. One release becomes context for the next — and Rollouts is just where it starts.":
     "캠페인을 운영한 그 브레인이 카탈로그 전체를 읽고, 모든 결정을 기억하며, 투어까지 이어집니다. 하나의 릴리스가 다음 릴리스의 맥락이 되고, Rollouts는 그 시작점일 뿐입니다.",
-  "Free, for every release you run": "당신이 운영하는 모든 릴리스에, 무료로",
+  "Free, for every release you run": "운영하는 모든 릴리스에서 무료로 이용하세요.",
 
   // ── related ──
   "Take the campaign to the road — routing, advancing, day sheets":
@@ -113,7 +113,7 @@ export const KO_ROLLOUTS: CopyMap = {
 
   // ── final CTA ──
   "Run your next release": "다음 릴리스를",
-  "on a rollout.": "롤아웃에서.",
+  "on a rollout.": "Rollouts에서 운영하세요.",
   "Start a release — free": "릴리스 시작하기 — 무료",
   "Get a demo": "데모 요청하기",
 };

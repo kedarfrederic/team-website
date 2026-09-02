@@ -35,8 +35,8 @@ const PAGE: CopyMap = {
   "and metadata is incomplete.": "남았는데 메타데이터가 아직 미완성입니다.",
 
   // ── you're the whole team ──
-  "You're the whole team,": "당신이 팀 전체이고,",
-  "and it's a lot.": "그건 벅찬 일입니다.",
+  "You're the whole team,": "혼자서 팀 전체의 역할을",
+  "and it's a lot.": "맡는 일은 쉽지 않습니다.",
   "The music, the visuals, the rollout, the deadlines. Nobody's tracking it but you, and you're also the one making it.":
     "음악, 비주얼, 롤아웃, 마감. 이걸 챙기는 사람은 당신뿐인데, 만드는 사람도 당신입니다.",
   "You, the artist": "아티스트로서의 당신",
@@ -61,10 +61,10 @@ const PAGE: CopyMap = {
   "why releases slip.": "릴리스를 밀리게 합니다.",
 
   // ── rollout timeline ──
-  "Your rollout,": "당신의 롤아웃이,",
-  "running seamlessly.": "막힘없이 굴러갑니다.",
+  "Your rollout,": "당신의 롤아웃을",
+  "running seamlessly.": "막힘없이 운영합니다.",
   "Team holds the whole release and moves it forward while you make the music, so every phase is handled and only the calls that are yours reach you.":
-    "당신이 음악을 만드는 동안 Team이 릴리스 전체를 붙잡고 앞으로 나아갑니다. 모든 단계가 처리되고, 당신이 내려야 할 결정만 전달됩니다.",
+    "당신이 음악을 만드는 동안 Team이 릴리스 전체를 관리하고 다음 단계로 진행합니다. 각 단계의 업무를 처리하고, 당신의 판단이 필요한 결정만 전달합니다.",
   "Announce": "공지",
   "this week": "이번 주",
   "On track": "정상 진행",
@@ -103,13 +103,13 @@ const PAGE: CopyMap = {
     "당신의 릴리스를 실제로 아는 한곳입니다. 훑어보고, 물어보고, 다시는 잘못된 파일을 보내지 마세요.",
   "Never miss a deadline": "마감을 놓치지 않습니다",
   "Every date on your release in one live view, ranked by what needs you first.":
-    "릴리스의 모든 날짜를 하나의 실시간 화면에, 당신이 먼저 봐야 할 순서로.",
+    "릴리스의 모든 일정을 하나의 실시간 화면에서 확인하고, 먼저 확인해야 할 순서로 정렬합니다.",
   "Always the right version": "언제나 올바른 버전",
   "Every file tracked and tagged, so the approved master is the only one that can go out.":
     "모든 파일을 추적하고 태그해, 승인된 마스터만 나갈 수 있습니다.",
   "Ask it anything": "무엇이든 물어보세요",
   "A straight answer on your release, drawn from your files and threads, not your memory.":
-    "당신의 기억이 아니라 파일과 대화에서 끌어낸, 릴리스에 대한 분명한 답.",
+    "기억에 의존하지 않고 파일과 대화 내용을 바탕으로 릴리스 상황을 명확하게 답합니다.",
   "The busywork, done": "잡무는 처리 완료",
   "The admin that steals studio time, drafted and filed while you make the music.":
     "스튜디오 시간을 빼앗는 관리 업무를, 당신이 음악을 만드는 동안 작성하고 정리합니다.",

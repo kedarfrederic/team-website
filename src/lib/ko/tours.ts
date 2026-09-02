@@ -14,7 +14,7 @@ export const KO_TOURS: CopyMap = {
   "Take the rollout": "릴리스의 흐름을",
   "to the road.": "투어까지 이어가세요.",
   "Tours is where a release becomes a run of shows — build the routing, advance every date, run the day sheets, and hold the whole tour's holds, on-sales, guarantees and settlement in one place, with the same brain across all of it.":
-    "Tours는 릴리스가 공연의 흐름이 되는 곳입니다. 라우팅을 짜고, 모든 날짜를 어드밴싱하고, 데이시트를 운영하며, 투어의 홀드와 티켓 오픈, 개런티와 정산을 한곳에서 관리합니다. 그 전부에 같은 브레인이 함께합니다.",
+    "Tours는 릴리스 운영을 공연 일정까지 이어주는 공간입니다. 이동 경로를 짜고, 각 공연의 사전 준비를 진행하고, 데이시트를 만들며, 홀드·티켓 오픈·개런티·정산을 한곳에서 관리합니다. 모든 과정에는 같은 브레인이 연결됩니다.",
   "Plan a tour": "투어 계획하기",
   "See the tour board": "투어 보드 살펴보기",
   "Available on Pro — plan your next run": "Pro에서 이용 가능 — 다음 투어를 계획하세요",
@@ -35,10 +35,10 @@ export const KO_TOURS: CopyMap = {
   "Tightening the Berlin → Paris leg would cut 400 miles of backtracking and save a day off.":
     "베를린 → 파리 구간을 조정하면 640km의 우회를 줄이고 하루를 절약할 수 있습니다.",
   "Reroute?": "경로를 다시 짤까요?",
-  "The whole run,": "투어 전체를,",
-  "one board.": "하나의 보드에.",
+  "The whole run,": "투어 전체를",
+  "one board.": "하나의 보드에서.",
   "Every show, its status, and the numbers that matter — confirmed, on-sale, sold, guaranteed. Open the builder to route it, advance a date, or pull a day sheet. The brain keeps the totals honest as the run fills in.":
-    "모든 공연과 그 상태, 그리고 중요한 숫자들 — 확정, 티켓 오픈, 판매, 개런티. 빌더를 열어 경로를 짜고, 날짜를 어드밴싱하고, 데이시트를 뽑으세요. 투어가 채워지는 동안 브레인이 합계를 정확하게 유지합니다.",
+    "모든 공연의 상태와 핵심 수치를 한눈에 확인합니다 — 확정 여부, 티켓 오픈, 판매 현황, 개런티까지. 빌더에서 경로를 조정하고, 공연 준비를 진행하고, 데이시트를 만들 수 있습니다. 투어 일정이 채워지는 동안 브레인이 전체 합계를 최신 상태로 유지합니다.",
   "Meet the brain behind it": "그 뒤의 브레인 만나보기",
   "On sale": "티켓 판매 중",
   "On sale · Autumn 2026": "티켓 판매 중 · 2026년 가을",
@@ -67,18 +67,18 @@ export const KO_TOURS: CopyMap = {
   "From the first hold to the final settlement — joined up, and feeding the same brain that ran the release.":
     "첫 홀드부터 최종 정산까지 하나로 이어지고, 릴리스를 운영한 그 브레인으로 모입니다.",
   "Build a run that makes geographic and financial sense. A routing-efficiency score flags backtracking and dead days before they cost you a guarantee.":
-    "지리적으로도 재무적으로도 말이 되는 투어를 만드세요. 라우팅 효율 점수가 우회와 공백일을 개런티에 손해가 되기 전에 표시합니다.",
+    "지리적·재무적으로 효율적인 투어 경로를 만드세요. 라우팅 효율 점수가 불필요한 우회와 휴식일을 찾아 비용 손실이 생기기 전에 알려줍니다.",
   "Every venue's details, tech, hospitality and timings in one advance — so nothing gets asked twice and nothing shows up as a surprise on the day.":
-    "공연장의 세부 사항과 테크, 호스피탈리티, 타임라인을 하나의 어드밴싱에 담습니다. 같은 질문을 두 번 하지 않고, 당일에 예상 밖의 일이 생기지 않습니다.",
+    "공연장별 세부사항, 기술 요구사항, 호스피탈리티, 진행 시간을 하나의 사전 준비 화면에서 관리합니다. 같은 질문을 반복하지 않고 공연 당일의 돌발 상황을 줄일 수 있습니다.",
   "The crew's daily plan, generated from the advance — load-in, sound check, doors, set time, contacts — and always current when the plan changes.":
-    "어드밴싱에서 생성되는 크루의 일일 계획입니다. 로드인, 사운드체크, 오픈, 셋 타임, 연락처까지 — 계획이 바뀌면 항상 최신 상태로 유지됩니다.",
+    "공연 사전 준비 내용을 바탕으로 크루의 일일 계획을 자동 생성합니다. 로드인, 사운드체크, 관객 입장, 공연 시작 시간, 연락처가 포함되며 계획이 바뀌면 바로 업데이트됩니다.",
   "Shows &amp; on-sales": "공연 &amp; 티켓 오픈",
   "Holds, offers, confirms and on-sales in one pipeline. Watch tickets and capacity fill in across the run, date by date.":
     "홀드와 오퍼, 확정, 티켓 오픈을 하나의 파이프라인에서 관리합니다. 투어 전체의 티켓과 수용 인원이 날짜별로 채워지는 것을 확인하세요.",
   "Guarantees &amp; settlement": "개런티 &amp; 정산",
   "Guarantees, expenses and settlement tracked per show and across the tour — so the money is as clear as the calendar.":
-    "개런티와 비용, 정산을 공연별로 그리고 투어 전체로 추적합니다. 그래서 돈이 일정만큼이나 분명해집니다.",
-  "A brain on the road": "투어 위의 브레인",
+    "공연별 개런티, 비용, 정산 내역을 투어 전체와 함께 추적해 수익과 비용을 일정만큼 명확하게 관리합니다.",
+  "A brain on the road": "투어를 함께 관리하는 브레인",
   "TeamMate watches the run overnight — a soft on-sale, a routing gap, a settlement that's late — and hands you the calls that need a human.":
     "TeamMate가 밤사이 투어를 지켜봅니다. 부진한 티켓 판매, 라우팅의 공백, 늦어지는 정산 — 그리고 사람의 판단이 필요한 결정만 전달합니다.",
 
@@ -87,7 +87,7 @@ export const KO_TOURS: CopyMap = {
   "the same story.": "같은 이야기입니다.",
   "The tour isn't a separate tool bolted on. It's the same brain that ran the release — it already knows the catalog, the audience and the markets, so the run starts from everything the rollout learned.":
     "투어는 따로 붙인 별개의 도구가 아닙니다. 릴리스를 운영한 그 브레인 그대로이며, 이미 카탈로그와 관객, 시장을 알고 있습니다. 그래서 투어는 롤아웃이 배운 모든 것에서 시작합니다.",
-  "On Pro, for every tour you run": "Pro에서, 당신이 운영하는 모든 투어에",
+  "On Pro, for every tour you run": "Pro에서 운영하는 모든 투어를 관리하세요.",
 
   // ── related ──
   "Where the release campaign comes together first": "릴리스 캠페인이 처음 모이는 곳",
@@ -95,8 +95,8 @@ export const KO_TOURS: CopyMap = {
   "Ticketing, calendars and the tools you already use": "티켓팅, 캘린더 등 이미 쓰는 도구들",
 
   // ── final CTA ──
-  "Put your next tour": "다음 투어를",
-  "on the board.": "보드 위에.",
+  "Put your next tour": "다음 투어를 하나의",
+  "on the board.": "보드에서 관리하세요.",
   "Start a Pro free trial": "Pro 무료 체험 시작하기",
   "Get a demo": "데모 요청하기",
 };

@@ -23,16 +23,16 @@ export const KO_CONNECTIONS: CopyMap = {
   "A connector isn't a checkbox.": "커넥터는 단순한 체크박스가 아니라",
   "It's a live wire.": "실시간으로 작동하는 연결 통로입니다.",
   "Most tools let you export. Team stays connected. It watches each source in real time, reasons over what changed, and acts back inside your stack, with receipts.":
-    "대부분의 도구는 내보내기를 제공합니다. Team은 연결된 상태를 유지합니다. 각 소스를 실시간으로 지켜보고, 무엇이 달라졌는지 추론하며, 근거와 함께 당신의 스택 안에서 다시 실행합니다.",
+    "대부분의 도구는 데이터를 내보내는 데 그치지만 Team은 연결을 계속 유지합니다. 각 소스의 변경사항을 실시간으로 확인하고, 그 의미를 분석해 기존 도구에 근거와 함께 반영합니다.",
   "It reads, live.": "실시간으로 읽습니다.",
   "New file, new thread, new number, Team sees it the moment it lands.":
     "새 파일, 새 대화, 새 수치 — 도착하는 순간 Team이 봅니다.",
   "It writes back.": "변경사항을 원래 도구에 다시 반영합니다.",
   "Two-way, not read-only. Team updates the doc, syncs the budget, re-briefs the partner.":
     "읽기 전용이 아닌 양방향 연동으로 문서를 업데이트하고, 예산을 동기화하고, 파트너 안내 내용을 수정합니다.",
-  "You stay in control.": "통제권은 당신에게.",
+  "You stay in control.": "통제권은 사용자에게 있습니다.",
   "Every connection is permissioned, scoped, and revocable in a click.":
-    "모든 연동은 권한 기반이고, 범위가 지정되며, 클릭 한 번으로 해제할 수 있습니다.",
+    "모든 연동은 권한과 범위를 직접 설정할 수 있으며 클릭 한 번으로 해제할 수 있습니다.",
 
   // ── the live example ──
   "Connected": "연결됨",
@@ -61,8 +61,8 @@ export const KO_CONNECTIONS: CopyMap = {
   "See how Team reasons across it": "Team이 어떻게 추론하는지 보기",
 
   // ── final CTA ──
-  "Put your whole stack": "스택 전체를",
-  "in one mind.": "하나의 지성 안에.",
+  "Put your whole stack": "사용 중인 모든",
+  "in one mind.": "도구를 하나의 브레인으로 연결하세요.",
   "Get a demo": "데모 요청하기",
 };
 
@@ -95,21 +95,21 @@ export const KO_CONNECTIONS_JS = {
     googlecalendar: "예정된 일정을 브레인이 파악하도록 유지합니다.",
     airtable: "베이스의 레코드를 브레인과 동기화합니다.",
     linear: "이슈와 프로젝트를 브레인으로 가져옵니다.",
-    asana: "작업과 프로젝트를 브레인으로.",
-    trello: "보드와 카드를 브레인으로.",
-    clickup: "문서와 작업을 브레인으로.",
-    discord: "커뮤니티 채널의 맥락.",
-    outlook: "이메일과 캘린더를 브레인으로.",
+    asana: "작업과 프로젝트 정보를 브레인에 연결합니다.",
+    trello: "보드와 카드 정보를 브레인에 연결합니다.",
+    clickup: "문서와 작업 정보를 브레인에 연결합니다.",
+    discord: "커뮤니티 채널의 맥락을 파악합니다.",
+    outlook: "이메일과 캘린더 정보를 브레인에 연결합니다.",
     googledrive: "Drive 폴더의 문서가 바뀔 때마다 반영합니다.",
     googlesheets: "스프레드시트의 행을 릴리스 브레인과 동기화합니다.",
     dropbox: "폴더의 파일을 가져오고, 파일을 다시 추가합니다.",
-    googledocs: "어시스턴트를 통해 문서를 읽고 씁니다.",
-    box: "엔터프라이즈 파일을 브레인으로.",
-    instagram: "게시물과 인사이트를 브레인으로.",
-    youtube: "채널, 영상, 댓글 인텔리전스.",
-    facebook: "페이지 인사이트를 브레인으로.",
-    reddit: "커뮤니티 반응.",
-    eventbrite: "티켓 판매와 참석자.",
-    ticketmaster: "이벤트 및 티켓 데이터.",
+    googledocs: "AI 어시스턴트를 통해 문서를 읽고 수정합니다.",
+    box: "기업용 파일을 브레인에 연결합니다.",
+    instagram: "게시물과 성과 인사이트를 브레인에 연결합니다.",
+    youtube: "채널, 영상, 댓글의 성과와 반응을 분석합니다.",
+    facebook: "페이지 성과 인사이트를 브레인에 연결합니다.",
+    reddit: "커뮤니티 반응을 분석합니다.",
+    eventbrite: "티켓 판매 및 관객 데이터를 연결합니다.",
+    ticketmaster: "이벤트와 티켓 데이터를 연결합니다.",
   },
 } as const;

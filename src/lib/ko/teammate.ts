@@ -18,8 +18,8 @@ export const KO_TEAMMATE: CopyMap = {
   "Get a demo": "데모 요청하기",
 
   // ── context ──
-  "The context that usually lives": "보통은 어디에나 있으면서",
-  "everywhere and nowhere.": "어디에도 없는 맥락.",
+  "The context that usually lives": "어디에나 흩어져 있지만 어디에서도",
+  "everywhere and nowhere.": "한눈에 볼 수 없던 맥락.",
   "Every master version, every Slack thread, every budget change, every approval, every deadline. TeamMate holds the whole history of a release in one place, so nothing has to live in someone's memory until they're on vacation.":
     "모든 마스터 버전, 모든 Slack 대화, 모든 예산 변경, 모든 승인, 모든 마감. TeamMate는 릴리스의 전체 기록을 한곳에 담아, 어떤 것도 누군가의 기억에만 의존하지 않게 합니다. 그 사람이 휴가를 떠나도 말이죠.",
   "TeamMate remembers · Midnight Static": "TeamMate가 기억합니다 · Midnight Static",
@@ -43,7 +43,7 @@ export const KO_TEAMMATE: CopyMap = {
   "Ask it anything.": "무엇이든 물어보세요.",
   "It already knows.": "이미 알고 있습니다.",
   "No blank session that forgets you the moment you close the tab. Ask TeamMate about a release and it answers from the whole operation, with the receipts to back it up.":
-    "탭을 닫는 순간 당신을 잊어버리는 빈 세션이 아닙니다. 릴리스에 대해 물으면 TeamMate는 운영 전체를 근거로, 출처와 함께 답합니다.",
+    "탭을 닫는 순간 모든 맥락을 잊는 일반 AI 채팅이 아닙니다. TeamMate는 운영 전체의 정보와 근거를 바탕으로 답합니다.",
   "Where's the final master?": "최종 마스터는 어디에 있나요?",
   ", approved by Maya in #audio on Tuesday. The one-sheet and distributor brief already reference it.":
     ", 화요일 #audio에서 Maya가 승인했습니다. 원시트와 유통사 브리프에 이미 반영되어 있습니다.",
@@ -77,8 +77,8 @@ export const KO_TEAMMATE: CopyMap = {
     "좋은 아침입니다. 밤사이 네 가지가 진행됐고 그중 셋은 처리했습니다. 나머지 하나는 당신만 내릴 수 있는 결정이 필요합니다.",
 
   // ── trust ──
-  "A brain on your stack,": "당신의 스택 위의 브레인,",
-  "on your terms.": "당신의 조건으로.",
+  "A brain on your stack,": "이미 사용하는 도구 위에서,",
+  "on your terms.": "당신이 정한 방식대로 작동하는 브레인.",
   "TeamMate reasons over your operation to help you, never to train on. Connections are permissioned and revocable, and everything you build in Team is yours to keep.":
     "TeamMate는 운영 전반의 정보를 분석해 업무를 지원합니다. 연동은 권한 기반이며 언제든 해제할 수 있고, Team에서 만든 데이터는 사용자가 보관하고 내보낼 수 있습니다.",
   "See our security &amp; trust": "보안 &amp; 신뢰 살펴보기",
@@ -90,7 +90,7 @@ export const KO_TEAMMATE: CopyMap = {
     "TeamMate가 볼 수 있는 범위를 소스별로 직접 정하고, 원하는 순간에 어떤 연동이든 끊을 수 있습니다.",
   "Yours to keep": "당신의 것",
   "Everything you build in Team stays portable and exportable. No lock-in, no data held hostage if you ever leave.":
-    "Team에서 만든 모든 것은 옮기고 내보낼 수 있습니다. 종속도, 떠날 때 붙잡히는 데이터도 없습니다.",
+    "Team에서 만든 데이터는 옮기고 내보낼 수 있습니다. 서비스를 종료하더라도 데이터를 내보낼 수 있어 특정 서비스에 묶이지 않습니다.",
 
   // ── final CTA ──
   "Put a brain on your": "다음 릴리스에",

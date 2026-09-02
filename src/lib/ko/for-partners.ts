@@ -25,7 +25,7 @@ const PAGE: CopyMap = {
   "You deliver hundreds of releases at once, each with its own assets, metadata and deadline.":
     "수백 건의 릴리스를 동시에 납품하며, 각각이 저마다의 에셋과 메타데이터, 마감을 갖고 있습니다.",
   "Team reasons across the entire book, catches the missing master or the wrong metadata before it reaches the DSP, and shows you where the real risk is, not just where the noise is.":
-    "Team은 전체 물량을 종합해 추론하고, 누락된 마스터나 잘못된 메타데이터를 DSP에 닿기 전에 잡아내며, 소음이 아니라 실제 리스크가 어디에 있는지 보여줍니다.",
+    "Team은 전체 릴리스 납품 현황을 분석해, 누락된 마스터와 잘못된 메타데이터를 DSP 전송 전에 찾아내고 실제 위험 항목을 보여줍니다.",
 
   // ── overnight strip ──
   "Pre-flighted": "사전 점검했습니다 —",
@@ -103,7 +103,7 @@ const PAGE: CopyMap = {
 
   // ── see the book ──
   "See the book": "Team이 보는 방식으로",
-  "the way Team does.": "전체 물량을 보세요.",
+  "the way Team does.": "전체 릴리스 납품 현황을 확인하세요.",
   "One connected brain across every delivery. Check it, rank it, and catch it before the DSP does.":
     "모든 납품을 잇는 하나의 브레인입니다. 점검하고, 정렬하고, DSP보다 먼저 잡아내세요.",
   "Every delivery pre-flighted": "모든 납품을 사전 점검",
@@ -111,10 +111,10 @@ const PAGE: CopyMap = {
     "릴리스가 들어오는 즉시 DSP 규격과 대조하므로, 결함이 있는 채로 나가지 않습니다.",
   "Risk, ranked": "리스크를 순서대로",
   "What's about to miss cutoff, across the whole book, ranked by what's most exposed.":
-    "전체 물량에서 마감을 놓칠 것들을, 가장 위험한 순서로.",
+    "전체 납품 건 중 마감을 놓칠 가능성이 있는 항목을 찾아 위험도가 높은 순서로 정렬합니다.",
   "Ask the book": "물량에 물어보기",
   "A straight answer on any batch or release, drawn from your trackers, not your recall.":
-    "당신의 기억이 아니라 트래커에서 끌어낸, 어느 배치나 릴리스에 대해서든 분명한 답.",
+    "기억이 아니라 트래커 데이터를 바탕으로 모든 배치와 릴리스의 현재 상황을 명확하게 답합니다.",
   "The client chase, automated": "클라이언트 독촉을 자동으로",
   "Missing assets requested from the client with the cutoff attached, so nothing stalls on you.":
     "누락된 에셋을 마감일과 함께 클라이언트에 요청하므로, 당신 쪽에서 멈추는 일이 없습니다.",
@@ -152,8 +152,8 @@ const PAGE: CopyMap = {
 
   // ── client chase ──
   "Client chase": "클라이언트 독촉",
-  "Chased,": "독촉했습니다,",
-  "with deadlines.": "마감일과 함께.",
+  "Chased,": "마감일을 명시해",
+  "with deadlines.": "요청했습니다.",
   "so delivery never stalls on you": "그래서 납품이 당신 쪽에서 멈추지 않습니다",
   "Label C, missing WAV, requested": "레이블 C, WAV 누락, 요청함",
   "Label A, artwork fix, sent": "레이블 A, 아트워크 수정본 발송",

@@ -71,7 +71,7 @@ const PAGE: CopyMap = {
   "Your whole slate,": "슬레이트 전체가,",
   "continually managed.": "끊임없이 관리됩니다.",
   "Team holds every release in one model and moves across the slate the way your teams can't, catching what falls between them.":
-    "Team은 모든 릴리스를 하나의 모델에 담고, 팀들이 할 수 없는 방식으로 슬레이트를 가로지르며 그 사이로 빠지는 것을 잡아냅니다.",
+    "Team은 모든 릴리스를 하나의 운영 모델로 연결해 팀 사이에서 놓치는 업무와 위험을 찾아냅니다.",
   "Nova LP": "Nova LP",
   "alt-pop · Q3": "alt-pop · 3분기",
   "On track": "정상 진행",
@@ -107,13 +107,13 @@ const PAGE: CopyMap = {
     "모든 릴리스를 잇는 하나의 브레인입니다. 훑어보고, 물어보고, 어떤 인계도 놓치지 마세요.",
   "The whole slate, one view": "슬레이트 전체를 한 화면에",
   "Every release and what it's waiting on, in one live picture. No one rebuilds the deck before the meeting.":
-    "모든 릴리스와 각자가 기다리는 것을 하나의 실시간 화면에. 회의 전에 자료를 다시 만들 필요가 없습니다.",
+    "모든 릴리스와 대기 사항을 하나의 실시간 화면에서 확인합니다. 회의 전에 자료를 다시 만들 필요가 없습니다.",
   "Clashes caught early": "충돌을 미리 포착",
   "Where two releases collide across the slate, surfaced before either one is a fire.":
-    "슬레이트에서 두 릴리스가 부딪히는 지점을, 어느 쪽도 급한 불이 되기 전에 드러냅니다.",
+    "두 릴리스의 일정이 충돌하는 지점을 조기에 찾아, 문제가 커지기 전에 알려줍니다.",
   "Ask the slate": "슬레이트에 물어보기",
   "A straight answer on any release, drawn from every team's tools, not someone's recall.":
-    "누군가의 기억이 아니라 모든 팀의 도구에서 끌어낸, 어느 릴리스에 대해서든 분명한 답.",
+    "누군가의 기억이 아니라 각 팀의 도구와 데이터를 바탕으로 모든 릴리스의 현재 상황을 명확하게 답합니다.",
   "Handoffs kept straight": "인계는 어긋나지 않게",
   "Every team working from the same final, so nothing falls in the gap between them.":
     "모든 팀이 같은 최종본으로 일하므로, 팀 사이의 틈으로 빠지는 것이 없습니다.",
@@ -152,7 +152,7 @@ const PAGE: CopyMap = {
   // ── handoff ──
   "Nova · handoff": "Nova · 인계",
   "Nova is": "Nova는",
-  "ready to ship.": "출고 준비가 끝났습니다.",
+  "ready to ship.": "납품 준비가 끝났습니다.",
   "LP · delivering in 5 weeks": "LP · 5주 후 납품",
   "A&R signed off": "A&R 승인 완료",
   "Marketing briefed on the final": "마케팅에 최종본 안내 완료",
@@ -164,7 +164,7 @@ const PAGE: CopyMap = {
   "While your teams were offline,": "팀들이 자리를 비운 사이,",
   "Team kept the slate moving.": "Team이 슬레이트를 계속 움직였습니다.",
   "The releases that slip are the ones between two teams. Team reasons across the whole slate after hours and hands leadership a short brief with only what needs a decision.":
-    "밀리는 릴리스는 두 팀 사이에 놓인 것들입니다. Team은 업무 시간 외에도 슬레이트 전체를 추론하고, 결정이 필요한 것만 담은 짧은 브리프를 경영진에 전달합니다.",
+    "지연되는 릴리스는 대개 팀 사이에서 놓친 업무 때문에 발생합니다. Team은 업무 시간 외에도 슬레이트 전체를 살펴보고, 경영진의 결정이 필요한 항목만 짧은 브리프로 전달합니다.",
   "TeamMate · across the slate": "TeamMate · 슬레이트 전반",
   "master approved by A&R. Re-briefed marketing and the distributor to match.":
     "마스터가 A&R 승인을 받았습니다. 마케팅과 유통사에 맞춰 다시 안내했습니다.",

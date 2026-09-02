@@ -23,10 +23,10 @@ export const KO_NOT_FOUND: CopyMap = {
 
   // <h1>This page took a <em>different rollout.</em></h1>
   "This page took a": "이 페이지는",
-  "different rollout.": "다른 롤아웃을 탔습니다.",
+  "different rollout.": "다른 경로로 이동했습니다.",
 
   "The link's broken or the page has moved. Let's get you back to something that ships.":
-    "링크가 깨졌거나 페이지가 옮겨졌습니다. 실제로 출시되는 곳으로 다시 안내해 드릴게요.",
+    "링크가 잘못되었거나 페이지가 이동했습니다. 정상 페이지로 다시 안내해 드릴게요.",
 
   "Back to home": "홈으로 돌아가기",
   "See pricing": "가격 보기",
@@ -34,11 +34,11 @@ export const KO_NOT_FOUND: CopyMap = {
   /* These match the nav and footer labels for the same destinations — see
      src/lib/ko/chrome.ts. A reader who has just hit a dead end should not also
      have to work out that "롤아웃" here and "Rollouts" in the nav above are the
-     same place. "Insights" stays English because /insights does. */
+     same place. "인사이트" stays English because /insights does. */
   Rollouts: "Rollouts",
   TeamMate: "TeamMate",
   Pricing: "가격",
-  Insights: "Insights",
+  인사이트: "인사이트",
   About: "회사 소개",
   Contact: "문의하기",
 };

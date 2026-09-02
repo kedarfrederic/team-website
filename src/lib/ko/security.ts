@@ -52,8 +52,8 @@ export const KO_SECURITY: CopyMap = {
   "Other customers": "다른 고객",
 
   // ── controls ──
-  "Protection built in,": "덧붙인 것이 아니라,",
-  "not bolted on.": "처음부터 내장된 보호.",
+  "Protection built in,": "처음부터",
+  "not bolted on.": "설계에 반영된 보안.",
   "The controls underneath every connection, so the brain only ever sees what you allow, and you can prove what it did.":
     "모든 연동 아래에 놓인 통제 장치입니다. 브레인은 허용된 것만 보고, 무엇을 했는지 언제든 증명할 수 있습니다.",
   /* The English heading is "Encrypted <em>in transit and at rest</em>", and
