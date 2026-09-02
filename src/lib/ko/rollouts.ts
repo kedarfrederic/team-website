@@ -54,9 +54,9 @@ export const KO_ROLLOUTS: CopyMap = {
   "Open a rollout and TeamMate has already read the whole thing overnight. It handles what it safely can, flags what's slipping, and hands you the few decisions only you can make — like a release manager who never sleeps and never drops a thread.":
     "롤아웃을 열면 TeamMate가 밤사이 이미 전체를 읽어두었습니다. 안전하게 처리할 수 있는 일은 처리하고, 밀리고 있는 일은 표시하며, 오직 당신만 내릴 수 있는 몇 가지 결정만 전달합니다. 잠들지 않고, 어떤 흐름도 놓치지 않는 릴리스 매니저처럼.",
   "Meet the brain behind it": "그 뒤의 브레인 만나보기",
-  "TeamMate reviewed the brain overnight —": "TeamMate가 밤사이 브레인을 검토했습니다 —",
-  "1 thing needs your eyes today": "오늘 확인이 필요한 항목 1건",
-  ", 6 are quietly slipping.": ", 6건이 조용히 밀리고 있습니다.",
+  "TeamMate reviewed the brain overnight —": "TeamMate가 밤사이 롤아웃 전체를 검토했습니다 —",
+  "1 thing needs your eyes today": "오늘 확인이 필요한 항목 1건과",
+  ", 6 are quietly slipping.": "지연 중인 항목 6건이 있습니다.",
   "Rollout pulse": "롤아웃 현황",
 
   // ── proposal ──

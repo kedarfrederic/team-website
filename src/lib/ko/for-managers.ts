@@ -27,9 +27,9 @@ const PAGE: CopyMap = {
     "Team은 아티스트마다 전용 브레인을 두고 로스터 전체를 한 화면에서 보여줍니다. 한 아티스트에게 집중하는 동안에도 다른 릴리스의 중요한 변화를 놓치지 않습니다.",
 
   // ── overnight strip ──
-  "Re-briefed the distributor on": "유통사에 다시 안내했습니다 —",
+  "Re-briefed the distributor on": "",
   "Maya's": "Maya의",
-  "new master.": "새 마스터.",
+  "new master.": "새 마스터에 맞춰 유통사 안내 내용을 업데이트했습니다.",
   "Pushed": "미뤘습니다 —",
   "Theo's": "Theo의",
   "teaser two days to clear the video edit.": "티저를 이틀 미뤄 영상 편집 시간을 확보했습니다.",

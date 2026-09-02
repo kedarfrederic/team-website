@@ -123,10 +123,10 @@ export const KO_HOMEPAGE_COPY: Readonly<Record<string, string>> = {
 
   // ── the turn ──
   "Until now": "지금까지는",
-  "Team is the": "Team은 음악 기업과 아티스트 팀,",
-  "operational brain": "운영 브레인",
+  "Team is the": "Team은 음악 회사와 아티스트 팀, 그리고 현대 음악 비즈니스를 위한",
+  "operational brain": "운영 브레인입니다.",
   "for music companies, artist teams, and modern music businesses.":
-    "그리고 현대 음악 비즈니스를 위한 것입니다.",
+    "",
 
   // ── product mock chrome ──
   "+ RELEASE": "+ 릴리스",
@@ -210,10 +210,10 @@ export const KO_HOMEPAGE_COPY: Readonly<Record<string, string>> = {
     ". 발매일까지는 9주 남았습니다. 발주 전에 알려드립니다.",
   "source · PO #1042 + release timeline": "출처 · 발주 #1042 + 릴리스 일정",
   "Signal": "시그널",
-  "Pre-save velocity": "프리세이브 증가 속도가",
-  "doubled": "두 배",
+  "Pre-save velocity": "티저 공개 후 프리세이브 증가 속도가",
+  "doubled": "두 배가",
   "since the teaser posted. Worth moving the playlist pitch up.":
-    "가 되었습니다. 플레이리스트 피칭을 앞당길 만합니다.",
+    "되었습니다. 플레이리스트 피칭을 앞당길 만합니다.",
   "source · DSP feed, last 48h": "출처 · DSP 피드, 최근 48시간",
   "Connected": "연결됨",
   "A distributor's Slack reply just cleared the metadata question":

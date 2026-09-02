@@ -32,9 +32,9 @@ const PAGE: CopyMap = {
   "Synced roles from your IdP.": "IdP에서 역할을 동기화했습니다.",
   "40 seats": "40석",
   "active.": "활성화됨.",
-  "Compiled the quarter's": "분기 자료를 정리했습니다 —",
+  "Compiled the quarter's": "보안팀에 전달할 분기",
   "audit export": "감사 로그 내보내기",
-  "for your security team.": "보안팀 전달용.",
+  "for your security team.": "파일을 정리했습니다.",
 
   // ── the gaps ──
   "Every unit runs well alone.": "각 조직은 따로 보면 잘 돌아갑니다.",
@@ -153,9 +153,9 @@ const PAGE: CopyMap = {
   "At scale, the admin never stops. Team keeps the operation synced overnight and hands your admins a short brief with only what needs a decision.":
     "규모가 커지면 관리 업무는 멈추지 않습니다. Team은 밤사이 조직을 동기화하고, 결정이 필요한 것만 담은 짧은 브리프를 관리자에게 전달합니다.",
   "TeamMate · across the org": "TeamMate · 조직 전반",
-  "Provisioned": "프로비저닝했습니다 —",
-  "12 new workspaces": "새 워크스페이스 12개",
-  "for Imprint A's incoming roster.": "산하 레이블 A의 신규 로스터용.",
+  "Provisioned": "산하 레이블 A의 신규 로스터를 위해",
+  "12 new workspaces": "워크스페이스 12개를",
+  "for Imprint A's incoming roster.": "생성했습니다.",
   "Synced roles from your identity provider.": "아이덴티티 제공자에서 역할을 동기화했습니다.",
   "3 joiners, 1 leaver": "입사 3명, 퇴사 1명",
   "applied.": "반영 완료.",

@@ -24,22 +24,22 @@ const PAGE: CopyMap = {
     "Team은 그 전부를 종합해 추론하고, 한 릴리스가 다음 릴리스에 미치는 영향을 추적하며, 슬레이트 전체를 살아 있는 하나의 그림으로 유지합니다.",
 
   // ── overnight strip ──
-  "Re-briefed marketing on": "마케팅에 다시 안내했습니다 —",
+  "Re-briefed marketing on": "",
   "Nova LP's": "Nova LP의",
-  "approved master.": "승인된 마스터.",
+  "approved master.": "승인된 마스터에 맞춰 마케팅 안내 내용을 업데이트했습니다.",
   /* "Delivered" is BOTH the overnight-strip sentence lead and the Distribution
      status chip on two release boards. localizeBody keys on exact text, so one
      value has to work in both roles: a verb-first clause with an em dash read
      as a dangling fragment in the chips. 전달 완료 works as a status and as a
      lead, with the connective moved into the tail below. */
-  "Delivered": "전달 완료",
+  "Delivered": "",
   "Kite's": "Kite의",
   /* The strip is `Delivered <b>Kite's</b> single to the…`, so this node lands
      AFTER the bolded artist — naming Kite again here printed it twice. The
      sibling lines carry their connective in the lead ("… 안내했습니다 —"),
      which this line cannot do, so it reads as a status tag followed by its
      object instead. */
-  "single to the distributor ahead of cutoff.": "싱글, 마감 전 유통사로.",
+  "single to the distributor ahead of cutoff.": "싱글을 마감 전에 유통사로 전달했습니다.",
   "Two": "두 건의",
   "Q3 releases": "3분기 릴리스가",
   "now land the same week.": "같은 주에 겹치게 됐습니다.",
