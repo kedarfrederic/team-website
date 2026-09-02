@@ -21,7 +21,7 @@ const PAGE: CopyMap = {
   // ── hero ──
   "Risk across": "전체 릴리스 납품 물량의 리스크를",
   "the": "",
-  "whole book.": "리스크.",
+  "whole book.": "한눈에.",
   "You deliver hundreds of releases at once, each with its own assets, metadata and deadline.":
     "수백 건의 릴리스를 동시에 납품하며, 각각이 저마다의 에셋과 메타데이터, 마감을 갖고 있습니다.",
   "Team reasons across the entire book, catches the missing master or the wrong metadata before it reaches the DSP, and shows you where the real risk is, not just where the noise is.":
@@ -145,7 +145,7 @@ const PAGE: CopyMap = {
     "두 건은 레이블 C의 마스터를 기다리는 중, 한 건은 유효하지 않은 ISRC로 수정안이 작성됐고, 한 건은 아트워크가 규격 미달입니다. 마감 순으로 정렬했습니다.",
   "Delivery tracker": "납품 트래커",
   "How is delivery tracking this week?": "이번 주 납품은 어떻게 진행되고 있나요?",
-  "142 due,": "142건 마감 중",
+  "142 due,": "이번 주 마감 142건 중",
   "138 clean and scheduled": "138건이 이상 없이 예약 완료",
   ". Four flagged, all blocked on client assets.":
     ". 네 건이 표시됐고, 모두 클라이언트 에셋 때문에 막혀 있습니다.",
@@ -170,8 +170,8 @@ const PAGE: CopyMap = {
   "142 releases": "릴리스 142건",
   "due this week. 138 clean and cleared for delivery.":
     "이 이번 주 마감입니다. 138건은 이상 없이 납품 준비를 마쳤습니다.",
-  "3 metadata mismatches": "메타데이터 불일치 3건",
-  "against DSP spec and re-checked.": "을 DSP 규격에 맞춰 재확인했습니다.",
+  "3 metadata mismatches": "DSP 규격과 맞지 않던 메타데이터 3건",
+  "against DSP spec and re-checked.": "을 수정하고 다시 확인했습니다.",
   "Re-ranked the queue": "대기열을 다시 정렬해",
   "by cutoff so the team opens on what is most exposed.":
     "마감 순으로 두었고, 팀이 가장 위험한 것부터 보게 됩니다.",

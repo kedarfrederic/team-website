@@ -27,8 +27,8 @@ const PAGE: CopyMap = {
   "Talk to us": "문의하기",
 
   // ── overnight strip ──
-  "Provisioned workspaces for the": "",
-  "new imprint's roster": "새 산하 레이블의 로스터",
+  "Provisioned workspaces for the": "새 산하 레이블의 로스터를 위한 워크스페이스를 생성했습니다.",
+  "new imprint's roster": "",
   "Synced roles from your IdP.": "IdP에서 역할을 동기화했습니다.",
   "40 seats": "40석",
   "active.": "사용자 40명이 활성화되었습니다.",
