@@ -29,8 +29,8 @@ export const KO_ROLLOUTS: CopyMap = {
   "Give it one shape.": "하나의 형태로 만드세요.",
   "Masters, artwork, budget, the timeline, the pitch, the territories, the people. On most releases they live in ten tools and one person's head. A rollout puts every part in one workspace — so the whole release has a shape you can actually see.":
     "마스터, 아트워크, 예산, 일정, 피칭, 지역, 그리고 사람. 대부분의 릴리스에서 이 모든 것은 열 개의 도구와 한 사람의 머릿속에 흩어져 있습니다. 롤아웃은 모든 조각을 하나의 작업 공간에 모아, 릴리스 전체를 눈으로 볼 수 있는 형태로 만듭니다.",
-  "Open a rollout and the whole release is right there": "롤아웃을 열면 릴리스 전체가 그 자리에",
-  "Every task has a date, an owner and a dependency": "모든 작업에 날짜와 담당자, 선행 관계가",
+  "Open a rollout and the whole release is right there": "롤아웃을 열면 릴리스 전체를 한눈에 볼 수 있습니다.",
+  "Every task has a date, an owner and a dependency": "모든 작업에 날짜, 담당자, 선행 관계가 지정됩니다.",
   "The brain reads across all of it, all the time": "브레인이 그 모두를 언제나 읽고 있습니다",
 
   // ── product mock ──

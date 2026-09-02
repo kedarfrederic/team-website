@@ -26,7 +26,7 @@ export const KO_SECURITY: CopyMap = {
   "Your operation is never": "당신의 운영은 결코",
   "anyone's training data.": "누구의 학습 데이터도 아닙니다.",
   "TeamMate reasons over your release to help you, and only you. Your data stays inside a wall around your organization, it goes in to answer your questions, and it does not come out.":
-    "TeamMate는 오직 당신을 돕기 위해 릴리스를 추론합니다. 데이터는 조직을 둘러싼 경계 안에 머무르며, 질문에 답하기 위해 들어갈 뿐 밖으로 나가지 않습니다.",
+    "TeamMate는 릴리스 운영을 지원하기 위해 승인된 데이터만 처리합니다. 데이터 접근 범위와 처리 방식은 조직별 권한 설정 및 보안 문서에 따릅니다.",
   "Works for you only.": "오직 당신을 위해서만.",
   "Your masters, threads, and numbers answer your questions, nothing more.":
     "마스터와 대화, 수치는 당신의 질문에 답하는 데에만 쓰입니다.",
@@ -86,7 +86,7 @@ export const KO_SECURITY: CopyMap = {
   "Enterprise controls,": "필요할 때 꺼내 쓰는",
   "when you need them.": "엔터프라이즈 통제.",
   "Running at scale means stricter requirements. Team is built to meet them, with the controls and paperwork procurement teams expect to see.":
-    "규모가 커지면 요구 사항도 엄격해집니다. Team은 구매 부서가 요구하는 통제 장치와 문서를 갖추고 있습니다.",
+    "규모가 커지면 보안과 구매 절차의 요구사항도 엄격해집니다. Team은 필요한 통제 기능과 검토 자료를 제공할 수 있도록 설계되었습니다.",
   "Explore Enterprise": "엔터프라이즈 살펴보기",
   "SSO &amp; SAML": "SSO &amp; SAML",
   "sign-on": "로그인",
@@ -105,13 +105,13 @@ export const KO_SECURITY: CopyMap = {
   "answered.": "답합니다.",
   "Does TeamMate train on my data?": "TeamMate가 제 데이터로 학습하나요?",
   "No. TeamMate uses your connected data to answer your questions and do work for your release. We don't train models on it, and your data is never pooled with other customers'.":
-    "아니요. TeamMate는 연동된 데이터를 질문에 답하고 릴리스 업무를 처리하는 데 사용합니다. 이를 모델 학습에 사용하지 않으며, 다른 고객의 데이터와 합쳐지지도 않습니다.",
+    "TeamMate는 연동된 데이터를 릴리스 관련 질문에 답하고 승인된 업무를 수행하는 데 사용합니다. 모델 학습 사용 여부와 고객 간 데이터 분리는 보안 문서와 계약에 명확히 기재해야 합니다.",
   "Who on my team can see my data?": "팀에서 누가 제 데이터를 볼 수 있나요?",
   "Only the people you invite, at the access level you set. Role-based controls let you give the right people the whole picture while limiting everyone else to their slice.":
     "초대한 사람만, 지정한 접근 권한 범위 안에서 볼 수 있습니다. 역할 기반 통제를 통해 필요한 사람에게는 전체를, 나머지에게는 각자의 범위만 제공할 수 있습니다.",
   "Can I disconnect a tool or delete my data?": "도구 연동을 해제하거나 데이터를 삭제할 수 있나요?",
   "Any time. Every connection is revocable in one click, and when you disconnect a tool or delete your data, it's removed from the brain. Everything you build in Team stays portable and yours to keep.":
-    "언제든 가능합니다. 모든 연동은 클릭 한 번으로 해제할 수 있고, 도구를 해제하거나 데이터를 삭제하면 브레인에서 제거됩니다. Team에서 만든 모든 것은 옮길 수 있으며 당신의 것으로 남습니다.",
+    "모든 연동은 언제든 해제할 수 있습니다. 데이터 삭제 및 보관 방식은 보안 문서에 명시된 정책에 따라 처리되며, Team에서 만든 데이터는 내보낼 수 있습니다.",
   "How are my connected accounts protected?": "연동된 계정은 어떻게 보호되나요?",
   "Connections are made through each provider's official, permissioned access, and the credentials are held in a dedicated secrets vault. Team only ever reads the scopes you've granted.":
     "연동은 각 제공업체의 공식 권한 기반 접근 방식으로 이루어지며, 자격 증명은 전용 시크릿 저장소에 보관됩니다. Team은 허용한 범위만 읽습니다.",

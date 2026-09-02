@@ -15,7 +15,7 @@ export const KO_CONNECTIONS: CopyMap = {
   "Connect the stack": "이미 쓰고 있는 스택을",
   "you already run on.": "그대로 연결하세요.",
   "Connections feed every file, message, plan and data point from the tools you already use into Team's brain — read across all of them, and written back. Nothing to migrate, nothing to rip out.":
-    "Connections는 이미 사용 중인 도구의 모든 파일과 메시지, 계획, 데이터를 Team의 브레인으로 보냅니다. 전체를 함께 읽고, 다시 써 넣습니다. 이전할 것도, 걷어낼 것도 없습니다.",
+    "Connections는 이미 사용 중인 도구의 파일, 메시지, 계획, 데이터를 Team의 브레인에 연결합니다. 모든 정보를 함께 읽고, 필요한 변경사항을 원래 도구에 다시 반영합니다. 데이터를 옮기거나 기존 도구를 제거할 필요가 없습니다.",
   "Get started": "시작하기",
   "See the catalog": "카탈로그 보기",
 

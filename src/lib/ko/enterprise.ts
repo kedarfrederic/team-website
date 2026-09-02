@@ -21,7 +21,7 @@ const PAGE: CopyMap = {
   "The brain for your operation,": "당신의 조직을 위한 브레인,",
   "at your scale.": "당신의 규모에 맞게.",
   "Labels and distributors running at scale need more than a tool. They need deployment across a whole org, the controls procurement expects, and a partner on the other end.":
-    "규모 있게 운영하는 레이블과 유통사에는 도구 이상이 필요합니다. 조직 전체에 걸친 배포, 구매 부서가 요구하는 통제 장치, 그리고 맞은편에 있어 줄 파트너가 필요합니다.",
+    "대규모 레이블과 유통사에는 단순한 도구 이상이 필요합니다. 조직 전체 배포, 구매 부서가 요구하는 통제 기능, 그리고 도입을 함께 책임질 파트너가 필요합니다.",
   "Team is built to meet all three, with one brain per release and one administrative view over everything.":
     "Team은 그 셋을 모두 충족하도록 만들어졌습니다. 릴리스마다 하나의 브레인, 그리고 전체를 아우르는 하나의 관리 화면.",
   "Talk to us": "문의하기",

@@ -80,11 +80,11 @@ export const KO_TEAMMATE: CopyMap = {
   "A brain on your stack,": "당신의 스택 위의 브레인,",
   "on your terms.": "당신의 조건으로.",
   "TeamMate reasons over your operation to help you, never to train on. Connections are permissioned and revocable, and everything you build in Team is yours to keep.":
-    "TeamMate는 당신을 돕기 위해 운영을 추론할 뿐, 학습에 사용하지 않습니다. 연동은 권한 기반이며 언제든 해제할 수 있고, Team에서 만든 모든 것은 당신의 것입니다.",
+    "TeamMate는 운영 전반의 정보를 분석해 업무를 지원합니다. 연동은 권한 기반이며 언제든 해제할 수 있고, Team에서 만든 데이터는 사용자가 보관하고 내보낼 수 있습니다.",
   "See our security &amp; trust": "보안 &amp; 신뢰 살펴보기",
   "Works for you, only": "오직 당신을 위해",
   "Your data is never used to train models, full stop. TeamMate reasons over your operation to help you run it, and for nothing else.":
-    "당신의 데이터는 어떤 경우에도 모델 학습에 사용되지 않습니다. TeamMate는 운영을 돕기 위해서만 추론하며, 그 외의 목적은 없습니다.",
+    "고객 데이터의 모델 학습 사용 여부와 범위는 보안 문서 및 모델 제공업체 계약에 명시된 정책을 따릅니다. TeamMate는 운영 지원 목적으로 데이터를 처리합니다.",
   "Permissioned, and revocable": "권한 기반, 언제든 해제",
   "You choose what TeamMate can see, source by source, and you can cut off any connection the moment you decide to.":
     "TeamMate가 볼 수 있는 범위를 소스별로 직접 정하고, 원하는 순간에 어떤 연동이든 끊을 수 있습니다.",

@@ -16,7 +16,7 @@ export const KO_CONTACT: CopyMap = {
   "Let's": "이야기",
   "talk.": "나눠요.",
   "A question, a walkthrough, or bringing your whole roster onto Team, tell us what you're after and the right person will get back to you.":
-    "궁금한 점, 제품 소개, 또는 로스터 전체를 Team으로 옮기는 일까지 — 무엇을 찾고 계신지 알려주시면 담당자가 회신드립니다.",
+    "제품 문의, 데모 요청 또는 로스터 전체에 Team을 도입하려는 경우 필요한 내용을 알려주세요. 담당자가 확인 후 회신드립니다.",
   "Email us": "이메일 보내기",
   "Prefer to write?": "글로 남기고 싶으신가요?",
   "Book a demo": "데모 예약하기",

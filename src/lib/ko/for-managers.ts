@@ -22,7 +22,7 @@ const PAGE: CopyMap = {
   "Your whole roster,": "로스터 전체를,",
   "in one place.": "한곳에.",
   "Every artist you manage is a release, a team, and a tool stack of their own, and you're the thread between all of them.":
-    "관리하는 아티스트 한 명 한 명이 각자의 릴리스이자 팀이자 도구 모음이고, 당신은 그 사이를 잇는 실입니다.",
+    "관리하는 아티스트마다 각자의 릴리스와 팀, 도구가 있고, 매니저는 그 모든 흐름을 연결하는 중심입니다.",
   "Team gives each artist their own brain and keeps the whole roster in one view, so nothing slips while you're focused on someone else.":
     "Team은 아티스트마다 각자의 브레인을 두고 로스터 전체를 한 화면에 유지합니다. 다른 아티스트에 집중하는 동안에도 놓치는 일이 없도록.",
 
@@ -168,7 +168,7 @@ const PAGE: CopyMap = {
   // ── outcome band ──
   "What a month on Team": "Team에서의 한 달이",
   "Team doesn't replace your judgement. It gives you the memory and the coverage to spend it where it counts, on the artists, not the admin.":
-    "Team은 당신의 판단을 대신하지 않습니다. 그 판단을 정말 중요한 곳 — 관리 업무가 아니라 아티스트 — 에 쓸 수 있도록 기억과 커버리지를 제공할 뿐입니다.",
+    "Team은 매니저의 판단을 대신하지 않습니다. 대신 필요한 맥락과 전체 현황을 제공해, 관리 업무보다 아티스트에게 더 집중할 수 있게 합니다.",
   "the roster, same hours": "같은 시간에 더 큰 로스터",
   "Carry more artists without more chaos, or more headcount.":
     "혼란도, 인력도 늘리지 않고 더 많은 아티스트를 맡으세요.",

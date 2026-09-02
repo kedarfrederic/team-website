@@ -312,7 +312,7 @@ export const KO_HOMEPAGE_COPY: Readonly<Record<string, string>> = {
   "managers": "매니저",
   "The roster runs while you're on the road.": "이동 중에도 로스터는 계속 굴러갑니다.",
   "Ops keep moving between flights, calls and shows. You get the three things that actually need you.":
-    "비행과 통화, 공연 사이에도 운영은 계속됩니다. 정말 당신이 필요한 세 가지만 전달됩니다.",
+    "비행과 통화, 공연 중에도 운영은 계속됩니다. 정말로 당신의 판단이 필요한 딱 세 가지만 전달합니다.",
   "Indie &amp;": "인디 &amp;",
   "major labels": "메이저 레이블",
   "Every artist, every release — one picture.": "모든 아티스트, 모든 릴리스를 하나의 그림으로.",
@@ -322,7 +322,7 @@ export const KO_HOMEPAGE_COPY: Readonly<Record<string, string>> = {
   "partners": "파트너",
   "Scale without the spreadsheet sprawl.": "스프레드시트를 늘리지 않고 확장하세요.",
   "Hundreds of releases, one reasoning layer across every partner, pipeline and deadline.":
-    "수백 건의 릴리스를, 모든 파트너와 파이프라인과 마감에 걸친 하나의 추론 레이어로.",
+    "수백 건의 릴리스를 하나의 인텔리전스 레이어로 연결해, 모든 파트너와 파이프라인, 마감을 함께 관리합니다.",
 
   // ── act: the credo ──
   "Not another tool.": "또 하나의 도구가 아니라,",
