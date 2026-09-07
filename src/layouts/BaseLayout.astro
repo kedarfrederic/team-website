@@ -90,11 +90,17 @@ const siteOrigin = (Astro.site ?? new URL("https://teamrollouts.com")).origin;
 const finalOgImage = seo?.ogImage ?? ogImage ?? defaultSeo.ogImage;
 // Precedence: Sanity image (editor-controlled) → static ogImageUrl prop →
 // site-wide default. Root-relative prop paths are absolutized for crawlers.
+//
+// The default MUST be a file that exists in public/. It was
+// `https://teamrollouts.com/og-image.png`, which never has been — so every page
+// that did not pass its own `ogImageUrl` (all of them except the homepage)
+// advertised a 404 as its social preview, and the only symptom was a blank card
+// in someone else's Slack. `scripts/check-og-images.mjs` now gates this.
 const ogImageUrl = finalOgImage?.asset?._ref
   ? urlFor(finalOgImage).width(1200).height(630).fit("crop").url()
   : ogImageUrlProp
     ? new URL(ogImageUrlProp, siteOrigin).toString()
-    : "https://teamrollouts.com/og-image.png";
+    : new URL("/v2/assets/og.png", siteOrigin).toString();
 
 const noIndex = seo?.noIndex === true || previewMode;
 const canonicalUrl =
