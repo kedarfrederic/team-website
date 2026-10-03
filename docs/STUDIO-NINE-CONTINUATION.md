@@ -50,3 +50,7 @@ The 10 existing article routes and 166 changelog entries are sourced from existi
 4. Obtain the user's approval for the verified production change, merge the existing-site PR, and verify production on the exact deployment SHA.
 
 Optional copy/pricing revisions remain deferred at the user's request. Do not resume Simon's Vercel deployment or claim local checks establish a live release.
+
+## Staging journey update (2026-10-03)
+
+The user requested staging validation before production. Website branch/hash previews on this project's `.team-website-6ur.pages.dev` subdomains now send signup/signin links to `team-pilot-staging-new.onrender.com`, preserving plan, period, language, redirect and hash. Canonical website hosts retain production app links. App PR #557 is merged to the staging branch as `e2a12ad140d915e62258ff8765da2c64740bd1cb`; staging build default `VITE_UI_NEXT=true` is enabled. Test account requested: `kedar+launch@teamrollouts.com`. Production promotion remains deferred until account and platform validation. Browser access for this staging account test was explicitly re-authorized.

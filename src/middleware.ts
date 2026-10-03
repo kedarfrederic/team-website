@@ -1,6 +1,6 @@
 import { renderDesignHtml } from "./studio-nine/localize";
 import { getDesignContent } from "./studio-nine/cms";
-import { localeFromPath } from "./studio-nine/lib/i18n/routes";
+import { localeFromPath, appOriginForWebsite } from "./studio-nine/lib/i18n/routes";
 import { isPreviewRequest } from "./lib/sanity";
 import { defineMiddleware } from "astro:middleware";
 
@@ -39,7 +39,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const html = await response.text();
   if (!html.includes('name="team-design" content="studio-nine-v3"')) return new Response(html,response);
   const maps = await getDesignContent(context);
-  const output = renderDesignHtml(html,localeFromPath(url.pathname),maps.copy,maps.media,maps.links);
+  const output = renderDesignHtml(html,localeFromPath(url.pathname),maps.copy,maps.media,maps.links,appOriginForWebsite(url.hostname));
   const headers = new Headers(response.headers);
   headers.delete('content-length');
   // All draft responses bypass intermediary caches, including ?preview=1.

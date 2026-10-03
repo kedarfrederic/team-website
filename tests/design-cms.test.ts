@@ -3,7 +3,7 @@ import {JSDOM} from 'jsdom';
 import {renderDesignHtml} from '../src/studio-nine/localize';
 import {contentMaps,pageIdentity,safeDestination} from '../src/studio-nine/cms';
 import {isPreviewRequest,getClient} from '../src/lib/sanity';
-import {translatedPaths,appLink} from '../src/studio-nine/lib/i18n/routes';
+import {translatedPaths,appLink,appOriginForWebsite,productionAppOrigin,stagingAppOrigin} from '../src/studio-nine/lib/i18n/routes';
 import {experimental_AstroContainer as AstroContainer} from 'astro/container';
 import Home from '../src/studio-nine/pages/index.astro';
 import Pricing from '../src/studio-nine/pages/pricing.astro';
@@ -31,6 +31,18 @@ describe('Sanity-backed new design',()=>{
   const d=dom(renderDesignHtml('<a href="/pricing?period=yearly#pro">Pricing</a><a href="https://app.teamrollouts.com/onboarding?plan=pro&period=yearly">Start free</a><script type="application/ld+json">{"@type":"Organization","url":"https://teamrollouts.com","inLanguage":"en","priceCurrency":"USD"}</script>','ko'));
   expect(d.querySelector('a')?.getAttribute('href')).toBe('/ko/pricing?period=yearly#pro');expect(d.querySelectorAll('a')[1].getAttribute('href')).toContain('lang=ko');
   const json=JSON.parse(d.querySelector('script')!.textContent!);expect(json.url).toBe('https://teamrollouts.com');expect(json.priceCurrency).toBe('USD');expect(json.inLanguage).toBe('ko-KR');
+ });
+ it('keeps preview account links on staging and preserves plan, language and destination',()=>{
+  const html='<a href="https://app.teamrollouts.com/onboarding?plan=free&amp;redirect_url=%2Finvite%2Flaunch#account">Start free</a><a href="https://app.teamrollouts.com/sign-in">Sign in</a><a href="https://example.com/media">Media</a>';
+  for(const locale of ['en','ko'] as const){
+   const preview=dom(renderDesignHtml(html,locale,{}, {}, {},appOriginForWebsite('abc12345.team-website-6ur.pages.dev')));
+   const links=[...preview.querySelectorAll('a')];
+   const signup=new URL(links[0].href);expect(signup.origin).toBe(stagingAppOrigin);expect(signup.searchParams.get('plan')).toBe('free');expect(signup.searchParams.get('redirect_url')).toBe('/invite/launch');expect(signup.searchParams.get('lang')).toBe(locale);expect(signup.hash).toBe('#account');
+   expect(new URL(links[1].href).origin).toBe(stagingAppOrigin);expect(links[2].href).toBe('https://example.com/media');
+  }
+  for(const host of ['teamrollouts.com','www.teamrollouts.com','team-website-6ur.pages.dev','fake.team-website-6ur.pages.dev.example.com'])expect(appOriginForWebsite(host)).toBe(productionAppOrigin);
+  const production=dom(renderDesignHtml(html,'en'));
+  expect(new URL(production.querySelector('a')!.href).origin).toBe(productionAppOrigin);
  });
  it('updates dialog image data and social cards alongside page images',()=>{
   const d=dom(renderDesignHtml('<img src="/studio-nine/img/a.webp"><script type="application/json">{"photo":"/studio-nine/img/a.webp"}</script><meta property="og:image" content="https://teamrollouts.com/studio-nine/img/a.webp">','en',{}, {'/studio-nine/img/a.webp':'https://cdn.sanity.io/images/g1olb5am/production/replacement.jpg'}));

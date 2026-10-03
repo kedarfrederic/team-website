@@ -1,15 +1,15 @@
 import {parse,serialize} from 'parse5';
 import {stegaClean} from '@sanity/client/stega';
-import {hasTranslation,localizedLink,canonicalLocalePath,type Locale} from './lib/i18n/routes';
+import {hasTranslation,localizedLink,canonicalLocalePath,productionAppOrigin,type Locale} from './lib/i18n/routes';
 import {translateCopy,normalizeCopy} from './lib/i18n/translate';
-export function renderDesignHtml(html:string,locale:Locale,copyOverrides:Record<string,string>={},mediaOverrides:Record<string,string>={},linkOverrides:Record<string,string>={}){
+export function renderDesignHtml(html:string,locale:Locale,copyOverrides:Record<string,string>={},mediaOverrides:Record<string,string>={},linkOverrides:Record<string,string>={},appOrigin=productionAppOrigin){
  const textCopy=(text:string)=>{const value=copyOverrides[normalizeCopy(text)];return value===undefined?(locale==='ko'?translateCopy(text):text):(text.match(/^\s*/)?.[0]||'')+value+(text.match(/\s*$/)?.[0]||'');};
  const root:any=parse(html);
  const attr=(node:any,name:string)=>node.attrs?.find((a:any)=>a.name===name);
  const jsonCopy=(value:any,key='',ownerType=''):any=>{
   if(typeof value==='string'){
    if(mediaOverrides[value])return mediaOverrides[value];
-   if(linkOverrides[value])return localizedLink(linkOverrides[value],locale);
+   if(linkOverrides[value])return localizedLink(linkOverrides[value],locale,appOrigin);
    if(key==='inLanguage')return locale==='ko'?'ko-KR':'en';
    if(key.startsWith('@')||['applicationCategory','operatingSystem','priceCurrency','category'].includes(key))return value;
    if(locale==='ko'&&key==='url'&&ownerType!=='Organization'&&value.startsWith('https://teamrollouts.com')){
@@ -34,7 +34,7 @@ export function renderDesignHtml(html:string,locale:Locale,copyOverrides:Record<
   }
   if(node.nodeName==='#text'&&!['script','style'].includes(node.parentNode?.nodeName))node.value=textCopy(node.value);
   for(const a of node.attrs||[]){
-   if(a.name==='href'&&node.nodeName==='a'&&!attr(node,'data-locale-choice'))a.value=localizedLink(linkOverrides[a.value]||a.value,locale);
+   if(a.name==='href'&&node.nodeName==='a'&&!attr(node,'data-locale-choice'))a.value=localizedLink(linkOverrides[a.value]||a.value,locale,appOrigin);
    if(a.name==='src'&&node.nodeName==='img'&&mediaOverrides[a.value])a.value=mediaOverrides[a.value];
    if(node.nodeName==='meta'&&a.name==='content'&&['og:image','twitter:image'].includes(attr(node,'property')?.value||attr(node,'name')?.value)){const source=a.value.replace('https://teamrollouts.com','');if(mediaOverrides[source])a.value=mediaOverrides[source];}
    if((['alt','title','aria-label','placeholder','data-per-year','data-per-month','data-suffix'].includes(a.name)||node.nodeName==='meta'&&a.name==='content'&&['description','og:title','og:description','og:image:alt','twitter:title','twitter:description'].includes(attr(node,'name')?.value||attr(node,'property')?.value)))a.value=textCopy(a.value);
