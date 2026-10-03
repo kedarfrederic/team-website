@@ -35,13 +35,13 @@ describe('Sanity-backed new design',()=>{
  });
  it('keeps preview account links on staging and preserves plan, language and destination',()=>{
   const html='<a href="https://app.teamrollouts.com/onboarding?plan=free&amp;redirect_url=%2Finvite%2Flaunch#account">Start free</a><a href="https://app.teamrollouts.com/sign-in">Sign in</a><a href="https://example.com/media">Media</a>';
-  for(const locale of ['en','ko'] as const){
-   const preview=dom(renderDesignHtml(html,locale,{}, {}, {},appOriginForWebsite('abc12345.team-website-6ur.pages.dev')));
+  for(const locale of ['en','ko'] as const)for(const host of ['abc12345.team-website-6ur.pages.dev','preview.teamrollouts.com','PREVIEW.TEAMROLLOUTS.COM']){
+   const preview=dom(renderDesignHtml(html,locale,{}, {}, {},appOriginForWebsite(host)));
    const links=[...preview.querySelectorAll('a')];
    const signup=new URL(links[0].href);expect(signup.origin).toBe(stagingAppOrigin);expect(signup.searchParams.get('plan')).toBe('free');expect(signup.searchParams.get('redirect_url')).toBe('/invite/launch');expect(signup.searchParams.get('lang')).toBe(locale);expect(signup.hash).toBe('#account');
    expect(new URL(links[1].href).origin).toBe(stagingAppOrigin);expect(links[2].href).toBe('https://example.com/media');
   }
-  for(const host of ['teamrollouts.com','www.teamrollouts.com','team-website-6ur.pages.dev','fake.team-website-6ur.pages.dev.example.com'])expect(appOriginForWebsite(host)).toBe(productionAppOrigin);
+  for(const host of ['teamrollouts.com','www.teamrollouts.com','team-website-6ur.pages.dev','fake.team-website-6ur.pages.dev.example.com','preview.teamrollouts.com.evil.example','fake-preview.teamrollouts.com'])expect(appOriginForWebsite(host)).toBe(productionAppOrigin);
   const production=dom(renderDesignHtml(html,'en'));
   expect(new URL(production.querySelector('a')!.href).origin).toBe(productionAppOrigin);
  });
