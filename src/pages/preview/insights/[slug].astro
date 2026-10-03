@@ -1,0 +1,6 @@
+---
+import Page from '../../../studio-nine/pages/insights/[slug].astro';
+import {isPreviewRequest} from '../../../lib/sanity';
+if(!isPreviewRequest(Astro))return Astro.redirect(`/insights/${Astro.params.slug}`);
+---
+<Page />

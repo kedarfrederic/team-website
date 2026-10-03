@@ -1,0 +1,35 @@
+---
+import type { Mock } from '../data/products';
+interface Props { mock: Mock; class?: string; tone?: 'white'|'green'|'lav'|'pink'|'cyan'|'lime'|'ink'; }
+const { mock, class: cls = '', tone = 'white' } = Astro.props;
+---
+<div class:list={['mock', `mock--${tone}`, cls]}>
+  <p class="mock__t"><span class="mock__dots"></span>{mock.title}</p>
+  <ul class="mock__rows">
+    {mock.rows.map(r => (
+      <li class="mock__row">
+        <div><b>{r.l}</b>{r.s && <span>{r.s}</span>}</div>
+        {r.tag && <span class:list={['tag', { 'tag--lime': r.tone === 'lime', 'tag--orange': r.tone === 'orange' }]}>{r.tag}</span>}
+      </li>
+    ))}
+  </ul>
+  {mock.foot && <p class="mock__foot">{mock.foot}</p>}
+</div>
+<style>
+  .mock{--bg:var(--white);--fg:var(--ink);--row:var(--paper);background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:var(--r-xl);box-shadow:var(--shadow-lg);padding:1.1rem;display:grid;gap:.8rem;width:100%}
+  .mock--green{--bg:var(--viv-green);--fg:var(--white);--row:var(--white);border-color:transparent}
+  .mock--lav{--bg:var(--viv-lav);--row:var(--white);border-color:transparent}
+  .mock--pink{--bg:var(--viv-pink);--row:var(--white);border-color:transparent}
+  .mock--cyan{--bg:var(--viv-cyan);--row:var(--white);border-color:transparent}
+  .mock--lime{--bg:var(--lime);--row:var(--white);border-color:transparent}
+  .mock--ink{--bg:var(--ink);--fg:var(--on-dark);--row:var(--dark-2);border-color:transparent}
+  .mock__t{display:flex;align-items:center;gap:.5rem;font-size:.78rem;font-weight:500;opacity:.85;padding:.2rem .3rem 0}
+  .mock__dots{width:.45rem;height:.45rem;border-radius:50%;background:currentColor;opacity:.55;box-shadow:.75rem 0 0 currentColor,1.5rem 0 0 currentColor;margin-right:1.5rem}
+  .mock__rows{display:grid;gap:.4rem}
+  .mock__row{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:.75rem .9rem;border-radius:calc(var(--r-xl) - 1.1rem);background:var(--row);color:var(--ink)}
+  .mock--ink .mock__row{color:var(--on-dark)}
+  .mock__row b{display:block;font-weight:500;font-size:.93rem;line-height:1.3}
+  .mock__row div span{display:block;font-size:.76rem;opacity:.6;margin-top:.15rem}
+  .mock__row .tag{flex:none;white-space:nowrap}
+  .mock__foot{font-size:.82rem;opacity:.85;line-height:1.4;padding:.2rem .3rem 0}
+</style>

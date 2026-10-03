@@ -1,0 +1,48 @@
+---
+import { site } from '../../data/site';
+---
+<section class="pl section section--paper" id="pricing">
+  <div class="wrap">
+    <div class="head head--center">
+      <h2 class="h1 lines"><span class="line"><span>Start free.</span></span><span class="line"><span>Go Pro when you <em>want more.</em></span></span></h2>
+      <p class="lead" data-reveal style="margin-inline:auto">Rollouts and Assets are free forever, with unlimited artists, releases and collaborators. Pro adds TeamMate, Tours and Connectors.</p>
+    </div>
+    <div class="pl__grid" data-reveal-stagger="0.12">
+      <article class="pl__card">
+        <p class="pl__k">Free</p>
+        <p class="pl__price"><b>$0</b><span>forever</span></p>
+        <p class="pl__d">The full release platform for every artist, manager and label. 1 seat, unlimited everything else.</p>
+        <ul class="pl__list"><li>Rollouts</li><li>Assets</li><li>Unlimited artists and releases</li><li>Unlimited collaborators</li></ul>
+        <a class="btn btn--lime btn--lg" href={site.cta.app + '?plan=free'}>Start free <span class="arr">→</span></a>
+        <p class="cta-note">No card required.</p>
+      </article>
+      <article class="pl__card pl__card--pro">
+        <p class="pl__k">Pro <span class="tag tag--lime">Beta pricing · about half off</span></p>
+        <p class="pl__price"><b>$39.96</b><span>/mo, billed yearly · 2 seats</span></p>
+        <p class="pl__d">For teams who want TeamMate doing the admin, and their tools connected.</p>
+        <ul class="pl__list"><li>Everything in Free</li><li>TeamMate, the AI that does the admin</li><li>Tours</li><li>Connectors to the tools you already use</li><li>First access to new betas, priority support</li></ul>
+        <a class="btn btn--lime btn--lg" href={site.cta.app + '?plan=pro&period=yearly'}>Start a 14-day Pro trial <span class="arr">→</span></a>
+        <p class="cta-note">Cancel any time.</p>
+      </article>
+    </div>
+    <p class="pl__more" data-reveal><a class="link" href="/pricing">Compare everything on the pricing page <span class="arr">→</span></a></p>
+  </div>
+</section>
+<style>
+  .pl__grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.25rem;max-width:56rem;margin-inline:auto}
+  .pl__card{background:var(--white);border:1px solid var(--line);border-radius:var(--r-xl);padding:2rem;display:grid;gap:1rem;align-content:start}
+  .pl__card--pro{background:var(--ink);color:var(--on-dark);border-color:transparent}
+  .pl__k{font-weight:500;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+  .pl__price{display:flex;align-items:baseline;gap:.5rem}
+  .pl__price b{font-size:3rem;font-weight:500;letter-spacing:-.04em;line-height:1}
+  .pl__price span{color:var(--ink-40);font-size:.9rem}
+  .pl__card--pro .pl__price span,.pl__card--pro .pl__d,.pl__card--pro .cta-note{color:var(--on-dark-60)}
+  .pl__d{color:var(--ink-60);line-height:1.5}
+  .pl__list{display:grid;gap:.45rem;margin:.5rem 0 .75rem}
+  .pl__list li{position:relative;padding-left:1.4rem;font-size:.95rem}
+  .pl__list li::before{content:'✓';position:absolute;left:0;top:.35em;width:.9rem;height:.9rem;border-radius:50%;background:var(--lime);color:var(--ink);font-size:.55rem;display:grid;place-items:center}
+  .pl__card .btn{justify-self:start}
+  .pl__card .cta-note{margin-top:0}
+  .pl__more{text-align:center;margin-top:2rem}
+  @media (max-width:760px){.pl__grid{grid-template-columns:1fr}}
+</style>

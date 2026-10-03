@@ -1,0 +1,158 @@
+---
+import { graph, software } from '../lib/seo';
+import Base from '../layouts/Base.astro';
+import MockCard from './MockCard.astro';
+import ConnectorsHero from './ConnectorsHero.astro';
+import ProductIllo from './ProductIllo.astro';
+import { products, byId, type Product } from '../data/products';
+interface Props { product: Product; }
+const { product: p } = Astro.props;
+const schema = graph(software({ name: p.name, description: p.lead, url: `/${p.slug}`, pro: p.pro }));
+const rel = p.related.map(r => r === 'security' ? { slug: 'security', name: 'Security', lead: 'Your data stays yours. Never used to train models. Permissioned and revocable.' } : { slug: r, name: byId(r).name, lead: byId(r).lead.split('. ')[0] + '.' });
+---
+<Base title={p.title} description={p.lead} schema={schema} closing={p.pro ? 'handled' : 'released'} section="product">
+  <section class="ph">
+    <div class="wrap ph__in">
+      <div class="ph__copy">
+        {p.pro && <p class="pro-label" data-reveal><b>Pro</b>Included in the 14-day trial</p>}
+        <h1 class="display lines"><span class="line"><span>{p.h1[0]}</span></span><span class="line"><span><em>{p.h1[1]}</em></span></span></h1>
+        <p class="lead" data-reveal style="transition-delay:.2s">{p.lead}</p>
+        <div class="cta-row" data-reveal style="transition-delay:.3s">
+          <a class="btn btn--lg btn--lime" href={p.cta.href}>{p.cta.label} <span class="arr">→</span></a>
+          <a class="btn btn--ghost btn--lg" href={p.cta2.href}>{p.cta2.label}</a>
+        </div>
+        <p class="cta-note" data-reveal style="transition-delay:.4s">{p.note}</p>
+      </div>
+      <div class="ph__media" data-reveal style="transition-delay:.25s">
+        {p.slug === 'connectors' ? <ConnectorsHero /> : <ProductIllo product={p.slug as any} panel="hero" />}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--paper">
+    <div class="wrap">
+      <div class="prob">
+        <h2 class="h1 lines"><span class="line"><span>{p.problem[0]}</span></span><span class="line"><span><em>{p.problem[1]}</em></span></span></h2>
+        <p class="lead" data-reveal>{p.problemBody}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section demos">
+    <div class="wrap">
+      {p.demos.map((d, i) => (
+        <div class:list={['demo', { 'demo--flip': i % 2 === 1 }]} data-reveal>
+          <div class="demo__copy">
+            <p class="demo__n tnum">0{i + 1} / 0{p.demos.length}</p>
+            <h3 class="h2">{d.h}</h3>
+            <p class="lead">{d.d}</p>
+          </div>
+          <div class="demo__media"><ProductIllo product={p.slug as any} panel={i as any} /></div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  {p.slug === 'connectors' && (
+    <section class="section section--paper" id="catalogue">
+      <div class="wrap">
+        <div class="head"><h2 class="h1">The <em>catalogue.</em></h2><p class="lead">The tools most releases run on come first. We add connectors constantly and prioritise by what people ask for.</p></div>
+        <ul class="catf" data-reveal-stagger="0.06">
+          {([['dropbox','Dropbox','Masters, artwork, video','var(--viv-pink)'],['googledrive','Google Drive','Files and folders','var(--viv-lav)'],['slack','Slack','Decisions in threads','var(--lime)'],['gmail','Gmail','Partners and press','var(--paper-2)'],['googlesheets','Google Sheets','Budgets and trackers','var(--viv-green)'],['notion-dark','Notion','Plans and one-sheets','var(--viv-cyan)'],['googlecalendar','Google Calendar','Dates and shoots','var(--viv-orange)'],['theorchard','The Orchard','Delivery and metadata','var(--paper-2)']] as [string,string,string,string][]).map(([l,n,d,c]) => (
+            <li class="catf__i" style={`--bg:${c};--fg:${c.includes('green')||c.includes('orange') ? 'var(--white)' : 'var(--ink)'}`}><span class="catf__ic"><img src={`/studio-nine/logos/${l}.svg`} alt="" loading="lazy" /></span><b>{n}</b><span>{d}</span><i class="catf__st">Live</i></li>
+          ))}
+        </ul>
+        <ul class="cat" data-reveal-stagger="0.03">
+          {([['box','Box'],['outlook','Outlook'],['googledocs','Google Docs'],['airtable','Airtable'],['asana','Asana'],['monday','monday.com'],['trello','Trello'],['clickup','ClickUp'],['linear','Linear'],['zoom','Zoom'],['microsoftteams','Microsoft Teams'],['instagram','Instagram'],['youtube','YouTube'],['facebook','Facebook'],['discord','Discord'],['reddit','Reddit'],['believe','Believe'],['ticketmaster','Ticketmaster'],['eventbrite-wordmark','Eventbrite'],['bmi','BMI'],['ascap','ASCAP']] as [string,string][]).map(([l,n], i) => (
+            <li class="cat__i"><span class="cat__ic" style={`--c:${['var(--lime)','var(--viv-cyan)','var(--viv-lav)','var(--viv-pink)','var(--paper-2)'][i % 5]}`}><img src={`/studio-nine/logos/${l}.${l==='believe'?'png':'svg'}`} alt="" loading="lazy" /></span><span>{n}</span></li>
+          ))}
+        </ul>
+        <p class="cat__more" data-reveal>Don't see the one you need? <a class="link" href="/contact">Tell us what you run on <span class="arr">→</span></a></p>
+      </div>
+    </section>
+  )}
+
+  {p.tm.log.length > 0 && (
+    <section class="section section--dark tmb">
+      <div class="wrap tmb__in">
+        <div>
+          <h2 class="h1"><span set:html={p.tm.h.replace(/(overnight|honest|on your terms|and only yours)\./, '<em>$1.</em>')} /></h2>
+          <p class="lead">{p.tm.d}</p>
+          {p.slug !== 'teammate' && <a class="btn btn--white" href="/teammate">Meet TeamMate <span class="arr">→</span></a>}
+          {p.slug === 'teammate' && <a class="btn btn--white" href="/security">How we keep it that way <span class="arr">→</span></a>}
+        </div>
+        <ol class="tmb__log" data-reveal-stagger="0.15">
+          {p.tm.log.map(l => <li class:list={['tmb__line', { 'is-needs': !l.ok, 'tmb__line--notime': !l.t }]}>{l.t && <span class="tnum">{l.t}</span>}<i>{l.ok ? '✓' : '!'}</i><span>{l.m}</span></li>)}
+        </ol>
+      </div>
+    </section>
+  )}
+
+  <section class="section rel">
+    <div class="wrap">
+      <h2 class="h2 rel__h" data-reveal>Part of the same <em>release.</em></h2>
+      <div class="rel__grid" data-reveal-stagger>
+        {rel.map(r => (
+          <a class="rel__card" href={'/' + r.slug} style={`--c:${({rollouts:'var(--team-music)',assets:'var(--team-press)',tours:'var(--team-distro)',teammate:'var(--viv-cyan)',connectors:'var(--viv-pink)',security:'var(--viv-green)'} as Record<string,string>)[r.slug]}`}>
+            <span class="rel__badge"><svg viewBox="0 0 64 64" width="56" height="56" aria-hidden="true"><circle class="rel__ring" cx="32" cy="32" r="30" fill="none" style="stroke:var(--ink-12)" stroke-width="1.5" stroke-dasharray="1.5 5" stroke-linecap="round"/><circle cx="32" cy="32" r="24" fill="none" style="stroke:var(--c)" stroke-width="3"/><circle cx="32" cy="32" r="16" style="fill:var(--c)"/><path d={({rollouts:'M24 27h16M24 32h10M24 37h13',assets:'M23 24h18v16H23zM23 35l5-5 4 4 3-3 6 6',tours:'M24 38c4-9 12-9 16 0M32 29a2 2 0 1 0 0-4 2 2 0 0 0 0 4z',teammate:'M32 23l1.8 5.2L39 30l-5.2 1.8L32 37l-1.8-5.2L25 30l5.2-1.8z',connectors:'M26 32a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM38 26a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM38 38a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM28.3 28.8l7.4-3.6M28.3 31.2l7.4 3.6',security:'M32 23l6 3v5c0 4-3 6.5-6 8-3-1.5-6-4-6-8v-5z'} as Record<string,string>)[r.slug]} fill="none" style="stroke:var(--ink)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <b>{r.name}{r.slug !== 'rollouts' && r.slug !== 'assets' && r.slug !== 'security' && <span class="tag tag--pro">Pro</span>}</b>
+            <span>{r.lead}</span>
+            <span class="rel__go"><span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>Explore</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .ph{padding:calc(4.5rem + clamp(3rem,7vw,6rem)) 0 clamp(3rem,6vw,5rem);background:var(--white)}
+  .ph__in{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(2rem,5vw,5rem);align-items:center}
+  .ph__copy{display:grid;gap:1.5rem}
+  .ph__copy .display{font-size:clamp(3.1rem,6vw,5.4rem)}
+  .ph__copy .lead{max-width:34rem}
+  .ph__media{max-width:30rem;justify-self:end;width:100%}
+  .prob{max-width:52rem}
+  .prob .lead{margin-top:1.25rem}
+  .demos .wrap{display:grid;gap:clamp(4rem,8vw,7rem)}
+  .demo{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,5vw,5rem);align-items:center}
+  .demo--flip .demo__copy{order:2}
+  .demo__copy{display:grid;gap:1rem;max-width:30rem}
+  .demo__n{font-size:.9rem;color:var(--ink-40)}
+  .demo__media{max-width:30rem;width:100%;justify-self:center}
+  .tmb__in{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,6vw,6rem);align-items:center}
+  .tmb__in>div{display:grid;gap:1.25rem;justify-items:start}
+  .tmb__log{display:grid;gap:.5rem}
+  .tmb__line{display:grid;grid-template-columns:2.8rem 1.5rem 1fr;gap:.7rem;align-items:start;padding:.9rem 1rem;border-radius:.9rem;background:var(--dark-2);color:var(--on-dark);line-height:1.4}
+  .tmb__line>.tnum{color:var(--on-dark-60);font-size:.85rem;padding-top:.1rem;min-width:2.8rem}
+  .tmb__line--notime{grid-template-columns:1.5rem 1fr}
+  .tmb__line i{width:1.4rem;height:1.4rem;border-radius:50%;background:var(--lime);color:var(--ink);display:grid;place-items:center;font-size:.72rem;font-weight:600;font-style:normal}
+  .tmb__line.is-needs i{background:var(--orange);color:var(--white)}
+  .rel__h{margin-bottom:1.75rem}
+  .rel__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+  .rel__card{position:relative;display:grid;grid-template-rows:auto auto 1fr auto;gap:.6rem;align-content:start;padding:1.5rem;border-radius:var(--r-xl);background:var(--white);border:1px solid var(--line);transition:transform .3s var(--ease),box-shadow .3s}
+  .rel__card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
+  .rel__badge{display:block;margin-bottom:.4rem}
+  .rel__ring{transform-box:fill-box;transform-origin:center;animation:relspin 60s linear infinite}
+  @keyframes relspin{to{transform:rotate(360deg)}}
+  .rel__card b{font-size:1.2rem;font-weight:500;letter-spacing:-.02em;display:flex;align-items:center;gap:.5rem}
+  .rel__card>span:not(.rel__badge):not(.rel__go){color:var(--ink-60);line-height:1.45;font-size:.95rem}
+  .rel__go{display:inline-flex;align-items:center;gap:.6rem;margin-top:.6rem;align-self:end;font-weight:500;font-size:.92rem}
+  .rel__go .tile{flex:none;width:2rem;height:2rem;border-radius:.6rem;background:var(--c);display:flex;align-items:center;justify-content:center;color:var(--ink);transition:border-radius .3s var(--ease)}
+  .rel__go .tile svg{width:1rem;height:1rem;min-width:1rem;display:block}
+  .rel__card:hover .rel__go .tile{border-radius:50%}
+  .catf{display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem;margin-bottom:.8rem}
+  .catf__i{position:relative;display:grid;gap:.15rem;align-content:start;padding:1.1rem;border-radius:var(--r-lg);background:var(--bg);color:var(--fg);min-height:9.5rem}
+  .catf__ic{width:2.6rem;height:2.6rem;border-radius:.8rem;background:var(--white);display:grid;place-items:center;margin-bottom:.6rem}
+  .catf__ic img{width:1.5rem;height:1.5rem;object-fit:contain}
+  .catf__i b{font-weight:500;font-size:1rem}
+  .catf__i>span:not(.catf__ic){font-size:.8rem;opacity:.8}
+  .catf__st{position:absolute;top:.9rem;right:.9rem;font-style:normal;font-size:.62rem;font-weight:600;padding:.15rem .45rem;border-radius:99px;background:rgba(255,255,255,.85);color:var(--ink)}
+  .catf__i[style*='paper-2'] .catf__ic{background:var(--white);box-shadow:inset 0 0 0 1px var(--line)}
+  .cat{display:grid;grid-template-columns:repeat(auto-fill,minmax(10rem,1fr));gap:.6rem}
+  .cat__i{display:flex;align-items:center;gap:.65rem;padding:.6rem .7rem;border-radius:.9rem;background:var(--white);border:1px solid var(--line);font-size:.86rem;font-weight:500}
+  .cat__ic{flex:none;width:2rem;height:2rem;border-radius:.6rem;background:var(--c);display:grid;place-items:center}
+  .cat__ic img{width:1.1rem;height:1.1rem;object-fit:contain}
+  .cat__more{margin-top:1.5rem;color:var(--ink-60)}
+  @media (max-width:900px){.ph__in,.demo,.tmb__in{grid-template-columns:1fr}.demo--flip .demo__copy{order:0}.ph__media{justify-self:stretch;max-width:none}.rel__grid{grid-template-columns:1fr}.catf{grid-template-columns:repeat(2,1fr)}}
+</style>

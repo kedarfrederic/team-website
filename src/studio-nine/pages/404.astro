@@ -1,0 +1,11 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base title="Page not found">
+  <section class="nf"><div class="wrap">
+    <h1 class="display">That one <em>slipped.</em></h1>
+    <p class="lead">The page you were after is not here. Ironic, we know.</p>
+    <div class="cta-row"><a class="btn btn--primary btn--lg" href="/">Back home <span class="arr">→</span></a><a class="btn btn--lime btn--lg" href="/pricing">Start free</a></div>
+  </div></section>
+</Base>
+<style>.nf{padding:calc(4.5rem + clamp(4rem,10vw,8rem)) 0 var(--section)}.nf .wrap{display:grid;gap:1.5rem;justify-items:start}</style>

@@ -1,0 +1,228 @@
+{
+  "hero-artist": {
+    "source": "Team studio editorial photography",
+    "file": "08-label-office-release-morning.webp",
+    "note": "Client-supplied, not a placeholder. Original in ../../assets/photography/"
+  },
+  "hiw-1-laptop": {
+    "unsplash_id": "photo-1633933769681-dc8d28bdeb6d",
+    "photographer": "erwimadethis",
+    "alt": "a laptop computer sitting on top of a desk",
+    "url": "https://unsplash.com/photos/1633933769681-dc8d28bdeb6d"
+  },
+  "hiw-2-producer": {
+    "source": "Team studio editorial photography",
+    "file": "09-community-gospel-session.webp",
+    "note": "Client-supplied, not a placeholder. Original in ../../assets/photography/"
+  },
+  "hiw-3-phone": {
+    "unsplash_id": "photo-1698769676432-912b21341fa0",
+    "photographer": "andreabuccelli",
+    "alt": "a man in a dark room looking at his cell phone",
+    "url": "https://unsplash.com/photos/1698769676432-912b21341fa0"
+  },
+  "hiw-4-artist": {
+    "unsplash_id": "photo-1698769676419-94609164dd31",
+    "photographer": "andreabuccelli",
+    "alt": "a man with a goatee stares into the distance",
+    "url": "https://unsplash.com/photos/1698769676419-94609164dd31"
+  },
+  "hiw-5-stage": {
+    "unsplash_id": "photo-1566808907623-51b8fc382454",
+    "photographer": "rkok",
+    "alt": "band performing on stage",
+    "url": "https://unsplash.com/photos/1566808907623-51b8fc382454"
+  },
+  "story-label": {
+    "unsplash_id": "photo-1587545634538-50a9b6b3168f",
+    "photographer": "littlegreeneyes",
+    "alt": "man in black shirt sitting on chair in front of computer",
+    "url": "https://unsplash.com/photos/1587545634538-50a9b6b3168f"
+  },
+  "story-manager": {
+    "unsplash_id": "photo-1606150119193-69ed87009dcf",
+    "photographer": "luismorerat",
+    "alt": "man in gray dress shirt standing beside counter",
+    "url": "https://unsplash.com/photos/1606150119193-69ed87009dcf"
+  },
+  "story-artist": {
+    "source": "Team studio editorial photography",
+    "file": "01-vocal-comp-at-dusk.webp",
+    "note": "Client-supplied, not a placeholder. Original in ../../assets/photography/"
+  },
+  "aud-artist": {
+    "source": "Team studio editorial photography",
+    "file": "08-drum-sound-problem-solving.webp",
+    "note": "Client-supplied, not a placeholder. Original in ../../assets/photography/"
+  },
+  "aud-manager": {
+    "source": "Team studio editorial photography",
+    "file": "02-live-room-direction.webp",
+    "note": "Client-supplied, not a placeholder. Original in ../../assets/photography/"
+  },
+  "aud-label": {
+    "source": "Team studio editorial photography",
+    "file": "05-post-session-playback.webp",
+    "note": "Client-supplied, not a placeholder. Original in ../../assets/photography/"
+  },
+  "aud-partner": {
+    "source": "Team studio editorial photography",
+    "file": "10-rooftop-studio-debrief.webp",
+    "note": "Client-supplied, not a placeholder. Original in ../../assets/photography/"
+  },
+  "about-hero": {
+    "unsplash_id": "photo-1730463527127-dd17dc3f0193",
+    "photographer": "jpetersbydesign",
+    "alt": "A black and white photo of a man playing a guitar",
+    "url": "https://unsplash.com/photos/1730463527127-dd17dc3f0193"
+  },
+  "face-1": {
+    "unsplash_id": "photo-1698769676419-94609164dd31",
+    "photographer": "andreabuccelli",
+    "alt": "a man with a goatee stares into the distance",
+    "url": "https://unsplash.com/photos/1698769676419-94609164dd31"
+  },
+  "face-2": {
+    "unsplash_id": "photo-1610716632424-4d45990bcd48",
+    "photographer": "rezli",
+    "alt": "man in black crew neck t-shirt sitting on chair in front of computer",
+    "url": "https://unsplash.com/photos/1610716632424-4d45990bcd48"
+  },
+  "face-3": {
+    "unsplash_id": "photo-1587545634538-50a9b6b3168f",
+    "photographer": "littlegreeneyes",
+    "alt": "man in black shirt sitting on chair in front of computer",
+    "url": "https://unsplash.com/photos/1587545634538-50a9b6b3168f"
+  },
+  "face-4": {
+    "unsplash_id": "photo-1606150119193-69ed87009dcf",
+    "photographer": "luismorerat",
+    "alt": "man in gray dress shirt standing beside counter",
+    "url": "https://unsplash.com/photos/1606150119193-69ed87009dcf"
+  },
+  "ins-feat": {
+    "unsplash_id": "photo-1598488035139-bdbb2231ce04",
+    "photographer": "caught_in_joy",
+    "alt": "A music recording studio with guitars on the wall and a large mixing console",
+    "url": "https://unsplash.com/photos/1598488035139-bdbb2231ce04"
+  },
+  "ins-1": {
+    "unsplash_id": "photo-1535406208535-1429839cfd13",
+    "photographer": "adigold1",
+    "alt": "close up photo of audio mixer",
+    "url": "https://unsplash.com/photos/1535406208535-1429839cfd13"
+  },
+  "ins-2": {
+    "unsplash_id": "photo-1514320291840-2e0a9bf2a9ae",
+    "photographer": "john_matychuk",
+    "alt": "music room with lights turned on",
+    "url": "https://unsplash.com/photos/1514320291840-2e0a9bf2a9ae"
+  },
+  "ins-3": {
+    "unsplash_id": "photo-1573339886430-32442b7ab985",
+    "photographer": "bentofan",
+    "alt": "pile of black train cases",
+    "url": "https://unsplash.com/photos/1573339886430-32442b7ab985"
+  },
+  "ins-4": {
+    "unsplash_id": "photo-1611426959571-9941542ea4a8",
+    "photographer": "trommelkopf",
+    "alt": "vinyl record on vinyl record player",
+    "url": "https://unsplash.com/photos/1611426959571-9941542ea4a8"
+  },
+  "ins-5": {
+    "unsplash_id": "photo-1618609377864-68609b857e90",
+    "photographer": "james2k",
+    "alt": "black and green audio mixer",
+    "url": "https://unsplash.com/photos/1618609377864-68609b857e90"
+  },
+  "ins-6": {
+    "unsplash_id": "photo-1627407660893-fe01f60d44c4",
+    "photographer": "luisgherasim",
+    "alt": "black flat screen computer monitor on brown wooden desk",
+    "url": "https://unsplash.com/photos/1627407660893-fe01f60d44c4"
+  },
+  "ins-7": {
+    "unsplash_id": "photo-1661261400335-7dc71eb2b5a6",
+    "photographer": "gytisb",
+    "alt": "a room with a desk and speakers",
+    "url": "https://unsplash.com/photos/1661261400335-7dc71eb2b5a6"
+  },
+  "ins-8": {
+    "unsplash_id": "photo-1735702518821-152854c0adc6",
+    "photographer": "jpetersbydesign",
+    "alt": "A group of people that are standing in front of a stage",
+    "url": "https://unsplash.com/photos/1735702518821-152854c0adc6"
+  },
+  "cover-release": {
+    "unsplash_id": "photo-1781756547472-46813046281c",
+    "photographer": "kaprion",
+    "alt": "A vinyl record spinning on a turntable in low light",
+    "url": "https://unsplash.com/photos/1781756547472-46813046281c"
+  },
+  "hero-manager": {
+    "source": "Team studio editorial photography",
+    "file": "06-manager-airport-dawn-landscape.webp",
+    "note": "Client-supplied, not a placeholder. Original in ../../assets/photography/"
+  },
+  "hero-label": {
+    "source": "Team studio editorial photography",
+    "file": "04-roster-meeting.webp",
+    "note": "Client-supplied, not a placeholder. Original in ../../assets/photography/"
+  },
+  "hero-partner": {
+    "source": "Team studio editorial photography",
+    "file": "03-beat-selection.webp",
+    "note": "Client-supplied, not a placeholder. Original in ../../assets/photography/"
+  },
+  "ins-88-problem": {
+    "source": "Team studio editorial photography",
+    "file": "08-coastal-field-recording-edit.webp",
+    "note": "Client-supplied, not a placeholder. Original in ../../assets/photography/"
+  },
+  "ins-ai-problem": {
+    "source": "Team studio editorial photography",
+    "file": "01-late-night-artist-bedroom-landscape.webp",
+    "note": "Client-supplied, not a placeholder. Original in ../../assets/photography/"
+  },
+  "ins-release-software": {
+    "source": "Team studio editorial photography",
+    "file": "02-independent-label-manager.webp",
+    "note": "Client-supplied, not a placeholder. Original in ../../assets/photography/"
+  },
+  "ins-ai-nuance": {
+    "source": "Team studio editorial photography",
+    "file": "04-roster-meeting.webp",
+    "note": "Client-supplied, not a placeholder. Original in ../../assets/photography/"
+  },
+  "ins-teammate": {
+    "source": "Team studio editorial photography",
+    "file": "07-mastering-approval.webp",
+    "note": "Client-supplied, not a placeholder. Original in ../../assets/photography/"
+  },
+  "ins-label-playbook": {
+    "source": "Team studio editorial photography",
+    "file": "06-synth-arrangement-at-dawn.png",
+    "note": "Client-supplied, not a placeholder. Original in ../../assets/photography/"
+  },
+  "ins-not-a-project": {
+    "source": "Team studio editorial photography",
+    "file": "05-rural-studio-playback.webp",
+    "note": "Client-supplied, not a placeholder. Original in ../../assets/photography/"
+  },
+  "ins-playlist-pitching": {
+    "source": "Team studio editorial photography",
+    "file": "05-manager-train-rain-landscape.webp",
+    "note": "Client-supplied, not a placeholder. Original in ../../assets/photography/"
+  },
+  "ins-release-checklist": {
+    "source": "Team studio editorial photography",
+    "file": "07-independent-artist-home-studio-square.webp",
+    "note": "Client-supplied, not a placeholder. Original in ../../assets/photography/"
+  },
+  "ins-when-to-pitch": {
+    "source": "Team studio editorial photography",
+    "file": "03-manager-backstage-portrait.webp",
+    "note": "Client-supplied, not a placeholder. Original in ../../assets/photography/"
+  }
+}

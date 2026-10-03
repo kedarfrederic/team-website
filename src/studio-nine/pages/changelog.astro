@@ -1,0 +1,38 @@
+---
+import Base from '../layouts/Base.astro';
+import {readChangelog} from '../editorial';
+const entries: {d:string;t:string;b:string;k:string;c:string;tag:string}[]=(await readChangelog(Astro)).map((e:any)=>({d:new Date(e.releaseDate).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}),t:e.title,b:e.description,k:({new:'New',improved:'Improved',fixed:'Fixed',performance:'Performance'} as Record<string,string>)[e.type]||e.type,c:({new:'var(--lime)',improved:'var(--viv-cyan)',fixed:'var(--team-press)',performance:'var(--team-mgmt)'} as Record<string,string>)[e.type]||'var(--paper)',tag:e.groupHeadline||'Team'}));
+---
+<Base title="Changelog — what we shipped in Team" description="Updates, improvements and fixes shipped in Team." theme="paper">
+  <section class="cl">
+    <div class="wrap">
+      <div class="cl__head">
+        <h1 class="display">Changelog</h1>
+        <p class="lead">What we shipped, month by month. New things land here first.</p>
+      </div>
+      <ol class="cl__list" data-reveal-stagger="0.1">
+        {entries.map(e => (
+          <li class="cl__item">
+            <span class="cl__date">{e.d}</span>
+            <article class="tile" style={`--bg:${e.c};--fg:${e.c.includes('orange') ? 'var(--white)' : 'var(--ink)'}`}>
+              <span class="tile__bar"><span class="tile__bar-l"><i class="tile__dots"></i>{e.tag}</span><span class="cl__kind">{e.k}</span></span>
+              <h2 class="h3">{e.t}</h2>
+              <p>{e.b}</p>
+            </article>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+</Base>
+<style>
+  .cl{padding:calc(4.5rem + clamp(2rem,5vw,4rem)) 0 var(--section)}
+  .cl__head{display:grid;gap:1rem;max-width:44rem;margin-bottom:clamp(2rem,5vw,3.5rem)}
+  .cl__head .lead{margin-top:.6rem}
+  .cl__list{display:grid;gap:1rem;max-width:52rem}
+  .cl__item{display:grid;grid-template-columns:10rem 1fr;gap:1.5rem;align-items:start}
+  .cl__date{font-size:.9rem;font-weight:500;color:var(--ink-60);padding-top:1.35rem;position:relative}
+  .cl__date::after{content:'';position:absolute;right:-1.05rem;top:1.65rem;width:.6rem;height:.6rem;border-radius:50%;background:var(--ink)}
+  .cl__kind{font-size:.66rem;font-weight:600;padding:.15rem .5rem;border-radius:99px;background:rgba(255,255,255,.85);color:var(--ink)}
+  @media (max-width:640px){.cl__item{grid-template-columns:1fr;gap:.4rem}.cl__date{padding-top:0}.cl__date::after{display:none}}
+</style>

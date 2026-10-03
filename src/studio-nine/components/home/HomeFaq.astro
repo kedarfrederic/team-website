@@ -1,0 +1,16 @@
+---
+import { homeFaq as faq } from '../../data/faqs';
+---
+<section class="section section--paper" id="faq">
+  <div class="wrap faq">
+    <div class="head"><h2 class="h1">FAQs</h2></div>
+    <div class="faq__list">
+      {faq.map(([q, a], i) => (
+        <details class="faq__i" open={i === 0}>
+          <summary><span class="faq__n tnum">0{i + 1}</span><span class="faq__q">{q}</span><span class="faq__x" aria-hidden="true"></span></summary>
+          <p>{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>

@@ -10,6 +10,7 @@
  * the right shape.
  */
 
+import type {ComponentProps} from "astro/types";
 import MockGantt from "./MockGantt.astro";
 import MockBudget from "./MockBudget.astro";
 import MockChat from "./MockChat.astro";
@@ -23,7 +24,7 @@ const { value } = Astro.props;
 const type = value?._type;
 ---
 
-{type === "mockGantt" && <MockGantt value={value} />}
-{type === "mockBudget" && <MockBudget value={value} />}
-{type === "mockChat" && <MockChat value={value} />}
-{type === "mockTimeline" && <MockTimeline value={value} />}
+{type === "mockGantt" && <MockGantt value={value as ComponentProps<typeof MockGantt>["value"]} />}
+{type === "mockBudget" && <MockBudget value={value as ComponentProps<typeof MockBudget>["value"]} />}
+{type === "mockChat" && <MockChat value={value as ComponentProps<typeof MockChat>["value"]} />}
+{type === "mockTimeline" && <MockTimeline value={value as ComponentProps<typeof MockTimeline>["value"]} />}

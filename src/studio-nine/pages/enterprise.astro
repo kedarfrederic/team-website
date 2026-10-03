@@ -1,0 +1,110 @@
+---
+import Base from '../layouts/Base.astro';
+import MockCard from '../components/MockCard.astro';
+import { audiences } from '../data/audiences';
+const cards = [
+  { h: 'Deploy across the company', d: 'Stand Team up across every imprint, team and release, then manage it all from one administrative view.' },
+  { h: 'Access on your terms', d: 'SSO, SAML, SCIM and role-based access, scoped per imprint, run through the systems you already have.' },
+  { h: 'Auditable by design', d: 'Every action logged, with who did it and when, exportable for your security and compliance teams on demand.' },
+  { h: 'A partner, not a portal', d: 'Dedicated onboarding, a named point of contact and hands-on rollout, with us alongside you.' },
+];
+---
+<Base title="Team for the whole company — Enterprise" description="Deploy Team across every imprint, team and release with the controls procurement expects and a partner on the other end." closing="covered" section="who">
+  <section class="eh">
+    <div class="wrap eh__in">
+      <div class="eh__copy">
+        <h1 class="display lines"><span class="line"><span>Team for the</span></span><span class="line"><span><em>whole company.</em></span></span></h1>
+        <p class="lead" data-reveal style="transition-delay:.2s">Labels and distributors running at scale need more than a tool. They need Team across the whole organisation, the controls procurement expects, and a partner on the other end. One release home per release, one view over everything.</p>
+        <div class="cta-row" data-reveal style="transition-delay:.3s"><a class="btn btn--primary btn--lg" href="/contact">Talk to us <span class="arr">→</span></a><a class="btn btn--ghost btn--lg" href="/demo">Book a demo</a></div>
+      </div>
+      <div class="eh__media" data-reveal style="transition-delay:.25s">
+        <div class="org">
+          <p class="org__bar"><span class="org__bar-l"><i class="org__dots"></i>Organisation · admin</span><span>4 units · 120 seats</span></p>
+          <div class="org__grid">
+            {[['Imprint A','pop · 40 seats','Live','var(--viv-green)','var(--white)',100],['Imprint B','electronic · 28 seats','Live','var(--viv-lav)','var(--ink)',100],['Distribution','delivery arm · rolling out','Rollout','var(--viv-orange)','var(--white)',62],['Management','artist mgmt · 12 seats','Live','var(--viv-pink)','var(--ink)',100]].map(([n,s,st,bg,fg,p]) => (
+              <div class="org__unit" style={`--bg:${bg};--fg:${fg};--p:${p}`}>
+                <span class="org__unit-k"><b>{n}</b><span class="org__st">{st}</span></span>
+                <span class="org__unit-s">{s}</span>
+                <span class="org__meter"><i></i></span>
+                <span class="org__chips"><i>SSO</i><i>Audit</i><i>RBAC</i></span>
+              </div>
+            ))}
+          </div>
+          <div class="org__foot"><span class="dot"></span><span><b>TeamMate</b> · Synced 40 roles from your IdP overnight. Quarter's audit export is ready for security.</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="wrap">
+      <nav class="who" aria-label="Who it's for"><span class="who__k">Team for</span><div class="tabs" style={`--tab-cols:${(audiences.length + 1) % 2 ? 3 : 2}`}>{audiences.map(x => <a class="tab" style={`--c:${({artist:'var(--team-music)',manager:'var(--team-mgmt)',label:'var(--team-mkt)',partner:'var(--team-distro)'} as Record<string,string>)[x.k]}`} href={'/' + x.slug}>{x.short}</a>)}<a class="tab is-on" style="--c:var(--team-press)" href="/enterprise">Enterprise</a></div></nav>
+    </div>
+  </section>
+  <section class="section section--paper">
+    <div class="wrap">
+      <div class="head"><h2 class="h1 lines"><span class="line"><span>Every unit runs well alone.</span></span><span class="line"><span>The risk is <em>the gaps.</em></span></span></h2><p class="lead" data-reveal>Each imprint has its own tools, its own trackers, its own view. Nobody sees the whole operation, and the risk hides between the units. Team gives every release one home and leadership one picture, without asking any unit to change how it works.</p></div>
+      <div class="ecards" data-reveal-stagger>{cards.map((c, i) => (
+        <div class:list={['tile', ['tile--green','tile--lav','tile--pink','tile--cyan'][i]]}>
+          <span class="tile__badge"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d={['M4 21V5a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v16M14 10h5a1 1 0 0 1 1 1v10M4 21h17','M12 3l7 4v5c0 5-3.5 8-7 9-3.5-1-7-4-7-9V7z','M4 7h16M4 12h10M4 17h13','M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM8 12l3 3 5-6'][i]} /></svg></span>
+          <h3 class="h3">{c.h}</h3><p>{c.d}</p>
+          {/* Mini scene per card: what the console actually shows */}
+          <div class="esc" aria-hidden="true">
+            {i === 0 && <>{[['North Records','14 releases','var(--team-music)'],['Glass House','9 releases','var(--team-mkt)'],['Kite Publishing','6 releases','var(--team-mgmt)']].map(([n, r, col]) => <span class="esc__row"><i class="esc__sw" style={`background:${col}`}></i><b>{n}</b><span>{r}</span><em class="esc__ok">Live</em></span>)}</>}
+            {i === 1 && <>{[['SSO · Okta','On'],['SCIM provisioning','On'],['Role: Imprint admin','12 people']].map(([n, v], k) => <span class="esc__row"><i class:list={['esc__tog', { 'is-on': k < 2 }]}></i><b>{n}</b><em class="esc__val">{v}</em></span>)}</>}
+            {i === 2 && <>{[['09:14','Maya R. approved Master_v10','Log #4821'],['09:20','Sam D. delivered · 12 DSPs','Log #4822'],['11:02','Export · security@ · 30 days','Sent']].map(([t, e, r]) => <span class="esc__row esc__log"><em class="esc__t">{t}</em><b>{e}</b><span class="esc__rc">{r}</span></span>)}</>}
+            {i === 3 && <><span class="esc__row esc__who"><i class="esc__av">JT</i><b>Jake, your named contact</b><em class="esc__ok">Onboarding · week 2</em></span><span class="esc__msg">Rollout plan for the remaining imprints is in your console. Thursday to walk the finance team through budgets?</span></>}
+          </div>
+        </div>
+      ))}</div>
+    </div>
+  </section>
+  <section class="section">
+    <div class="wrap rollout">
+      <div><h2 class="h1">Live in <em>weeks.</em></h2><p class="lead">Dedicated onboarding and a named point of contact, with us alongside you from the first connection to the quarterly review.</p><a class="btn btn--primary" href="/contact">Talk to us <span class="arr">→</span></a></div>
+      <ol class="steps" data-reveal-stagger>
+        {[['Connect','We map your stack with you, unit by unit.'],['Configure','Roles, access and scopes set up through your IdP.'],['Go live','Every release gets a home. Dedicated support through launch.'],['Review','Quarterly, with the numbers and what to do next.']].map(([t,d],i) => <li><span class="tnum">0{i+1}</span><div><b>{t}</b><p>{d}</p></div></li>)}
+      </ol>
+    </div>
+  </section>
+</Base>
+<style>
+  .eh{padding:calc(4.5rem + clamp(3rem,7vw,6rem)) 0 clamp(2rem,4vw,3rem)}
+  .eh__in{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(2rem,5vw,5rem);align-items:center;margin-bottom:clamp(2rem,4vw,3rem)}
+  .eh__copy{display:grid;gap:1.5rem}
+  .eh__copy .display{font-size:clamp(2.4rem,6vw,5.4rem)}.eh__copy .lead{max-width:36rem}
+  .eh__media{max-width:32rem;justify-self:end;width:100%}
+  .org{background:var(--white);border:1px solid var(--line);border-radius:var(--r-xl);box-shadow:var(--shadow-lg);padding:1rem;display:grid;gap:.8rem}
+  .org__bar{display:flex;justify-content:space-between;align-items:center;font-size:.76rem;font-weight:500;color:var(--ink-60);padding:.2rem .3rem 0}
+  .org__bar-l{display:flex;align-items:center;gap:.5rem}
+  .org__dots{width:.45rem;height:.45rem;border-radius:50%;background:currentColor;opacity:.5;box-shadow:.75rem 0 0 currentColor,1.5rem 0 0 currentColor;margin-right:1.5rem}
+  .org__grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+  .org__unit{display:grid;gap:.4rem;padding:.9rem 1rem;border-radius:calc(var(--r-xl) - 1rem);background:var(--bg);color:var(--fg)}
+  .org__unit-k{display:flex;justify-content:space-between;align-items:center}.org__unit-k b{font-weight:500;font-size:.95rem}
+  .org__st{font-size:.72rem;font-weight:600;padding:.15rem .5rem;border-radius:99px;background:rgba(255,255,255,.85);color:var(--ink)}
+  .org__unit-s{font-size:.74rem;opacity:.8}
+  .org__meter{display:block;height:.4rem;border-radius:99px;background:rgba(255,255,255,.35);overflow:hidden;margin-top:.2rem}
+  .org__meter i{display:block;height:100%;width:calc(var(--p) * 1%);background:var(--white);border-radius:99px}
+  .org__unit[style*='--fg:var(--ink)'] .org__meter{background:rgba(14,13,11,.12)}.org__unit[style*='--fg:var(--ink)'] .org__meter i{background:var(--ink)}
+  .org__chips{display:flex;gap:.3rem;margin-top:.1rem}.org__chips i{font-style:normal;font-size:.62rem;font-weight:600;letter-spacing:.03em;padding:.12rem .4rem;border-radius:.3rem;background:rgba(255,255,255,.25)}
+  .org__foot{display:flex;gap:.55rem;align-items:flex-start;padding:.75rem .85rem;border-radius:calc(var(--r-xl) - 1rem);background:var(--ink);color:var(--on-dark);font-size:.8rem;line-height:1.35}
+  .org__foot b{color:var(--white);font-weight:500}.org__foot .dot{margin-top:.25rem}
+  .ecards{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+  .ecards .tile{display:grid;grid-template-rows:auto auto 1fr auto;gap:.5rem}
+  /* White mini scene inside each enterprise tile */
+  .esc{margin-top:.9rem;display:grid;gap:.45rem;padding:.75rem .85rem;border-radius:calc(var(--r-xl) - 1.25rem);background:var(--white);color:var(--ink);font-size:.78rem;line-height:1.3}
+  .esc__row{display:flex;align-items:center;gap:.55rem;min-width:0}.esc__row b{font-weight:500;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.esc__row>span{opacity:.6;flex:none}
+  .esc__sw{width:.9rem;height:.9rem;border-radius:.28rem;flex:none}
+  .esc__ok,.esc__val{font-style:normal;font-size:.72rem;font-weight:600;padding:.15rem .45rem;border-radius:.4rem;background:var(--lime-wash);color:var(--green-ink);flex:none}
+  .esc__val{background:var(--paper);color:var(--ink)}
+  .esc__tog{width:1.6rem;height:.95rem;border-radius:1rem;background:var(--paper-2);position:relative;flex:none}.esc__tog::after{content:'';position:absolute;top:.12rem;left:.12rem;width:.7rem;height:.7rem;border-radius:50%;background:var(--white)}.esc__tog.is-on{background:var(--viv-green)}.esc__tog.is-on::after{left:auto;right:.12rem}
+  .esc__t{font-style:normal;font-variant-numeric:tabular-nums;opacity:.55;flex:none}.esc__rc{font-size:.72rem;font-weight:600;padding:.15rem .45rem;border-radius:.4rem;background:var(--paper);opacity:1 !important}
+  .esc__av{width:1.8rem;height:1.8rem;border-radius:50%;background:var(--team-mgmt);font-style:normal;font-size:.7rem;font-weight:700;display:grid;place-items:center;flex:none}
+  .esc__msg{display:block;padding:.55rem .7rem;border-radius:.7rem .7rem .7rem .2rem;background:var(--paper);margin-left:2.35rem}
+  .tile--green .esc{background:rgba(255,255,255,.96)}
+  .rollout{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,6vw,6rem);align-items:center}
+  .rollout>div:first-child{display:grid;gap:1.25rem;justify-items:start}
+  .steps{display:grid;gap:.6rem}
+  .steps li{display:grid;grid-template-columns:2.5rem 1fr;gap:1rem;padding:1.1rem 1.2rem;border-radius:var(--r-lg);background:var(--paper)}
+  .steps .tnum{width:2rem;height:2rem;border-radius:.6rem;display:grid;place-items:center;font-weight:600;font-size:.8rem;color:var(--ink);background:var(--lime)}
+  .steps li:nth-child(2) .tnum{background:var(--viv-cyan)}.steps li:nth-child(3) .tnum{background:var(--viv-pink)}.steps li:nth-child(4) .tnum{background:var(--viv-lav)}
+  .steps b{font-weight:500;display:block;margin-bottom:.2rem}.steps p{color:var(--ink-60);font-size:.95rem}
+  @media (max-width:900px){.eh__in,.rollout{grid-template-columns:minmax(0,1fr)}.eh__copy{min-width:0}.eh__copy .display{overflow-wrap:anywhere}.eh__media{justify-self:stretch;max-width:none}.ecards{grid-template-columns:1fr}}
+</style>

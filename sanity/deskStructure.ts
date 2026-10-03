@@ -19,6 +19,18 @@ export const deskStructure = (S: StructureBuilder) =>
   S.list()
     .title("Marketing CMS")
     .items([
+      S.listItem().title("New website · English / 한국어").child(
+        S.list().title("New website").items(["en","ko"].map(locale=>
+          S.listItem().title(locale==="ko"?"한국어":"English").child(
+            S.list().title(locale==="ko"?"한국어":"English").items(["shared", "home", "pricing", "rollouts", "teammate", "assets", "tours", "connectors", "contact", "security", "about", "for-artists", "for-managers", "for-labels", "for-partners", "enterprise", "demo", "insights", "changelog"].filter(page=>locale==="en"||!["insights","changelog"].includes(page)).map(page=>
+              S.listItem().id(`v3-${locale}-${page}`).title(page==="shared"?"Navigation & footer":page==="home"?"Homepage":page).child(
+                S.editor().id(`v3-${locale}-${page}`).schemaType("marketingV3Page").documentId(`marketing-v3-${locale}-${page}`)
+              )
+            ))
+          )
+        ))
+      ),
+      S.divider(),
       // ── Top-level / hero ────────────────────────────────────
       S.listItem()
         .title("Homepage")

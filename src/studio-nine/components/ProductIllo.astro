@@ -1,0 +1,300 @@
+---
+// Product illustrations: hero + three demo panels per product. Stylised, coloured, animated where it earns it.
+import { img } from '../data/images';
+interface Props { product: 'rollouts' | 'assets' | 'tours' | 'teammate' | 'connectors'; panel: 'hero' | 0 | 1 | 2; }
+const { product, panel } = Astro.props;
+const key = `${product}-${panel}`;
+const who = { AN: 'var(--team-music)', TS: 'var(--team-mgmt)', MR: 'var(--team-mkt)', SD: 'var(--team-distro)', TM: 'var(--ink)' } as Record<string, string>;
+---
+{/* ---------------- ROLLOUTS ---------------- */}
+{key === 'rollouts-hero' && (
+<div class="il il--green" data-il="rollouts-hero">
+  <p class="il__bar"><span><i class="il__dots"></i>Timeline · Midnight Static</span><span>41 days</span></p>
+  <div class="il__week">
+    {[['Mon','22'],['Tue','23'],['Wed','24'],['Thu','25'],['Fri','26']].map(([d,n],i) => <div class:list={['il__day',{ 'is-today': i===2 }]}><span>{d}</span><b>{n}</b></div>)}
+  </div>
+  <ul class="il__tasks">
+    <li class="il__task" style="--c:var(--team-mkt);--col:1;--span:2"><b>Teaser clip goes live</b><i class="il__av" style="background:var(--team-music)">AN</i></li>
+    <li class="il__task" style="--c:var(--team-press);--col:2;--span:1"><b>Press one-sheet</b><i class="il__av" style="background:var(--team-mkt)">MR</i></li>
+    <li class="il__task is-tm" style="--c:var(--lime);--col:3;--span:2"><b>Pitch editorial playlists</b><i class="il__av" style="background:var(--ink);color:var(--lime)">TM</i></li>
+    <li class="il__task is-needs" style="--c:var(--viv-orange);--col:3;--span:3"><b>Vinyl PO sign-off</b><i class="il__av" style="background:var(--team-mgmt)">TS</i></li>
+    <li class="il__task" style="--c:var(--team-mgmt);--col:4;--span:2"><b>Video final delivered</b><i class="il__av" style="background:var(--team-music)">AN</i></li>
+  </ul>
+  <p class="il__foot"><span class="dot"></span><b>TeamMate</b> · Moved the release date? I'll re-cut every dependent task and tell everyone who needs to know.</p>
+</div>)}
+{key === 'rollouts-0' && (
+<div class="il il--lav" data-il>
+  <p class="il__bar"><span><i class="il__dots"></i>Plan · announce → release</span><span>22 tasks</span></p>
+  <div class="il__gantt">
+    {[['Announce','var(--team-mkt)',0,22,'done'],['Pre-save','var(--team-press)',18,30,'done'],['Pitch editorial','var(--lime)',40,25,'tm'],['Video final','var(--team-mgmt)',52,22,''],['Vinyl PO','var(--viv-orange)',60,18,'needs'],['Release day','var(--ink)',92,8,'']].map(([l,c,x,w,st]) => (
+      <div class:list={['il__g',{ 'is-done': st==='done','is-needs': st==='needs','is-tm': st==='tm' }]}><span>{l}</span><i style={`--c:${c};--x:${x}%;--w:${w}%`}></i></div>
+    ))}
+    <span class="il__now" style="--x:46%"><b>Today</b></span>
+  </div>
+</div>)}
+{key === 'rollouts-1' && (
+<div class="il il--green" data-il>
+  <p class="il__bar"><span><i class="il__dots"></i>Budget · $15,050 of $18,000</span><span>84%</span></p>
+  <div class="il__budget">
+    <div class="il__donut" style="--g:conic-gradient(var(--white) 0 62%, var(--viv-pink) 62% 83%, var(--viv-cyan) 83% 93%, var(--viv-orange) 93% 100%)"><div><b>$15.1k</b><span>spent</span></div></div>
+    <ul class="il__legend">
+      {[['Advertising','$9,400','var(--white)'],['Content','$3,100','var(--viv-pink)'],['PR','$1,500','var(--viv-cyan)'],['Vinyl','$1,050','var(--viv-orange)']].map(([l,v,c]) => <li><i style={`background:${c}`}></i>{l}<b>{v}</b></li>)}
+    </ul>
+  </div>
+  <p class="il__foot il__foot--warn"><i>!</i><b>Changed 14:02</b> · Content went from $2,500 to $3,100 in Sheets. The one-sheet is updated to match.</p>
+</div>)}
+{key === 'rollouts-2' && (
+<div class="il il--pink" data-il>
+  <p class="il__bar"><span><i class="il__dots"></i>Ready to roll</span><span>5 of 6 green</span></p>
+  <div class="il__ready">
+    <div class="il__ring" style="--p:83"><b>5<small>/6</small></b></div>
+    <ul class="il__checks">
+      {[['Masters delivered',true],['Metadata & ISRCs clean',true],['Artwork at spec',true],['Editorial pitch in',true],['Distributor confirmed',false],['Pre-save live',true]].map(([l,ok]) => <li class:list={[{ 'is-ok': ok }]}><i>{ok ? '✓' : '·'}</i>{l}</li>)}
+    </ul>
+  </div>
+  <p class="il__foot"><span class="dot"></span><b>Ships when all six are green.</b> TeamMate re-checks every hour.</p>
+</div>)}
+
+{/* ---------------- ASSETS ---------------- */}
+{key === 'assets-hero' && (
+<div class="il il--lav" data-il>
+  <p class="il__bar"><span><i class="il__dots"></i>Assets · Midnight Static</span><span>18 files · release-ready</span></p>
+  <div class="il__grid">
+    {[['Cover_3000.png','Artwork · final',img('cover-release'),'lime'],['Master_v10.wav','Audio · DSP-ready','','wave'],['Teaser_15s.mp4','Video · approved',img('hiw-5-stage'),'lime'],['One-sheet.pdf','Document','','doc'],['Canvas_9x16.jpg','Artwork · v3',img('story-artist'),'orange'],['Press_02.jpg','Photo · approved',img('hero-artist'),'lime']].map(([t,s,src,k]) => (
+      <div class="il__file"><span class:list={['il__thumb',{ 'il__thumb--wave': k==='wave','il__thumb--doc': k==='doc' }]}>{src && <img src={src} alt="" loading="lazy" />}{k==='wave' && <span class="il__wave">{Array.from({length:22}).map((_,j)=><i style={`--i:${j}`}></i>)}</span>}{k==='doc' && <b>PDF</b>}<em class:list={['il__chip',{ 'il__chip--orange': k==='orange' }]}>{k==='orange'?'v3':'Final'}</em></span><b>{t}</b><span>{s}</span></div>
+    ))}
+  </div>
+</div>)}
+{key === 'assets-0' && (
+<div class="il il--green" data-il>
+  <p class="il__bar"><span><i class="il__dots"></i>Master · versions</span><span>10 kept</span></p>
+  <ul class="il__versions">
+    {[['v10','Approved by Maya · Tue','final'],['v9','Superseded · referenced by one-sheet, fixed',''],['v8','Superseded',''],['v7','Superseded','']].map(([v,s,st],i) => <li class:list={[{ 'is-final': st==='final' }]}><span class="il__v">{v}</span><span class="il__wave il__wave--sm">{Array.from({length:30}).map((_,j)=><i style={`--i:${j + i * 7}`}></i>)}</span><span class="il__vs">{s}</span>{st==='final' && <em class="il__chip">Final</em>}</li>)}
+  </ul>
+</div>)}
+{key === 'assets-1' && (
+<div class="il il--pink" data-il>
+  <p class="il__bar"><span><i class="il__dots"></i>Shared · press kit</span><span>4 people · view only</span></p>
+  <div class="il__share">
+    <div class="il__link"><span>teamrollouts.com/s/midnight-static-press</span><b>Copy</b></div>
+    <ul class="il__people">{[['Rolling Stone','RS','var(--viv-lav)'],['NME','NM','var(--viv-cyan)'],['Sam · distro','SD','var(--team-distro)'],['JP · press','JP','var(--team-press)']].map(([n,i,c]) => <li><i style={`background:${c}`}>{i}</i>{n}</li>)}</ul>
+    <ul class="il__minis">{['Cover_3000.png','One-sheet.pdf','Teaser_15s.mp4','Press_02.jpg'].map(f => <li>{f}</li>)}</ul>
+  </div>
+  <p class="il__foot"><span class="dot"></span>No expiry. No zip. Revoke in a click.</p>
+</div>)}
+{key === 'assets-2' && (
+<div class="il il--cyan" data-il>
+  <p class="il__bar"><span><i class="il__dots"></i>Attached to the plan</span><span>3 tasks</span></p>
+  <ul class="il__attach">
+    {[['Pitch editorial playlists','Wed 24',['Cover_3000.png','Master_v10.wav'],'ready'],['Video final delivered','Thu 25',['Teaser_15s.mp4'],'review'],['Press one-sheet to list','Tue 23',['One-sheet.pdf','Press_02.jpg'],'done']].map(([t,d,files,st]) => (
+      <li><div><b>{t}</b><span>{d}</span></div><span class="il__files">{(files as string[]).map(f => <i>{f}</i>)}</span><em class:list={['il__chip',{ 'il__chip--orange': st==='review' }]}>{st==='ready'?'Ready':st==='review'?'In review':'Done'}</em></li>
+    ))}
+  </ul>
+</div>)}
+
+{/* ---------------- TOURS ---------------- */}
+{key === 'tours-hero' && (
+<div class="il il--orange" data-il>
+  <p class="il__bar"><span><i class="il__dots"></i>The Static Tour · 8 shows</span><span>Routing 82/100</span></p>
+  <div class="il__map">
+    <svg viewBox="0 0 320 150" aria-hidden="true">
+      <path d="M40 110 C80 60 120 60 150 80 S220 40 280 50" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2" stroke-dasharray="3 5" stroke-linecap="round" />
+      <path class="il__route" d="M40 110 C80 60 120 60 150 80 S220 40 280 50" fill="none" stroke="var(--white)" stroke-width="2.5" stroke-linecap="round" />
+      {[[40,110,'LON'],[95,72,'PAR'],[150,80,'BER'],[215,55,'AMS'],[280,50,'LAG']].map(([x,y,l],i) => <g><circle cx={x} cy={y} r="9" style="fill:var(--white)" /><circle cx={x} cy={y} r="4.5" style={`fill:${i < 3 ? 'var(--ink)' : 'var(--viv-orange)'}`} /><text x={x} y={Number(y) + 24} text-anchor="middle" font-size="11" font-weight="600" font-family="Inter, sans-serif" style="fill:var(--white)">{l}</text></g>)}
+    </svg>
+  </div>
+  <ul class="il__stats">{[['6/8','confirmed'],['12.4k','tickets'],['$340k','guaranteed']].map(([v,l]) => <li><b>{v}</b><span>{l}</span></li>)}</ul>
+</div>)}
+{key === 'tours-0' && (
+<div class="il il--cyan" data-il>
+  <p class="il__bar"><span><i class="il__dots"></i>Routing</span><span>82/100</span></p>
+  <ul class="il__legs">
+    {[['Sep 12','London','O2 Academy Brixton','On sale','lime'],['Sep 18','Paris','La Cigale','On sale','lime'],['Sep 24','Berlin','Astra Kulturhaus','Offer out',''],['Oct 03','Amsterdam','Paradiso','Confirmed','cyan']].map(([d,c,v,st,k]) => <li><span class="il__date">{d}</span><div><b>{c}</b><span>{v}</span></div><em class:list={['il__chip',{ 'il__chip--cyan': k==='cyan' }]}>{st}</em></li>)}
+  </ul>
+  <p class="il__foot il__foot--tip"><span class="dot"></span><b>TeamMate</b> · Tightening Berlin → Paris cuts 400 miles and saves a day off.</p>
+</div>)}
+{key === 'tours-1' && (
+<div class="il il--lav" data-il>
+  <p class="il__bar"><span><i class="il__dots"></i>Day sheet · Paris · Sep 18</span><span>from the advance</span></p>
+  <ul class="il__sheet">
+    {[['14:00','Load-in','stage door · Rue Rochechouart'],['17:00','Soundcheck','45 min'],['19:30','Doors',''],['21:00','Set','75 min · curfew 23:00']].map(([t,l,s]) => <li><b class="tnum">{t}</b><div><b>{l}</b>{s && <span>{s}</span>}</div></li>)}
+  </ul>
+  <p class="il__foot"><span class="dot"></span>Updated 2 hours ago · sent to 6 crew</p>
+</div>)}
+{key === 'tours-2' && (
+<div class="il il--green" data-il>
+  <p class="il__bar"><span><i class="il__dots"></i>Settlement · run</span><span>2 outstanding</span></p>
+  <div class="il__money">
+    {[['London','$62k','$62k',100],['Paris','$48k','$48k',100],['Berlin','$40k','$0',0],['Amsterdam','$44k','$0',0]].map(([c,g,s,p]) => <div class="il__row"><span>{c}</span><i><b style={`width:${p}%`}></b></i><span class="tnum">{s} <small>/ {g}</small></span></div>)}
+  </div>
+  <p class="il__foot il__foot--warn"><i>!</i><b>Amsterdam settlement is 9 days late.</b> Needs you to chase.</p>
+</div>)}
+
+{/* ---------------- TEAMMATE ---------------- */}
+{key === 'teammate-hero' && (
+<div class="il il--ink" data-il="teammate-hero">
+  <p class="il__bar"><span><span class="dot"></span>TeamMate · Midnight Static</span><span>remembers everything</span></p>
+  <div class="il__chat">
+    <p class="il__q"><em>Where's the final master?</em></p>
+    <div class="il__ans"><p>v10, Master_v10.wav. Approved by Maya in #audio on Tuesday. The one-sheet and the distributor brief both point at it.</p><ul class="il__src"><li><img src="/studio-nine/logos/dropbox.svg" alt="" />Dropbox</li><li><img src="/studio-nine/logos/slack.svg" alt="" />#audio</li><li><img src="/studio-nine/logos/googledocs.svg" alt="" />One-sheet</li></ul></div>
+  </div>
+  <ul class="il__mem">{[['9','versions'],['14','decisions'],['3','threads'],['t–9w','launch']].map(([v,l]) => <li><b>{v}</b><span>{l}</span></li>)}</ul>
+</div>)}
+{key === 'teammate-0' && (
+<div class="il il--cyan" data-il>
+  <p class="il__bar"><span><i class="il__dots"></i>It remembers</span><span>the whole release</span></p>
+  <ul class="il__memgrid">
+    {[['Masters','every bounce, who approved which','9 versions','var(--lime)'],['Conversations','decisions buried in threads','14 decisions','var(--viv-pink)'],['People','who owns what, right now','mix · a&r · distro','var(--viv-lav)'],['Money','budget, POs, splits, changes','live','var(--viv-orange)']].map(([k,s,v,c]) => <li><i style={`background:${c}`}></i><div><b>{k}</b><span>{s}</span></div><em>{v}</em></li>)}
+  </ul>
+</div>)}
+{key === 'teammate-1' && (
+<div class="il il--green" data-il>
+  <p class="il__bar"><span><span class="dot"></span>Overnight</span><span>4 actions · all logged</span></p>
+  <ul class="il__log">
+    {[['23:41','Re-cut the timeline around the new date','Timeline',true],['23:43','Updated the budget in Notion and the one-sheet','Sheets → Docs',true],['02:57','Re-briefed the press list on the new embargo','Gmail',true],['06:05','Vinyl PO #1042 needs your sign-off before Friday','',false]].map(([t,m,src,ok]) => <li class:list={[{ 'is-needs': !ok }]}><b class="tnum">{t}</b><i>{ok?'✓':'!'}</i><div><span>{m}</span>{src && <small>{src}</small>}</div></li>)}
+  </ul>
+</div>)}
+{key === 'teammate-2' && (
+<div class="il il--lav" data-il>
+  <p class="il__bar"><span><span class="dot"></span>Needs you · 1</span><span>06:05</span></p>
+  <div class="il__ask">
+    <span class="il__chip">Needs your sign-off</span>
+    <p class="il__askt">Vinyl PO #1042 is up <em>$140</em> to $1,190.</p>
+    <ul class="il__facts"><li><span>Due</span><b>Friday 26</b></li><li><span>Budget</span><b>Can absorb it</b></li><li><span>Supplier</span><b>Pallas Pressing</b></li></ul>
+    <div class="il__btns"><span class="il__approve">Approve</span><span>Ask a question</span></div>
+  </div>
+</div>)}
+
+{/* ---------------- CONNECTORS (0–2) ---------------- */}
+{key === 'connectors-0' && (
+<div class="il il--pink" data-il>
+  <p class="il__bar"><span><img class="il__logo" src="/studio-nine/logos/dropbox.svg" alt="" />Dropbox · connected</span><span>reads live</span></p>
+  <ul class="il__flow">
+    <li><b>Read</b><span>New file in /Masters · Single_Master_v10.wav</span><small>23:41</small></li>
+    <li><b>Reasoned</b><span>Recognised as the new master. Supersedes v9, which the one-sheet and distro brief still reference.</span></li>
+  </ul>
+</div>)}
+{key === 'connectors-1' && (
+<div class="il il--green" data-il>
+  <p class="il__bar"><span><i class="il__dots"></i>Wrote back</span><span>2 · both ways</span></p>
+  <ul class="il__wrote">
+    <li><img src="/studio-nine/logos/googledocs.svg" alt="" /><div><b>Updated the one-sheet to reference v10</b><span>Google Docs · 23:41</span></div><i>✓</i></li>
+    <li><img src="/studio-nine/logos/gmail.svg" alt="" /><div><b>Re-briefed the distributor on the change</b><span>Gmail · 23:42</span></div><i>✓</i></li>
+  </ul>
+</div>)}
+{key === 'connectors-2' && (
+<div class="il il--lav" data-il>
+  <p class="il__bar"><span><i class="il__dots"></i>Permissions</span><span>scoped · revocable</span></p>
+  <ul class="il__perm">
+    {[['dropbox','Dropbox','/Masters, /Artwork · read + write',true],['slack','Slack','#audio, #release-ops · read',true],['gmail','Gmail','label: Midnight Static · read + send',true],['notion-dark','Notion','not connected',false]].map(([l,n,s,on]) => <li><img src={`/studio-nine/logos/${l}.svg`} alt="" /><div><b>{n}</b><span>{s}</span></div><i class:list={['il__toggle',{ 'is-on': on }]}></i></li>)}
+  </ul>
+</div>)}
+
+<style>
+  .il{--bg:var(--paper);--fg:var(--ink);--row:var(--white);width:100%;max-width:30rem;display:grid;gap:.8rem;padding:1.1rem;border-radius:var(--r-xl);background:var(--bg);color:var(--fg);box-shadow:var(--shadow-lg);font-size:.86rem}
+  .il--green{--bg:var(--viv-green);--fg:var(--white);--row:rgba(255,255,255,.12)}
+  .il--ink{--bg:var(--ink);--fg:var(--on-dark);--row:rgba(255,255,255,.08)}
+  .il--lav{--bg:var(--viv-lav)}.il--pink{--bg:var(--viv-pink)}.il--cyan{--bg:var(--viv-cyan)}.il--orange{--bg:var(--viv-orange);--fg:var(--white);--row:rgba(255,255,255,.14)}
+  .il__bar{display:flex;justify-content:space-between;align-items:center;gap:.6rem;font-size:.76rem;font-weight:500;opacity:.9;padding:.1rem .2rem}.il__bar>span{min-width:0;white-space:nowrap;overflow:clip;overflow-clip-margin:4px;text-overflow:ellipsis;padding-left:4px;margin-left:-4px}.il__bar>span:first-child{flex:1}
+  .il__bar>span:first-child{display:flex;align-items:center;gap:.5rem}
+  .il__dots{width:.45rem;height:.45rem;border-radius:50%;background:currentColor;opacity:.5;box-shadow:.75rem 0 0 currentColor,1.5rem 0 0 currentColor;margin-right:1.5rem}
+  .il__logo{width:1rem;height:1rem}
+  .il__av{width:1.3rem;height:1.3rem;border-radius:50%;font-style:normal;font-size:.5rem;font-weight:700;display:grid;place-items:center;color:var(--ink);flex:none}
+  .il__chip{font-style:normal;font-size:.7rem;font-weight:600;padding:.2rem .5rem;border-radius:99px;background:var(--lime);color:var(--ink);white-space:nowrap}
+  .il__chip--orange{background:var(--viv-orange);color:var(--white)}.il__chip--cyan{background:var(--viv-cyan)}
+  .il__foot{display:flex;gap:.5rem;align-items:flex-start;padding:.7rem .85rem;border-radius:calc(var(--r-xl) - 1.1rem);background:var(--ink);color:var(--on-dark);font-size:.78rem;line-height:1.35}
+  .il__foot b{color:var(--white);font-weight:500}.il__foot .dot{margin-top:.25rem}
+  .il__foot--warn{background:var(--viv-orange);color:var(--white)}.il__foot--warn i{flex:none;width:1.1rem;height:1.1rem;border-radius:50%;background:var(--white);color:var(--viv-orange);font-style:normal;font-weight:700;font-size:.7rem;display:grid;place-items:center}
+  .il--ink .il__foot,.il--green .il__foot:not(.il__foot--warn){background:rgba(255,255,255,.1)}
+  /* rollouts hero */
+  .il__week{display:grid;grid-template-columns:repeat(5,1fr);gap:.4rem}
+  .il__day{display:flex;align-items:baseline;gap:.35rem;padding:.4rem .5rem;border-radius:.5rem;background:var(--row);font-size:.7rem;opacity:.85}.il__day b{font-size:1rem;font-weight:500}
+  .il__day.is-today{background:var(--lime);color:var(--ink);opacity:1}
+  .il__tasks{display:grid;grid-template-columns:repeat(5,1fr);gap:.4rem;grid-auto-rows:2.4rem}
+  .il__task{grid-column:var(--col) / span var(--span);display:flex;align-items:center;justify-content:space-between;gap:.4rem;padding:.4rem .6rem;border-radius:.6rem;background:var(--white);color:var(--ink);border-left:3px solid var(--c);font-size:.72rem;box-shadow:var(--shadow-sm);min-width:0}
+  .il__task b{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .il__task.is-needs{background:var(--viv-orange);color:var(--white);border-color:var(--white)}
+  .il__task.is-tm{background:var(--lime)}
+  /* gantt */
+  .il__gantt{position:relative;display:grid;gap:.45rem;padding-top:.4rem}
+  .il__g{display:grid;grid-template-columns:7rem 1fr;align-items:center;gap:.6rem;font-size:.76rem}
+  .il__g>span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .il__g>i{position:relative;display:block;height:1.1rem;border-radius:99px;background:rgba(14,13,11,.06)}
+  .il__g>i::after{content:'';position:absolute;top:0;bottom:0;left:var(--x);width:var(--w);border-radius:99px;background:var(--c)}
+  .il__g.is-done>i::after{opacity:.55}
+  .il__now{position:absolute;top:0;bottom:0;left:calc(7rem + .6rem + (100% - 7rem - .6rem) * .46);border-left:1.5px dashed var(--ink);pointer-events:none}
+  .il__now b{position:absolute;top:-.2rem;left:.3rem;font-size:.6rem;font-weight:600;background:var(--ink);color:var(--white);padding:.1rem .35rem;border-radius:99px}
+  /* budget */
+  .il__budget{display:grid;grid-template-columns:8rem 1fr;gap:1rem;align-items:center}
+  .il__donut{width:8rem;height:8rem;border-radius:50%;background:var(--g);display:grid;place-items:center;position:relative}
+  .il__donut::before{content:'';position:absolute;inset:1rem;border-radius:50%;background:var(--bg)}
+  .il__donut div{position:relative;text-align:center}.il__donut b{display:block;font-size:1.25rem;font-weight:500;letter-spacing:-.03em}.il__donut span{font-size:.7rem;opacity:.8}
+  .il__legend{display:grid;gap:.4rem}.il__legend li{display:flex;align-items:center;gap:.5rem;font-size:.8rem}.il__legend i{width:.6rem;height:.6rem;border-radius:2px}.il__legend b{margin-left:auto;font-weight:500}
+  /* ready */
+  .il__ready{display:grid;grid-template-columns:6rem 1fr;gap:1rem;align-items:center}
+  .il__ring{width:6rem;height:6rem;border-radius:50%;background:conic-gradient(var(--ink) calc(var(--p) * 1%),rgba(14,13,11,.12) 0);display:grid;place-items:center;position:relative}
+  .il__ring::before{content:'';position:absolute;inset:.6rem;border-radius:50%;background:var(--bg)}
+  .il__ring b{position:relative;font-size:1.6rem;font-weight:500;letter-spacing:-.03em}.il__ring small{font-size:.8rem;opacity:.6}
+  .il__checks{display:grid;gap:.3rem}.il__checks li{display:flex;align-items:center;gap:.5rem;font-size:.78rem;padding:.35rem .5rem;border-radius:.5rem;background:var(--row)}
+  .il__checks i{width:1.1rem;height:1.1rem;border-radius:50%;background:rgba(14,13,11,.1);display:grid;place-items:center;font-style:normal;font-size:.7rem}.il__checks li.is-ok i{background:var(--ink);color:var(--lime)}
+  /* assets */
+  .il__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.55rem}
+  .il__file{display:grid;gap:.1rem;padding:.45rem;border-radius:.8rem;background:var(--white);color:var(--ink)}
+  .il__file>b{font-size:.72rem;font-weight:500;padding:.25rem .2rem 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.il__file>span:last-child{font-size:.7rem;color:var(--ink-40);padding:0 .2rem .1rem}
+  .il__thumb{position:relative;display:grid;place-items:center;aspect-ratio:4/3;border-radius:.5rem;overflow:hidden;background:var(--paper-2)}
+  .il__thumb img{width:100%;height:100%;object-fit:cover}
+  .il__thumb--wave{background:var(--ink)}.il__thumb--doc b{font-size:.7rem;font-weight:700;letter-spacing:.06em;color:var(--ink-40);border:1.5px solid var(--ink-12);border-radius:.3rem;padding:.15rem .35rem}
+  .il__thumb .il__chip{position:absolute;left:.3rem;bottom:.3rem;font-size:.7rem;padding:.12rem .4rem}
+  .il__wave{display:flex;align-items:center;gap:1.5px;height:1.2rem;width:80%}
+  .il__wave i{flex:1;height:calc(15% + 85% * abs(sin(calc(var(--i) * .9 + 1.3))));min-height:2px;border-radius:99px;background:var(--lime)}
+  .il__wave--sm{height:1rem;width:auto;flex:1}
+  .il__versions{display:grid;gap:.4rem}
+  .il__versions li{display:grid;grid-template-columns:2.2rem 1fr auto auto;align-items:center;gap:.7rem;padding:.55rem .7rem;border-radius:.7rem;background:var(--row);font-size:.76rem}
+  .il__versions li.is-final{background:var(--white);color:var(--ink)}
+  .il__v{font-weight:600}.il__vs{opacity:.8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:11rem}
+  .il__versions li:not(.is-final) .il__wave i{background:currentColor;opacity:.5}
+  .il__share{display:grid;gap:.6rem}
+  .il__link{display:flex;justify-content:space-between;align-items:center;gap:.6rem;padding:.55rem .75rem;border-radius:.7rem;background:var(--white);color:var(--ink);font-size:.76rem}.il__link b{font-size:.7rem;padding:.2rem .55rem;border-radius:99px;background:var(--ink);color:var(--white)}
+  .il__people{display:flex;flex-wrap:wrap;gap:.4rem}.il__people li{display:flex;align-items:center;gap:.4rem;font-size:.72rem;padding:.3rem .6rem .3rem .3rem;border-radius:99px;background:var(--white);color:var(--ink)}.il__people i{width:1.3rem;height:1.3rem;border-radius:50%;font-style:normal;font-size:.5rem;font-weight:700;display:grid;place-items:center}
+  .il__minis{display:flex;flex-wrap:wrap;gap:.35rem}.il__minis li{font-size:.7rem;padding:.25rem .5rem;border-radius:.4rem;background:rgba(14,13,11,.08)}
+  .il__attach{display:grid;gap:.45rem}.il__attach li{display:grid;grid-template-columns:1fr auto;gap:.3rem .6rem;padding:.6rem .75rem;border-radius:.7rem;background:var(--white);color:var(--ink)}
+  .il__attach li>div b{display:block;font-weight:500;font-size:.82rem}.il__attach li>div span{font-size:.7rem;color:var(--ink-40)}.il__attach li>.il__chip{align-self:start}
+  .il__files{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:.3rem}.il__files i{font-style:normal;font-size:.7rem;padding:.2rem .45rem;border-radius:.35rem;background:var(--paper)}
+  /* tours */
+  .il__map{border-radius:.8rem;background:rgba(255,255,255,.12);padding:.4rem}
+  .il__map svg{width:100%;height:auto;display:block}
+  .il__route{stroke-dasharray:600;stroke-dashoffset:600;animation:route 3s var(--ease) forwards}
+  @keyframes route{to{stroke-dashoffset:0}}
+  .il__stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem}.il__stats li{display:grid;padding:.5rem .7rem;border-radius:.6rem;background:var(--row)}.il__stats b{font-size:1.15rem;font-weight:500;letter-spacing:-.02em}.il__stats span{font-size:.7rem;opacity:.8}
+  .il__legs{display:grid;gap:.4rem}.il__legs li{display:grid;grid-template-columns:3.3rem 1fr auto;align-items:center;gap:.6rem;padding:.55rem .7rem;border-radius:.7rem;background:var(--white);color:var(--ink);font-size:.78rem}
+  .il__date{font-weight:600;font-size:.7rem;color:var(--ink-60)}.il__legs li div b{display:block;font-weight:500}.il__legs li div span{font-size:.7rem;color:var(--ink-40)}.il__legs .il__chip:not(.il__chip--cyan):not([class*='orange']){background:var(--paper-2)}.il__legs li:nth-child(-n+2) .il__chip{background:var(--lime)}
+  .il__foot--tip{background:var(--ink)}
+  .il__sheet{display:grid;gap:.4rem}.il__sheet li{display:grid;grid-template-columns:3rem 1fr;gap:.7rem;align-items:center;padding:.55rem .7rem;border-radius:.7rem;background:var(--white);color:var(--ink)}
+  .il__sheet li>b{font-weight:600;font-size:.8rem}.il__sheet li div b{display:block;font-weight:500;font-size:.82rem}.il__sheet li div span{font-size:.7rem;color:var(--ink-40)}
+  .il__money{display:grid;gap:.5rem}.il__row{display:grid;grid-template-columns:5.5rem 1fr 5.5rem;align-items:center;gap:.6rem;font-size:.78rem}
+  .il__row i{display:block;height:.6rem;border-radius:99px;background:rgba(255,255,255,.18);overflow:hidden}.il__row i b{display:block;height:100%;background:var(--lime);border-radius:99px}.il__row>span:last-child{text-align:right}.il__row small{opacity:.6}
+  /* teammate */
+  .il__chat{display:grid;gap:.5rem}
+  .il__q{font-size:1.35rem;line-height:1.15;padding:.6rem .85rem;border-radius:1rem 1rem 1rem .25rem;background:var(--white);color:var(--ink);justify-self:start;max-width:85%}.il__q em{font-family:var(--serif);font-weight:300;font-style:italic;font-size:1.1em}
+  .il__ans{display:grid;gap:.5rem;padding:.75rem .9rem;border-radius:1rem 1rem .25rem 1rem;background:rgba(255,255,255,.1);font-size:.86rem;line-height:1.4;margin-left:1.2rem}
+  .il__src{display:flex;flex-wrap:wrap;gap:.35rem}.il__src li{display:inline-flex;align-items:center;gap:.35rem;font-size:.7rem;font-weight:500;padding:.25rem .55rem .25rem .4rem;border-radius:99px;background:var(--white);color:var(--ink)}.il__src img{width:.85rem;height:.85rem}
+  .il__mem{display:grid;grid-template-columns:repeat(4,1fr);gap:.4rem}.il__mem li{display:grid;padding:.5rem .6rem;border-radius:.6rem;background:rgba(255,255,255,.08)}.il__mem b{font-size:1.1rem;font-weight:500;letter-spacing:-.02em;color:var(--lime)}.il__mem span{font-size:.7rem;opacity:.7}
+  .il__memgrid{display:grid;gap:.4rem}.il__memgrid li{display:grid;grid-template-columns:.7rem 1fr auto;align-items:center;gap:.7rem;padding:.6rem .75rem;border-radius:.7rem;background:var(--white);color:var(--ink)}
+  .il__memgrid i{width:.7rem;height:.7rem;border-radius:2px}.il__memgrid b{display:block;font-weight:500;font-size:.84rem}.il__memgrid div span{font-size:.7rem;color:var(--ink-40)}.il__memgrid em{font-style:normal;font-size:.7rem;font-weight:600;padding:.2rem .5rem;border-radius:99px;background:var(--paper)}
+  .il__log{display:grid;gap:.4rem}.il__log li{display:grid;grid-template-columns:2.6rem 1.2rem 1fr;gap:.5rem;align-items:start;padding:.55rem .7rem;border-radius:.7rem;background:var(--row);font-size:.78rem;line-height:1.3}
+  .il__log b{font-weight:500;opacity:.7}.il__log i{width:1.2rem;height:1.2rem;border-radius:50%;background:var(--lime);color:var(--ink);font-style:normal;font-size:.7rem;font-weight:700;display:grid;place-items:center}.il__log small{display:block;font-size:.7rem;opacity:.6;margin-top:.1rem}
+  .il__log li.is-needs{background:var(--viv-orange);color:var(--white)}.il__log li.is-needs i{background:var(--white);color:var(--viv-orange)}
+  .il__ask{display:grid;gap:.6rem;padding:.9rem 1rem;border-radius:calc(var(--r-xl) - 1.1rem);background:var(--white);color:var(--ink)}
+  .il__askt{font-size:1.15rem;font-weight:500;letter-spacing:-.02em;line-height:1.2}.il__askt em{font-family:var(--serif);font-weight:300;font-size:1.12em}
+  .il__facts{display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem}.il__facts li{display:grid;gap:.05rem;padding:.45rem .55rem;border-radius:.55rem;background:var(--paper);font-size:.7rem}.il__facts span{color:var(--ink-40)}.il__facts b{font-weight:500;font-size:.76rem}
+  .il__btns{display:flex;gap:.7rem;align-items:center;font-size:.8rem;font-weight:500;color:var(--ink-60)}.il__approve{background:var(--ink);color:var(--white);padding:.5rem .9rem;border-radius:var(--r-btn);font-size:.82rem}
+  /* connectors */
+  .il__flow{display:grid;gap:.4rem}.il__flow li{display:grid;grid-template-columns:5rem 1fr auto;gap:.6rem;align-items:start;padding:.6rem .75rem;border-radius:.7rem;background:var(--white);color:var(--ink);font-size:.78rem;line-height:1.35}
+  .il__flow b{font-weight:600;font-size:.7rem;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-60);padding-top:.15rem}.il__flow small{color:var(--ink-40)}
+  .il__wrote{display:grid;gap:.4rem}.il__wrote li{display:grid;grid-template-columns:1.4rem 1fr 1.2rem;gap:.7rem;align-items:center;padding:.6rem .75rem;border-radius:.7rem;background:var(--white);color:var(--ink)}
+  .il__wrote img{width:1.4rem;height:1.4rem}.il__wrote b{display:block;font-weight:500;font-size:.82rem}.il__wrote div span{font-size:.7rem;color:var(--ink-40)}.il__wrote i{width:1.2rem;height:1.2rem;border-radius:50%;background:var(--lime);font-style:normal;font-size:.7rem;font-weight:700;display:grid;place-items:center}
+  .il__perm{display:grid;gap:.4rem}.il__perm li{display:grid;grid-template-columns:1.4rem 1fr auto;gap:.7rem;align-items:center;padding:.6rem .75rem;border-radius:.7rem;background:var(--white);color:var(--ink)}
+  .il__perm img{width:1.4rem;height:1.4rem}.il__perm b{display:block;font-weight:500;font-size:.82rem}.il__perm div span{font-size:.7rem;color:var(--ink-40)}
+  .il__toggle{width:2rem;height:1.15rem;border-radius:99px;background:var(--ink-12);position:relative;display:block}.il__toggle::after{content:'';position:absolute;top:.15rem;left:.15rem;width:.85rem;height:.85rem;border-radius:50%;background:var(--white);transition:transform .3s var(--ease)}.il__toggle.is-on{background:var(--viv-green)}.il__toggle.is-on::after{transform:translateX(.85rem)}
+  @media (max-width:640px){.il{font-size:.86rem;padding:.9rem}.il__src li,.il__mem span,.il__files i,.il__minis li,.il__facts li,.il__flow small,.il__file>span:last-child,.il__thumb .il__chip,.il__memgrid div span,.il__memgrid em,.il__legs li div span,.il__sheet li div span,.il__wrote div span,.il__perm div span,.il__attach li>div span,.il__day{font-size:.72rem}.il__grid{grid-template-columns:repeat(2,1fr)}.il__budget,.il__ready{grid-template-columns:1fr;justify-items:center}.il__legend,.il__checks{width:100%}.il__g{grid-template-columns:5.5rem 1fr}.il__now{left:calc(5.5rem + .6rem + (100% - 5.5rem - .6rem) * .46)}.il__tasks{grid-auto-rows:2.2rem}.il__task b{font-size:.7rem}.il__task[style*='--span:1'] b{display:none}.il__task[style*='--span:1']{justify-content:center}}
+</style>

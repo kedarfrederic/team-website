@@ -1,0 +1,302 @@
+---
+import { site } from '../data/site';
+import LanguagePicker from './LanguagePicker.astro';
+import { stripLocale } from '../lib/i18n/routes';
+interface Props { section?: 'product' | 'who'; }
+const { section } = Astro.props;
+const path = stripLocale(Astro.url.pathname);
+// Section sub-bar: on product pages it switches between products, on audience pages between audiences.
+// It only appears once the bar has become the floating pill (scrolled), never on first load.
+const sub = section === 'product' ? site.nav.product : section === 'who' ? [...site.nav.who, { label: 'Enterprise', href: '/enterprise', c: 'var(--team-press)' }] : [];
+const here = (href: string) => path === href || path === href + '/';
+const icons: Record<string,string> = {
+  rollouts: '<path d="M4 7h16M4 12h10M4 17h13"/>',
+  assets: '<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 15l5-5 4 4 3-3 6 6"/>',
+  tours: '<path d="M4 18c4-9 12-9 16 0"/><circle cx="12" cy="9" r="2"/>',
+  teammate: '<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/>',
+  connectors: '<circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.3 10.8l7.4-3.6M8.3 13.2l7.4 3.6"/>',
+  artists: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M9 21h6"/>',
+  managers: '<rect x="3" y="7" width="18" height="13" rx="3"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18"/>',
+  labels: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.5"/><path d="M12 3a9 9 0 0 1 9 9"/>',
+  partners: '<path d="M3 8h11v9H3zM14 11h4l3 3v3h-7z"/><circle cx="7" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/>',
+  enterprise: '<path d="M4 21V5a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v16M14 10h5a1 1 0 0 1 1 1v10M8 8h2M8 12h2M8 16h2M17 14h1M17 18h1M4 21h17"/>',
+};
+---
+<header class="nav" id="nav">
+  <div class="nav__in wrap">
+    <a class="nav__logo" href="/" aria-label="Team home">
+      <img src="/studio-nine/logo/team-logo-colour.svg" alt="Team" width="88" height="29" />
+    </a>
+
+    <nav class="nav__menu" aria-label="Primary">
+      <div class="nav__item" data-menu>
+        <button class="nav__link" aria-expanded="false" aria-haspopup="true">Product <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 3.5l3 3 3-3"/></svg></button>
+        <div class="nav__panel nav__panel--product" role="menu">
+          <div class="nav__grid">
+            {site.nav.product.map(i => (
+              <a class="nav__row" href={i.href} role="menuitem">
+                <span class="nav__ic" style={`--c:${i.c}`}><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" set:html={icons[i.icon]}></svg></span>
+                <span class="nav__txt"><b>{i.label}</b><span>{i.desc}</span></span>
+                {i.pro && <em class="nav__pro">Pro</em>}
+              </a>
+            ))}
+            <a class="nav__row" href="/security" role="menuitem">
+              <span class="nav__ic" style="--c:var(--viv-green);color:var(--white)"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 4v5c0 5-3.5 8-7 9-3.5-1-7-4-7-9V7z"/></svg></span>
+              <span class="nav__txt"><b>Security</b><span>Your data stays yours</span></span>
+            </a>
+          </div>
+          <a class="nav__feature nav__feature--lime" href={site.cta.primary.href}>
+            <span class="nav__feature-top"><span class="nav__feature-mark"><img src="/studio-nine/logo/team-logomark-black.png" alt="" /></span><span class="nav__feature-kicker">Free forever</span></span>
+            <b>Every release needs a <em>Team.</em></b>
+            <span>No card. Nothing to migrate. Your first release is set up in minutes.</span>
+            <span class="btn btn--sm nav__feature-btn">Start free <span class="arr">→</span></span>
+          </a>
+        </div>
+      </div>
+      <div class="nav__item" data-menu>
+        <button class="nav__link" aria-expanded="false" aria-haspopup="true">Who it's for <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 3.5l3 3 3-3"/></svg></button>
+        <div class="nav__panel nav__panel--who" role="menu">
+          <div class="nav__grid">
+            {site.nav.who.map(i => (
+              <a class="nav__row" href={i.href} role="menuitem">
+                <span class="nav__ic" style={`--c:${i.c}`}><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" set:html={icons[i.icon]}></svg></span>
+                <span class="nav__txt"><b>{i.label}</b><span>{i.desc}</span></span>
+              </a>
+            ))}
+            <a class="nav__row" href="/enterprise" role="menuitem">
+              <span class="nav__ic" style="--c:var(--team-press)"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" set:html={icons.enterprise}></svg></span>
+              <span class="nav__txt"><b>Enterprise</b><span>Deploy across the whole company</span></span>
+            </a>
+            <a class="nav__row" href="/pricing" role="menuitem">
+              <span class="nav__ic" style="--c:var(--paper-2)"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M7 8.5c0-1.7 2-3 5-3s5 1.3 5 3-2 2.5-5 3-5 1.3-5 3 2 3 5 3 5-1.3 5-3"/></svg></span>
+              <span class="nav__txt"><b>Pricing</b><span>Free, or Pro when you want more</span></span>
+            </a>
+          </div>
+          <a class="nav__feature nav__feature--ink" href="/demo">
+            <span class="nav__feature-top"><span class="nav__feature-av"><i style="background:var(--team-music)">AN</i><i style="background:var(--team-mgmt)">TS</i><i style="background:var(--team-mkt)">MR</i></span><span class="nav__feature-kicker">20 minutes</span></span>
+            <b>See it on <em>your</em> roster.</b>
+            <span>A walkthrough with someone who runs releases on Team, on your releases.</span>
+            <span class="btn btn--sm btn--lime nav__feature-btn">Book a demo <span class="arr">→</span></span>
+          </a>
+        </div>
+      </div>
+      {site.nav.more.map(i => <a class:list={['nav__link', { 'is-active': path.startsWith(i.href) }]} href={i.href}>{i.label}</a>)}
+    </nav>
+
+    <div class="nav__cta">
+      <div class="nav__languages"><LanguagePicker /></div>
+      <a class="nav__signin" href={site.cta.signin.href}>{site.cta.signin.label}</a>
+      <a class="btn btn--ghost btn--sm nav__demo" href={site.cta.secondary.href}>{site.cta.secondary.label}</a>
+      <a class="btn btn--lime btn--sm" href={site.cta.primary.href}>{site.cta.primary.label}</a>
+      <button class="nav__burger" aria-label="Open menu" aria-expanded="false" aria-controls="mnav"><i></i><i></i></button>
+    </div>
+  </div>
+  {sub.length > 0 && (
+    <nav class="subnav" aria-label={section === 'product' ? 'Products' : 'Who it is for'}>
+      <div class="subnav__in">
+        {sub.map((it: any) => <a class:list={['subnav__link', { 'is-on': here(it.href), 'is-ink': it.c === 'var(--ink)' }]} style={`--c:${it.c}`} href={it.href} aria-current={here(it.href) ? 'page' : undefined}><i></i>{it.label}</a>)}
+      </div>
+    </nav>
+  )}
+
+  <div class="mnav" id="mnav" data-lenis-prevent hidden>
+    <div class="wrap mnav__in">
+      <LanguagePicker />
+      <p class="mnav__k">Product</p>
+      <ul class="mnav__grid">
+        {site.nav.product.map(i => <li><a class="mnav__tile" href={i.href} style={`--c:${i.c}`}><span class="mnav__ic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" set:html={icons[i.icon]}></svg></span><b>{i.label}{i.pro && <span class="mnav__pro">Pro</span>}</b><span>{i.desc}</span></a></li>)}
+        <li><a class="mnav__tile" href="/security" style="--c:var(--viv-green);--fg:var(--white)"><span class="mnav__ic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 4v5c0 5-3.5 8-7 9-3.5-1-7-4-7-9V7z"/></svg></span><b>Security</b><span>Your data stays yours</span></a></li>
+      </ul>
+
+      <p class="mnav__k">Who it's for</p>
+      <ul class="mnav__list">
+        {site.nav.who.map(i => <li><a class="mnav__row" href={i.href}><span class="mnav__ic mnav__ic--sm" style={`--c:${i.c}`}><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" set:html={icons[i.icon]}></svg></span>{i.label}<i class="mnav__arr">→</i></a></li>)}
+        <li><a class="mnav__row" href="/enterprise"><span class="mnav__ic mnav__ic--sm" style="--c:var(--team-press)"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" set:html={icons.enterprise}></svg></span>Enterprise<i class="mnav__arr">→</i></a></li>
+      </ul>
+
+      {/* secondary links: an even grid, so the row always spans the full width and never orphans one item */}
+      <ul class="mnav__more">{site.nav.more.map(i => <li><a href={i.href}>{i.label}</a></li>)}<li><a href={site.cta.signin.href}>Sign in</a></li></ul>
+
+      <div class="mnav__cta">
+        <div class="mnav__cta-top"><span class="mnav__cta-mark"><img src="/studio-nine/logo/team-logomark-white.png" alt="" width="20" height="20" /></span><span class="mnav__cta-pill">Free forever</span></div>
+        <p class="mnav__cta-t">Every release needs a <em>Team.</em></p>
+        <p class="mnav__cta-d">No card. Nothing to migrate. Your first release is set up in minutes.</p>
+        <div class="mnav__cta-row">
+          <a class="btn btn--lime btn--sm" href={site.cta.primary.href}>{site.cta.primary.label}</a>
+          <a class="btn btn--sm mnav__cta-ghost" href={site.cta.secondary.href}>{site.cta.secondary.label}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<style>
+  .nav{position:fixed;inset:0 0 auto 0;z-index:100;padding-top:0;transition:padding .5s var(--ease)}
+  .nav__in{display:flex;align-items:center;gap:1.5rem;height:4.5rem;transition:max-width .55s var(--ease),height .5s var(--ease),padding .5s var(--ease),background .4s,border-radius .5s var(--ease),box-shadow .5s,transform .5s var(--ease);background:transparent;border-radius:0;box-shadow:none;
+    transition:max-width .55s var(--ease),height .5s var(--ease),padding .5s var(--ease),background .4s,border-radius .5s var(--ease),box-shadow .5s,transform .5s var(--ease)}
+  /* scrolled: the bar becomes a floating pill */
+  .nav.is-scrolled{padding-top:.6rem}
+  .nav.is-scrolled .nav__in{max-width:58rem;height:3.3rem;padding-inline:.9rem .45rem;background:rgba(255,255,255,.82);backdrop-filter:blur(24px) saturate(1.4);-webkit-backdrop-filter:blur(24px) saturate(1.4);border-radius:var(--r-nav);box-shadow:0 8px 30px rgba(14,13,11,.08),0 0 0 1px rgba(255,255,255,.6) inset}
+  .nav.is-scrolled .nav__logo{padding-left:.6rem}
+  .nav.is-scrolled .nav__logo img{height:1.4rem}
+  .nav.is-scrolled .nav__demo{display:none}
+  .nav.is-scrolled .nav__signin{font-size:.85rem}
+  .nav.is-scrolled .nav__link{height:2.2rem;font-size:.86rem;padding:0 .7rem}
+  .nav.is-scrolled .nav__cta .btn--lime{height:2.4rem;padding:0 .95rem;font-size:.86rem}
+  .nav.is-hidden{transform:translateY(-120%)}
+  .nav{transition:padding .5s var(--ease),transform .45s var(--ease)}
+  .nav__logo img{height:1.7rem;width:auto;transition:height .5s var(--ease)}
+  .nav__menu{display:flex;align-items:center;gap:.25rem;margin-inline:auto}
+  .nav__in{position:relative;z-index:2}  /* panels are children of the bar, so they stack above the section sub-bar */
+  .subnav{position:relative;z-index:1}
+  .nav__item{position:static}
+  .nav__link{display:inline-flex;align-items:center;gap:.4em;height:2.4rem;padding:0 .85rem;border-radius:var(--r-btn);font-size:.95rem;font-weight:500;color:var(--ink-80);transition:background .2s,color .2s,height .4s var(--ease),font-size .4s var(--ease)}
+  .nav__link:hover,.nav__item.is-open .nav__link,.nav__link.is-active{color:var(--ink);background:var(--ink-6)}
+  .nav__link svg{transition:transform .25s var(--ease);opacity:.6}
+  .nav__item.is-open .nav__link svg{transform:rotate(180deg)}
+  .nav__panel{position:absolute;top:calc(100% + .5rem);left:var(--gutter);right:var(--gutter);background:var(--white);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-lg);padding:.6rem;display:grid;gap:.6rem;opacity:0;visibility:hidden;transform:translateY(8px) scale(.98);transform-origin:top left;transition:opacity .25s var(--ease),transform .3s var(--ease),visibility .25s}
+  .nav__panel--product,.nav__panel--who{grid-template-columns:1fr 17.5rem;gap:.75rem;padding:.75rem;align-items:stretch}
+  .nav.is-scrolled .nav__panel{left:0;right:0}
+  .nav__item.is-open .nav__panel{opacity:1;visibility:visible;transform:none}
+  /* two tidy columns of rows, each row one line of description, all rows the same height */
+  .nav__grid{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:.25rem .5rem;align-content:stretch}
+  .nav__row{display:flex;gap:.8rem;align-items:center;padding:.55rem .7rem;border-radius:calc(var(--r-lg) - .75rem);transition:background .2s;min-width:0}
+  .nav__row:hover{background:var(--paper)}
+  .nav__txt{display:grid;min-width:0;flex:1}
+  .nav__txt b{font-weight:500;font-size:.95rem;color:var(--ink);line-height:1.25}
+  .nav__txt>span{font-size:.8rem;color:var(--ink-60);line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .nav__pro{flex:none;font-style:normal;font-size:.66rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:.2rem .45rem;border-radius:.35rem;color:var(--ink-60);box-shadow:inset 0 0 0 1px var(--ink-12)}
+  .nav__row:hover .nav__pro{color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink-40)}
+  .nav__ic{flex:none;width:2.1rem;height:2.1rem;border-radius:.65rem;background:var(--c,var(--lime));color:var(--ink);display:grid;place-items:center}
+  .nav__ic[style*='--ink']{color:var(--lime)}
+  /* promo tile: same skeleton in both panels so the panels match in height */
+  .nav__feature{position:relative;overflow:hidden;display:grid;grid-template-rows:auto auto 1fr auto;gap:.45rem;align-items:start;padding:1.1rem;min-height:14.5rem;border-radius:calc(var(--r-lg) - .75rem);font-size:.84rem;line-height:1.45;transition:transform .3s var(--ease)}
+  .nav__feature:hover{transform:translateY(-2px)}
+  .nav__feature b{font-weight:500;font-size:1.2rem;letter-spacing:-.015em;line-height:1.15;margin-top:.35rem}
+  .nav__feature b em{font-family:var(--serif);font-weight:300;font-style:italic;font-size:1.12em}
+  .nav__feature-top{display:flex;justify-content:space-between;align-items:center}
+  .nav__feature-mark{width:2.1rem;height:2.1rem;border-radius:.65rem;background:var(--white);display:grid;place-items:center}
+  .nav__feature-mark img{width:1.1rem;height:1.1rem}
+  .nav__feature-kicker{font-size:.7rem;font-weight:600;padding:.25rem .6rem;border-radius:var(--r-pill)}
+  .nav__feature-av{display:flex;padding-left:.45rem}
+  .nav__feature-av i{width:1.9rem;height:1.9rem;border-radius:50%;margin-left:-.45rem;border:2px solid var(--ink);font-style:normal;font-size:.58rem;font-weight:700;color:var(--ink);display:grid;place-items:center}
+  .nav__feature-btn{justify-self:start;align-self:end;margin-top:.5rem}
+  .nav__feature .arr{transition:transform .3s var(--ease)}
+  .nav__feature:hover .arr{transform:translateX(3px)}
+  .nav__feature--lime{background:var(--lime);color:var(--ink-80);background-image:repeating-radial-gradient(circle at 100% 0%,rgba(14,13,11,.05) 0 1px,transparent 1px 9px)}
+  .nav__feature--lime b{color:var(--ink)}
+  .nav__feature--lime .nav__feature-kicker{background:rgba(14,13,11,.1);color:var(--ink)}
+  .nav__feature--lime .nav__feature-btn{background:var(--ink);color:var(--white)}
+  .nav__feature--ink{background:var(--ink);color:var(--on-dark-60);background-image:repeating-radial-gradient(circle at 100% 0%,rgba(255,255,255,.06) 0 1px,transparent 1px 9px)}
+  .nav__feature--ink b{color:var(--white)}
+  .nav__feature--ink .nav__feature-kicker{background:rgba(255,255,255,.12);color:var(--white)}
+  .nav__cta{margin-left:0;display:flex;align-items:center;gap:.5rem}
+  .nav__cta .btn{transition:background .25s var(--ease),color .25s var(--ease),height .4s var(--ease),padding .4s var(--ease),font-size .4s var(--ease)}
+  .nav__signin{font-size:.93rem;font-weight:500;color:var(--ink-60);padding:.4rem .7rem;border-radius:var(--r-pill)}
+  .nav__signin:hover{color:var(--ink)}
+  .nav__burger{display:none;width:2.6rem;height:2.6rem;border-radius:var(--r-pill);flex-direction:column;justify-content:center;align-items:center;gap:5px}
+  .nav__burger i{width:20px;height:1.6px;background:var(--ink);transition:transform .3s var(--ease)}
+  .nav__burger[aria-expanded="true"] i:first-child{transform:translateY(3.3px) rotate(45deg)}
+  .nav__burger[aria-expanded="true"] i:last-child{transform:translateY(-3.3px) rotate(-45deg)}
+  .mnav{position:fixed;inset:4.5rem 0 0 0;background:var(--white);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding-block:.5rem 2.5rem;z-index:99}
+  .mnav__in{display:grid;gap:.75rem}
+  .mnav__k{font-size:1.05rem;font-weight:600;letter-spacing:-.01em;color:var(--ink);margin:1.1rem 0 .3rem}
+  /* every product tile is the same height: equal rows, and each tile lays out top-to-bottom */
+  .mnav__grid{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:.5rem}
+  .mnav__grid li{display:grid}
+  .mnav__tile{display:grid;grid-template-rows:auto auto 1fr;gap:.25rem;padding:.9rem;border-radius:var(--r-lg);background:var(--c);color:var(--fg,var(--ink))}
+  .mnav__tile[style*='--ink']{--fg:var(--white)}
+  .mnav__tile b{font-weight:500;font-size:.98rem;display:flex;align-items:center;gap:.4rem;margin-top:.45rem;line-height:1.2}
+  .mnav__tile>span:last-child{font-size:.78rem;opacity:.8;line-height:1.3}
+  .mnav__pro{font-size:.62rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:.12rem .38rem;border-radius:.3rem;background:rgba(14,13,11,.12);color:inherit}
+  .mnav__tile[style*='--ink'] .mnav__pro,.mnav__tile[style*='viv-green'] .mnav__pro{background:rgba(255,255,255,.2)}
+  .mnav__ic{width:2.1rem;height:2.1rem;border-radius:.65rem;background:rgba(255,255,255,.75);color:var(--ink);display:grid;place-items:center}
+  .mnav__tile[style*='--ink'] .mnav__ic,.mnav__tile[style*='viv-green'] .mnav__ic{background:rgba(255,255,255,.16);color:var(--white)}
+  .mnav__list{display:grid;gap:.35rem}
+  .mnav__row{display:flex;align-items:center;gap:.7rem;padding:.6rem .7rem;border-radius:var(--r-md);background:var(--paper);font-size:1rem;font-weight:500}
+  .mnav__ic--sm{width:1.9rem;height:1.9rem;border-radius:.55rem;background:var(--c)}
+  .mnav__arr{margin-left:auto;color:var(--ink-40);font-style:normal}
+  /* four even columns: the row spans the full width, and wrapping drops a whole pair, never one orphan */
+  .mnav__more{display:grid;grid-template-columns:repeat(4,1fr);gap:.4rem;margin-top:.75rem}
+  .mnav__more a{display:flex;align-items:center;justify-content:center;height:2.6rem;padding:0 .5rem;border-radius:var(--r-btn);background:var(--paper);font-size:.9rem;font-weight:500;color:var(--ink);text-align:center}
+  @media (max-width:420px){ .mnav__more{grid-template-columns:repeat(2,1fr)} }
+  /* closing tile */
+  .mnav__cta{display:grid;gap:.5rem;margin-top:1.25rem;padding:1.35rem;border-radius:var(--r-xl);background:var(--ink);color:var(--on-dark-60);background-image:repeating-radial-gradient(circle at 100% 0%,rgba(255,255,255,.06) 0 1px,transparent 1px 9px)}
+  .mnav__cta-top{display:flex;align-items:center;justify-content:space-between}
+  .mnav__cta-mark{width:2.2rem;height:2.2rem;border-radius:.7rem;background:rgba(255,255,255,.12);display:grid;place-items:center}
+  .mnav__cta-mark img{width:1.15rem;height:1.15rem}
+  .mnav__cta-pill{font-size:.72rem;font-weight:600;padding:.28rem .65rem;border-radius:var(--r-pill);background:var(--lime);color:var(--ink)}
+  .mnav__cta-t{font-size:1.55rem;line-height:1.1;letter-spacing:-.02em;color:var(--white);margin-top:.5rem}
+  .mnav__cta-t em{font-family:var(--serif);font-weight:300;font-style:italic;font-size:1.12em;color:var(--lime)}
+  .mnav__cta-d{font-size:.88rem;line-height:1.45}
+  .mnav__cta-row{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.75rem}
+  .mnav__cta-row .btn{width:100%;justify-content:center}
+  .mnav__cta-row .btn--lime:hover{background:var(--lime-2);color:var(--ink)}
+  .mnav__cta-ghost{background:transparent;color:var(--white);box-shadow:inset 0 0 0 1px rgba(255,255,255,.35)}
+  .mnav__cta-ghost:hover{background:rgba(255,255,255,.1);color:var(--white)}
+  /* section sub-bar: hidden until the bar is the scrolled pill */
+  .subnav{display:flex;justify-content:center;margin-top:.45rem;opacity:0;transform:translateY(-.6rem);pointer-events:none;transition:opacity .4s var(--ease),transform .5s var(--ease)}
+  .nav.is-scrolled .subnav{opacity:1;transform:none;pointer-events:auto}
+  .subnav__in{display:flex;gap:.2rem;padding:.3rem;border-radius:calc(var(--r-nav) - .2rem);background:rgba(255,255,255,.82);backdrop-filter:blur(24px) saturate(1.4);-webkit-backdrop-filter:blur(24px) saturate(1.4);box-shadow:0 8px 30px rgba(14,13,11,.08),0 0 0 1px rgba(255,255,255,.6) inset;max-width:calc(100% - 1.5rem);overflow-x:auto;scrollbar-width:none}
+  .subnav__in::-webkit-scrollbar{display:none}
+  .subnav__link{display:inline-flex;align-items:center;gap:.45rem;height:2.1rem;padding:0 .8rem 0 .65rem;border-radius:calc(var(--r-nav) - .5rem);font-size:.82rem;font-weight:500;color:var(--ink-80);white-space:nowrap;transition:background .25s var(--ease),color .25s var(--ease)}
+  .subnav__link i{width:.5rem;height:.5rem;border-radius:50%;background:var(--c);box-shadow:0 0 0 2px var(--white)}
+  .subnav__link:hover{background:var(--paper);color:var(--ink)}
+  .subnav__link.is-on{background:var(--c);color:var(--ink)}
+  .subnav__link.is-on i{background:var(--ink);box-shadow:none}
+  .subnav__link.is-ink.is-on{color:var(--white)}.subnav__link.is-ink.is-on i{background:var(--lime)}
+  .nav.is-hidden .subnav{opacity:0}
+  @media (max-width:1040px){
+    .nav__menu,.nav__demo,.nav__signin{display:none}
+    .nav__cta{margin-left:auto}
+    .nav__burger{display:flex}
+    .nav.is-scrolled .nav__in{max-width:calc(100% - 1.5rem);background:rgba(255,255,255,.9)}
+  }
+  @media (max-width:720px){ .nav__languages{display:none} .nav__in{height:4rem} .mnav{inset:4rem 0 0 0} .nav.is-scrolled{padding-top:.5rem} .subnav{justify-content:flex-start;padding-inline:.75rem} .subnav__in{max-width:100%} .subnav__link{font-size:.8rem;height:2rem} }
+  /* menu open: the scrolled pill animates back to the full-width bar, so the sheet reads as one piece */
+  .nav.is-menu{padding-top:0}
+  .nav.is-menu .nav__in{transition:max-width .45s var(--ease),height .45s var(--ease),padding .45s var(--ease),background .12s linear,border-radius .3s var(--ease),box-shadow .3s;max-width:100%;height:4.5rem;padding-inline:var(--gutter);background:var(--white);backdrop-filter:none;-webkit-backdrop-filter:none;border-radius:0;box-shadow:none}
+  .nav.is-menu .nav__logo{padding-left:0}
+  .nav.is-menu .nav__logo img{height:1.8rem}
+  .nav.is-menu .nav__cta .btn--lime{height:2.75rem;padding:0 1.15rem;font-size:.95rem}
+  .nav.is-menu .subnav{opacity:0;pointer-events:none}
+  @media (max-width:720px){ .nav.is-menu .nav__in{height:4rem} .nav.is-menu .nav__cta .btn--lime{height:2.6rem} }
+</style>
+
+<script>
+  const nav = document.getElementById('nav')!;
+  const items = nav.querySelectorAll<HTMLElement>('[data-menu]');
+  let closeT: number | undefined;
+  items.forEach((it) => {
+    const btn = it.querySelector('button')!;
+    const open = () => { window.clearTimeout(closeT); items.forEach(o => o !== it && o.classList.remove('is-open')); it.classList.add('is-open'); btn.setAttribute('aria-expanded','true'); };
+    const close = () => { it.classList.remove('is-open'); btn.setAttribute('aria-expanded','false'); };
+    it.addEventListener('mouseenter', open);
+    it.addEventListener('mouseleave', () => { closeT = window.setTimeout(close, 120); });
+    btn.addEventListener('click', () => it.classList.contains('is-open') ? close() : open());
+    it.addEventListener('focusout', (e) => { if (!it.contains(e.relatedTarget as Node)) close(); });
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') items.forEach(i => i.classList.remove('is-open')); });
+
+  // scroll state + hide on scroll down
+  let last = 0;
+  const onScroll = () => {
+    const y = window.scrollY;
+    nav.classList.toggle('is-scrolled', y > 80);  // always visible; only the shape changes
+    last = y;
+  };
+  window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+  // mobile
+  const burger = nav.querySelector<HTMLButtonElement>('.nav__burger')!;
+  const mnav = document.getElementById('mnav')!;
+  burger.addEventListener('click', () => {
+    const openNow = burger.getAttribute('aria-expanded') === 'true';
+    burger.setAttribute('aria-expanded', String(!openNow));
+    mnav.hidden = openNow;
+    nav.classList.toggle('is-menu', !openNow);  // un-shrink the scrolled pill while the sheet is open
+    document.body.classList.toggle('menu-open', !openNow);
+    document.documentElement.style.overflow = openNow ? '' : 'hidden';
+    (window as any).__lenis?.[openNow ? 'start' : 'stop']?.();
+  });
+</script>

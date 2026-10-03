@@ -309,7 +309,7 @@ const others =
       <SplitHeadline as="h2" top={stepsTop} bottom={stepsBottom} />
     </div>
     <div class="steps-timeline">
-      {stepItems.map((s) => (
+      {stepItems.map((s: {num:string;t:string;d:string}) => (
         <div class="step">
           <div class="step__circle">{s.num}</div>
           <div class="step__card">
@@ -337,7 +337,7 @@ const others =
 
 <section class="other-icps">
   <div class="other-icps__inner">
-    {others.map((o, i) => (
+    {others.map((o: {href:string;title:string;desc:string}, i:number) => (
       <>
         {i > 0 && <div class="other-icps__divider"></div>}
         <a href={o.href} class="other-icp">

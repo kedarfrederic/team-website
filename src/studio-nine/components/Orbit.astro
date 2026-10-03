@@ -1,0 +1,147 @@
+---
+// Orbit panel: dotted rings that turn, radial dotted spokes,
+// people as two-tone vibrant rings with serif names, task nodes on the outer ring, packets travelling the spokes,
+// and a notification card beside the person the event belongs to.
+interface Props { active?: string; class?: string; }
+const { active = 'artist', class: cls = '' } = Astro.props;
+const sats = [
+  { k:'artist', l:'Artist', team:'The music', a:-90, ring:'var(--lime)', core:'var(--viv-lav)', name:'Ava' },
+  { k:'manager', l:'Manager', team:'Management', a:-18, ring:'var(--viv-cyan)', core:'var(--viv-green)', name:'Theo' },
+  { k:'label', l:'Label', team:'Marketing', a:54, ring:'var(--viv-pink)', core:'var(--viv-orange)', name:'Maya' },
+  { k:'partner', l:'Distributor', team:'Distribution', a:126, ring:'var(--viv-orange)', core:'var(--lime)', name:'Sam' },
+  { k:'agency', l:'PR agency', team:'Press', a:198, ring:'var(--viv-lav)', core:'var(--viv-pink)', name:'JP' },
+];
+const V = 600, R = 180, RT = 258, CX = V / 2, CY = V / 2;
+const rad = (d: number) => d * Math.PI / 180;
+const pos = (deg: number, r = R) => ({ x: CX + r * Math.cos(rad(deg)), y: CY + r * Math.sin(rad(deg)) });
+const pct = (v: number) => (v / V * 100).toFixed(2) + '%';
+const anchor = (deg: number) => { const c = Math.cos(rad(deg)); return c > .3 ? 'start' : c < -.3 ? 'end' : 'middle'; };
+// Cards sit just off their person, on the side away from the ring centre and away from that person's own label.
+// Top/bottom people: card beside them. Side people: card above (top half) or below (bottom half). Never past the page edge.
+const cardAt = (k: string) => ({
+  artist:  { x: '62%', y: '4%',  xf: 'translate(0,0)' },          // right of Ava, above the ring
+  manager: { x: '96%', y: '34%', xf: 'translate(-100%,-100%)' },  // above Theo, tucked in from the edge
+  label:   { x: '96%', y: '87%', xf: 'translate(-100%,0)' },      // below Maya's label
+  partner: { x: '4%',  y: '87%', xf: 'translate(0,0)' },          // below Sam's label
+  agency:  { x: '4%',  y: '34%', xf: 'translate(0,-100%)' },      // above JP
+} as Record<string, { x: string; y: string; xf: string }>)[k];
+---
+<div class:list={['orbit', cls]} data-orbit data-active={active}>
+  <div class="orbit__hud"><b>Midnight Static · 5</b><span>22 tasks ↗</span></div>
+  <div class="orbit__add">+ Add person</div>
+  <svg viewBox={`0 0 ${V} ${V}`} width="100%" height="100%" aria-hidden="true">
+    <defs><filter id="og2" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6"/></filter></defs>
+    <g class="orbit__ring orbit__ring--a"><circle cx={CX} cy={CY} r="100" fill="none" stroke="var(--ink-40)" stroke-width="1.5" stroke-dasharray="1.5 7" stroke-linecap="round" /></g>
+    <g class="orbit__ring orbit__ring--b"><circle cx={CX} cy={CY} r={R} fill="none" stroke="var(--ink-40)" stroke-width="1.5" stroke-dasharray="1.5 8" stroke-linecap="round" /></g>
+    <g class="orbit__ring orbit__ring--c"><circle cx={CX} cy={CY} r={RT} fill="none" stroke="var(--ink-12)" stroke-width="1.5" stroke-dasharray="1.5 9" stroke-linecap="round" /></g>
+    {sats.map(s => { const p = pos(s.a, R - 38); return <line x1={CX} y1={CY} x2={p.x} y2={p.y} stroke="var(--ink-40)" stroke-width="1.5" stroke-dasharray="1.5 6" stroke-linecap="round" />; })}
+    {sats.map(s => { const p = pos(s.a, R - 34); return (
+      <g class="orbit__spoke" data-sat={s.k}>
+        <circle class="orbit__pkt-glow" cx={CX} cy={CY} r="9" style={`fill:${s.ring}`} opacity="0" filter="url(#og2)" data-glow={s.k} />
+        <circle class="orbit__pkt" cx={CX} cy={CY} r="4" style={`fill:${s.ring}`} opacity="0" data-pkt={s.k} />
+      </g>
+    ); })}
+    <g class="orbit__core">
+      <rect x={CX - 40} y={CY - 40} width="80" height="80" rx="22" style="fill:var(--ink)" />
+      <image href="/studio-nine/logo/team-logomark-white.png" x={CX - 22} y={CY - 22} width="44" height="44" />
+    </g>
+    {sats.map(s => { const p = pos(s.a); const lp = pos(s.a, R + 56); return (
+      <g class="orbit__sat" data-sat={s.k}>
+        <g transform={`translate(${p.x} ${p.y})`}>
+          <circle r="42" style={`fill:${s.ring}`} opacity="0" class="orbit__halo" />
+          <circle r="34" style={`fill:${s.ring}`} class="orbit__sat-ring" />
+          <circle r="27" style="fill:var(--white)" />
+          <circle r="20" style={`fill:${s.core}`} />
+          <circle r="11" style={`fill:${s.ring}`} opacity=".9" />
+        </g>
+        <text x={lp.x} y={lp.y + 1} text-anchor={anchor(s.a)} style="fill:var(--ink)" font-size="18" font-family="Nyght, Georgia, serif" font-weight="300">{s.name}</text>
+        <text x={lp.x} y={lp.y + 17} text-anchor={anchor(s.a)} style="fill:var(--ink-60)" font-size="11" font-family="Inter, sans-serif" font-weight="500">{s.team}</text>
+      </g>
+    ); })}
+  </svg>
+  {sats.map(s => { const p = cardAt(s.k); return (
+    <div class="orbit__card" data-card={s.k} style={`left:${p.x};top:${p.y};transform:${p.xf}`}>
+      <span class="orbit__card-av" style={`background:${s.ring}`}></span>
+      <span class="orbit__card-t"><b>{s.name} · {s.team}</b><span data-card-text></span></span>
+    </div>
+  ); })}
+</div>
+
+<style>
+  .orbit{position:relative;width:100%;aspect-ratio:1;max-width:34rem;margin:0 auto;background:var(--white);border-radius:var(--r-xl);overflow:visible;
+    background-image:repeating-radial-gradient(circle at 50% 50%,transparent 0 11px,var(--ink-6) 11px 12px);box-shadow:var(--shadow-md)}
+  .orbit svg{position:absolute;inset:0}
+  .orbit__hud{position:absolute;left:1.4rem;top:1.2rem;color:var(--ink);z-index:2}
+  .orbit__hud b{display:block;font-weight:500;font-size:1.1rem;letter-spacing:-.02em}
+  .orbit__hud span{font-size:.78rem;color:var(--ink-60)}
+  .orbit__add{position:absolute;right:1.2rem;bottom:1.2rem;padding:.45rem .8rem;border-radius:var(--r-btn);background:var(--ink);color:var(--white);font-size:.8rem;font-weight:500;z-index:2}
+  .orbit__ring{transform-box:fill-box;transform-origin:center}
+  .orbit__ring--a{animation:spin 90s linear infinite reverse}
+  .orbit__ring--b{animation:spin 140s linear infinite}
+  .orbit__ring--c{animation:spin 200s linear infinite reverse}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .orbit__sat-ring{transition:r .3s}
+  .orbit__sat.is-on .orbit__sat-ring{r:37}
+  .orbit__halo{transform-box:fill-box;transform-origin:center}
+  .orbit__sat.is-live .orbit__halo{animation:halo 1.6s ease-out infinite}
+  @keyframes halo{0%{transform:scale(1);opacity:.6}100%{transform:scale(1.6);opacity:0}}
+  .orbit__card{position:absolute;display:flex;gap:.55rem;align-items:flex-start;width:max-content;max-width:11.5rem;background:var(--ink);color:var(--white);border-radius:var(--r-md);box-shadow:var(--shadow-lg);padding:.6rem .75rem;font-size:.78rem;line-height:1.35;opacity:0;visibility:hidden;transition:opacity .35s var(--ease),visibility .35s;z-index:3;margin:0}
+  .orbit__card.is-on{opacity:1;visibility:visible}
+  .orbit__card-av{flex:none;width:1rem;height:1rem;border-radius:50%;margin-top:.15rem}
+  .orbit__card-t b{display:block;font-weight:500;font-size:.7rem;color:var(--on-dark-60)}
+  @media (max-width:640px){
+    .orbit{margin:.5rem auto 7.5rem;border-radius:var(--r-lg)}
+    .orbit__hud b{font-size:.9rem}.orbit__add{display:none}
+    .orbit__card{left:0!important;top:auto!important;right:0;transform:none!important;max-width:none;width:auto;margin:0;font-size:.78rem}
+    .orbit__card[data-slot="0"]{bottom:-3.4rem}
+    .orbit__card[data-slot="1"]{bottom:-6.9rem}
+  }
+  @media (prefers-reduced-motion:reduce){.orbit__ring,.orbit__halo{animation:none}}
+</style>
+
+<script>
+  import { gsap, reduce } from '../scripts/motion';
+  import { uiText } from '../lib/i18n/client';
+  type Note = { t: string; dir: 'in' | 'out' };
+  const notes: Record<string, Note[]> = {
+    artist: [{ t: 'Dropped v10 of the master. It replaced v9 everywhere.', dir: 'in' }, { t: 'Approved the artwork. Marketing and distribution were told.', dir: 'in' }, { t: 'Asked to sign off the vinyl PO before Friday.', dir: 'out' }],
+    manager: [{ t: 'Moved the release date. 11 tasks re-cut for every team.', dir: 'in' }, { t: 'Got the morning brief: three handled, one needs him.', dir: 'out' }, { t: 'Signed off the vinyl PO from the airport.', dir: 'in' }],
+    label: [{ t: 'Cleared the content budget. The one-sheet updated itself.', dir: 'in' }, { t: 'Pitched six editorial playlists. Two replies in.', dir: 'in' }, { t: 'Was told the teaser clip is approved and scheduled.', dir: 'out' }],
+    partner: [{ t: 'Confirmed the delivery window. Ready to roll went green.', dir: 'in' }, { t: 'Flagged a missing ISRC. Fixed before it mattered.', dir: 'in' }, { t: 'Received v10 in the delivery package, not v9.', dir: 'out' }],
+    agency: [{ t: 'Got the new embargo date before having to ask.', dir: 'out' }, { t: 'Filed the press one-sheet straight into Assets.', dir: 'in' }, { t: 'Received the approved press shots.', dir: 'out' }],
+  };
+  const CX = 300, CY = 300, R = 180;
+  const ang: Record<string, number> = { artist: -90, manager: -18, label: 54, partner: 126, agency: 198 };
+  document.querySelectorAll<HTMLElement>('[data-orbit]').forEach((root) => {
+    const keys = Object.keys(notes);
+    const sat = (k: string) => root.querySelector<SVGGElement>(`.orbit__sat[data-sat="${k}"]`)!;
+    const card = (k: string) => root.querySelector<HTMLElement>(`[data-card="${k}"]`)!;
+    const set = (k: string) => { keys.forEach(x => sat(x).classList.toggle('is-on', x === k)); root.dataset.active = k; };
+    set(root.dataset.active || 'artist');
+    const recent: string[] = []; const noteIdx: Record<string, number> = {}; const busy = new Set<string>();
+    (root as any).__setActive = (k: string) => { set(k); if (busy.size < 2 && !clashes(k)) fire(k); };
+    if (reduce) { const k = root.dataset.active || 'artist'; const c = card(k); c.querySelector('[data-card-text]')!.textContent = uiText(notes[k][0].t); c.dataset.slot = '0'; c.classList.add('is-on'); return; }
+    const adj: Record<string, string[]> = { artist: ['manager', 'agency'], manager: ['artist', 'label'], label: ['manager', 'partner'], partner: ['label', 'agency'], agency: ['partner', 'artist'] };
+    const clashes = (k: string) => Array.from(busy).some(b => adj[k].includes(b));
+    const pick = () => { const pool = keys.filter(k => !busy.has(k) && !recent.slice(-2).includes(k) && !clashes(k)); return pool[Math.floor(Math.random() * pool.length)] || keys.find(k => !busy.has(k) && !clashes(k)) || ''; };
+    const fire = (k: string) => {
+      if (busy.has(k)) return; busy.add(k); recent.push(k); if (recent.length > 4) recent.shift();
+      noteIdx[k] = ((noteIdx[k] ?? -1) + 1) % notes[k].length; const n = notes[k][noteIdx[k]];
+      const c = card(k); c.querySelector('[data-card-text]')!.textContent = uiText(n.t);
+      c.dataset.slot = String([0, 1].find(i => !Array.from(busy).some(b => b !== k && card(b).dataset.slot === String(i))) ?? 0);
+      const g = sat(k); g.classList.add('is-live');
+      const a = ang[k] * Math.PI / 180, x2 = CX + (R - 34) * Math.cos(a), y2 = CY + (R - 34) * Math.sin(a);
+      const pkt = root.querySelector<SVGCircleElement>(`[data-pkt="${k}"]`)!, glow = root.querySelector<SVGCircleElement>(`[data-glow="${k}"]`)!;
+      const from = n.dir === 'in' ? { cx: x2, cy: y2 } : { cx: CX, cy: CY }, to = n.dir === 'in' ? { cx: CX, cy: CY } : { cx: x2, cy: y2 };
+      gsap.timeline({ onComplete: () => { busy.delete(k); } })
+        .add(() => c.classList.add('is-on'))
+        .fromTo([pkt, glow], { attr: from, opacity: 0 }, { attr: to, opacity: (i) => i === 0 ? 1 : .5, duration: 1.3, ease: 'power2.inOut' }, 0.15)
+        .to([pkt, glow], { opacity: 0, duration: .3 })
+        .add(() => { c.classList.remove('is-on'); g.classList.remove('is-live'); }, '+=2.2')
+        .to({}, { duration: .5 });
+    };
+    fire(root.dataset.active || 'artist');
+    setTimeout(() => { const k = pick(); if (k) fire(k); }, 2100);
+    setInterval(() => { if (busy.size < 2) { const k = pick(); if (k) fire(k); } }, 2300);
+  });
+</script>

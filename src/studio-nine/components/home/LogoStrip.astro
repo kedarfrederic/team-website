@@ -1,0 +1,105 @@
+---
+// Mixed marquee: people, product tiles and the tools Team works with, in the brand palette.
+import { img } from '../../data/images';
+type Item =
+  | { t: 'photo'; src: string; pos?: string }
+  | { t: 'ring'; v: number; bg: string; fg: string }
+  | { t: 'stat'; k: string; v: string; d?: string; bg: string; fg: string; sub?: string;
+      /** bar: progress 0-100 · dots: [done, total] · pill: a status chip */
+      bar?: number; dots?: [number, number]; pill?: string }
+  | { t: 'logo'; src: string; bg: string; wide?: boolean; invert?: boolean }
+  | { t: 'brief'; }
+  | { t: 'mark'; bg: string }
+  | { t: 'chip'; text: string; bg: string; fg: string };
+const items: Item[] = [
+  { t: 'photo', src: img('hero-artist'), pos: 'center 30%' },
+  { t: 'ring', v: 64, bg: 'var(--viv-green)', fg: 'var(--lime)' },
+  { t: 'stat', k: 'Pre-saves · this week', v: '2,140', d: '+18%', bg: 'var(--viv-lav)', fg: 'var(--ink)', bar: 71 },
+  { t: 'logo', src: '/studio-nine/logos/slack.svg', bg: 'var(--lime)' },
+  { t: 'brief' },
+  { t: 'logo', src: '/studio-nine/logos/googlecalendar.svg', bg: 'var(--viv-cyan)' },
+  { t: 'stat', k: 'Days to release', v: '41', bg: 'var(--viv-orange)', fg: 'var(--white)', pill: 'On track', bar: 62 },
+  { t: 'logo', src: '/studio-nine/logos/dropbox.svg', bg: 'var(--viv-pink)' },
+  { t: 'photo', src: img('hero-manager'), pos: 'center 30%' },
+  { t: 'stat', k: 'Budget', v: '$15.1k', d: 'of $18k', bg: 'var(--lime)', fg: 'var(--ink)', bar: 84 },
+  { t: 'logo', src: '/studio-nine/logos/theorchard.svg', bg: 'var(--paper-2)' },
+  { t: 'mark', bg: 'var(--ink)' },
+  { t: 'logo', src: '/studio-nine/logos/notion-dark.svg', bg: 'var(--paper-2)' },
+  { t: 'chip', text: 'Master v10 approved', bg: 'var(--viv-green)', fg: 'var(--white)' },
+  { t: 'logo', src: '/studio-nine/logos/googlesheets.svg', bg: 'var(--viv-lav)' },
+  { t: 'photo', src: img('hero-label'), pos: 'center 45%' },
+  { t: 'ring', v: 83, bg: 'var(--lime)', fg: 'var(--ink)' },
+  { t: 'logo', src: '/studio-nine/logos/ticketmaster.svg', bg: 'var(--viv-cyan)', wide: true },
+  { t: 'logo', src: '/studio-nine/logos/eventbrite-wordmark.svg', bg: 'var(--paper-2)', wide: true },
+  { t: 'stat', k: 'Ready to roll', v: '5', d: 'of 6', bg: 'var(--viv-pink)', fg: 'var(--viv-green)', dots: [5, 6] },
+  { t: 'logo', src: '/studio-nine/logos/gmail.svg', bg: 'var(--paper-2)' },
+];
+---
+<section class="mq" aria-label="Team works with the tools you already use">
+  <div class="mq__track" data-marquee>
+    {[0, 1].map((dup) => (
+      <ul class="mq__row" aria-hidden={dup === 1 ? 'true' : undefined}>
+        {items.map((it) => {
+          if (it.t === 'photo') return <li class="mq__i mq__photo"><img src={it.src} alt="" loading="lazy" style={`object-position:${it.pos || 'center'}`} /></li>;
+          if (it.t === 'ring') return <li class="mq__i mq__ring" style={`--bg:${it.bg};--fg:${it.fg};--p:${it.v}`}><span class="mq__ring-arrow">→</span><b class="tnum">{it.v}<small>%</small></b></li>;
+          if (it.t === 'stat') return (
+            <li class="mq__i mq__stat" style={`--bg:${it.bg};--fg:${it.fg}`}>
+              <span class="mq__k">{it.k}</span>
+              <b class="mq__v tnum">{it.v}{it.d && <i>{it.d}</i>}</b>
+              {it.bar !== undefined && <span class="mq__bar"><i style={`width:${it.bar}%`}></i></span>}
+              {it.dots && <span class="mq__dots">{Array.from({ length: it.dots[1] }).map((_, i) => <i class:list={{ 'is-on': i < it.dots![0] }}></i>)}</span>}
+              {it.pill && <span class="mq__pill">{it.pill}</span>}
+              {it.sub && <span class="mq__sub">{it.sub}</span>}
+            </li>
+          );
+          if (it.t === 'logo') return <li class:list={['mq__i', 'mq__logo', { 'mq__logo--wide': it.wide, 'mq__logo--invert': it.invert }]} style={`--bg:${it.bg}`}><img src={it.src} alt="" loading="lazy" /></li>;
+          if (it.t === 'mark') return <li class="mq__i mq__mark" style={`--bg:${it.bg}`}><img src="/studio-nine/logo/team-logomark-white.png" alt="Team" loading="lazy" /></li>;
+          if (it.t === 'chip') return <li class="mq__i mq__chip" style={`--bg:${it.bg};--fg:${it.fg}`}><span class="mq__tick">✓</span><b>{it.text}</b><span class="mq__sub">Maya · Tuesday</span></li>;
+          return <li class="mq__i mq__brief"><span class="mq__k"><span class="dot"></span>TeamMate's brief</span><p>Overnight the plan re-cut, the press list briefed. One thing needs you.</p></li>;
+        })}
+      </ul>
+    ))}
+  </div>
+</section>
+
+<style>
+  .mq{padding:clamp(1rem,2vw,1.5rem) 0 clamp(3rem,6vw,5rem);background:transparent;overflow:hidden}
+  .mq__track{display:flex;width:max-content;gap:1.25rem;animation:mq 75s linear infinite;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+  .mq__track:hover{animation-play-state:paused}
+  .mq__row{display:flex;flex:none;gap:1.25rem;align-items:center}
+  .mq__i{flex:none;height:9rem;display:grid;place-items:center;overflow:hidden;color:var(--fg,var(--ink));background:var(--bg,var(--paper))}
+  .mq__photo{width:9rem;border-radius:50%;position:relative;background:var(--paper-2)}
+  .mq__photo img{width:100%;height:100%;object-fit:cover}
+  .mq__ring{width:9rem;border-radius:50%;position:relative;background:conic-gradient(var(--fg) calc(var(--p) * 1%),color-mix(in srgb,var(--fg) 18%,var(--bg)) 0)}
+  .mq__ring::before{content:'';position:absolute;inset:1rem;border-radius:50%;background:var(--white)}
+  .mq__ring b{position:relative;font-size:2.2rem;font-weight:500;letter-spacing:-.04em;color:var(--ink)}
+  .mq__ring small{font-size:.9rem;vertical-align:super;letter-spacing:0}
+  .mq__ring-arrow{position:absolute;top:.35rem;left:50%;transform:translateX(-50%);width:2.6rem;height:1.5rem;border-radius:var(--r-pill);background:var(--viv-cyan);color:var(--ink);font-size:.9rem;display:grid;place-items:center;z-index:1}
+  .mq__stat{width:12rem;border-radius:var(--r-lg);place-items:stretch;align-content:space-between;gap:.5rem;padding:.9rem 1rem}
+  .mq__k{display:flex;justify-content:space-between;align-items:center;gap:.4rem;font-size:.74rem;font-weight:500;opacity:.85;line-height:1.25}
+  .mq__k em{font-style:normal;font-size:.62rem;padding:.12rem .4rem;border-radius:var(--r-pill);background:rgba(255,255,255,.55);color:var(--ink)}
+  .mq__v{display:flex;align-items:baseline;gap:.3rem;font-size:2.2rem;font-weight:500;letter-spacing:-.045em;line-height:1}
+  .mq__v i{font-style:normal;white-space:nowrap;font-size:.78rem;font-weight:500;letter-spacing:-.01em;opacity:.7}
+  .mq__bar{display:block;height:.35rem;border-radius:99px;background:color-mix(in srgb,var(--fg) 20%,transparent);overflow:hidden}
+  .mq__bar i{display:block;height:100%;border-radius:99px;background:var(--fg)}
+  .mq__dots{display:flex;gap:.28rem}
+  .mq__dots i{flex:1;height:.35rem;border-radius:99px;background:color-mix(in srgb,var(--fg) 22%,transparent)}
+  .mq__dots i.is-on{background:var(--fg)}
+  .mq__pill{justify-self:start;font-size:.7rem;font-weight:600;padding:.2rem .55rem;border-radius:var(--r-pill);background:color-mix(in srgb,var(--fg) 16%,transparent)}
+  .mq__sub{font-size:.74rem;opacity:.8}
+  .mq__logo{width:9rem;border-radius:var(--r-lg)}
+  .mq__logo img{width:3.4rem;height:3.4rem;object-fit:contain}
+  .mq__logo--wide{width:13rem}
+  .mq__logo--wide img{width:9rem;height:3rem}
+  .mq__logo--invert img{filter:brightness(0) invert(1)}
+  .mq__mark{width:9rem;border-radius:var(--r-lg)}
+  .mq__mark img{width:3.4rem}
+  .mq__brief{width:17rem;border-radius:var(--r-lg);background:var(--paper);place-items:stretch;align-content:start;gap:.5rem;padding:.9rem 1rem}
+  .mq__brief p{font-size:1.05rem;line-height:1.2;letter-spacing:-.01em;font-weight:500}
+  .mq__chip{width:12rem;border-radius:var(--r-lg);place-items:stretch;align-content:space-between;padding:.9rem 1rem}
+  .mq__tick{width:1.9rem;height:1.9rem;border-radius:50%;background:var(--lime);color:var(--ink);font-size:.8rem;font-weight:700;display:grid;place-items:center}
+  .mq__chip b{font-size:1.2rem;font-weight:500;letter-spacing:-.02em;line-height:1.15}
+  @keyframes mq{to{transform:translateX(calc(-50% - .625rem))}}
+  @media (max-width:640px){.mq__i{height:7rem}.mq__photo,.mq__ring,.mq__logo,.mq__mark{width:7rem}.mq__stat,.mq__chip{width:10rem}.mq__v{font-size:1.9rem}.mq__chip b{font-size:1.05rem}.mq__brief{width:14rem}.mq__brief p{font-size:.92rem}.mq__logo--wide{width:10.5rem}.mq__logo img{width:2.8rem;height:2.8rem}}
+  @media (prefers-reduced-motion:reduce){.mq__track{animation:none;flex-wrap:wrap;width:100%;justify-content:center}.mq__row:last-child{display:none}}
+</style>

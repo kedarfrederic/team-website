@@ -1,0 +1,62 @@
+---
+import Placeholder from '../Placeholder.astro';
+import Orbit from '../Orbit.astro';
+const people = [
+  { k:'artist', l:'Artist', h:['Make the record.','Team runs the <em>release.</em>'], d:'You are the artist, the label and the project manager at once. Team holds the release for free. With TeamMate on Pro, the admin does itself and you only see the three things that are actually yours.', ph:'A solo artist in a bedroom studio, headphones on, laptop open.', tone:'warm', see:['Your dates, ranked by what needs you first','Which master is final, always','The content calendar, drafted for your approval'], href:'/for-artists', cta:'Team for artists' },
+  { k:'manager', l:'Manager', h:['Every artist,','<em>one place.</em>'], d:'Between flights, calls and shows, the roster keeps moving. You get one view of every release and a short brief of the calls that need you today.', ph:'A manager on the move, phone in hand, backstage corridor.', tone:'cool', see:['Every release across the roster, live','The three decisions that need you today','Who is waiting on whom, before it slips'], href:'/for-managers', cta:'Team for managers' },
+  { k:'label', l:'Label', h:['The whole slate,','<em>always current.</em>'], d:'A&R, marketing, production and distribution each live in their own tools. Team keeps the whole slate in one picture, catches the clashes early, and ends the status meeting.', ph:'A small label team around a table, one laptop, a wall of sleeves behind.', tone:'warm', see:['Every release and what it is waiting on','Two releases landing the same week, flagged early','A leadership brief instead of a deck'], href:'/for-labels', cta:'Team for labels' },
+  { k:'partner', l:'Distributor or agency', h:['Your part, always','<em>in step.</em>'], d:'You work a piece of hundreds of releases. Team shows you your piece of each one, tells you what is ready and what is late, and keeps your side in sync with theirs.', ph:'A distributor ops desk, two screens, a delivery calendar.', tone:'cool', see:['Delivery windows and metadata readiness, per release','What your clients still owe you, chased for you','One view across every label you serve'], href:'/for-partners', cta:'Team for partners' },
+];
+---
+<section class="ev section section--paper" id="everyone">
+  <div class="wrap">
+    <div class="ev__top">
+      <h2 class="h1 lines"><span class="line"><span>Artist, manager, label, partner.</span></span><span class="line"><span>One release, <em>no gaps.</em></span></span></h2>
+      <div class="tabs" role="tablist" aria-label="Who it's for" style={`--tab-cols:${people.length % 2 ? 3 : 2}`}>
+        {people.map((p, i) => <button class:list={['tab', { 'is-on': i === 0 }]} style={`--c:${({artist:'var(--team-music)',manager:'var(--team-mgmt)',label:'var(--team-mkt)',partner:'var(--team-distro)'} as Record<string,string>)[p.k]}`} role="tab" aria-selected={i === 0 ? 'true' : 'false'} data-ev-tab={p.k}>{p.l}</button>)}
+      </div>
+    </div>
+    <div class="ev__stage" data-ev>
+      {people.map((p, i) => (
+        <div class:list={['ev__panel', { 'is-on': i === 0 }]} data-ev-panel={p.k} role="tabpanel">
+          <div class="ev__copy">
+            <h3 class="h2" set:html={p.h.join('<br />')} />
+            <p class="lead">{p.d}</p>
+            <ul class="ev__see">{p.see.map(s => <li>{s}</li>)}</ul>
+            <a class="btn btn--primary" href={p.href}>{p.cta} <span class="arr">→</span></a>
+          </div>
+        </div>
+      ))}
+      <div class="ev__media" data-reveal>
+        <Orbit active="artist" />
+      </div>
+    </div>
+  </div>
+</section>
+<style>
+  .ev__top{display:grid;gap:1.75rem;margin-bottom:clamp(2rem,4vw,3rem);justify-items:start}
+  .ev__stage{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,6vw,6rem);align-items:center}
+  .ev__panel{display:none;animation:pin .55s var(--ease)}
+  .ev__panel.is-on{display:block}
+  @keyframes pin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .ev__copy{display:grid;gap:1.25rem}
+  .ev__copy .h2 :global(em){font-family:var(--serif);font-weight:300;font-style:italic;font-size:1.12em}
+  .ev__see{display:grid;gap:.5rem}
+  .ev__see li{position:relative;padding-left:1.5rem;color:var(--ink-80)}
+  .ev__see li::before{content:'✓';position:absolute;left:0;top:0;width:1rem;height:1rem;border-radius:50%;background:var(--lime);font-size:.6rem;display:grid;place-items:center;margin-top:.3em}
+  .ev__copy .btn{justify-self:start;margin-top:.4rem}
+  @media (max-width:900px){.ev__stage{grid-template-columns:1fr}.ev__media{order:-1;margin-bottom:1.5rem}}
+</style>
+<script>
+  const root = document.querySelector<HTMLElement>('[data-ev]');
+  if (root) {
+    const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-ev-tab]'));
+    const panels = Array.from(root.querySelectorAll<HTMLElement>('[data-ev-panel]'));
+    tabs.forEach((t) => t.addEventListener('click', () => {
+      const k = t.dataset.evTab;
+      tabs.forEach(x => { x.classList.toggle('is-on', x === t); x.setAttribute('aria-selected', String(x === t)); });
+      panels.forEach(p => p.classList.toggle('is-on', p.dataset.evPanel === k));
+      const orb = root.querySelector<HTMLElement>('[data-orbit]') as any; orb?.__setActive?.(k);
+    }));
+  }
+</script>

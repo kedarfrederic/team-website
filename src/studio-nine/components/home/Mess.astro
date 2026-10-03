@@ -1,0 +1,144 @@
+---
+// "A release lives in ten places." Scattered tool chips snap into one release shape on scroll.
+const chips = [
+  { l:'Master_FINAL_v9.wav', t:'Dropbox', ic:'dropbox' },
+  { l:'"which master is final-final?"', t:'Gmail', ic:'gmail' },
+  { l:'Budget $2,500 → $3,100', t:'Sheets', ic:'googlesheets' },
+  { l:'Rollout plan · Week 34', t:'Notion', ic:'notion-dark' },
+  { l:'"is the v10 bounce in yet?"', t:'Slack', ic:'slack' },
+  { l:'artwork_3000x3000_v7.png', t:'Drive', ic:'googledrive' },
+  { l:'Video shoot · Thu 14', t:'Calendar', ic:'googlecalendar' },
+  { l:'Pitch playlists · due Fri', t:'Asana', ic:'asana' },
+  { l:'Artwork — awaiting approval', t:'Trello', ic:'trello' },
+  { l:'Press embargo date?', t:'Gmail', ic:'gmail' },
+  { l:'Delivery window closes Friday', t:'Distributor', ic:'theorchard' },
+  { l:'Distributor call · 45:12', t:'Zoom', ic:'zoom' },
+];
+---
+<section class="mess section" id="mess">
+  <div class="wrap">
+    <div class="head head--center">
+      <h2 class="h1 lines"><span class="line"><span>A release lives</span></span><span class="line"><span>in <em>ten places.</em></span></span></h2>
+      <p class="lead" data-reveal style="margin-inline:auto">The master's in Dropbox, the plan's in Notion, the budget's in a sheet, the approval's buried in a thread, and one person is holding it all together in their head. Until they're on holiday.</p>
+    </div>
+    <div class="mess__stage" data-mess>
+      <div class="mess__home">
+        <div class="mess__cover">
+          <span class="mess__cover-img" aria-hidden="true"><img src="/studio-nine/img/set/cover-release.webp" alt="" loading="lazy" /></span>
+          <p class="mess__cover-k">Ava North · Album</p>
+          <h3 class="mess__cover-t"><em>Midnight Static</em></h3>
+          <p class="mess__live"><span class="mess__live-dot"></span>Release in <b class="tnum"><span data-mess-days>41</span> days</b> <span class="mess__live-t tnum" data-mess-clock>06:12:44</span></p>
+        </div>
+        <ul class="mess__parts">
+          <li><i class="mess__ic mess__ic--tl"></i><b>Timeline</b><span>22 tasks · 14 done</span></li>
+          <li><i class="mess__ic mess__ic--tr"></i><b>Tracks</b><span>4 · masters final</span></li>
+          <li><i class="mess__ic mess__ic--as"></i><b>Assets</b><span>18 · release-ready</span></li>
+          <li><i class="mess__ic mess__ic--bu"></i><b>Budget</b><span>$15,050 of $18k</span></li>
+          <li><i class="mess__ic mess__ic--te"></i><b>Territories</b><span>UK · DE · US first</span></li>
+          <li><i class="mess__ic mess__ic--pi"></i><b>Pitches</b><span>6 editorial · 2 in</span></li>
+          <li class="mess__part--ready"><i class="mess__ic mess__ic--rr"></i><b>Ready to roll</b><span>5 of 6 green</span></li>
+        </ul>
+      </div>
+      {chips.map((c, i) => (
+        <div class="chip" data-chip={i}>
+          <img src={`/studio-nine/logos/${c.ic}.svg`} alt="" width="16" height="16" />
+          <span class="chip__l">{c.l}</span>
+          <span class="chip__t">{c.t}</span>
+        </div>
+      ))}
+    </div>
+    <p class="mess__after" data-reveal>Team brings it all together into a single, easy-to-manage tool.</p>
+  </div>
+</section>
+
+<style>
+  .mess{background:var(--white)}
+  .mess__stage{position:relative;height:clamp(30rem,52vw,38rem);margin-top:1rem}
+  .mess__home{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.92);width:min(34rem,92%);background:var(--white);border:1px solid var(--line);border-radius:var(--r-xl);box-shadow:var(--shadow-lg);overflow:hidden;opacity:0;z-index:2;transition:opacity .6s var(--ease),transform .8s var(--ease)}
+  .mess__stage.is-home .mess__home{opacity:1;transform:translate(-50%,-50%) scale(1)}
+  .mess__cover{position:relative;min-height:13.5rem;display:grid;place-content:center;justify-items:center;text-align:center;gap:.4rem;padding:2rem 1.5rem;color:var(--white);isolation:isolate}
+  .mess__cover-img{position:absolute;inset:0;z-index:-1;background:var(--ph-ink);background-image:radial-gradient(60% 80% at 30% 20%,rgba(217,250,135,.35),transparent 60%),radial-gradient(50% 60% at 80% 90%,rgba(245,96,2,.35),transparent 60%),var(--ph-ink)}
+  .mess__cover-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .mess__cover-img::after{content:'';position:absolute;inset:0;background:rgba(14,13,11,.45)}
+  .mess__cover-k{font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.7)}
+  .mess__cover-t{font-size:clamp(2.2rem,4vw,3.2rem);line-height:1;letter-spacing:-.01em;font-weight:400}
+  .mess__cover-t em{font-family:var(--serif);font-weight:300;font-style:italic}
+  .mess__live{display:inline-flex;align-items:center;gap:.5rem;margin-top:.6rem;padding:.4rem .8rem .4rem .6rem;border-radius:var(--r-pill);background:rgba(255,255,255,.12);backdrop-filter:blur(8px);font-size:.82rem;color:rgba(255,255,255,.85)}
+  .mess__live b{font-weight:500;color:var(--white)}
+  .mess__live-t{font-size:.74rem;color:rgba(255,255,255,.6);padding-left:.5rem;border-left:1px solid rgba(255,255,255,.25)}
+  .mess__live-dot{width:.5rem;height:.5rem;border-radius:50%;background:var(--lime);box-shadow:0 0 0 0 rgba(217,250,135,.6);animation:live 2s ease-out infinite}
+  @keyframes live{0%{box-shadow:0 0 0 0 rgba(217,250,135,.6)}70%{box-shadow:0 0 0 .55rem rgba(217,250,135,0)}100%{box-shadow:0 0 0 0 rgba(217,250,135,0)}}
+  .mess__parts{display:grid;grid-template-columns:repeat(2,1fr);gap:.4rem;padding:.9rem}
+  .mess__parts li{display:grid;grid-template-columns:1.9rem 1fr;grid-template-rows:auto auto;column-gap:.6rem;align-items:center;padding:.55rem .7rem;border-radius:calc(var(--r-xl) - .9rem);background:var(--paper)}
+  .mess__parts b{font-size:.86rem;font-weight:500;color:var(--ink)}
+  .mess__parts span{grid-column:2;font-size:.72rem;color:var(--ink-40)}
+  .mess__ic{grid-row:span 2;width:1.9rem;height:1.9rem;border-radius:.55rem;background:var(--white);border:1px solid var(--line);display:grid;place-items:center;position:relative}
+  .mess__ic::before{content:'';width:.85rem;height:.85rem;border-radius:2px}
+  .mess__ic--tl::before{width:.9rem;height:.5rem;background:linear-gradient(90deg,var(--cat-mkt) 40%,var(--cat-pr) 40% 70%,var(--cat-video) 70%);border-radius:1px}
+  .mess__ic--tr::before{width:.8rem;height:.8rem;border-radius:50%;background:var(--ink);box-shadow:inset 0 0 0 .2rem var(--white),inset 0 0 0 .3rem var(--ink)}
+  .mess__ic--as::before{width:.9rem;height:.7rem;background:var(--ph-warm);border-radius:2px;box-shadow:.15rem -.15rem 0 -.05rem var(--ink-12)}
+  .mess__ic--bu::before{width:.9rem;height:.6rem;background:linear-gradient(90deg,var(--ink) 62%,var(--ink-12) 62%);border-radius:99px}
+  .mess__ic--te::before{width:.85rem;height:.85rem;border-radius:50%;background:radial-gradient(circle at 35% 40%,var(--cat-pr) 25%,transparent 26%),radial-gradient(circle at 70% 65%,var(--cat-pr) 18%,transparent 19%),var(--paper-2)}
+  .mess__ic--pi::before{width:.9rem;height:.9rem;border-radius:50%;background:conic-gradient(var(--lime-2) 0 120deg,var(--paper-2) 120deg)}
+  .mess__ic--rr::before{width:.9rem;height:.9rem;border-radius:50%;background:var(--lime);box-shadow:inset 0 0 0 1px var(--ink)}
+  .mess__part--ready{grid-column:span 2;background:var(--lime)}
+  .mess__part--ready span{color:var(--ink-60)}
+  .mess__part--ready .mess__ic{background:var(--white)}
+  .chip{position:absolute;z-index:1;left:50%;top:50%;display:inline-flex;align-items:center;gap:.5rem;padding:.55rem .8rem .55rem .65rem;border-radius:var(--r-pill);background:var(--white);border:1px solid var(--line);box-shadow:var(--shadow-md);font-size:.82rem;white-space:nowrap;will-change:transform,opacity;transform:translate(-50%,-50%)}
+  .chip img{width:16px;height:16px}
+  .chip__l{color:var(--ink);font-weight:500}
+  .chip__t{color:var(--ink-40);font-size:.74rem}
+  .mess__after{text-align:center;max-width:32rem;margin:2.5rem auto 0;color:var(--ink);font-size:var(--t-h3);font-weight:450;letter-spacing:-.01em;line-height:1.3}
+  @media (max-width:640px){
+    .chip{font-size:.72rem;padding:.45rem .65rem .45rem .55rem}.chip__t{display:none}
+    /* Phones: the release card sits in flow and sets the stage height; chips pile over it */
+    .mess__stage{height:auto;min-height:26rem;display:grid;place-items:center}
+    .mess__home{position:relative;left:auto;top:auto;transform:scale(.94);width:100%}
+    .mess__stage.is-home .mess__home{transform:scale(1)}
+  }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger, reduce } from '../../scripts/motion';
+  const stage = document.querySelector<HTMLElement>('[data-mess]');
+  if (stage) {
+    const chips = Array.from(stage.querySelectorAll<HTMLElement>('[data-chip]'));
+    const n = chips.length;
+    // Scatter positions (percent of stage), roughly a ring with jitter
+    const scatter = chips.map((_, i) => {
+      const a = (i / n) * Math.PI * 2 - Math.PI / 2;
+      const rx = 40 + (i % 3) * 6, ry = 38 + (i % 2) * 8;
+      return { x: Math.cos(a) * rx, y: Math.sin(a) * ry, r: (i % 2 ? -1 : 1) * (4 + (i % 5) * 2) };
+    });
+    // Settled positions: chips collapse into the home card and fade
+    // Scatter is in viewport units, then clamped so every chip stays inside the stage (matters on phones)
+    const set = (p: number) => {
+      const vw = window.innerWidth / 100, vh = window.innerHeight / 100;
+      const hw = stage.clientWidth / 2, hh = stage.clientHeight / 2;
+      const narrow = stage.clientWidth < 600;
+      chips.forEach((c, i) => {
+        const s = scatter[i];
+        const lx = hw - c.offsetWidth / 2 - 6, ly = hh - c.offsetHeight / 2 - 6;
+        // Phones: a loose stacked pile (chips are nearly as wide as the stage), desktop: the ring
+        const sx = narrow ? ((i % 3) - 1) * lx * 0.9 : s.x * vw;
+        const sy = narrow ? ((i / (n - 1)) - 0.5) * 2 * ly : s.y * 0.55 * vh;
+        const x = Math.max(-lx, Math.min(lx, sx)) * (1 - p);
+        const y = Math.max(-ly, Math.min(ly, sy)) * (1 - p);
+        c.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) rotate(${s.r * (1 - p)}deg) scale(${1 - p * 0.5})`;
+        c.style.opacity = String(Math.max(0, 1 - Math.max(0, p - 0.4) / 0.32));
+      });
+      stage.classList.toggle('is-home', p > 0.7);
+    };
+    // a ticking clock so the countdown reads as live
+    const clock = stage.querySelector<HTMLElement>('[data-mess-clock]');
+    if (clock) { let t = 6 * 3600 + 12 * 60 + 44; setInterval(() => { t = Math.max(0, t - 1); const h = Math.floor(t / 3600), m = Math.floor((t % 3600) / 60), sec = t % 60; clock.textContent = [h, m, sec].map(n => String(n).padStart(2, '0')).join(':'); }, 1000); }
+    if (reduce) { set(1); }
+    else {
+      set(0);
+      ScrollTrigger.create({
+        trigger: stage, start: 'top 70%', end: 'bottom 45%', scrub: 0.6,
+        onUpdate: (st) => set(gsap.parseEase('power2.inOut')(st.progress)),
+      });
+    }
+  }
+</script>

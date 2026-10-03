@@ -1,0 +1,60 @@
+---
+import { graph, collection } from '../lib/seo';
+import Base from '../layouts/Base.astro';
+import Placeholder from '../components/Placeholder.astro';
+import {readPosts} from '../editorial';
+import {urlFor} from '../../lib/sanity';
+const posts: {slug:string;title:string;cat:string;min:number;date:string;dek:string;img?:string}[]=(await readPosts(Astro)).map((p:any)=>({...p,slug:p.slug.current,cat:p.category?.title||'Insights',min:p.readMinutes||3,date:p.publishDate,dek:p.excerpt,img:p.heroImage?.asset?urlFor(p.heroImage).width(1200).auto('format').url():undefined}));
+import { img } from '../data/images';
+const cats = ['All', ...Array.from(new Set(posts.map(p => p.cat)))];
+const fmt = (d: string) => new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+const [feat, ...rest] = posts;
+const schema = graph(collection({ name: 'Insights', description: 'How releases really run, from the people running them.', url: '/insights', items: posts.map(p => ({ title: p.title, url: `/insights/${p.slug}` })) }));
+---
+<Base title="Insights — how releases really run" description="Playbooks, release strategy and what we are learning from the rollouts run on Team." schema={schema} theme="paper">
+  <section class="in">
+    <div class="wrap">
+      <div class="in__top">
+        <h1 class="display">Insights.</h1>
+        <p class="lead">How releases really run, from the people running them.</p>
+      </div>
+      {feat && <a class="feat" href={'/insights/' + feat.slug} data-reveal>
+        <Placeholder label={feat.title} ratio="16 / 10" shape="card" tone="ink" src={feat.img} />
+        <div class="feat__copy"><p class="micro">{feat.cat} · {feat.min} min · {fmt(feat.date)}</p><h2 class="h2">{feat.title}</h2><p class="lead">{feat.dek}</p><span class="link">Read <span class="arr">→</span></span></div>
+      </a>}
+      <div class="tabs tabs--paper" style={`--tab-cols:${cats.length % 2 ? 3 : 2}`} data-reveal>{cats.map((c, i) => <button class:list={['tab', { 'is-on': i === 0 }]} style={`--c:${({All:'var(--lime)',Strategy:'var(--team-mgmt)',Industry:'var(--team-mkt)',Product:'var(--team-distro)',Guides:'var(--team-press)'} as Record<string,string>)[c] || 'var(--lime)'}`} data-cat={c}>{c}</button>)}</div>
+      <div class="grid3" data-reveal-stagger="0.06">
+        {rest.map((p, i) => (
+          <a class="post" href={'/insights/' + p.slug} data-post={p.cat}>
+            <Placeholder label={p.title} ratio="16 / 10" shape="card" tone={p.cat === 'Guides' ? 'lime' : p.cat === 'Product' ? 'ink' : 'warm'} src={p.img} />
+            <p class="micro">{p.cat} · {p.min} min</p>
+            <h3 class="h3">{p.title}</h3>
+            <p class="small">{p.dek}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>
+<style>
+  .in{padding:calc(4.5rem + clamp(2rem,5vw,4rem)) 0 var(--section)}
+  .in__top{display:grid;gap:.75rem;margin-bottom:clamp(2rem,4vw,3rem)}
+  .feat :global(.ph){--ph-r:calc(var(--r-xl) - 1rem);border-radius:var(--ph-r)}
+  .post :global(.ph){--ph-r:calc(var(--r-xl) - .75rem);border-radius:var(--ph-r)}
+  .feat{display:grid;grid-template-columns:1.2fr 1fr;gap:clamp(1.5rem,4vw,3rem);align-items:center;background:var(--white);border-radius:var(--r-xl);padding:1rem;border:1px solid var(--line);margin-bottom:2.5rem;transition:box-shadow .3s}
+  .feat:hover{box-shadow:var(--shadow-md)}
+  .feat__copy{display:grid;gap:.9rem;padding:1rem 1.5rem 1rem 0}
+  .tabs{margin-bottom:1.5rem}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem}
+  .post{display:grid;gap:.5rem;align-content:start;background:var(--white);border-radius:var(--r-xl);padding:.75rem .75rem 1.25rem;border:1px solid var(--line);transition:transform .3s var(--ease),box-shadow .3s}
+  .post:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
+  .post .micro,.post .h3,.post .small{padding-inline:.5rem}
+  .post .micro{margin-top:.5rem}
+  .post[hidden]{display:none}
+  @media (max-width:900px){.feat,.grid3{grid-template-columns:1fr}.feat__copy{padding:.5rem}}
+  @media (max-width:1100px) and (min-width:901px){.grid3{grid-template-columns:repeat(2,1fr)}}
+</style>
+<script>
+  const cats = document.querySelectorAll<HTMLButtonElement>('[data-cat]'); const posts = document.querySelectorAll<HTMLElement>('[data-post]');
+  cats.forEach(c => c.addEventListener('click', () => { cats.forEach(x => x.classList.toggle('is-on', x === c)); posts.forEach(p => p.hidden = c.dataset.cat !== 'All' && p.dataset.post !== c.dataset.cat); }));
+</script>
