@@ -1,6 +1,5 @@
 ---
 import { site } from '../data/site';
-import LanguagePicker from './LanguagePicker.astro';
 interface Props { cta?: boolean; closing?: 'released' | 'handled' | 'covered'; }
 const { cta = true, closing = 'released' } = Astro.props;
 // Closing section variant: 'staffed' = the headline with stickers; 'card' = the earlier lime CTA card (kept for revert).
@@ -56,7 +55,6 @@ const cols = [
   <div class="wrap">
     <div class="foot__top">
       <div class="foot__brand">
-        <LanguagePicker />
         <img class="foot__logo" src="/studio-nine/logo/team-logo-live.svg" alt="Team" width="96" height="32" />
         <p class="foot__line">Every release needs a <em>Team.</em></p>
         <form class="foot__news" action="https://admin.getteamnow.com/api/v1/website-leads" method="post" data-form="newsletter">
