@@ -33,7 +33,8 @@ describe('Sanity-backed new design',()=>{
   expect(d.querySelector('a')?.getAttribute('href')).toBe('/ko/pricing?period=yearly#pro');expect(d.querySelectorAll('a')[1].getAttribute('href')).toContain('lang=ko');
   const json=JSON.parse(d.querySelector('script')!.textContent!);expect(json.url).toBe('https://teamrollouts.com');expect(json.priceCurrency).toBe('USD');expect(json.inLanguage).toBe('ko-KR');
  });
- it('keeps preview account links on staging and preserves plan, language and destination',()=>{
+ it('keeps preview account links on Team-owned staging and preserves plan, language and destination',()=>{
+  expect(stagingAppOrigin).toBe('https://pilot-staging.teamrollouts.com');
   const html='<a href="https://app.teamrollouts.com/onboarding?plan=free&amp;redirect_url=%2Finvite%2Flaunch#account">Start free</a><a href="https://app.teamrollouts.com/sign-in">Sign in</a><a href="https://example.com/media">Media</a>';
   for(const locale of ['en','ko'] as const)for(const host of ['abc12345.team-website-6ur.pages.dev','preview.teamrollouts.com','PREVIEW.TEAMROLLOUTS.COM']){
    const preview=dom(renderDesignHtml(html,locale,{}, {}, {},appOriginForWebsite(host)));

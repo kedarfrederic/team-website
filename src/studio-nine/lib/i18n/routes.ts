@@ -5,7 +5,7 @@ export function stripLocale(path: string) { const plain = path.replace(/^\/ko(?=
 export function hasTranslation(path: string) { return translatedPaths.includes(stripLocale(path).slice(1) as typeof translatedPaths[number]); }
 export function localePath(path: string, locale: Locale) { const plain = stripLocale(path); return locale === 'ko' && hasTranslation(plain) ? `/ko${plain === '/' ? '/' : plain}` : plain; }
 export const productionAppOrigin = 'https://app.teamrollouts.com';
-export const stagingAppOrigin = 'https://team-pilot-staging-new.onrender.com';
+export const stagingAppOrigin = 'https://pilot-staging.teamrollouts.com';
 /** Keep the branded preview and this site's branch/hash previews on staging. */
 export function appOriginForWebsite(hostname: string) {
  const host = hostname.toLowerCase();
