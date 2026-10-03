@@ -11,6 +11,17 @@
 - Existing website host: Cloudflare Pages project `team-website`; canonical domain `https://teamrollouts.com`.
 - Simon's `team-website-v2` is the design source. Its Vercel project is not the deployment target.
 
+## Verified preview
+
+- PR: https://github.com/kedarfrederic/team-website/pull/8
+- Tested code commit: `cd867cd3a3163bc6877efcbcde29f9251519c287`.
+- Cloudflare check reports a successful deployment of that exact code commit.
+- Immutable English preview: https://6659b906.team-website-6ur.pages.dev/
+- Immutable Korean preview: https://6659b906.team-website-6ur.pages.dev/ko/
+- Branch alias: https://codex-studio-nine-sanity-kor.team-website-6ur.pages.dev/
+- GitHub run `37141694875`: website and Studio jobs both succeeded, including Studio typecheck, build and schema extraction.
+- Hosting worked through the existing GitHub/Cloudflare integration even though local Wrangler authentication is expired. The earlier request to restore local Cloudflare access is unnecessary for this preview.
+
 ## Implementation
 
 The supplied design is isolated under `src/studio-nine` and `public/studio-nine`; public marketing route entrypoints now use it. The Cloudflare SSR adapter, investor server routes, draft-preview endpoints, parent-domain consent contract, CRM submission endpoint, booking calendar and application sign-up/sign-in flows are retained.
@@ -33,10 +44,9 @@ The 10 existing article routes and 166 changelog entries are sourced from existi
 
 ## Release steps still required
 
-1. Verify both GitHub validation jobs on the exact PR head and address any failures.
-2. Restore Cloudflare deployment access. Local Wrangler reports an expired authentication token and "Not logged in". No Vercel authentication is relevant.
-3. Deploy the branch to the existing Cloudflare project as a preview, verify its assigned URL/SHA, and review both languages and the CMS/application journeys there.
-4. Deploy the changed Studio to the existing `team-cms` host with its existing preview configuration and secrets. Do not create a replacement Studio or expose secret values in logs.
-5. Obtain the user's approval for the verified production change, merge the existing-site PR, and verify production on the exact deployment SHA.
+1. Review both languages and the CMS/application journeys on the verified preview above.
+2. Recheck the latest PR head and required checks before publishing; the follow-up commit only records this handoff evidence.
+3. Deploy the changed Studio to the existing `team-cms` host with its existing preview configuration and secrets. Do not create a replacement Studio or expose secret values in logs.
+4. Obtain the user's approval for the verified production change, merge the existing-site PR, and verify production on the exact deployment SHA.
 
 Optional copy/pricing revisions remain deferred at the user's request. Do not resume Simon's Vercel deployment or claim local checks establish a live release.
