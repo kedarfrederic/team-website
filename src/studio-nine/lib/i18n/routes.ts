@@ -11,6 +11,7 @@ export function appOriginForWebsite(hostname: string) { return hostname.toLowerC
 export function appLink(href: string, locale: Locale, appOrigin = productionAppOrigin) { const url = new URL(href); const target = new URL(appOrigin); url.protocol = target.protocol; url.host = target.host; url.searchParams.set('lang', locale); return url.href; }
 export function localizedLink(href: string, locale: Locale, appOrigin = productionAppOrigin) {
  if(href.startsWith('https://app.teamrollouts.com/'))return appLink(href,locale,appOrigin);
+ if(/^https:\/\/(?:www\.)?teamrollouts\.com(?:[/?#]|$)/i.test(href)){const url=new URL(href);href=url.pathname+url.search+url.hash;}
  if(!href.startsWith('/') || href.startsWith('//'))return href;
  const url=new URL(href,'https://teamrollouts.com'); url.pathname=localePath(url.pathname,locale); return url.pathname+url.search+url.hash;
 }

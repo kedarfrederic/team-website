@@ -44,6 +44,13 @@ describe('Sanity-backed new design',()=>{
   const production=dom(renderDesignHtml(html,'en'));
   expect(new URL(production.querySelector('a')!.href).origin).toBe(productionAppOrigin);
  });
+ it('keeps absolute legal and home links inside the preview and makes both wordmarks navigable',async()=>{
+  const d=dom(renderDesignHtml('<a href="https://teamrollouts.com/terms">Terms</a><a href="https://www.teamrollouts.com/privacy#rights">Privacy</a><a href="https://teamrollouts.com/pricing?period=yearly">Pricing</a><a href="https://teamrollouts.com.evil.example/">External</a>','ko'));
+  expect([...d.querySelectorAll('a')].map(a=>a.getAttribute('href'))).toEqual(['/terms','/privacy#rights','/ko/pricing?period=yearly','https://teamrollouts.com.evil.example/']);
+  const container=await AstroContainer.create();const home=dom(renderDesignHtml(await container.renderToString(Home),'ko'));
+  expect(home.querySelector('.nav__logo')?.getAttribute('href')).toBe('/ko/');
+  expect(home.querySelector('.foot__logo')?.parentElement?.getAttribute('href')).toBe('/ko/');
+ });
  it('updates dialog image data and social cards alongside page images',()=>{
   const d=dom(renderDesignHtml('<img src="/studio-nine/img/a.webp"><script type="application/json">{"photo":"/studio-nine/img/a.webp"}</script><meta property="og:image" content="https://teamrollouts.com/studio-nine/img/a.webp">','en',{}, {'/studio-nine/img/a.webp':'https://cdn.sanity.io/images/g1olb5am/production/replacement.jpg'}));
   expect(d.querySelector('img')?.src).toContain('cdn.sanity.io');expect(JSON.parse(d.querySelector('script')!.textContent!).photo).toContain('cdn.sanity.io');expect(d.querySelector('meta')?.getAttribute('content')).toContain('cdn.sanity.io');
