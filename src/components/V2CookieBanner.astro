@@ -1,34 +1,7 @@
 ---
-/**
- * Cookie consent banner — marketing site.
- *
- * WHY THIS EXISTS: the app (app.teamrollouts.com) has asked for consent for a
- * while; the marketing site never did, while still loading PostHog with cookie
- * persistence on first paint. This closes that gap.
- *
- * THE CONSENT RECORD IS A COOKIE, NOT localStorage:
- *   cookie_consent = {"necessary":true,"analytics":bool,"marketing":bool}
- *   Domain=.teamrollouts.com; Path=/; SameSite=Lax; Secure; Max-Age=180d
- *
- * localStorage is ORIGIN-scoped, so teamrollouts.com, www.teamrollouts.com and
- * app.teamrollouts.com would each prompt separately — three prompts on the way
- * from a landing page to signup. One cookie on the parent domain covers all
- * three, and it survives Safari's 7-day cap on script-writable storage, which
- * is why the app's banner appeared to re-prompt.
- *
- * The name and JSON shape deliberately match the app's `useCookieConsent`, so
- * when that switches from localStorage to this cookie the two agree with no
- * migration. Until it does, the app keeps its own record and a visitor may be
- * asked twice — degraded, not broken.
- *
- * Categories match the app's: necessary (always on), analytics, marketing.
- * Nothing non-essential loads or persists before an explicit choice; "necessary"
- * covers Clerk's session cookies and the app's csrf_token, which is why it has
- * no toggle. No dark patterns: Reject is as prominent as Accept.
- *
- * Self-contained on purpose — inline CSS with literal colours rather than v2
- * tokens, because this renders on BOTH the v2 pages and the classic-chrome ones,
- * and the token sets differ between them.
+/** Shared with the app's cookieConsent.ts: one explicit choice across Team domains.
+ * Provider previews and localhost use a host-only cookie. A rejected choice never
+ * changes sign-in/session cookies. Keep category names and the record shape in sync.
  */
 ---
 <div id="ckBanner" class="ck" role="dialog" aria-modal="false" aria-label="Cookie preferences" hidden>
@@ -72,6 +45,8 @@
       color:#efebe3;backdrop-filter:blur(10px);
       font-family:Inter,-apple-system,BlinkMacSystemFont,sans-serif}
   .ck[hidden]{display:none}
+  .ck{max-height:85dvh;overflow-y:auto;padding-bottom:env(safe-area-inset-bottom)}
+  .ck__btn:focus-visible,.ck__body a:focus-visible,.ck__opt input:focus-visible{outline:2px solid #d9fa87;outline-offset:4px}
   .ck__in{max-width:78rem;margin:0 auto;padding:1.1rem clamp(1.3rem,5vw,4.5rem);
           display:flex;flex-wrap:wrap;gap:1rem 1.6rem;align-items:center}
   .ck__copy{flex:1 1 22rem;min-width:0}
@@ -118,7 +93,8 @@
       if (!m) return null;
       try {
         const p = JSON.parse(decodeURIComponent(m[1]));
-        return { necessary: true, analytics: !!p.analytics, marketing: !!p.marketing };
+        if (typeof p?.analytics !== 'boolean' || typeof p?.marketing !== 'boolean') return null;
+        return { necessary: true, analytics: p.analytics, marketing: p.marketing };
       } catch { return null; }   // malformed → treat as no decision, ask again
     };
 
@@ -165,8 +141,8 @@
     const apply = (c) => {
       if (!c.analytics) dropByPrefix(['ph_', '_ga']);
       if (!c.marketing) dropByPrefix(['_fbp', '_fbc']);
-      if (window.posthog && c.analytics) {
-        try { window.posthog.set_config({ persistence: 'localStorage+cookie' }); } catch {}
+      if (window.posthog) {
+        try { window.posthog.set_config({ persistence: c.analytics ? 'localStorage+cookie' : 'memory' }); } catch {}
       }
       if (typeof window.gtag === 'function') {
         window.gtag('consent', 'update', {
@@ -182,6 +158,11 @@
     };
 
     const decide = (c) => { write(c); apply(c); banner.hidden = true; };
+
+    const refresh = () => { const c = read(); if (c) { apply(c); if (el('ckOpts').hidden) banner.hidden = true; } };
+    window.addEventListener('focus', refresh);
+    window.addEventListener('pageshow', refresh);
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') refresh(); });
 
     const existing = read();
     if (existing) {
