@@ -8,6 +8,7 @@ import {experimental_AstroContainer as AstroContainer} from 'astro/container';
 import Home from '../src/studio-nine/pages/index.astro';
 import Pricing from '../src/studio-nine/pages/pricing.astro';
 import Contact from '../src/studio-nine/pages/contact.astro';
+import Insight from '../src/studio-nine/pages/insights/[slug].astro';
 import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
 import {normalizeCopy} from '../src/studio-nine/lib/i18n/translate';
 const pages=import.meta.glob('../src/studio-nine/pages/*.astro',{eager:true,import:'default'});
@@ -50,6 +51,15 @@ describe('Sanity-backed new design',()=>{
   const container=await AstroContainer.create();const home=dom(renderDesignHtml(await container.renderToString(Home),'ko'));
   expect(home.querySelector('.nav__logo')?.getAttribute('href')).toBe('/ko/');
   expect(home.querySelector('.foot__logo')?.parentElement?.getAttribute('href')).toBe('/ko/');
+ });
+ it('renders article navigation per request instead of baking production account links into previews',async()=>{
+  expect(readFileSync('src/pages/insights/[slug].astro','utf8')).toContain('export const prerender=false');
+  const container=await AstroContainer.create();
+  const html=await container.renderToString(Insight,{params:{slug:'the-88-percent-problem'}});
+  const d=dom(renderDesignHtml(html,'en',{}, {}, {},stagingAppOrigin));
+  expect(d.querySelector('h1')?.textContent).toContain('88%');
+  const accounts=[...d.querySelectorAll('a')].filter(a=>a.href.includes('/sign-in'));
+  expect(accounts.length).toBeGreaterThan(0);for(const a of accounts)expect(new URL(a.href).origin).toBe(stagingAppOrigin);
  });
  it('updates dialog image data and social cards alongside page images',()=>{
   const d=dom(renderDesignHtml('<img src="/studio-nine/img/a.webp"><script type="application/json">{"photo":"/studio-nine/img/a.webp"}</script><meta property="og:image" content="https://teamrollouts.com/studio-nine/img/a.webp">','en',{}, {'/studio-nine/img/a.webp':'https://cdn.sanity.io/images/g1olb5am/production/replacement.jpg'}));

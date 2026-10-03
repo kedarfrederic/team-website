@@ -1,7 +1,6 @@
 ---
 import Page from '../../studio-nine/pages/insights/[slug].astro';
-import {getInsightPostSlugs} from '../../lib/queries';
-export const prerender=true;
-export async function getStaticPaths(){return (await getInsightPostSlugs()).map(slug=>({params:{slug}}));}
+// Account destinations and Sanity drafts depend on the request, including preview host identity.
+export const prerender=false;
 ---
 <Page />
