@@ -1,0 +1,56 @@
+---
+import {graph,breadcrumbs} from '../../lib/seo';
+import Base from '../../layouts/Base.astro';
+import Placeholder from '../../components/Placeholder.astro';
+import PortableText from '../../../components/PortableText.astro';
+import {readPost} from '../../editorial';
+import {urlFor} from '../../../lib/sanity';
+const slug=Astro.params.slug||'';
+const post=await readPost(Astro,slug);
+if(!post)return Astro.redirect('/insights');
+const hero=post.heroImage?.asset?urlFor(post.heroImage).width(1200).auto('format').url():undefined;
+const fmt=(d:string)=>new Date(d).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+const more:any[]=(post.relatedPosts||[]).filter((p:any)=>p.slug?.current);
+const url=`/insights/${slug}`;
+const schema=graph({'@type':'BlogPosting',headline:post.title,description:post.excerpt,url:`https://teamrollouts.com${url}`,mainEntityOfPage:`https://teamrollouts.com${url}`,datePublished:post.publishDate,dateModified:post._updatedAt||post.publishDate,image:hero,author:{'@type':'Person',name:post.authorName||'Team'},publisher:{'@id':'https://teamrollouts.com/#organization'}},breadcrumbs([{name:'Insights',url:'/insights'},{name:post.title,url}]));
+---
+<Base title={post.seo?.metaTitle||post.title} description={post.seo?.metaDescription||post.excerpt} schema={schema} image={post.seo?.ogImage?.asset?urlFor(post.seo.ogImage).width(1200).auto('format').url():hero} noindex={post.seo?.noIndex===true} published={post.publishDate}>
+  <article class="art">
+    <div class="wrap art__head">
+      <p class="micro"><a href="/insights">Insights</a> · {post.category?.title||'Insights'} · {post.readMinutes||3} min · {fmt(post.publishDate)}</p>
+      <h1 class="h1">{post.title}</h1>
+      <p class="lead">{post.excerpt}</p>
+      <p class="art__by"><span class="art__av"><img src="/studio-nine/logo/team-logomark-white.png" alt="" /></span><span><b>Written by {post.authorName||'Team'}</b><br /></span></p>
+    </div>
+    {hero && <div class="wrap"><Placeholder label={post.title} ratio="21 / 9" shape="card" tone="warm" src={hero} /></div>}
+    <div class="wrap art__body"><PortableText value={post.body} /></div>
+    {more.length>0 && <div class="wrap art__more">
+      <p class="micro">More from Insights</p>
+      <div class="grid3">{more.map(p => <a class="post" href={'/insights/' + p.slug.current}><p class="micro">{p.category?.title||'Insights'}</p><h3 class="h3">{p.title}</h3></a>)}</div>
+    </div>}
+  </article>
+</Base>
+<style>
+  .art{padding:calc(4.5rem + clamp(2rem,5vw,4rem)) 0 var(--section)}
+  .art__head{display:grid;gap:1.25rem;max-width:48rem;margin-bottom:2.5rem}
+  .art__by{display:flex;gap:.8rem;align-items:center;font-size:.9rem;color:var(--ink-60);line-height:1.35}
+  .art__by b{color:var(--ink);font-weight:500}
+  .art__av{width:2.4rem;height:2.4rem;border-radius:50%;background:var(--ink);display:grid;place-items:center;overflow:hidden}.art__av img{width:1.3rem}
+  .art__body{max-width:42rem;margin-top:2.5rem;font-size:1.12rem;line-height:1.65;color:var(--ink-80)}
+  .art__body :global(p){margin:0 0 1.25rem}
+  .art__body :global(h2){font-size:1.6rem;font-weight:500;letter-spacing:-.02em;margin:2.2rem 0 .8rem;color:var(--ink)}
+  .art__body :global(h3){font-size:1.2rem;font-weight:500;margin:1.6rem 0 .5rem;color:var(--ink)}
+  .art__body :global(ul),.art__body :global(ol){padding-left:1.3rem;margin:0 0 1.25rem;display:grid;gap:.5rem}
+  .art__body :global(ul){list-style:disc}.art__body :global(ol){list-style:decimal}
+  .art__body :global(a){color:var(--ink);border-bottom:1px solid var(--ink-12)}
+  .art__body :global(strong){color:var(--ink);font-weight:500}
+  .art__body :global(blockquote){margin:1.5rem 0;padding-left:1.5rem;border-left:3px solid var(--lime);font-size:1.5rem;line-height:1.25;color:var(--ink)}
+  .art__body :global(blockquote em),.art__body :global(blockquote p){font-family:var(--serif);font-weight:300;font-style:italic;font-size:1.05em;margin:0}
+  .art__body :global(figure){margin:1.5rem 0}.art__body :global(img){border-radius:var(--r-lg)}
+  .art__more{margin-top:clamp(3rem,6vw,5rem);padding-top:2.5rem;border-top:1px solid var(--line)}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1rem}
+  .post{display:grid;gap:.5rem;align-content:start;padding:1.25rem;border-radius:var(--r-xl);background:var(--paper)}
+  @media (max-width:900px){.grid3{grid-template-columns:1fr}}
+</style>
+
+<style is:global>.art__body{--text-secondary:var(--ink-80);--accent:var(--ink);--bg:var(--paper)}</style>

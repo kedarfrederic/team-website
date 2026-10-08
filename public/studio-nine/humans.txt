@@ -1,0 +1,10 @@
+/* TEAM */
+Team Rollouts, Inc.
+Site: https://teamrollouts.com
+
+/* SITE */
+Design and build: Studio Nine
+https://studionine.agency
+
+/* STACK */
+Astro, GSAP, Lenis, Inter, Nyght Serif

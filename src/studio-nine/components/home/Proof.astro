@@ -1,0 +1,47 @@
+---
+import Placeholder from '../Placeholder.astro';
+import { img } from '../../data/images';
+const stories = [
+  { who: 'Independent label', name: '', h: 'The Sunday-night "where are we" message stopped. Everyone could just see it.', tags: ['Label', '9 releases', 'Slate view'], ph: 'Label manager at their desk, looking off-camera. Warm, editorial.', tone: 'cool' },
+  { who: 'Artist manager', name: '', h: 'Four artists, one phone, and for the first time nothing slipped between them.', tags: ['Manager', 'Roster', 'TeamMate'], ph: 'A manager backstage, phone in hand, one earbud in.', tone: 'warm' },
+  { who: 'Independent artist', name: '', h: 'I made the record. Team ran the release. I did not send one wrong file.', tags: ['Artist', 'Album', 'Assets'], ph: 'An artist in a bedroom studio, headphones round the neck.', tone: 'lime' },
+];
+---
+<section class="st section" id="stories">
+  <div class="wrap">
+    <div class="st__top">
+      <h2 class="h1 lines"><span class="line"><span>Releases that run</span></span><span class="line"><span>on <em>Team.</em></span></span></h2>
+      <p class="st__aside" data-reveal>Real people, real rollouts.<br /><a class="link" href="/insights">All stories <span class="arr">→</span></a></p>
+    </div>
+    <div class="st__grid" data-reveal-stagger="0.12">
+      {stories.map((s, i) => (
+        <a class="story" href="/insights">
+          <Placeholder label={s.ph} ratio="4 / 3" shape="card" tone={s.tone as any} src={img(['story-label','story-manager','story-artist'][i])} />
+          <div class="story__copy">
+            <p class="story__who">{s.who}{s.name && <> · <em>{s.name}</em></>}</p>
+            <h3 class="story__h">"{s.h}"</h3>
+            <ul class="story__tags">{s.tags.map(t => <li>{t}</li>)}</ul>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+<style>
+  .st{background:var(--white)}
+  .st__top{display:flex;justify-content:space-between;align-items:flex-end;gap:2rem;margin-bottom:clamp(2rem,4vw,3rem)}
+  .st__aside{font-size:1.05rem;color:var(--ink-60);line-height:1.6;text-align:right}
+  .st__grid{display:flex;gap:1rem}
+  .st__grid:hover .story{flex-grow:.85}
+  .st__grid .story:hover{flex-grow:1.4}
+  .story{flex:1 1 0;min-width:0;display:grid;align-content:start;gap:1rem;padding:.75rem;border-radius:var(--r-xl);background:var(--paper);transition:flex-grow .55s var(--ease),box-shadow .35s}
+  .story:hover{box-shadow:var(--shadow-md)}
+  .story :global(.ph){--ph-r:calc(var(--r-xl) - .75rem);border-radius:var(--ph-r)}
+  .story__copy{display:grid;gap:.7rem;padding:.25rem .75rem 1rem}
+  .story__who{font-size:.86rem;color:var(--ink-60)}
+  .story__who em{font-family:var(--serif);font-weight:300;font-style:italic;font-size:1.15em;color:var(--ink)}
+  .story__h{font-size:1.35rem;font-weight:450;letter-spacing:-.02em;line-height:1.25;text-wrap:pretty}
+  .story__tags{display:flex;flex-wrap:wrap;gap:.35rem}
+  .story__tags li{font-size:.74rem;padding:.25rem .6rem;border-radius:var(--r-pill);background:var(--white);color:var(--ink-60)}
+  @media (max-width:900px){.st__top{flex-direction:column;align-items:flex-start}.st__aside{text-align:left}.st__grid{flex-direction:column}.st__grid .story,.st__grid:hover .story{flex-grow:1}}
+</style>

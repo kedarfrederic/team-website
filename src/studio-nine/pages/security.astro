@@ -1,0 +1,95 @@
+---
+import { graph, faq as faqSchema, webpage } from '../lib/seo';
+import Base from '../layouts/Base.astro';
+import SecurityHero from '../components/SecurityHero.astro';
+const controls = [
+  ['Encrypted in transit and at rest', 'Your data is encrypted in transit and at rest. Credentials for your connected tools live in a dedicated secrets vault, never in plain text.'],
+  ['Permissioned and revocable', 'You decide what each connection can see, and you can cut any of them off in one click. Team only ever reads the scopes you have granted.'],
+  ['Granular access', 'Role-based controls decide who on your team sees what. The right people get the whole picture, everyone else gets exactly their slice.'],
+  ['A full audit trail', 'Every action Team takes is logged, so you can always see what changed, when, and where the answer came from.'],
+];
+const faq = [
+  ['Does TeamMate train on my data?', 'No. TeamMate uses your connected data to answer your questions and do work for your release. We do not train models on it, and neither do our providers. Your data is never pooled with other customers.'],
+  ['Who on my team can see my data?', 'Only the people you invite, at the access level you set. Role-based controls let you give the right people the whole picture while limiting everyone else to their slice.'],
+  ['Can I disconnect a tool or delete my data?', 'Any time. Every connection is revocable in one click, and when you disconnect a tool or delete your data, it is removed from Team. Everything you build stays portable and yours to keep.'],
+  ['How are my connected accounts protected?', 'Connectors are made through each provider\'s official, permissioned access, and the credentials are held in a dedicated secrets vault. Team only ever reads the scopes you have granted.'],
+  ['Where is my data stored?', 'Your data is encrypted in transit and at rest with a reputable cloud provider. Enterprise plans can discuss data residency options. Request our security documentation for the full detail.'],
+];
+const schema = graph(webpage({ name: 'Security and trust', description: 'How Team handles your data: never used to train a model, permissioned, revocable and exportable.', url: '/security' }), faqSchema(faq.map(([q, a]) => ({ q, a }))));
+---
+<Base title="Security and trust — your data, your rules" description="Team reads your files, messages, money and plans to help you run releases. Here is how it stays private, permissioned and yours: never trained on, revocable in a click, encrypted, audited." schema={schema} closing="covered">
+  <section class="sh">
+    <div class="wrap sh__in">
+      <div>
+        <h1 class="display lines"><span class="line"><span>Your data,</span></span><span class="line"><span><em>your rules.</em></span></span></h1>
+        <p class="lead" data-reveal>Team reads across your whole release: files, messages, money, plans. That only works if it stays private, permissioned and yours. Here is how we make sure it does.</p>
+        <div class="cta-row" data-reveal><a class="btn btn--lime btn--lg" href="https://app.teamrollouts.com/onboarding?plan=free">Start free <span class="arr">→</span></a><a class="btn btn--ghost btn--lg" href="/contact">Request security docs</a></div>
+      </div>
+      <div class="wall" data-reveal><SecurityHero /></div>
+    </div>
+  </section>
+
+  <section class="section section--paper">
+    <div class="wrap">
+      <div class="head"><h2 class="h1 lines"><span class="line"><span>Your release is never</span></span><span class="line"><span>anyone's <em>training data.</em></span></span></h2>
+        <p class="lead" data-reveal>TeamMate reads your release to help you, and only you. Answering a question means sending it to a model provider (Anthropic for reasoning, OpenAI for search embeddings) and neither trains on data sent through their APIs. Nothing is pooled with other customers, and nothing is sold.</p></div>
+      <ul class="four" data-reveal-stagger>
+        <li class="tile tile--green"><span class="tile__badge">✓</span><p class="tile__big">Works for <em>you</em> only.</p><p>Your masters, threads and numbers answer your questions, nothing more.</p></li>
+        <li class="tile tile--pink"><span class="tile__badge">✕</span><p class="tile__big">Never <em>trains</em> a model.</p><p>Not ours, and not our providers'. Both exclude API data from training under their commercial terms.</p></li>
+        <li class="tile tile--lav"><span class="tile__badge">✕</span><p class="tile__big">Never shared across <em>customers.</em></p><p>Your data is isolated to your organisation.</p></li>
+        <li class="tile tile--lime"><span class="tile__badge">✓</span><p class="tile__big">Gone on <em>your</em> say-so.</p><p>Disconnect or delete and it is removed from Team.</p></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="head"><h2 class="h1">Protection built in, <em>not bolted on.</em></h2><p class="lead" data-reveal>The controls underneath every connection, so Team only ever sees what you allow, and you can prove what it did.</p></div>
+      <div class="ctrls" data-reveal-stagger>{controls.map(([h, d], i) => <div class="ctrl"><span class="ctrl__badge" style={`--c:${['var(--viv-green)','var(--viv-cyan)','var(--viv-pink)','var(--viv-lav)'][i]}`}><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d={['M6 10V8a6 6 0 0 1 12 0v2M5 10h14v10H5z','M12 3l7 4v5c0 5-3.5 8-7 9-3.5-1-7-4-7-9V7z','M16 11a4 4 0 1 0-8 0 4 4 0 0 0 8 0zM4 21a8 8 0 0 1 16 0','M4 7h16M4 12h10M4 17h13'][i]} /></svg></span><h3 class="h3">{h}</h3><p>{d}</p></div>)}</div>
+    </div>
+  </section>
+
+  <section class="section section--paper">
+    <div class="wrap ent">
+      <div><h2 class="h2">Enterprise controls, <em>when you need them.</em></h2><p class="lead">Running at scale means stricter requirements. Team is built to meet them, with the controls and paperwork procurement teams expect.</p><a class="link" href="/enterprise">Explore Enterprise <span class="arr">→</span></a></div>
+      <ul class="ent__list" data-reveal-stagger>{['SSO and SAML sign-on','Role-based access control','SCIM provisioning','DPA on request','Data residency options','Exportable audit logs'].map((t, i) => <li><i style={`background:${['var(--lime)','var(--viv-cyan)','var(--viv-pink)','var(--viv-lav)','var(--viv-orange)','var(--viv-green)'][i]}`}></i>{t}</li>)}</ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap faq">
+      <div class="head"><h2 class="h1">FAQs</h2></div>
+      <div class="faq__list">{faq.map(([q, a], i) => <details class="faq__i" open={i === 0}><summary><span class="faq__n tnum">0{i + 1}</span><span class="faq__q">{q}</span><span class="faq__x" aria-hidden="true"></span></summary><p>{a}</p></details>)}</div>
+    </div>
+  </section>
+</Base>
+<style>
+  .sh{padding:calc(4.5rem + clamp(3rem,7vw,6rem)) 0 var(--section)}
+  .sh__in{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(2rem,5vw,5rem);align-items:center}
+  .sh__in>div:first-child{display:grid;gap:1.5rem}
+  .wall{max-width:28rem;justify-self:end;width:100%}
+  .wall__in{background:var(--ink);color:var(--on-dark);border-radius:var(--r-xl);padding:1.5rem;display:grid;gap:.9rem;box-shadow:var(--shadow-lg)}
+  .wall__k{font-size:.78rem;color:var(--on-dark-60);text-transform:uppercase;letter-spacing:.05em;font-weight:500}
+  .wall__chips{display:flex;flex-wrap:wrap;gap:.4rem}
+  .wall__chips li{font-size:.85rem;padding:.35rem .7rem;border-radius:99px;background:var(--dark-2);color:var(--on-dark)}
+  .wall__tm{font-size:.9rem;display:flex;gap:.5rem;align-items:flex-start;line-height:1.4}
+  .wall__out{font-weight:500;color:var(--lime)}
+  .wall__blocked{border:1.5px dashed var(--ink-12);border-radius:var(--r-xl);padding:1.2rem 1.5rem;display:grid;gap:.6rem;color:var(--ink-60)}
+  .wall__blocked ul{display:flex;gap:1rem;flex-wrap:wrap;font-size:.9rem}
+  .four{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+  .four .tile{min-height:15rem;padding:1.75rem;gap:.75rem}
+  .four .tile__big{font-size:1.7rem}
+  .four .tile p:not(.tile__big){font-size:1.02rem}
+  .four .tile__badge{width:2.8rem;height:2.8rem;font-size:1.1rem;font-weight:700}
+  .ctrls{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+  .ctrl{background:var(--paper);border-radius:var(--r-xl);padding:1.75rem;display:grid;gap:.6rem;align-content:start}
+  .ctrl p{color:var(--ink-60);line-height:1.5}
+  .ctrl__badge{width:2.4rem;height:2.4rem;border-radius:.75rem;background:var(--c);color:var(--white);display:grid;place-items:center;margin-bottom:.4rem}
+  .ctrl__badge[style*='cyan'],.ctrl__badge[style*='pink'],.ctrl__badge[style*='lav']{color:var(--ink)}
+  .ent{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,5vw,5rem);align-items:center}
+  .ent>div{display:grid;gap:1.25rem;justify-items:start}
+  .ent__list{display:grid;grid-template-columns:repeat(2,1fr);gap:.5rem}
+  .ent__list li{display:flex;align-items:center;gap:.6rem;padding:.8rem 1rem;border-radius:.8rem;background:var(--white);font-size:.95rem;font-weight:500}
+  .ent__list i{width:.7rem;height:.7rem;border-radius:50%}
+  @media (max-width:900px){.sh__in,.ent,.four,.ctrls{grid-template-columns:1fr}.wall{justify-self:stretch;max-width:none}}
+</style>

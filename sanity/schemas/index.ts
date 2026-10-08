@@ -51,7 +51,10 @@ import { insightPost } from "./documents/insightPost";
 import { changelogEntry } from "./documents/changelogEntry";
 import { integration } from "./documents/integration";
 
+import { marketingV3Page } from "./documents/marketingV3Page";
+
 export const schemaTypes = [
+  marketingV3Page,
   // Pages
   siteSettings,
   homepage,

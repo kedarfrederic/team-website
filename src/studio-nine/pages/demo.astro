@@ -1,0 +1,39 @@
+---
+import Base from '../layouts/Base.astro';
+// Same booking link the live site uses.
+const calendly = 'https://calendly.com/teamrollouts-demo/30min';
+---
+<Base title="Book a demo — see a release run on Team" description="Twenty minutes, one real release, your questions. Book a walkthrough of Team with someone who runs releases on it.">
+  <section class="dm">
+    <div class="wrap dm__in">
+      <div class="dm__copy">
+        <h1 class="h1 lines"><span class="line"><span>See a release</span></span><span class="line"><span>run on <em>Team.</em></span></span></h1>
+        <p class="lead" data-reveal>Twenty minutes, one real release, your questions. We will show you the release home, TeamMate doing the admin, and how your artists, label or partners would see their part.</p>
+        <ul class="dm__list" data-reveal-stagger>
+          <li class="tile tile--lav"><span class="tile__k">01</span><b>What you'll see</b><span>A release from plan to release day, the overnight log, and the morning brief.</span></li>
+          <li class="tile tile--pink"><span class="tile__k">02</span><b>Who it's for</b><span>Managers with a roster, labels with a slate, distributors and agencies working many releases.</span></li>
+          <li class="tile tile--cyan"><span class="tile__k">03</span><b>What happens after</b><span>You start free, or we set up a Pro trial with your real releases. No pressure either way.</span></li>
+        </ul>
+        <p class="small" data-reveal>Just want to try it? <a class="link" href="https://app.teamrollouts.com/onboarding?plan=free">Start free now <span class="arr">→</span></a></p>
+      </div>
+      <div class="dm__cal" data-reveal>
+        <div class="dm__frame">
+          <iframe src={calendly + '?hide_gdpr_banner=1&background_color=ffffff&text_color=0e0d0b&primary_color=0e0d0b'} title="Book a demo" loading="lazy"></iframe>
+          <p class="dm__fallback">If the calendar does not load, <a class="link" href={calendly} target="_blank" rel="noopener">open it in a new tab</a> or <a class="link" href="/contact">send us a message</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+<style>
+  .dm{padding:calc(4.5rem + clamp(3rem,6vw,5rem)) 0 var(--section)}
+  .dm__in{display:grid;grid-template-columns:1fr 1.1fr;gap:clamp(2rem,5vw,5rem);align-items:start}
+  .dm__copy{display:grid;gap:1.5rem;position:sticky;top:6rem}
+  .dm__list{display:grid;gap:.8rem}
+  .dm__list li{gap:.2rem}
+  .dm__list b{font-weight:500;font-size:1.05rem}.dm__list span:not(.tile__k){font-size:.95rem;line-height:1.45;opacity:.85}
+  .dm__frame{background:var(--white);border:1px solid var(--line);border-radius:var(--r-xl);overflow:hidden;box-shadow:var(--shadow-lg)}
+  .dm__frame iframe{width:100%;height:44rem;border:0;display:block}
+  .dm__fallback{padding:1rem 1.25rem;font-size:.85rem;color:var(--ink-60);border-top:1px solid var(--line)}
+  @media (max-width:900px){.dm__in{grid-template-columns:1fr}.dm__copy{position:static}}
+</style>

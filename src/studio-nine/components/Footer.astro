@@ -1,0 +1,153 @@
+---
+import { site } from '../data/site';
+interface Props { cta?: boolean; closing?: 'released' | 'handled' | 'covered'; }
+const { cta = true, closing = 'released' } = Astro.props;
+// Closing section variant: 'staffed' = the headline with stickers; 'card' = the earlier lime CTA card (kept for revert).
+const CLOSING = (():'staffed'|'card' => 'staffed')();
+const cols = [
+  ['Product', site.footer.product], ['Who it\'s for', site.footer.who], ['Company', site.footer.company], ['Legal', site.footer.legal],
+] as const;
+---
+<div class:list={['footwrap', { 'footwrap--cta': cta }]}>
+{cta && CLOSING === 'card' && (
+<section class="fcta">
+  <div class="wrap">
+    <div class="fcta__card" data-reveal>
+      <h2 class="h1">Your next release, <em>run properly.</em></h2>
+      <p class="lead">Free for every artist, manager and label. No card, nothing to migrate, and you can start today.</p>
+      <div class="cta-row">
+        <a class="btn btn--primary btn--lg" href={site.cta.primary.href}>{site.cta.primary.label} <span class="arr">→</span></a>
+        <a class="btn btn--ghost btn--lg" href={site.cta.secondary.href}>{site.cta.secondary.label}</a>
+      </div>
+    </div>
+  </div>
+</section>
+)}
+{cta && CLOSING === 'staffed' && (
+<section class="fst">
+  <div class="wrap fst__in" data-reveal>
+    {closing === 'released' && (
+    <h2 class="fst__h">
+      <span class="fst__l1"><span class="stk stk--tile stk--orange" data-stk><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 12v2M8 8v8M12 5v14M16 9v6M20 11v2"/></svg></span>Consider <span class="stk stk--av" data-stk><img src="/studio-nine/img/set/story-artist.webp" alt="" loading="lazy" /></span> <em>it</em></span>
+      <span class="fst__l2">released<span class="stk stk--tile stk--lime" data-stk><img src="/studio-nine/logo/team-logomark-black.png" alt="" /></span><span class="stk stk--pill stk--lime2" data-stk>✓ Delivered</span></span>
+      <span class="stk stk--pill stk--pink" data-stk><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 12h3l2-6 3 12 3-9 2 3h3"/></svg>Pre-save live</span>
+      <span class="stk stk--dot" data-stk></span>
+    </h2>)}
+    {closing === 'handled' && (
+    <h2 class="fst__h">
+      <span class="fst__l1"><span class="stk stk--tile stk--ink" data-stk><span class="dot"></span></span>Consider <span class="stk stk--av" data-stk><img src="/studio-nine/img/set/hero-manager.webp" alt="" loading="lazy" /></span> <em>it</em></span>
+      <span class="fst__l2">handled<span class="stk stk--tile stk--lime" data-stk><img src="/studio-nine/logo/team-logomark-black.png" alt="" /></span><span class="stk stk--pill stk--lime2" data-stk>✓ 3 done</span></span>
+      <span class="stk stk--pill stk--orange2" data-stk>1 needs you</span>
+      <span class="stk stk--dot" data-stk></span>
+    </h2>)}
+    {closing === 'covered' && (
+    <h2 class="fst__h">
+      <span class="fst__l1"><span class="stk stk--tile stk--green" data-stk><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 4v5c0 5-3.5 8-7 9-3.5-1-7-4-7-9V7z"/></svg></span>Consider <span class="stk stk--av" data-stk><img src="/studio-nine/img/set/hero-label.webp" alt="" loading="lazy" /></span> <em>it</em></span>
+      <span class="fst__l2">covered<span class="stk stk--tile stk--lime" data-stk><img src="/studio-nine/logo/team-logomark-black.png" alt="" /></span><span class="stk stk--pill stk--lime2" data-stk>✓ Delivered</span></span>
+      <span class="stk stk--pill stk--lav" data-stk>9 releases · on track</span>
+      <span class="stk stk--dot" data-stk></span>
+    </h2>)}
+    <a class="btn btn--hero btn--hero-lg" href={site.cta.primary.href}>{site.cta.primary.label} <span class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
+  </div>
+</section>
+)}
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot__top">
+      <div class="foot__brand">
+        <a href="/" aria-label="Team home"><img class="foot__logo" src="/studio-nine/logo/team-logo-live.svg" alt="Team" width="96" height="32" /></a>
+        <p class="foot__line">Every release needs a <em>Team.</em></p>
+        <form class="foot__news" action="https://admin.getteamnow.com/api/v1/website-leads" method="post" data-form="newsletter">
+          <label class="sr-only" for="news-email">Email</label>
+          <input id="news-email" type="email" name="email" placeholder="Your email" required />
+          <button class="btn btn--lime btn--sm" type="submit">Subscribe</button>
+        </form>
+        <p class="foot__note">Just updates on the latest from Team. No spam, ever.</p>
+      </div>
+      <div class="foot__cols">
+        {cols.map(([k, links]) => (
+          <div>
+            <p class="foot__k">{k}</p>
+            <ul>{links.map(l => <li><a href={l.href}>{l.label}</a></li>)}</ul>
+          </div>
+        ))}
+      </div>
+    </div>
+        <div class="foot__bottom">
+      <p>© {new Date().getFullYear()} Team Rollouts, Inc. · Built with the artists, managers and labels who live it. · Site by <a class="foot__credit" href="https://studionine.agency" rel="noopener">Studio Nine</a></p>
+      <div class="foot__social">
+        <a href="https://www.instagram.com/teamrollouts/" rel="noopener">Instagram</a>
+        <a href="https://www.linkedin.com/company/teamrollouts" rel="noopener">LinkedIn</a>
+        <a href="https://x.com/Teamrollouts" rel="noopener">X</a>
+        <a href={site.cta.signin.href}>Sign in</a>
+      </div>
+    </div>
+  </div>
+  <button type="button" class="foot__cookie" data-cookie-prefs>Cookie preferences</button>
+</footer>
+</div>
+
+<style>
+  /* The CTA card straddles the boundary between the page and the dark footer. */
+  .footwrap{position:relative;z-index:0;margin-top:var(--section)}
+  .footwrap:has(.fst){margin-top:0}
+  .fcta{position:relative;z-index:2;padding:0}
+  .fcta__card{position:relative;overflow:hidden;background:var(--lime);border-radius:var(--r-xl);padding:clamp(3rem,7vw,6rem) clamp(1.5rem,6vw,5rem);text-align:center;display:grid;justify-items:center;gap:1.25rem;box-shadow:var(--shadow-lg)}
+  .fcta__card::before{content:'';position:absolute;inset:auto -10% -40% -10%;height:70%;background:radial-gradient(60% 60% at 50% 100%,rgba(255,255,255,.55),transparent 70%);pointer-events:none}
+  .fcta__card>*{position:relative}
+  .fcta__card .lead{color:var(--ink-80);max-width:36rem}
+  .fcta__card .cta-row{justify-content:center;margin-top:.5rem}
+  .fcta__card .btn--ghost{box-shadow:inset 0 0 0 1.5px rgba(14,13,11,.25)}
+  /* closing: headline with stickers */
+  .fst{position:relative;z-index:2;padding:clamp(4rem,8vw,7rem) 0 clamp(5rem,9vw,8rem);background:var(--paper)}
+  .fst::before{content:'';position:absolute;inset:0;pointer-events:none;background-image:repeating-radial-gradient(circle at 50% 120%,transparent 0 9px,rgba(14,13,11,.06) 9px 10px);-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 38%,#000 100%);mask-image:linear-gradient(180deg,transparent 0,#000 38%,#000 100%)}
+  .fst__in{position:relative}
+  .fst__in{display:grid;justify-items:center;gap:clamp(2rem,4vw,3rem);text-align:center}
+  .fst__h{position:relative;font-size:clamp(3.2rem,10.5vw,9.5rem);line-height:.95;letter-spacing:-.045em;font-weight:500;color:var(--ink);text-wrap:balance}
+  .fst__h em{font-family:var(--serif);font-weight:300;font-style:italic;font-size:1.12em;line-height:0}
+  .fst__l1,.fst__l2{display:block;white-space:nowrap}
+  .stk{display:inline-grid;place-items:center;vertical-align:middle;margin:0 .12em;animation:breathe 4s ease-in-out infinite}
+  .stk:nth-child(odd){animation-delay:-2s}
+  @keyframes breathe{0%,100%{transform:translateY(0) rotate(var(--r,0deg))}50%{transform:translateY(-.08em) rotate(calc(var(--r,0deg) + 2deg))}}
+  .stk--tile{width:.72em;height:.72em;border-radius:.2em;--r:-6deg}
+  .stk--tile svg,.stk--tile img{width:.4em;height:.4em;max-width:none;object-fit:contain}
+  .stk--orange{background:var(--viv-orange);color:var(--white)}
+  .stk--lime{background:var(--lime)}
+  .stk--av{width:.72em;height:.72em;border-radius:50%;overflow:hidden;border:.04em solid var(--white);box-shadow:var(--shadow-md)}
+  .stk--av img{width:.72em;height:.72em;max-width:none;object-fit:cover}
+  .stk--pill{height:auto;padding:.3em .65em;border-radius:var(--r-pill);font-family:var(--sans);font-size:.2em;font-weight:600;letter-spacing:-.01em;line-height:1;gap:.35em;grid-auto-flow:column;box-shadow:var(--shadow-md);white-space:nowrap}
+  .stk--pill svg{width:1.2em;height:1.2em}
+  .stk--lime2{background:var(--lime);color:var(--ink);position:absolute;right:-1.1em;top:-.55em;--r:5deg}
+  .stk--pink{background:var(--viv-pink);color:var(--ink);position:absolute;left:-.3em;bottom:-.42em;--r:-5deg}
+.stk--ink{background:var(--ink)}.stk--ink .dot{width:.28em;height:.28em;box-shadow:0 0 0 .08em rgba(217,250,135,.35)}
+  .stk--green{background:var(--viv-green);color:var(--white)}
+  .stk--orange2{background:var(--viv-orange);color:var(--white);position:absolute;left:-.3em;bottom:-.42em;--r:-5deg}
+  .stk--lav{background:var(--viv-lav);color:var(--ink);position:absolute;left:-.3em;bottom:-.42em;--r:-5deg}
+  .stk--dot{position:absolute;right:.6em;bottom:-.05em;width:.32em;height:.32em;border-radius:50%;background:var(--viv-cyan);box-shadow:inset 0 0 0 .09em var(--viv-green)}
+  @media (max-width:720px){.fst{padding-top:3.5rem}.fst__h{font-size:clamp(2.5rem,11.5vw,4.2rem)}.stk--pill{font-size:.26em}.stk--lime2{right:0;top:-1.05em}.stk--pink,.stk--orange2,.stk--lav{left:0;bottom:-.8em}.fst__in{gap:2.5rem}}
+  .foot{position:relative;overflow:hidden;background:var(--dark);color:var(--on-dark);padding:clamp(3.5rem,7vw,6rem) 0 1.5rem}
+  .footwrap--cta .foot{margin-top:calc(-1 * clamp(4rem,9vw,8rem));padding-top:calc(clamp(4rem,9vw,8rem) + clamp(3.5rem,7vw,6rem))}
+  .foot::before{content:'';position:absolute;inset:auto -20% -60% -20%;height:80%;background:radial-gradient(50% 60% at 50% 100%,rgba(217,250,135,.14),transparent 70%);pointer-events:none}
+  .foot .wrap{position:relative}
+  .foot__top{display:grid;grid-template-columns:1.1fr 1.6fr;gap:3rem;align-items:start}
+  .foot__logo{height:2rem;width:auto;filter:brightness(0) invert(1);margin-bottom:1.4rem}
+  .foot__line{font-size:clamp(1.8rem,3vw,2.6rem);font-weight:450;letter-spacing:-.03em;line-height:1.05;max-width:16ch;text-wrap:balance}
+  .foot__line em{font-family:var(--serif);font-weight:300;font-style:italic;font-size:1.12em;color:var(--lime)}
+  .foot__news{display:flex;gap:.35rem;margin:1.6rem 0 .6rem;max-width:26rem;padding:.3rem .3rem .3rem 1rem;border:1px solid rgba(243,240,232,.18);border-radius:calc(var(--r-btn) + .3rem);background:rgba(255,255,255,.06)}
+  .foot__news input{flex:1;min-width:0;border:0;outline:0;font:inherit;font-size:.95rem;background:transparent;color:var(--on-dark)}
+  .foot__news input::placeholder{color:var(--on-dark-60)}
+  .foot__note{font-size:.85rem;color:var(--on-dark-60)}
+  .foot__cols{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem}
+  .foot__k{font-size:.74rem;font-weight:500;color:var(--on-dark-60);text-transform:uppercase;letter-spacing:.08em;margin-bottom:1rem}
+  .foot__cols li{margin-bottom:.55rem}
+  .foot__cols a{font-size:.95rem;color:var(--on-dark);opacity:.85;transition:opacity .2s}
+  .foot__cols a:hover{opacity:1;color:var(--lime)}
+    .foot__bottom{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;margin-top:clamp(3rem,6vw,5rem);padding-top:1.25rem;border-top:1px solid rgba(243,240,232,.12);font-size:.82rem;color:var(--on-dark-60)}
+  .foot__social{display:flex;gap:1.2rem}
+  .foot__credit{color:var(--on-dark);border-bottom:1px solid rgba(243,240,232,.25)}.foot__credit:hover{color:var(--lime)}
+  .foot__social a{color:var(--on-dark-60);transition:color .2s}
+  .foot__social a:hover{color:var(--lime)}
+  @media (max-width:900px){ .foot__top{grid-template-columns:1fr} .foot__cols{grid-template-columns:repeat(2,1fr)} }
+</style>
+
+<style>.foot__cookie{font:inherit;color:inherit;background:transparent;border:0;padding:.7rem;cursor:pointer;text-decoration:underline}</style>

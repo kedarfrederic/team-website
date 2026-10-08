@@ -1,0 +1,23 @@
+---
+import { localeFromPath, localePath, hasTranslation } from '../lib/i18n/routes';
+const locale = localeFromPath(Astro.url.pathname);
+const korean = hasTranslation(Astro.url.pathname);
+---
+<nav class="languages" aria-label="Language">
+ <a href={localePath(Astro.url.pathname, 'en')} lang="en" hreflang="en" aria-current={locale === 'en' ? 'page' : undefined} data-locale-choice="en">EN</a>
+ <a href={korean ? localePath(Astro.url.pathname, 'ko') : '/ko/'} lang="ko" hreflang="ko-KR" aria-current={locale === 'ko' ? 'page' : undefined} data-locale-choice="ko">한국어</a>
+</nav>
+<style>
+.languages{display:flex;align-items:center;gap:.15rem;flex:none;font-size:.78rem;white-space:nowrap}
+.languages a{padding:.4rem .5rem;border-radius:99px;color:var(--ink-60)}
+.languages a[aria-current="page"]{background:var(--paper-2);color:var(--ink)}
+.languages a:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+@media(max-width:380px){.languages a{padding:.35rem .25rem;font-size:.7rem}}
+</style>
+<script>
+ document.querySelectorAll<HTMLAnchorElement>('[data-locale-choice]').forEach(a=>a.addEventListener('click',()=>{
+ const locale=a.dataset.localeChoice;if(locale!=='ko'&&locale!=='en')return;
+ const domain=location.hostname==='teamrollouts.com'||location.hostname.endsWith('.teamrollouts.com')?'; Domain=.teamrollouts.com':'';
+ document.cookie=`preferred_locale=${locale}; Path=/; Max-Age=31536000; SameSite=Lax${location.protocol==='https:'?'; Secure':''}${domain}`;
+ }));
+</script>

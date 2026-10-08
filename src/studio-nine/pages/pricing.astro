@@ -1,0 +1,158 @@
+---
+import Base from '../layouts/Base.astro';
+const app = 'https://app.teamrollouts.com/onboarding';
+const compare: [string, string, string][] = [
+  ['Rollouts', '✓', '✓'], ['Assets', '✓', '✓'], ['Tours', '–', '✓'], ['TeamMate, the AI that does the admin', '–', '✓'], ['Connectors to the tools you use', '–', '✓'], ['TeamMate by email and text', '–', '✓'],
+  ['Artists and releases', 'Unlimited', 'Unlimited'], ['Collaborators and workspaces', 'Unlimited', 'Unlimited'], ['Seats included', '1', '2, then per seat'], ['First access to new betas', '–', '✓'], ['Support', 'Standard', 'Priority'],
+];
+import { pricingFaq as faq } from '../data/faqs';
+import { graph, faq as faqSchema } from '../lib/seo';
+
+const schema = graph(faqSchema(faq.map(([q, a]) => ({ q, a }))));
+---
+<Base title="Pricing — start free, go Pro when you want more" description="Rollouts and Assets are free forever. Pro adds TeamMate, Tours and Connectors at beta pricing. 14-day trial, no card for Free." theme="paper" closing="handled" schema={schema}>
+  <section class="pr">
+    <div class="wrap">
+      <div class="prh" data-reveal>
+        <h1 class="prh__h">
+          <span class="prh__l"><span class="stk stk--tile stk--lime" data-stk><b>$0</b></span>Start <em>free.</em><span class="stk stk--pill stk--pink" data-stk>Free forever</span></span>
+          <span class="prh__l">Go Pro when<span class="stk stk--av" data-stk><img src="/studio-nine/img/set/hero-manager.webp" alt="" loading="lazy" /></span></span>
+          <span class="prh__l"><span class="stk stk--pill stk--cyan" data-stk>✓ 14-day trial</span>you <em>want more</em><span class="stk stk--tile stk--ink" data-stk><img src="/studio-nine/logo/team-logomark-white.png" alt="" /></span><span class="stk stk--dot" data-stk></span></span>
+        </h1>
+        <p class="lead">Rollouts and Assets are free forever, with unlimited artists, releases and collaborators. Pro adds TeamMate, Tours and Connectors, at beta pricing while we are in early access.</p>
+        <div class="toggle" role="group" aria-label="Billing period">
+          <button class="toggle__b is-on" data-period="year" aria-pressed="true">Yearly <span class="tag tag--lime">Save about 20%</span></button>
+          <button class="toggle__b" data-period="month" aria-pressed="false">Monthly</button>
+        </div>
+      </div>
+      <div class="pl__grid" data-reveal-stagger="0.12">
+        <article class="pl__card">
+          <p class="pl__k">Free</p>
+          <p class="pl__price"><b>$0</b><span>forever</span></p>
+          <p class="pl__d">The full release platform for every artist, manager and label. 1 seat, unlimited everything else.</p>
+          <ul class="pl__list"><li>Rollouts, the release plan</li><li>Assets, the creative library</li><li>Unlimited artists and releases</li><li>Unlimited collaborators and workspaces</li></ul>
+          <a class="btn btn--lime btn--lg" href={app + '?plan=free'}>Start free <span class="arr">→</span></a>
+          <p class="cta-note">No card required.</p>
+        </article>
+        <article class="pl__card pl__card--pro">
+          <p class="pl__k">Pro <span class="tag tag--lime">Beta pricing · about half off</span></p>
+          <p class="pl__price"><b><s data-list-year="$79.96" data-list-month="$99.95">$79.96</s> <span data-price-year="$39.96" data-price-month="$49.95">$39.96</span></b><span data-per-year="/mo, billed yearly · 2 seats" data-per-month="/mo, billed monthly · 2 seats">/mo, billed yearly · 2 seats</span></p>
+          <p class="pl__d">Then <span data-seat-year="$23.96" data-seat-month="$29.95">$23.96</span>/mo per extra seat. For teams who want TeamMate doing the admin and their tools connected.</p>
+          <ul class="pl__list"><li>Everything in Free</li><li>TeamMate, the AI that does the admin</li><li>Tours</li><li>Connectors to the tools you already use</li><li>TeamMate by email and text</li><li>First access to new betas, priority support</li></ul>
+          <a class="btn btn--lime btn--lg" href={app + '?plan=pro&period=yearly'} data-pro-link>Start a 14-day Pro trial <span class="arr">→</span></a>
+          <p class="cta-note">Cancel any time.</p>
+        </article>
+      </div>
+      <p class="pr__ent" data-reveal>Running a label or distributor at scale? <a class="link" href="/enterprise">See Enterprise <span class="arr">→</span></a></p>
+    </div>
+  </section>
+
+  <section class="section cmpsec">
+    <div class="wrap">
+      <div class="head head--center"><h2 class="h1">Compare <em>Free and Pro.</em></h2><p class="lead" data-reveal style="margin-inline:auto">Everything in both plans, side by side. The two columns stay with you as you scroll.</p></div>
+      <div class="cmp" data-reveal>
+        <div class="cmp__sticky">
+          <div class="cmp__what">What you get</div>
+          <div class="cmp__tier"><b>Free</b><span>$0 · forever</span><a class="btn btn--lime btn--sm" href={app + '?plan=free'}>Start free</a></div>
+          <div class="cmp__tier cmp__tier--pro"><b>Pro <span class="tag tag--lime">Beta</span></b><span data-price-year="$39.96/mo" data-price-month="$49.95/mo">$39.96/mo</span><a class="btn btn--lime btn--sm" href={app + '?plan=pro&period=yearly'} data-pro-link>Start Pro trial</a></div>
+        </div>
+        <div class="cmp__rows">
+          {compare.map(([f, a, b], i) => (
+            <div class:list={['cmp__row', { 'cmp__row--group': i === 0 || i === 6 }]}>
+              <div class="cmp__f">{f}</div>
+              <div class:list={['cmp__c', { 'is-no': a === '–', 'is-yes': a === '✓' }]}>{a}</div>
+              <div class:list={['cmp__c cmp__c--pro', { 'is-no': b === '–', 'is-yes': b === '✓' }]}>{b}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--paper">
+    <div class="wrap faq">
+      <div class="head"><h2 class="h1">FAQs</h2><p class="lead"><a class="link" href="/contact">Or ask us directly <span class="arr">→</span></a></p></div>
+      <div class="faq__list">
+        {faq.map(([q, a], i) => <details class="faq__i" open={i === 0}><summary><span class="faq__n tnum">0{i + 1}</span><span class="faq__q">{q}</span><span class="faq__x" aria-hidden="true"></span></summary><p>{a}</p></details>)}
+      </div>
+    </div>
+  </section>
+</Base>
+<style>
+  .pr{position:relative;padding:calc(4.5rem + clamp(3rem,7vw,6rem)) 0 var(--section)}
+  .pr::before{content:'';position:absolute;inset:0;pointer-events:none;background-image:repeating-radial-gradient(circle at 50% -40%,transparent 0 9px,rgba(14,13,11,.06) 9px 10px);-webkit-mask-image:linear-gradient(180deg,#000 0,#000 45%,transparent 90%);mask-image:linear-gradient(180deg,#000 0,#000 45%,transparent 90%)}
+  .pr>.wrap{position:relative}
+  .prh{display:grid;justify-items:center;gap:clamp(1.5rem,3vw,2.25rem);text-align:center;margin-bottom:clamp(3rem,6vw,4.5rem)}
+  .prh .lead{max-width:40rem}
+  .prh__h{position:relative;font-size:clamp(2.8rem,8.4vw,7.2rem);line-height:.98;letter-spacing:-.045em;font-weight:500;color:var(--ink)}
+  .prh__h em{font-family:var(--serif);font-weight:300;font-style:italic;font-size:1.12em;line-height:0}
+  .prh__l{display:block;white-space:nowrap}
+  .stk{display:inline-grid;place-items:center;vertical-align:middle;margin:0 .14em;animation:breathe 4s ease-in-out infinite}
+  .stk:nth-child(odd){animation-delay:-2s}
+  @keyframes breathe{0%,100%{transform:translateY(0) rotate(var(--r,0deg))}50%{transform:translateY(-.08em) rotate(calc(var(--r,0deg) + 2deg))}}
+  .stk--tile{width:.72em;height:.72em;border-radius:.2em;--r:-6deg;box-shadow:var(--shadow-md)}
+  .stk--tile b{font-family:var(--sans);font-size:.3em;font-weight:600;letter-spacing:-.02em}
+  .stk--tile img{width:.4em;height:.4em;max-width:none;object-fit:contain}
+  .stk--lime{background:var(--lime);color:var(--ink)}
+  .stk--ink{background:var(--ink);--r:5deg}
+  .stk--av{width:.72em;height:.72em;border-radius:50%;overflow:hidden;border:.04em solid var(--white);box-shadow:var(--shadow-md);--r:4deg}
+  .stk--av img{width:.72em;height:.72em;max-width:none;object-fit:cover;object-position:center 30%}
+  .stk--pill{padding:.3em .65em;border-radius:var(--r-pill);font-family:var(--sans);font-size:.2em;font-weight:600;letter-spacing:-.01em;line-height:1;white-space:nowrap;box-shadow:var(--shadow-md);vertical-align:.9em}
+  .stk--pink{background:var(--viv-pink);color:var(--ink);--r:5deg}
+  .stk--cyan{background:var(--viv-cyan);color:var(--ink);--r:-4deg;vertical-align:-.4em}
+  .stk--dot{width:.32em;height:.32em;border-radius:50%;background:var(--viv-orange);box-shadow:inset 0 0 0 .09em var(--viv-green);margin-left:.1em;vertical-align:-.2em}
+  @media (max-width:720px){.prh{max-width:100%}.prh__h{font-size:clamp(2.1rem,10vw,3.2rem);max-width:100%}.prh__l{white-space:normal}.stk--pill{font-size:.26em;vertical-align:.5em}.stk--cyan{vertical-align:.1em}.stk--tile,.stk--av{width:.62em;height:.62em}.stk--av img{width:.62em;height:.62em}.stk{margin:0 .08em}.stk--ink,.stk--dot{display:none}}
+  .toggle{display:inline-flex;gap:.25rem;padding:.25rem;border-radius:var(--r-pill);background:var(--white);box-shadow:inset 0 0 0 1px var(--line);margin-top:1.5rem}
+  .toggle__b{height:2.5rem;padding:0 1rem;border-radius:var(--r-pill);font-weight:500;font-size:.92rem;color:var(--ink-60);display:inline-flex;align-items:center;gap:.5rem;transition:background .2s,color .2s}
+  .toggle__b.is-on{background:var(--ink);color:var(--white)}
+  .toggle__b.is-on .tag{background:var(--lime);color:var(--ink)}
+  .pl__grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.25rem;max-width:58rem;margin-inline:auto}
+  .pl__card{background:var(--white);border:1px solid var(--line);border-radius:var(--r-xl);padding:2rem;display:grid;gap:1rem;align-content:start}
+  .pl__card--pro{background:var(--ink);color:var(--on-dark);border-color:transparent}
+  .pl__k{font-weight:500;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+  .pl__price{display:flex;align-items:baseline;gap:.5rem;flex-wrap:wrap}
+  .pl__price b{font-size:3rem;font-weight:500;letter-spacing:-.04em;line-height:1}
+  .pl__price s{font-size:1.4rem;color:var(--on-dark-60);font-weight:400;letter-spacing:-.02em}
+  .pl__price>span{color:var(--ink-40);font-size:.9rem}
+  .pl__card--pro .pl__price>span,.pl__card--pro .pl__d,.pl__card--pro .cta-note{color:var(--on-dark-60)}
+  .pl__d{color:var(--ink-60);line-height:1.5}
+  .pl__list{display:grid;gap:.45rem;margin:.5rem 0 .75rem}
+  .pl__list li{position:relative;padding-left:1.4rem;font-size:.95rem}
+  .pl__list li::before{content:'✓';position:absolute;left:0;top:.35em;width:.9rem;height:.9rem;border-radius:50%;background:var(--lime);color:var(--ink);font-size:.55rem;display:grid;place-items:center}
+  .pl__card .btn{justify-self:start}.pl__card .cta-note{margin-top:0}
+  .pr__ent{text-align:center;margin-top:2rem;color:var(--ink-60)}
+  .cmp{--c1:1.15fr;--c2:1fr;--c3:1fr;position:relative}
+    .cmp__sticky{position:sticky;top:4.4rem;z-index:5;display:grid;grid-template-columns:var(--c1) var(--c2) var(--c3);gap:.75rem;padding:.6rem 0 .75rem;background:var(--paper)}
+  .cmp__what{align-self:end;padding-bottom:.9rem;border-bottom:1px solid var(--line);margin-bottom:-.75rem;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-40);font-weight:500}
+  .cmp__tier{display:grid;gap:.35rem;justify-items:start;padding:.9rem 1rem;border-radius:var(--r-lg);background:var(--white);border:1px solid var(--line);box-shadow:var(--shadow-md)}
+  .cmp__tier b{font-weight:500;display:flex;align-items:center;gap:.4rem}
+  .cmp__tier>span{font-size:.82rem;color:var(--ink-60)}
+  .cmp__tier .btn{margin-top:.25rem}
+  .cmp__tier--pro{background:var(--ink);color:var(--on-dark);border-color:transparent}
+  .cmp__tier--pro>span{color:var(--on-dark-60)}
+  .cmp__rows{display:grid}
+  .cmp__row{display:grid;grid-template-columns:var(--c1) var(--c2) var(--c3);gap:.75rem;align-items:center;border-bottom:1px solid var(--line)}
+  .cmp__row--group{border-top:1px solid var(--ink-12)}
+  .cmp__f{padding:1rem 1rem 1rem 0;font-size:.98rem}
+  .cmp__c{align-self:stretch;display:grid;place-items:center;padding:1rem;font-weight:500;font-size:.95rem;text-align:center;background:var(--paper)}
+  .cmp__c--pro{background:var(--paper-2)}
+  .cmp__c.is-no{color:var(--ink-40);font-weight:400}
+  .cmp__c.is-yes{color:var(--ink)}
+  .cmp__c.is-yes::before{content:'';width:1.15rem;height:1.15rem;border-radius:50%;background:var(--lime) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230e0d0b' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 13l4 4L19 7'/%3E%3C/svg%3E") center/60% no-repeat;font-size:0}
+  .cmp__c.is-yes{font-size:0}
+  .cmp__row:last-child .cmp__c{border-radius:0 0 var(--r-md) var(--r-md)}
+  @media (max-width:640px){.cmp{--c1:1.3fr;--c2:1fr;--c3:1fr}.cmp__tier .btn{display:none}.cmp__tier{padding:.6rem}.cmp__sticky{top:4rem;padding-bottom:0}.cmp__what{align-self:stretch;display:flex;align-items:flex-end;margin-bottom:0;padding-bottom:.6rem}}
+  @media (max-width:760px){.pl__grid{grid-template-columns:1fr}}
+</style>
+<script>
+  const btns = document.querySelectorAll<HTMLButtonElement>('[data-period]');
+  const set = (p: 'year'|'month') => {
+    btns.forEach(b => { const on = b.dataset.period === p; b.classList.toggle('is-on', on); b.setAttribute('aria-pressed', String(on)); });
+    document.querySelectorAll<HTMLElement>('[data-price-year]').forEach(e => e.textContent = e.dataset[p === 'year' ? 'priceYear' : 'priceMonth']!);
+    document.querySelectorAll<HTMLElement>('[data-list-year]').forEach(e => e.textContent = e.dataset[p === 'year' ? 'listYear' : 'listMonth']!);
+    document.querySelectorAll<HTMLElement>('[data-per-year]').forEach(e => e.textContent = e.dataset[p === 'year' ? 'perYear' : 'perMonth']!);
+    document.querySelectorAll<HTMLElement>('[data-seat-year]').forEach(e => e.textContent = e.dataset[p === 'year' ? 'seatYear' : 'seatMonth']!);
+    document.querySelectorAll<HTMLAnchorElement>('[data-pro-link]').forEach(a => a.href = a.href.replace(/period=\w+/, 'period=' + (p === 'year' ? 'yearly' : 'monthly')));
+  };
+  btns.forEach(b => b.addEventListener('click', () => set(b.dataset.period as any)));
+</script>

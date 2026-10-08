@@ -1,0 +1,60 @@
+---
+// Security hero: your data sealed inside, TeamMate reasoning over it, answers only to you; outside attempts bounce off the wall.
+const inside = [['Masters','var(--lime)'],['Threads','var(--viv-cyan)'],['Budgets','var(--viv-pink)'],['Plans','var(--viv-lav)'],['Contacts','var(--viv-orange)']];
+const blocked = ['Model training','Other customers','Anyone else'];
+---
+<div class="sec" data-sec>
+  <div class="sec__vault">
+    <p class="sec__k"><span class="sec__lock"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M8 10V8a4 4 0 0 1 8 0v2M6 10h12v9H6z"/></svg></span>Your organisation · sealed</p>
+    <ul class="sec__chips">{inside.map(([t, c], i) => <li style={`--c:${c};--i:${i}`}>{t}</li>)}</ul>
+    <div class="sec__tm">
+      <span class="sec__tm-k"><span class="dot"></span>TeamMate</span>
+      <p class="sec__q" data-sec-q>Where's the final master?</p>
+      <p class="sec__a" data-sec-a>v10, approved by Maya on Tuesday.</p>
+      <span class="sec__out"><i>→</i>Answers, only to you</span>
+    </div>
+    <span class="sec__ring"></span>
+  </div>
+  <div class="sec__wall"><span class="sec__wall-k">Blocked at the wall</span><ul class="sec__blocked">
+    {blocked.map((t, i) => <li style={`--i:${i}`}><i>✕</i>{t}</li>)}
+  </ul></div>
+</div>
+
+<style>
+  .sec{position:relative;width:100%;max-width:30rem;display:grid;gap:.75rem}
+  .sec__vault{position:relative;isolation:isolate;display:grid;gap:1rem;padding:1.6rem;border-radius:var(--r-xl);background:var(--ink);color:var(--on-dark);box-shadow:var(--shadow-lg);overflow:hidden;
+    background-image:repeating-radial-gradient(circle at 50% 50%,transparent 0 11px,rgba(255,255,255,.04) 11px 12px)}
+  .sec__ring{position:absolute;inset:-1px;border-radius:var(--r-xl);border:2px solid var(--lime);opacity:.9;pointer-events:none;animation:secring 3s ease-out infinite}
+  @keyframes secring{0%{transform:scale(1);opacity:.9}100%{transform:scale(1.04);opacity:0}}
+  .sec__k{display:flex;align-items:center;gap:.5rem;font-size:.74rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--on-dark-60)}
+  .sec__lock{width:1.4rem;height:1.4rem;border-radius:.45rem;background:var(--lime);color:var(--ink);display:grid;place-items:center}
+  .sec__chips{display:flex;flex-wrap:wrap;gap:.4rem}
+  .sec__chips li{font-size:.88rem;font-weight:500;padding:.5rem .85rem;border-radius:99px;background:var(--c);color:var(--ink);animation:chipin .6s var(--ease) both;animation-delay:calc(var(--i) * .12s + .2s)}
+  @keyframes chipin{from{opacity:0;transform:translateY(8px) scale(.9)}to{opacity:1;transform:none}}
+  .sec__tm{display:grid;gap:.45rem;padding:.9rem 1rem;border-radius:calc(var(--r-xl) - 1.4rem);background:rgba(255,255,255,.07)}
+  .sec__tm-k{display:flex;align-items:center;gap:.4rem;font-size:.74rem;font-weight:500;color:var(--on-dark-60)}
+  .sec__q{font-family:var(--serif);font-weight:300;font-size:1.45rem;line-height:1.15;color:var(--white);transition:opacity .35s}
+  .sec__a{font-size:.95rem;line-height:1.35;color:var(--on-dark);transition:opacity .35s}
+  .sec__q.is-swap,.sec__a.is-swap{opacity:0}
+  .sec__out{display:inline-flex;align-items:center;gap:.4rem;margin-top:.2rem;font-size:.82rem;font-weight:600;color:var(--lime)}
+  .sec__out i{font-style:normal}
+  .sec__wall{display:grid;gap:.6rem;padding:1rem 1.1rem;border-radius:var(--r-xl);border:1.5px dashed var(--ink-12);background:var(--white)}
+  .sec__wall-k{font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-40)}
+  .sec__blocked{display:flex;flex-wrap:wrap;gap:.5rem}
+  .sec__blocked li{display:inline-flex;align-items:center;gap:.5rem;padding:.55rem .9rem .55rem .6rem;border-radius:99px;background:var(--paper);color:var(--ink);font-size:.88rem;font-weight:500;white-space:nowrap;animation:bounce 4.5s ease-in-out infinite;animation-delay:calc(var(--i) * 1.5s)}
+  .sec__blocked i{width:1.25rem;height:1.25rem;border-radius:50%;background:var(--viv-orange);color:var(--white);font-style:normal;font-size:.62rem;font-weight:700;display:grid;place-items:center;flex:none}
+  @keyframes bounce{0%,100%{transform:translateY(0)}6%{transform:translateY(-.55rem)}12%{transform:translateY(0)}}
+  @media (max-width:640px){.sec__blocked li{font-size:.8rem}}
+  @media (prefers-reduced-motion:reduce){.sec__ring,.sec__chips li,.sec__blocked li{animation:none}}
+</style>
+
+<script>
+  import { uiText } from '../lib/i18n/client';
+  const root = document.querySelector<HTMLElement>('[data-sec]');
+  if (root && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const q = root.querySelector<HTMLElement>('[data-sec-q]')!, a = root.querySelector<HTMLElement>('[data-sec-a]')!;
+    const qa = [["Where's the final master?", 'v10, approved by Maya on Tuesday.'], ["What's blocking Friday?", 'The vinyl PO. Everything else is clear.'], ['Did we clear that sample?', 'Yes, 12 May. Licence is in the folder.'], ['Who changed the budget?', 'Maya, 14:02. One-sheet updated to match.']];
+    let i = 0;
+    setInterval(() => { q.classList.add('is-swap'); a.classList.add('is-swap'); setTimeout(() => { i = (i + 1) % qa.length; q.textContent = uiText(qa[i][0]); a.textContent = uiText(qa[i][1]); q.classList.remove('is-swap'); a.classList.remove('is-swap'); }, 380); }, 4200);
+  }
+</script>

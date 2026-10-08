@@ -96,7 +96,7 @@ export const insightPostLocations = defineLocations({
     if (!doc?.slug) return null;
     return {
       locations: [
-        { title: doc?.title ?? "Insight post", href: `/insights/${doc.slug}` },
+        { title: doc?.title ?? "Insight post", href: `/preview/insights/${doc.slug}` },
         { title: "Insights index", href: "/insights" },
       ],
     };

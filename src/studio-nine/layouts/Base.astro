@@ -1,0 +1,100 @@
+---
+import '../styles/base.css';
+import CookieBanner from '../../components/V2CookieBanner.astro';
+import VisualEditing from '../../components/VisualEditing.astro';
+import Analytics from '../components/Analytics.astro';
+import { isPreviewRequest } from '../../lib/sanity';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { site } from '../data/site';
+import { SITE, graph, webpage } from '../lib/seo';
+import { localeFromPath, canonicalLocalePath, hasTranslation } from '../lib/i18n/routes';
+const locale = localeFromPath(Astro.url.pathname);
+
+// True when this build is not the real domain (set from the deploy host at build time).
+const PREVIEW_HOST = import.meta.env.PUBLIC_PREVIEW_HOST === 'true';
+interface Props {
+  title: string; description?: string; theme?: 'white' | 'paper'; noFooterCta?: boolean;
+  closing?: 'released' | 'handled' | 'covered'; section?: 'product' | 'who';
+  /** Structured data for this page, from src/lib/seo.ts. */
+  schema?: string;
+  /** Social card override — defaults to the site card. */
+  image?: string;
+  /** Articles get og:type article plus a published date. */
+  published?: string; noindex?: boolean;
+}
+const { closing = 'released', section, schema, image, published, noindex = false, title, description = 'Team is the home of the release. Free for artists, managers and labels. Pro adds TeamMate, the AI that does the admin.', theme = 'white' } = Astro.props;
+const fullTitle = title.includes('Team') ? title : `${title} — Team`;
+const canonical = new URL(canonicalLocalePath(Astro.url.pathname.replace(/^\/preview(?=\/insights\/)/,''),locale), SITE).href;
+const socialImage = new URL(image ?? '/studio-nine/img/og.png', SITE).href;
+// This build also runs on a preview host. Canonical already points at the real domain; this keeps
+// the preview out of search results entirely so it can never compete with it.
+const previewMode = isPreviewRequest(Astro);
+const NOINDEX = noindex || PREVIEW_HOST || Astro.url.pathname.startsWith('/preview/') || previewMode || !['teamrollouts.com','www.teamrollouts.com'].includes(Astro.url.hostname);
+// Every page carries structured data. Pages that pass their own use that; the rest get a
+// WebPage node tying them to the site and the organisation, so none can be left bare.
+const schemaJson = schema ?? graph(webpage({ name: fullTitle, description, url: Astro.url.pathname }));
+---
+<!doctype html>
+<html lang={locale === 'ko' ? 'ko-KR' : 'en'} data-theme={theme}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="team-design" content="studio-nine-v3" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/studio-nine/logo/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/studio-nine/logo/favicon-32.png" />
+    <link rel="apple-touch-icon" href="/studio-nine/logo/apple-touch-icon.png" />
+    <link rel="preload" href="/studio-nine/fonts/Inter-Variable.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/studio-nine/fonts/NyghtSerif-LightItalic.woff2" as="font" type="font/woff2" crossorigin />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={published ? 'article' : 'website'} />
+    <meta property="og:site_name" content="Team" />
+    <meta property="og:locale" content={locale === 'ko' ? 'ko_KR' : 'en_GB'} />
+    <meta property="og:image" content={socialImage} />
+    {!image && <meta property="og:image:width" content="1200" />}
+    {!image && <meta property="og:image:height" content="630" />}
+    <meta property="og:image:alt" content={fullTitle} />
+    <meta property="og:url" content={canonical} />
+    {published && <meta property="article:published_time" content={published} />}
+    {published && <meta property="article:publisher" content="https://teamrollouts.com" />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={socialImage} />
+    <meta name="robots" content={NOINDEX ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1'} />
+    <link rel="canonical" href={canonical} />
+    {hasTranslation(Astro.url.pathname) && <>
+      <link rel="alternate" hreflang="en" href={new URL(canonicalLocalePath(Astro.url.pathname,'en'),SITE).href} />
+      <link rel="alternate" hreflang="ko-KR" href={new URL(canonicalLocalePath(Astro.url.pathname,'ko'),SITE).href} />
+      <link rel="alternate" hreflang="x-default" href={new URL(canonicalLocalePath(Astro.url.pathname,'en'),SITE).href} />
+    </>}
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="author" content="Studio Nine" />
+    <link rel="author" href="https://studionine.agency" />
+    <script type="application/ld+json" set:html={schemaJson} />
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <Nav section={section} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer closing={closing} />
+    <Analytics />
+    <CookieBanner />
+    {previewMode && <VisualEditing />}
+    <script>
+      import '../scripts/motion.ts';
+    </script>
+  </body>
+</html>
+<style is:global>
+  html[data-theme="paper"] body{background:var(--paper)}
+  html[lang="ko-KR"]{font-synthesis-style:none;word-break:keep-all;overflow-wrap:anywhere}
+  html[lang="ko-KR"] body{--sans:"Inter","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;--serif:"Nyght","Apple SD Gothic Neo","Malgun Gothic",serif}
+  html[lang="ko-KR"] :is(.h1,.h2,.hero__h,.fst__h){letter-spacing:-.035em;line-height:1.18}
+</style>

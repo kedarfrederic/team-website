@@ -3,6 +3,12 @@ import sanity from "@sanity/astro";
 import cloudflare from "@astrojs/cloudflare";
 import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
+import { createClient } from "@sanity/client";
+
+// Articles render per request so preview account links and editorial drafts remain correct.
+// Keep every published article discoverable, including posts hidden only from the index.
+const publishedArticleSlugs = await createClient({ projectId: "g1olb5am", dataset: "production", apiVersion: "2024-12-01", useCdn: true, timeout: 10000, maxRetries: 1 }).fetch('*[_type == "insightPost" && defined(slug.current)].slug.current');
+const articleSitemapPages = publishedArticleSlugs.map(slug => `https://teamrollouts.com/insights/${encodeURIComponent(slug)}`);
 
 /**
  * Astro config — Sanity-fed marketing site.
@@ -49,11 +55,12 @@ export default defineConfig({
   redirects: {
     "/orchestration": "/rollouts",
     "/intelligence": "/teammate",
-    "/integrations": "/connections",
-    "/demo": "/contact",
+    "/integrations": "/connectors",
+    "/connections": "/connectors",
+    "/ko/connections": "/ko/connectors",
   },
   adapter: cloudflare({
-    platformProxy: { enabled: true },
+    platformProxy: { enabled: process.env.NODE_ENV !== "test" },
   }),
   integrations: [
     react(),
@@ -66,9 +73,11 @@ export default defineConfig({
        *                  should stay out of the sitemap, but it was being listed)
        *   /home-classic — the pre-v2 homepage kept for rollback; noindex'd
        */
+      customPages: ["", "pricing", "rollouts", "teammate", "assets", "tours", "connectors", "contact", "security", "about", "for-artists", "for-managers", "for-labels", "for-partners", "enterprise", "demo"].flatMap(p=>[`https://teamrollouts.com/${p}`,`https://teamrollouts.com/ko/${p}`]).concat(["insights","changelog","privacy","terms","cookies","sms-terms"].map(p=>`https://teamrollouts.com/${p}`), articleSitemapPages),
       filter: (page) =>
         !page.includes("/api/") &&
         !page.includes("/playground/") &&
+        !page.includes("/preview/") &&
         !page.includes("/home-classic") &&
         // Unlisted investor deck — noindex'd; a sitemap listing would
         // contradict that and advertise the URL.

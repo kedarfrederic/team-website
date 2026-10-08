@@ -1,0 +1,35 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/home/Hero.astro';
+import LogoStrip from '../components/home/LogoStrip.astro';
+import StatsBand from '../components/home/StatsBand.astro';
+import Mess from '../components/home/Mess.astro';
+import ReleaseHome from '../components/home/ReleaseHome.astro';
+import HowItWorks from '../components/home/HowItWorks.astro';
+import TeamMate from '../components/home/TeamMate.astro';
+import Ask from '../components/home/Ask.astro';
+import Everyone from '../components/home/Everyone.astro';
+import Proof from '../components/home/Proof.astro';
+import Trust from '../components/home/Trust.astro';
+import PricingLadder from '../components/home/PricingLadder.astro';
+import HomeFaq from '../components/home/HomeFaq.astro';
+import { graph, organisation, website, faq } from '../lib/seo';
+import { homeFaq } from '../data/faqs';
+
+const schema = graph(organisation(), website(), faq(homeFaq.map(([q, a]) => ({ q, a }))));
+---
+<Base title="Team — Every release needs a Team" description="Team is the home of the release: the plan, the files, the money, the dates and the people in one place. Free for artists, managers and labels. On Pro, TeamMate does the admin." schema={schema}>
+  <Hero />
+  <LogoStrip />
+  <StatsBand />
+  <Mess />
+  <ReleaseHome />
+  <HowItWorks />
+  <TeamMate />
+  <Ask />
+  <Everyone />
+  <Proof />
+  <Trust />
+  <PricingLadder />
+  <HomeFaq />
+</Base>

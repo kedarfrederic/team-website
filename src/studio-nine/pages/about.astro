@@ -1,0 +1,135 @@
+---
+import Base from '../layouts/Base.astro';
+import Placeholder from '../components/Placeholder.astro';
+import { img } from '../data/images';
+const chapters = [
+  ['Every release is a small operation.', 'A dozen tools. Twice as many hands. Masters in one folder, approvals buried in a thread, the budget in a sheet, the plan in someone\'s head. The context that decides whether a release goes well lives everywhere, and nowhere at once.'],
+  ['The tools were never the problem.', 'The gaps between them were. And somehow one person is expected to hold all of it together, until they take a week off and it turns out they were the system.'],
+  ['So we built the home of the release.', 'One place that already knows what a release is, works with the tools you have, and does the admin so nothing falls through the cracks and nothing lives in one person\'s head. We are building the operating system for music releases, starting at the moment everything converges.'],
+];
+const beliefs = [
+  ['Your tools aren\'t <em>broken.</em>', 'You shouldn\'t have to leave them to get organised. Team works alongside what you already use.', 'M4 7h16M4 12h10M4 17h13'],
+  ['Holding the context is the <em>software\'s</em> job.', 'Not yours, and not the one person who remembers everything until they take a week off.', 'M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z'],
+  ['AI should work for you, never <em>train on</em> you.', 'TeamMate reads your release to help you run it, and for nothing else.', 'M12 3l7 4v5c0 5-3.5 8-7 9-3.5-1-7-4-7-9V7z'],
+  ['"Where do we stand?" should be <em>one question</em> away.', 'Every release, every artist, every partner. One honest answer, and where it came from.', 'M4 12a8 8 0 1 1 16 0 8 8 0 0 1-16 0zM12 8v4l3 2'],
+];
+const founders = [
+  { slug: 'kedar', name: 'Kedar Frederic', role: 'Founder & CEO', photo: '/studio-nine/img/team/kedar-frederic.webp', full: '/studio-nine/img/team/kedar-frederic-full.webp', pos: 'center', short: 'Product and company building. Operator across TuneCore and Believe.',
+    bio: ['Kedar spent his career inside the machinery of independent music, first at TuneCore and then at Believe, watching releases succeed or fail on the strength of the coordination around them rather than the music itself.', 'He started Team to give every release a proper home. He leads product and the company, and built and shipped the live platform with the first customers on a fraction of what most platforms raise to get to a first version.', 'He still runs releases on Team himself, which is where most of the roadmap comes from.'] },
+  { slug: 'jake', name: 'Jake Truman', role: 'Co-Founder & President', photo: '/studio-nine/img/team/jake-truman.webp', full: '/studio-nine/img/team/jake-truman-full.webp', pos: 'center', short: 'Go-to-market, operations and technical product leadership.',
+    bio: ['Jake runs go-to-market and operations, and leads the technical side of the product, including TeamMate, the AI that does the admin.', 'His background is music-industry operations: the deadlines, the deliveries, the partners and the spreadsheets that hold a release together. He has read more rollout reports than anyone should, and it shows in how Team thinks about a release week.', 'He is usually the person on the demo, and the one who answers when a customer writes in at 2am.'] },
+  { slug: 'scott', name: 'Scott Ackerman', role: 'Co-Founder & COO', photo: '/studio-nine/img/team/scott-ackerman.webp', full: '/studio-nine/img/team/scott-ackerman-full.webp', pos: 'center', short: 'Operations, finance and scaling. Former CEO and COO of TuneCore.',
+    bio: ['Scott is the former CEO and COO of TuneCore, and has spent more than twenty-five years building and scaling consumer technology companies.', 'At Team he runs operations, finance and organisational scaling, and led the company\'s first round as an investor before joining as a co-founder.', 'He has seen what it takes to serve hundreds of thousands of independent artists at once, and what breaks when you try.'] },
+];
+---
+<Base title="About Team — music runs on releases" description="We started Team because getting a release out still runs on a mess of tools, threads and one person's memory. Here is why we built it, what we believe, and who we are building it with.">
+  <section class="ab">
+    <div class="wrap ab__in">
+      <div>
+        <h1 class="display lines"><span class="line"><span>Music runs on releases.</span></span><span class="line"><span>Releases run on <em>chaos.</em></span></span></h1>
+        <p class="lead" data-reveal>We started Team because the most important work in music, getting a release out into the world, still runs on a mess of tools, threads and one person's memory. We think it deserves a home.</p>
+      </div>
+      <Placeholder label="Black and white, in the studio. Documentary." ratio="4 / 3" shape="round" tone="ink" src={img('about-hero')} pos="center 40%" />
+    </div>
+  </section>
+
+  <section class="section section--paper">
+    <div class="wrap">
+      <div class="story" data-reveal-stagger="0.12">
+        {chapters.map(([h, d], i) => <div class:list={['tile', ['tile--green','tile--lav','tile--pink'][i]]}><span class="tile__badge tnum">0{i + 1}</span><h2 class="h3">{h}</h2><p>{d}</p></div>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="head"><h2 class="h1">A few things <em>we believe.</em></h2></div>
+      <div class="bel" data-reveal-stagger>
+        {beliefs.map(([h, d, path]) => (
+          <div class="bel__card">
+            <span class="bel__ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d={path} /></svg></span>
+            <h3 class="h3" set:html={h} />
+            <p>{d}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--paper">
+    <div class="wrap team">
+      <div class="head"><h2 class="h1">Built in the open, <em>with the industry.</em></h2><p class="lead" data-reveal>Team is early, and in beta with the artists, managers and labels who live this every day. We are building it with them, not for a boardroom. The people shaping it now are setting how the next decade of releases will run.</p></div>
+      <div class="faces" data-reveal-stagger="0.12">
+        {founders.map(f => (
+          <button class="face" type="button" data-founder={f.slug} aria-haspopup="dialog">
+            <span class="face__photo"><img src={f.photo} alt={f.name} loading="lazy" style={`object-position:${f.pos}`} /></span>
+            <span class="face__meta"><b>{f.name}</b><span>{f.role}</span></span>
+            <span class="face__more">Read bio <span class="arr">→</span></span>
+          </button>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <dialog class="bio" id="bio" aria-labelledby="bio-name">
+    <div class="bio__in">
+      <button class="bio__close" type="button" data-bio-close aria-label="Close">×</button>
+      <div class="bio__photo"><img data-bio-photo src={founders[0].full} alt={founders[0].name} /></div>
+      <div class="bio__copy">
+        <p class="bio__role" data-bio-role></p>
+        <h3 class="h2" id="bio-name" data-bio-name></h3>
+        <div class="bio__text" data-bio-text></div>
+        <div class="bio__nav"><button type="button" class="btn btn--ghost btn--sm" data-bio-prev>← Previous</button><button type="button" class="btn btn--ghost btn--sm" data-bio-next>Next →</button></div>
+      </div>
+    </div>
+  </dialog>
+  <script type="application/json" id="founders-data" set:html={JSON.stringify(founders)} />
+</Base>
+<style>
+  .ab{padding:calc(4.5rem + clamp(3rem,7vw,6rem)) 0 var(--section)}
+  .ab__in{display:grid;grid-template-columns:1.2fr .8fr;gap:clamp(2rem,5vw,5rem);align-items:center}
+  .ab__in>div{display:grid;gap:1.5rem}
+  .story{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+    .bel{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+  .bel__card{display:grid;gap:.7rem;align-content:start;padding:1.75rem;border-radius:var(--r-xl);background:var(--paper)}
+  .bel__card:nth-child(2) .bel__ic{background:var(--viv-cyan)}.bel__card:nth-child(3) .bel__ic{background:var(--viv-pink)}.bel__card:nth-child(4) .bel__ic{background:var(--viv-lav)}
+  .bel__ic{width:2.4rem;height:2.4rem;border-radius:calc(var(--r-xl) - 1.75rem + .5rem);background:var(--lime);color:var(--ink);display:grid;place-items:center;margin-bottom:.4rem}
+  .bel__card h3{max-width:22ch}
+  .bel__card p{color:var(--ink-60);line-height:1.5}
+  .faces{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+  .face{display:grid;gap:.9rem;padding:.75rem .75rem 1.25rem;border-radius:var(--r-xl);background:var(--white);text-align:left;transition:transform .35s var(--ease),box-shadow .35s}
+  .face:hover{transform:translateY(-4px);box-shadow:var(--shadow-md)}
+  .face__photo{display:block;aspect-ratio:1;overflow:hidden;border-radius:calc(var(--r-xl) - .75rem);background:var(--paper-2)}
+  .face__photo img{width:100%;height:100%;object-fit:cover;transition:transform .6s var(--ease)}
+  .face:hover .face__photo img{transform:scale(1.04)}
+  .face__meta{display:grid;gap:.15rem;padding:0 .5rem}
+  .face__meta b{font-weight:500;font-size:1.1rem;letter-spacing:-.01em}
+  .face__meta span{color:var(--ink-60);font-size:.92rem}
+  .face__more{padding:0 .5rem;font-size:.88rem;font-weight:500;color:var(--ink-60);display:inline-flex;gap:.4em}
+  .face:hover .face__more{color:var(--ink)}
+  /* bio dialog */
+  .bio{border:0;padding:0;background:transparent;max-width:min(64rem,calc(100% - 2rem));width:100%;margin:auto}
+  .bio::backdrop{background:rgba(14,13,11,.55);backdrop-filter:blur(6px)}
+  .bio__in{position:relative;display:grid;grid-template-columns:.9fr 1.1fr;height:min(36rem,calc(100vh - 3rem));background:var(--white);border-radius:var(--r-xl);overflow:hidden;box-shadow:var(--shadow-lg);animation:bio-in .5s var(--ease)}  /* fixed size so all three bios open at the same dimensions */
+  @keyframes bio-in{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
+  .bio__photo{background:var(--paper-2);height:100%}
+  .bio__photo img{width:100%;height:100%;object-fit:cover;object-position:center 20%;display:block}
+  .bio__copy{display:grid;grid-template-rows:auto auto 1fr auto;gap:1rem;padding:clamp(1.5rem,4vw,3rem);overflow:auto}
+  .bio__role{font-size:.9rem;color:var(--ink-60)}
+  .bio__text{display:grid;gap:.9rem;align-content:start;color:var(--ink-80);line-height:1.6}
+  .bio__nav{display:flex;gap:.5rem;align-self:end;padding-top:.75rem}
+  .bio__close{position:absolute;top:.9rem;right:.9rem;width:2.4rem;height:2.4rem;border-radius:50%;background:var(--white);box-shadow:var(--shadow-md);font-size:1.3rem;line-height:1;display:grid;place-items:center;z-index:2}
+  @media (max-width:900px){.ab__in,.bel,.story{grid-template-columns:1fr}.faces{grid-template-columns:1fr}.bio__in{grid-template-columns:1fr;grid-template-rows:auto 1fr;height:calc(100vh - 2rem)}.bio__photo{height:auto;aspect-ratio:16/10}}
+</style>
+<script>
+  const data: any[] = JSON.parse(document.getElementById('founders-data')!.textContent || '[]');
+  const dlg = document.getElementById('bio') as HTMLDialogElement;
+  const photo = dlg.querySelector<HTMLImageElement>('[data-bio-photo]')!, role = dlg.querySelector('[data-bio-role]')!, name = dlg.querySelector('[data-bio-name]')!, text = dlg.querySelector('[data-bio-text]')!;
+  let idx = 0;
+  const fill = (i: number) => { idx = (i + data.length) % data.length; const f = data[idx]; photo.src = f.full; photo.alt = f.name; photo.style.objectPosition = "center 20%"; role.textContent = f.role; name.textContent = f.name; text.innerHTML = f.bio.map((p: string) => `<p>${p}</p>`).join(''); };
+  document.querySelectorAll<HTMLButtonElement>('[data-founder]').forEach((b, i) => b.addEventListener('click', () => { fill(i); dlg.showModal(); }));
+  dlg.querySelector('[data-bio-close]')!.addEventListener('click', () => dlg.close());
+  dlg.querySelector('[data-bio-prev]')!.addEventListener('click', () => fill(idx - 1));
+  dlg.querySelector('[data-bio-next]')!.addEventListener('click', () => fill(idx + 1));
+  dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+</script>

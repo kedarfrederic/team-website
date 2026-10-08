@@ -1,0 +1,62 @@
+---
+// "From your seat": a proper board per audience. App chrome, a headline stat row, a list with avatars/status, and a TeamMate line.
+interface Row { l: string; s: string; st: 'ok' | 'warn' | 'soon' | 'done'; who: string; c: string; p?: number }
+interface Props { kind: 'artist' | 'manager' | 'label' | 'partner'; }
+const { kind } = Astro.props;
+const boards: Record<string, { title: string; sub: string; stats: [string, string, string][]; rows: Row[]; tm: string; tone: string; tone2: string }> = {
+  artist: { title: 'Midnight Static', sub: 'Album · 41 days to release', tone: 'var(--lime)', tone2: 'var(--viv-green)',
+    stats: [['Tasks', '14/22', 'done'], ['Needs you', '1', 'this week'], ['Ready to roll', '5/6', 'green']],
+    rows: [ { l: 'Distributor cutoff · metadata', s: 'Friday · 6 days', st: 'warn', who: 'AN', c: 'var(--team-music)' }, { l: 'Video final', s: 'due in 3 days · in review', st: 'soon', who: 'MR', c: 'var(--team-mkt)' }, { l: 'Pre-save link', s: 'live in 14 territories', st: 'done', who: 'TM', c: 'var(--ink)' }, { l: 'Launch', s: 'in 2 weeks · on track', st: 'ok', who: 'AN', c: 'var(--team-music)' } ],
+    tm: 'One thing needs you this week. Everything else is handled.' },
+  manager: { title: 'Roster', sub: '4 artists · 9 releases · this week', tone: 'var(--viv-cyan)', tone2: 'var(--viv-green)',
+    stats: [['On track', '7/9', 'releases'], ['Needs you', '3', 'decisions'], ['Clashes', '1', 'flagged']],
+    rows: [ { l: 'Ava North · Midnight Static', s: 'Album · 41 days', st: 'ok', who: 'AN', c: 'var(--team-music)', p: 64 }, { l: 'Juno Vale · Slow Motion', s: 'single · same week as Kite', st: 'warn', who: 'JV', c: 'var(--team-press)', p: 80 }, { l: 'Kite · Glass House', s: 'single · delivered, marketing in draft', st: 'ok', who: 'KT', c: 'var(--team-mkt)', p: 90 }, { l: 'Atlas · Northline', s: 'EP · A&R review', st: 'soon', who: 'AT', c: 'var(--team-mgmt)', p: 18 } ],
+    tm: 'One decision needs you: move Juno or Kite.' },
+  label: { title: 'Slate', sub: 'Q3 · 9 releases across 4 teams', tone: 'var(--viv-pink)', tone2: 'var(--viv-orange)',
+    stats: [['On track', '7/9', 'releases'], ['Clashes', '1', 'week 3'], ['Delivered', '2', 'this month']],
+    rows: [ { l: 'Nova · LP', s: 'delivering in 5 weeks', st: 'ok', who: 'NV', c: 'var(--team-music)', p: 72 }, { l: 'Kite · single', s: 'delivered · marketing in draft', st: 'ok', who: 'KT', c: 'var(--team-mkt)', p: 95 }, { l: 'Atlas · EP', s: 'clashes with Kite · week 3', st: 'warn', who: 'AT', c: 'var(--team-mgmt)', p: 55 }, { l: 'Vega · LP', s: 'in A&R review', st: 'soon', who: 'VG', c: 'var(--team-press)', p: 20 } ],
+    tm: 'Nine releases, seven on track. One decision this week.' },
+  partner: { title: 'Deliveries', sub: 'Next 14 days · 4 labels', tone: 'var(--viv-green)', tone2: 'var(--lime)',
+    stats: [['Clean', '38/40', 'this month'], ['Chasing', '2', 'asked today'], ['Windows', '6', 'closing']],
+    rows: [ { l: 'Ava North · Midnight Static', s: 'window closes Fri · metadata complete', st: 'ok', who: 'AN', c: 'var(--team-music)' }, { l: 'Kite · Glass House', s: 'delivered · confirmed', st: 'done', who: 'KT', c: 'var(--team-mkt)' }, { l: 'Nova · LP', s: 'window in 9 days · ISRCs missing', st: 'warn', who: 'NV', c: 'var(--team-press)' }, { l: 'Vega · LP', s: 'not yet scheduled', st: 'soon', who: 'VG', c: 'var(--team-mgmt)' } ],
+    tm: 'One release needs chasing. TeamMate already has.' },
+};
+const b = boards[kind];
+const stl: Record<string, [string, string]> = { ok: ['On track', 'var(--lime)'], warn: ['Needs you', 'var(--viv-orange)'], soon: ['Soon', 'var(--paper-2)'], done: ['Done', 'var(--viv-cyan)'] };
+---
+<div class="sbd" style={`--tone:${b.tone};--tone2:${b.tone2}`}>
+  <div class="sbd__chrome"><span class="sbd__dots"></span><span class="sbd__crumb"><b>{b.title}</b>{b.sub}</span><span class="sbd__av"><i style="background:var(--team-music)">AN</i><i style="background:var(--team-mkt)">MR</i><i style="background:var(--team-mgmt)">TS</i></span></div>
+  <div class="sbd__stats">{b.stats.map(([k, v, s], i) => <div class:list={['sbd__stat', { 'sbd__stat--hot': i === 1 }]}><span>{k}</span><b class="tnum">{v}</b><small>{s}</small></div>)}</div>
+  <ul class="sbd__rows">
+    {b.rows.map(r => (
+      <li class="sbd__row">
+        <i class="sbd__who" style={`background:${r.c}`}>{r.who}</i>
+        <div class="sbd__t"><b>{r.l}</b><span>{r.s}</span>{r.p !== undefined && <span class="sbd__bar"><i style={`width:${r.p}%`}></i></span>}</div>
+        <span class="sbd__st" style={`--c:${stl[r.st][1]}`}>{stl[r.st][0]}</span>
+      </li>
+    ))}
+  </ul>
+  <p class="sbd__tm"><span class="dot"></span><b>TeamMate</b> · {b.tm}</p>
+</div>
+<style>
+  .sbd{width:100%;max-width:30rem;background:var(--white);border:1px solid var(--line);border-radius:var(--r-xl);box-shadow:var(--shadow-lg);overflow:hidden;font-size:.92rem}
+  .sbd__chrome{display:flex;align-items:center;gap:.8rem;padding:.8rem 1rem;border-bottom:1px solid var(--line)}
+  .sbd__dots{width:.45rem;height:.45rem;border-radius:50%;background:var(--ink-12);box-shadow:.75rem 0 0 var(--ink-12),1.5rem 0 0 var(--ink-12);margin-right:1.5rem}
+  .sbd__crumb{display:flex;gap:.5rem;align-items:baseline;font-size:.78rem;color:var(--ink-40)}.sbd__crumb b{font-weight:500;color:var(--ink);font-size:.9rem}
+  .sbd__av{margin-left:auto;display:flex}.sbd__av i{width:1.5rem;height:1.5rem;border-radius:50%;border:2px solid var(--white);margin-left:-.35rem;font-style:normal;font-size:.5rem;font-weight:700;display:grid;place-items:center;color:var(--ink)}
+  .sbd__stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;padding:.9rem 1rem 0}
+  .sbd__stat{display:grid;gap:.05rem;padding:.7rem .8rem;border-radius:calc(var(--r-xl) - 1rem);background:var(--paper)}
+  .sbd__stat span{font-size:.7rem;color:var(--ink-60);font-weight:500}.sbd__stat b{font-size:1.45rem;font-weight:500;letter-spacing:-.03em;line-height:1.1}.sbd__stat small{font-size:.68rem;color:var(--ink-40)}
+  .sbd__stat--hot{background:var(--tone);color:var(--ink)}.sbd__stat--hot span,.sbd__stat--hot small{color:var(--ink-80)}
+  .sbd__rows{display:grid;gap:.35rem;padding:.9rem 1rem}
+  .sbd__row{display:grid;grid-template-columns:1.9rem 1fr auto;gap:.7rem;align-items:center;padding:.6rem .75rem;border-radius:calc(var(--r-xl) - 1rem);background:var(--paper)}
+  .sbd__who{width:1.9rem;height:1.9rem;border-radius:50%;font-style:normal;font-size:.58rem;font-weight:700;display:grid;place-items:center;color:var(--ink)}
+  .sbd__who[style*='--ink']{color:var(--lime)}
+  .sbd__t{display:grid;gap:.1rem;min-width:0}.sbd__t b{font-weight:500;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sbd__t>span:not(.sbd__bar){font-size:.72rem;color:var(--ink-40)}
+  .sbd__bar{display:block;height:.35rem;border-radius:99px;background:var(--ink-6);overflow:hidden;margin-top:.25rem}.sbd__bar i{display:block;height:100%;background:var(--tone2);border-radius:99px}
+  .sbd__st{font-size:.68rem;font-weight:600;padding:.25rem .55rem;border-radius:99px;background:var(--c);color:var(--ink);white-space:nowrap}
+  .sbd__st[style*='orange']{color:var(--white)}
+  .sbd__tm{display:flex;gap:.5rem;align-items:center;margin:0 1rem 1rem;padding:.7rem .85rem;border-radius:calc(var(--r-xl) - 1rem);background:var(--ink);color:var(--on-dark);font-size:.8rem}
+  .sbd__tm b{color:var(--white);font-weight:500}
+  @media (max-width:640px){.sbd__stats{grid-template-columns:repeat(3,1fr);gap:.35rem}.sbd__stat b{font-size:1.15rem}.sbd__crumb span{display:none}}
+</style>

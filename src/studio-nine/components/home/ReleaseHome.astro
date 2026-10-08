@@ -1,0 +1,332 @@
+---
+// "Built around the release." A stylised product illustration (not the real UI) authored at 1120px and scaled.
+import { img } from '../../data/images';
+const tabs = [
+  { k:'timeline', l:'Timeline', n:'22' }, { k:'tracks', l:'Tracks', n:'10' }, { k:'assets', l:'Assets', n:'18' }, { k:'budget', l:'Budget', n:'' }, { k:'ready', l:'Ready to roll', n:'5/6' },
+];
+const people = [['AN','var(--team-music)'],['TS','var(--team-mgmt)'],['MR','var(--team-mkt)'],['SD','var(--team-distro)']];
+const days = [
+  { d:'Mon', n:'22', tasks:[ { t:'Teaser clip goes live', c:'mkt', who:'AN', s:'Done', st:'done' } ] },
+  { d:'Tue', n:'23', tasks:[ { t:'Press one-sheet to list', c:'pr', who:'MR', s:'Done', st:'done' }, { t:'Radio edit bounced', c:'ops', who:'TS', s:'Done', st:'done' } ] },
+  { d:'Wed', n:'24', today:true, tasks:[ { t:'Pitch editorial playlists', c:'mkt', who:'TM', s:'TeamMate drafted', st:'tm' }, { t:'Vinyl PO sign-off', c:'ops', who:'TS', s:'Needs you · Fri', st:'needs' } ] },
+  { d:'Thu', n:'25', tasks:[ { t:'Video final delivered', c:'video', who:'AN', s:'In review', st:'review' } ] },
+  { d:'Fri', n:'26', tasks:[ { t:'Pre-save push · email + social', c:'mkt', who:'MR', s:'Scheduled', st:'sched' }, { t:'Distributor delivery window', c:'dsp', who:'SD', s:'Confirmed', st:'done' } ] },
+];
+const tracks = [ ['01','Midnight Static','3:41','v10','Final','final'], ['02','Slow Motion','4:02','v4','Final','final'], ['03','Glass House','3:18','v2','In review','review'], ['04','Northline (feat. Juno Vale)','4:26','stems','Awaiting master','soon'], ['05','Halfway Home','3:55','v6','Final','final'], ['06','Static Bloom','2:58','v3','Final','final'], ['07','Paper Moons','4:11','v5','Final','final'], ['08','Low Tide','3:29','v2','In review','review'], ['09','Signal / Noise','5:04','v7','Final','final'], ['10','Morning, Eventually','4:47','v1','Mix','soon'] ];
+const assets = [ ['Cover_3000.png','Artwork · final','final', img('cover-release')], ['Master_v10.wav','Audio · DSP-ready','final', ''], ['Teaser_15s.mp4','Video · approved','final', img('hiw-5-stage')], ['One-sheet.pdf','Document','', ''], ['Canvas_9x16.jpg','Artwork · v3','review', img('story-artist')], ['Press_shot_02.jpg','Photo · approved','final', img('hero-artist')] ];
+const budget = [ ['Advertising',9400,62,'var(--ink)'], ['Content',3100,21,'var(--cat-mkt)'], ['PR',1500,10,'var(--cat-pr)'], ['Vinyl',1050,7,'var(--orange)'] ] as const;
+const checks = [ ['Masters delivered to distributor','SD',true], ['Metadata and ISRCs clean','TS',true], ['Artwork at spec, all sizes','MR',true], ['Editorial pitch submitted','TM',true], ['Distributor confirmed delivery window','SD',false], ['Pre-save live in all territories','AN',true] ] as const;
+---
+<section class="rh section section--paper" id="release-home">
+  <div class="wrap">
+    <div class="rh__head">
+      <h2 class="h1 lines rh__h"><span class="line"><span>Built around</span></span><span class="line"><span>the <em>release.</em></span></span></h2>
+      <p class="lead" data-reveal>Not a project tool you have to teach. The timeline, tracks, artwork, budget, territories, pitches and pre-flight check are already built in. Everything in its place. Everyone on the same page.</p>
+    </div>
+
+    <div class="rh__stage" data-reveal data-rh-stage><div class="rh__app" data-rh>
+      <!-- app chrome -->
+      <header class="rh__chrome">
+        <span class="rh__dots"><i></i><i></i><i></i></span>
+        <p class="rh__crumb"><b>Ava North</b><span>/</span><b>Midnight Static</b><span>/</span><span data-rh-crumb>Timeline</span></p>
+        <div class="rh__search"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>Search the release…<kbd>⌘K</kbd></div>
+        <div class="rh__people">{people.map(([i,c]) => <i style={`background:${c}`}>{i}</i>)}<b>+3</b></div>
+        <span class="rh__bell"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 9a6 6 0 1 1 12 0v5l2 3H4l2-3z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg><i></i></span>
+      </header>
+
+      <aside class="rh__side">
+        <div class="rh__ws"><span class="rh__ws-ic">AN</span><div><b>Ava North</b><span>Album · 10 tracks</span></div></div>
+        <nav class="rh__tabs" aria-label="Release parts">
+          {tabs.map((t, i) => <button class:list={['rh__tab', { 'is-on': i === 0 }]} data-tab={t.k} aria-pressed={i === 0 ? 'true' : 'false'}><span class:list={['rh__tab-ic', `rh__tab-ic--${t.k}`]}></span>{t.l}{t.n && <em>{t.n}</em>}<i></i></button>)}
+        </nav>
+        <p class="rh__side-k">Also on this release</p>
+        <ul class="rh__side-more"><li>Territories</li><li>Pitches</li><li>Tour</li></ul>
+        <div class="rh__tm">
+          <p><span class="dot"></span>TeamMate</p>
+          <span class="rh__tm-in">Ask anything about the release…</span>
+        </div>
+      </aside>
+
+      <div class="rh__main">
+        <header class="rh__bar">
+          <img class="rh__art" src={img('cover-release')} alt="" loading="lazy" />
+          <div class="rh__bar-t"><p class="rh__k">Release · Album</p><h3 class="rh__title">Midnight Static</h3><p class="rh__chips"><span class="tag tag--lime">On track</span><span class="tag">30 Oct 2026</span><span class="tag">UK · DE · US</span></p></div>
+          <div class="rh__count"><p class="rh__count-n tnum"><span>41</span><small>days</small><span>06</span><small>hrs</small></p><p class="rh__count-k">to release</p></div>
+          <div class="rh__ring" style="--p:64"><span class="tnum">64%</span></div>
+        </header>
+
+        <div class="rh__panel is-on" data-panel="timeline">
+          <div class="rh__week">
+            {days.map((d) => (
+              <div class:list={['rh__day', { 'is-today': d.today }]}>
+                <p class="rh__date"><span>{d.d}</span><b>{d.n}</b></p>
+                {d.tasks.map(t => (
+                  <div class:list={['rh__task', `rh__task--${t.c}`, `is-${t.st}`]}>
+                    <b>{t.t}</b>
+                    <span class="rh__task-m"><i class="rh__av" data-who={t.who}>{t.who}</i>{t.s}</span>
+                  </div>
+                ))}
+                {d.today && <div class="rh__add">+ Add task</div>}
+              </div>
+            ))}
+          </div>
+          <div class="rh__toast"><span class="dot"></span><span><b>TeamMate</b> · The playlist pitch is drafted from the one-sheet. Want it sent to the six editors on Friday morning?</span><span class="rh__toast-b">Send Fri</span></div>
+        </div>
+
+        <div class="rh__panel" data-panel="tracks">
+          <ul class="rh__tracks">
+            {tracks.map(([n,t,len,v,s,st], i) => (
+              <li class="rh__track"><span class="rh__n tnum">{n}</span><span class="rh__tart" style={`--h:${200 + i * 40}`}></span><div><b>{t}</b><span>{len} · {v}</span></div>
+                <span class="rh__wave" style={`--seed:${i + 1};--played:${[62,100,38,0,100,100,100,45,100,12][i]}`} aria-hidden="true">{Array.from({length: 72}).map((_, j) => <i style={`--i:${j}`}></i>)}</span>
+                <span class:list={['tag', { 'tag--lime': st==='final', 'tag--orange': st==='review' }]}>{s}</span></li>
+            ))}
+          </ul>
+        </div>
+
+        <div class="rh__panel" data-panel="assets">
+          <div class="rh__grid">
+            {assets.map(([t,s,st,src]) => (
+              <div class="rh__asset">
+                <span class:list={['rh__thumb', { 'rh__thumb--audio': !src && t.endsWith('.wav'), 'rh__thumb--doc': !src && t.endsWith('.pdf') }]}>{src && <img src={src} alt="" loading="lazy" />}{!src && t.endsWith('.wav') && <span class="rh__wave rh__wave--sm" aria-hidden="true">{Array.from({length: 26}).map((_, j) => <i style={`--i:${j}`}></i>)}</span>}{!src && t.endsWith('.pdf') && <span class="rh__doc">PDF</span>}{st && <span class:list={['tag', { 'tag--lime': st==='final', 'tag--orange': st==='review' }]}>{st==='final'?'Final':'Review'}</span>}</span>
+                <b>{t}</b><span>{s}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div class="rh__panel" data-panel="budget">
+          <div class="rh__budget">
+            <div class="rh__donut" style={`--g:conic-gradient(${budget.map(([l,v,p,c], i) => `${c} ${budget.slice(0,i).reduce((a,b)=>a+b[2],0)}% ${budget.slice(0,i+1).reduce((a,b)=>a+b[2],0)}%`).join(',')}, var(--paper-2) 0)`}><div><b class="tnum">$15,050</b><span>of $18,000</span></div></div>
+            <div class="rh__brows">
+              {budget.map(([l,v,p,c]) => <div class="rh__brow"><span class="rh__brow-l"><i style={`background:${c}`}></i>{l}</span><i class="rh__brow-bar"><b style={`width:${p}%;background:${c}`}></b></i><span class="tnum">${v.toLocaleString('en-US')}</span></div>)}
+              <p class="rh__bnote"><span class="tag tag--orange">Changed 14:02</span>Content went from $2,500 to $3,100 in Sheets. TeamMate updated the one-sheet to match.</p>
+            </div>
+            <div class="rh__spend">
+              <p class="rh__k">Spend by week · to release</p>
+              <div class="rh__bars">{[18,22,30,26,41,55,48,62,70,58,64,80].map((v, i) => <i style={`--v:${v}`} class:list={[{ 'is-now': i === 8 }]}></i>)}</div>
+              <p class="rh__spend-f"><span>Aug</span><span>Sep</span><span>Oct</span></p>
+            </div>
+            <ul class="rh__pend">
+              <li><span class="rh__av" data-who="TS">TS</span><div><b>Vinyl PO #1042 · $1,190</b><span>Needs your approval · due Friday</span></div><span class="tag tag--orange">Needs you</span></li>
+              <li><span class="rh__av" data-who="TM">TM</span><div><b>Playlist ads · $600 proposed</b><span>TeamMate suggests moving it from PR</span></div><span class="tag">Review</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="rh__panel" data-panel="ready">
+          <div class="rh__ready">
+            <div class="rh__ready-ring" style="--p:83"><b class="tnum">5<small>/6</small></b><span>green</span></div>
+            <ul class="rh__check">
+              {checks.map(([l,who,ok], i) => <li class:list={[{ 'is-ok': ok }]}><span class="rh__tick">{ok ? '✓' : '·'}</span><div><b>{l}</b><span>{['Delivered Tue · 10 tracks · checksum verified','ISRCs and UPC confirmed with the distributor','3000×3000, 1400×1400, canvas 9:16','Submitted to 6 editors · 2 replies in','Window closes Fri 26 · asked this morning','Pre-save live in 14 territories · 2,140 saves'][i]}</span></div><i class="rh__av" data-who={who}>{who}</i>{!ok && <span class="tag tag--orange">Waiting</span>}</li>)}
+            </ul>
+            <div class="rh__ship"><span class="dot"></span><span><b>Ships when all six are green.</b> TeamMate re-checks every hour and will ask the distributor again at 09:00 if the window is still unconfirmed.</span></div>
+          </div>
+        </div>
+      </div>
+    </div></div>
+    <p class="rh__note">Illustration of the platform, not the live interface.</p>
+  </div>
+</section>
+
+<style>
+  .rh__head{max-width:56rem;margin-bottom:clamp(2.5rem,5vw,4rem)}
+  .rh__h{font-size:clamp(2.8rem,4.6vw,4.2rem)}
+  .rh__head .lead{margin-top:1.25rem}
+  .rh__stage{position:relative;width:100%}
+  .rh__note{margin-top:1rem;font-size:.78rem;color:var(--ink-40);text-align:right}
+  /* app frame: fixed 1120px design, scaled by JS */
+  .rh__app{--w:1120px;width:var(--w);transform-origin:top left;display:grid;grid-template-columns:15.5rem 1fr;grid-template-rows:auto 1fr;background:var(--white);border:1px solid var(--line);border-radius:var(--r-xl);box-shadow:var(--shadow-lg);overflow:hidden;font-size:.92rem}
+  .rh__chrome{grid-column:1/-1;display:flex;align-items:center;gap:1rem;height:3.1rem;padding:0 1.1rem;border-bottom:1px solid var(--line);background:var(--white)}
+  .rh__dots{display:flex;gap:.35rem}.rh__dots i{width:.6rem;height:.6rem;border-radius:50%;background:var(--ink-12)}
+  .rh__crumb{display:flex;gap:.45rem;font-size:.82rem;color:var(--ink-40)}.rh__crumb b{font-weight:500;color:var(--ink-80)}
+  .rh__search{margin-left:auto;display:flex;align-items:center;gap:.5rem;height:2rem;padding:0 .6rem 0 .7rem;border-radius:var(--r-pill);background:var(--paper);color:var(--ink-40);font-size:.8rem;min-width:16rem}
+  .rh__search kbd{margin-left:auto;font:inherit;font-size:.68rem;padding:.1rem .35rem;border-radius:.3rem;background:var(--white);border:1px solid var(--line)}
+  .rh__people{display:flex;align-items:center}.rh__people i{width:1.7rem;height:1.7rem;border-radius:50%;color:var(--ink);font-size:.58rem;font-weight:600;font-style:normal;display:grid;place-items:center;border:2px solid var(--white);margin-left:-.4rem}.rh__people i:first-child{margin-left:0}.rh__people b{margin-left:.35rem;font-size:.72rem;color:var(--ink-40);font-weight:500}
+  .rh__bell{position:relative;color:var(--ink-60);display:grid;place-items:center}.rh__bell i{position:absolute;top:-1px;right:-1px;width:.5rem;height:.5rem;border-radius:50%;background:var(--orange);border:2px solid var(--white)}
+  /* sidebar */
+  .rh__side{border-right:1px solid var(--line);padding:1.1rem 1rem;display:flex;flex-direction:column;gap:1rem;background:var(--paper)}
+  .rh__ws{display:flex;gap:.6rem;align-items:center;padding:.4rem .5rem;border-radius:calc(var(--r-xl) - 1rem);background:var(--white);border:1px solid var(--line)}
+  .rh__ws-ic{width:2rem;height:2rem;border-radius:.6rem;background:var(--ink);color:var(--lime);display:grid;place-items:center;font-size:.7rem;font-weight:600}
+  .rh__ws b{display:block;font-weight:500;font-size:.88rem}.rh__ws span:last-child{font-size:.72rem;color:var(--ink-40)}
+  .rh__tabs{display:grid;gap:.15rem}
+  .rh__tab{position:relative;display:flex;align-items:center;gap:.6rem;text-align:left;padding:.55rem .65rem;border-radius:.6rem;font-size:.88rem;color:var(--ink-60);font-weight:500;transition:background .2s,color .2s;overflow:hidden}
+  .rh__tab em{margin-left:auto;font-style:normal;font-size:.7rem;color:var(--ink-40);background:var(--white);border:1px solid var(--line);border-radius:99px;padding:.05rem .4rem}
+  .rh__tab:hover{color:var(--ink)}
+  .rh__tab.is-on{background:var(--ink);color:var(--white)}
+  .rh__tab.is-on em{background:rgba(255,255,255,.15);border-color:transparent;color:var(--on-dark-60)}
+  .rh__tab i{position:absolute;left:0;bottom:0;height:2px;width:0;background:var(--lime)}
+  .rh__tab.is-on i{animation:fill var(--cycle,4.2s) linear forwards}
+  @keyframes fill{to{width:100%}}
+  .rh__tab-ic{width:1rem;height:1rem;border-radius:.25rem;background:currentColor;opacity:.5;-webkit-mask:var(--m) center/contain no-repeat;mask:var(--m) center/contain no-repeat}
+  .rh__tab-ic--timeline{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M4 7h16M4 12h10M4 17h13'/%3E%3C/svg%3E")}
+  .rh__tab-ic--tracks{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M4 12v2M8 8v8M12 5v14M16 9v6M20 11v2'/%3E%3C/svg%3E")}
+  .rh__tab-ic--assets{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4'%3E%3Crect x='3' y='4' width='18' height='16' rx='3'/%3E%3Cpath d='M3 15l5-5 4 4 3-3 6 6'/%3E%3C/svg%3E")}
+  .rh__tab-ic--budget{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4'%3E%3Ccircle cx='12' cy='12' r='8'/%3E%3Cpath d='M12 4v8l6 3'/%3E%3C/svg%3E")}
+  .rh__tab-ic--ready{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='8'/%3E%3Cpath d='m8.5 12 2.5 2.5 4.5-5'/%3E%3C/svg%3E")}
+  .rh__side-k{font-size:.66rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-40);font-weight:500;margin-top:.4rem}
+  .rh__side-more{display:grid;gap:.1rem}.rh__side-more li{padding:.4rem .65rem;font-size:.85rem;color:var(--ink-60)}
+  .rh__tm{margin-top:auto;background:var(--ink);color:var(--on-dark);border-radius:calc(var(--r-xl) - 1rem);padding:.75rem;display:grid;gap:.5rem}
+  .rh__tm p{display:flex;align-items:center;gap:.4rem;font-size:.8rem;font-weight:500}
+  .rh__tm-in{display:block;padding:.45rem .6rem;border-radius:.5rem;background:rgba(255,255,255,.1);font-size:.76rem;color:var(--on-dark-60)}
+  /* main */
+  .rh__main{position:relative;padding:1.2rem 1.4rem;display:grid;grid-template-rows:auto 1fr;height:600px;overflow:hidden}
+  .rh__bar{display:grid;grid-template-columns:3.6rem 1fr auto auto;gap:1rem;align-items:center;border-bottom:1px solid var(--line);padding-bottom:1rem;margin-bottom:1rem}
+  .rh__art{width:3.6rem;height:3.6rem;border-radius:.6rem;object-fit:cover}
+  .rh__k{font-size:.68rem;color:var(--ink-40);font-weight:500;text-transform:uppercase;letter-spacing:.06em}
+  .rh__title{font-size:1.45rem;font-weight:500;letter-spacing:-.02em;line-height:1.1;margin:.1rem 0 .35rem}
+  .rh__chips{display:flex;gap:.35rem}.rh__chips .tag{height:1.45rem;font-size:.7rem}
+  .rh__count{text-align:right}.rh__count-n{display:flex;align-items:baseline;gap:.2rem;font-size:1.7rem;font-weight:500;letter-spacing:-.03em;line-height:1}.rh__count-n small{font-size:.68rem;color:var(--ink-40);margin-right:.45rem;letter-spacing:0}.rh__count-k{font-size:.7rem;color:var(--ink-40)}
+  .rh__ring{width:3.4rem;height:3.4rem;border-radius:50%;background:conic-gradient(var(--lime-2) calc(var(--p) * 1%),var(--paper-2) 0);display:grid;place-items:center;position:relative}
+  .rh__ring::before{content:'';position:absolute;inset:.35rem;border-radius:50%;background:var(--white)}
+  .rh__ring span{position:relative;font-size:.72rem;font-weight:600}
+  .rh__panel{display:none;animation:pin .5s var(--ease);position:relative}
+  .rh__panel.is-on{display:block}
+  @keyframes pin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  /* timeline */
+  .rh__week{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:.5rem;min-height:23rem;background-image:repeating-linear-gradient(180deg,transparent 0 3.9rem,var(--line) 3.9rem calc(3.9rem + 1px));background-position:0 2.4rem}
+  .rh__day{border-radius:calc(var(--r-xl) - 1.4rem);padding:.5rem;display:grid;align-content:start;gap:.45rem;position:relative}
+  .rh__day.is-today{background:color-mix(in srgb,var(--lime) 38%,var(--white));outline:1.5px solid var(--lime)}
+  .rh__date{display:flex;align-items:baseline;gap:.35rem;padding:.15rem .3rem .4rem;font-size:.72rem;color:var(--ink-40)}.rh__date b{font-size:1.1rem;font-weight:500;color:var(--ink);letter-spacing:-.02em}
+  .rh__day.is-today .rh__date b{background:var(--ink);color:var(--lime);border-radius:.45rem;padding:0 .4rem}
+  .rh__task{background:var(--white);border-radius:.65rem;padding:.55rem .65rem .55rem .75rem;box-shadow:var(--shadow-sm);border:1px solid var(--line);position:relative;display:grid;gap:.35rem}
+  .rh__task::before{content:'';position:absolute;left:0;top:.55rem;bottom:.55rem;width:3px;border-radius:99px;background:var(--c,var(--ink-12))}
+  .rh__task b{display:block;font-size:.8rem;font-weight:500;line-height:1.25;color:var(--ink)}
+  .rh__task.is-done b{color:var(--ink-60);text-decoration:line-through;text-decoration-color:var(--ink-40);text-decoration-thickness:1px}
+  .rh__task-m{display:flex;align-items:center;gap:.4rem;font-size:.68rem;color:var(--ink-40)}
+  .rh__task.is-needs{border-color:var(--orange);background:var(--orange-wash)}.rh__task.is-needs .rh__task-m{color:var(--orange-ink);font-weight:500}
+  .rh__task.is-tm .rh__task-m{color:var(--green-ink)}
+  .rh__task--mkt{--c:var(--cat-mkt)}.rh__task--pr{--c:var(--cat-pr)}.rh__task--ops{--c:var(--orange)}.rh__task--video{--c:var(--cat-video)}.rh__task--dsp{--c:var(--lime-2)}
+  .rh__av{flex:none;width:1.15rem;height:1.15rem;border-radius:50%;display:grid;place-items:center;font-size:.48rem;font-weight:700;color:var(--ink);font-style:normal;background:var(--ink-12)}
+  .rh__av[data-who=AN]{background:var(--team-music)}.rh__av[data-who=TS]{background:var(--team-mgmt)}.rh__av[data-who=MR]{background:var(--team-mkt)}.rh__av[data-who=SD]{background:var(--team-distro);color:var(--white)}.rh__av[data-who=TM]{background:var(--ink);color:var(--lime)}
+  .rh__add{margin-top:.1rem;padding:.4rem;border:1px dashed var(--ink-12);border-radius:.6rem;font-size:.72rem;color:var(--ink-40);text-align:center}
+  .rh__toast{position:absolute;right:.5rem;bottom:.5rem;max-width:26rem;display:flex;align-items:center;gap:.6rem;background:var(--ink);color:var(--on-dark);border-radius:.9rem;padding:.7rem .8rem .7rem .9rem;font-size:.78rem;line-height:1.35;box-shadow:var(--shadow-lg);z-index:2}
+  .rh__toast b{color:var(--white);font-weight:500}.rh__toast-b{flex:none;background:var(--lime);color:var(--ink);font-weight:500;padding:.35rem .6rem;border-radius:99px;font-size:.72rem}
+  /* tracks */
+  .rh__tracks{display:grid;gap:.18rem}
+  .rh__track{display:grid;grid-template-columns:1.4rem 1.6rem 13rem 1fr auto;align-items:center;gap:.8rem;padding:.14rem .7rem;border-radius:calc(var(--r-xl) - 1.4rem);background:var(--paper)}
+  .rh__track b{display:block;font-weight:500;font-size:.82rem;line-height:1.15}.rh__track div span{font-size:.66rem;color:var(--ink-40)}
+  .rh__track .tag{height:1.45rem;font-size:.7rem}
+  .rh__n{color:var(--ink-40);font-size:.8rem}
+  .rh__tart{width:1.7rem;height:1.7rem;border-radius:.4rem;background:linear-gradient(135deg,hsl(var(--h) 30% 25%),hsl(calc(var(--h) + 40) 40% 55%))}
+  .rh__wave{display:flex;align-items:center;gap:1.5px;height:1.15rem}
+  .rh__wave i{flex:1;height:calc(12% + 88% * abs(sin(calc(var(--i) * .9 + var(--seed,1) * 1.3))) * (.55 + .45 * abs(cos(calc(var(--i) * .31 + var(--seed,1))))));min-height:2px;border-radius:99px;background:linear-gradient(90deg,var(--ink) calc((var(--played,0) * .72 - var(--i)) * 100%),var(--ink-12) 0)}
+    .rh__wave--sm{height:1.2rem;padding:0 .5rem}.rh__wave--sm i{background:var(--lime)}
+  /* assets */
+  .rh__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem}
+  .rh__asset{background:var(--paper);border-radius:calc(var(--r-xl) - 1.4rem);padding:.55rem;display:grid;gap:.15rem}
+  .rh__asset b{font-size:.8rem;font-weight:500;padding:0 .2rem}.rh__asset>span:last-child{font-size:.7rem;color:var(--ink-40);padding:0 .2rem .2rem}
+  .rh__thumb{position:relative;display:block;aspect-ratio:16/9;border-radius:max(.35rem,calc(var(--r-xl) - 1.4rem - .55rem));margin-bottom:.4rem;overflow:hidden;background:var(--paper-2)}
+  .rh__thumb img{width:100%;height:100%;object-fit:cover}
+  .rh__thumb .tag{position:absolute;left:.4rem;bottom:.4rem;height:1.35rem;font-size:.66rem}
+  .rh__thumb--audio{background:var(--ink);display:grid;align-items:center}
+  .rh__thumb--doc{display:grid;place-items:center}.rh__doc{font-size:.7rem;font-weight:600;letter-spacing:.06em;color:var(--ink-40);border:1.5px solid var(--ink-12);border-radius:.3rem;padding:.2rem .4rem}
+  /* budget */
+  .rh__budget{display:grid;grid-template-columns:14rem 1fr;grid-template-rows:auto auto;gap:1.5rem 2rem;align-items:center}
+  .rh__spend{display:grid;gap:.5rem;padding:1rem;border-radius:calc(var(--r-xl) - 1.4rem);background:var(--paper)}
+  .rh__bars{display:flex;align-items:flex-end;gap:.35rem;height:5.5rem}
+  .rh__bars i{flex:1;height:calc(var(--v) * 1%);border-radius:3px 3px 0 0;background:var(--ink-12)}
+  .rh__bars i.is-now{background:var(--lime-2)}
+  .rh__spend-f{display:flex;justify-content:space-between;font-size:.68rem;color:var(--ink-40)}
+  .rh__pend{display:grid;gap:.4rem;align-self:start}
+  .rh__pend li{display:flex;align-items:center;gap:.7rem;padding:.6rem .8rem;border-radius:calc(var(--r-xl) - 1.4rem);background:var(--paper);font-size:.86rem}
+  .rh__pend li div{flex:1}.rh__pend b{display:block;font-weight:500}.rh__pend div span{font-size:.72rem;color:var(--ink-40)}
+  .rh__donut{width:13rem;height:13rem;border-radius:50%;background:var(--g);display:grid;place-items:center;position:relative}
+  .rh__donut::before{content:'';position:absolute;inset:1.5rem;border-radius:50%;background:var(--white)}
+  .rh__donut div{position:relative;text-align:center}.rh__donut b{display:block;font-size:1.5rem;font-weight:500;letter-spacing:-.03em}.rh__donut span{font-size:.72rem;color:var(--ink-40)}
+  .rh__brows{display:grid;gap:.6rem}
+  .rh__brow{display:grid;grid-template-columns:7.5rem 1fr 5rem;align-items:center;gap:.8rem;font-size:.86rem}
+  .rh__brow-l{display:flex;align-items:center;gap:.5rem}.rh__brow-l i{width:.6rem;height:.6rem;border-radius:2px}
+  .rh__brow-bar{display:block;height:.7rem;border-radius:99px;background:var(--paper-2);overflow:hidden}.rh__brow-bar b{display:block;height:100%;border-radius:99px}
+  .rh__brow>span:last-child{text-align:right;color:var(--ink-60)}
+  .rh__bnote{margin-top:.6rem;font-size:.8rem;color:var(--ink-60);display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;padding:.7rem .8rem;border-radius:calc(var(--r-xl) - 1.4rem);background:var(--paper)}
+  /* ready */
+  .rh__ready{display:grid;grid-template-columns:9rem 1fr;gap:1rem 2rem;align-items:start}
+  .rh__ship{grid-column:2;display:flex;gap:.6rem;align-items:flex-start;padding:.8rem 1rem;border-radius:calc(var(--r-xl) - 1.4rem);background:var(--ink);color:var(--on-dark);font-size:.82rem;line-height:1.4}
+  .rh__ship b{color:var(--white);font-weight:500}
+  .rh__ship .dot{margin-top:.3rem}
+  .rh__ready-ring{width:9rem;height:9rem;border-radius:50%;background:conic-gradient(var(--lime) calc(var(--p) * 1%),var(--paper-2) 0);display:grid;place-content:center;justify-items:center;position:relative}
+  .rh__ready-ring::before{content:'';position:absolute;inset:.8rem;border-radius:50%;background:var(--white)}
+  .rh__ready-ring b{position:relative;font-size:2rem;font-weight:500;letter-spacing:-.03em;line-height:1}.rh__ready-ring b small{font-size:.9rem;color:var(--ink-40)}.rh__ready-ring span{position:relative;font-size:.72rem;color:var(--ink-40)}
+  .rh__check{display:grid;gap:.4rem}
+  .rh__check li{display:flex;align-items:center;gap:.7rem;padding:.55rem .8rem;border-radius:calc(var(--r-xl) - 1.4rem);background:var(--paper);font-size:.88rem}
+  .rh__check li div{flex:1}.rh__check li b{display:block;font-weight:500;line-height:1.25}.rh__check li div span{display:block;font-size:.7rem;color:var(--ink-40);margin-top:.1rem}
+  .rh__check li .rh__av{margin-left:0}.rh__check li .tag{height:1.45rem;font-size:.68rem}
+  .rh__tick{width:1.4rem;height:1.4rem;border-radius:50%;display:grid;place-items:center;font-size:.75rem;background:var(--paper-2);color:var(--ink-40)}
+  .rh__check li.is-ok .rh__tick{background:var(--lime);color:var(--ink)}
+  /* native mobile layout below 640px: fixed height, one column, no reflow between tabs */
+  .rh__app.is-mobile{--w:100%;width:100%;transform:none!important;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr);height:640px;overflow:clip}
+  .rh__app.is-mobile .rh__chrome,.rh__app.is-mobile .rh__side,.rh__app.is-mobile .rh__main{min-width:0;width:100%}
+  .rh__app.is-mobile .rh__search,.rh__app.is-mobile .rh__people,.rh__app.is-mobile .rh__side-k,.rh__app.is-mobile .rh__side-more,.rh__app.is-mobile .rh__tm,.rh__app.is-mobile .rh__ws{display:none}
+  .rh__app.is-mobile .rh__crumb{font-size:.76rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+  .rh__app.is-mobile .rh__crumb>b:first-child,.rh__app.is-mobile .rh__crumb>span:first-of-type{display:none}
+  .rh__app.is-mobile .rh__bell{margin-left:auto}
+  .rh__app.is-mobile .rh__side{border-right:0;border-bottom:1px solid var(--line);padding:.6rem .8rem;gap:0}
+  .rh__app.is-mobile .rh__tabs{display:flex;flex-wrap:nowrap;gap:.3rem;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;margin:0 -.8rem;padding:0 .8rem}
+  .rh__app.is-mobile .rh__tabs::-webkit-scrollbar{display:none}
+  .rh__app.is-mobile .rh__tab{flex:none;padding:.45rem .75rem;font-size:.82rem;white-space:nowrap}
+  .rh__app.is-mobile .rh__tab em{display:none}
+  .rh__app.is-mobile .rh__main{height:auto;min-height:0;padding:1rem;overflow:clip}
+  .rh__app.is-mobile .rh__bar{grid-template-columns:2.6rem 1fr auto;gap:.7rem;padding-bottom:.8rem;margin-bottom:.8rem}
+  .rh__app.is-mobile .rh__ring{display:none}.rh__app.is-mobile .rh__art{width:2.6rem;height:2.6rem}
+  .rh__app.is-mobile .rh__title{font-size:1.1rem;margin:.05rem 0 .25rem}.rh__app.is-mobile .rh__count-n{font-size:1.15rem}.rh__app.is-mobile .rh__count-k{font-size:.64rem}
+  .rh__app.is-mobile .rh__chips{flex-wrap:nowrap}.rh__app.is-mobile .rh__chips .tag{white-space:nowrap}.rh__app.is-mobile .rh__chips .tag:nth-child(n+2){display:none}
+  /* timeline: today, with a sliver of tomorrow peeking on the right */
+  .rh__app.is-mobile .rh__week{display:flex;gap:.6rem;min-height:0;background:none;overflow:hidden;margin-right:-1rem}
+  .rh__app.is-mobile .rh__day{display:none}
+  .rh__app.is-mobile .rh__day.is-today{display:grid;flex:0 0 78%}
+  .rh__app.is-mobile .rh__day.is-today + .rh__day{display:grid;flex:0 0 60%;opacity:.45;-webkit-mask-image:linear-gradient(90deg,#000 20%,transparent 95%);mask-image:linear-gradient(90deg,#000 20%,transparent 95%)}
+  .rh__app.is-mobile .rh__toast{position:static;margin-top:.8rem;max-width:none;font-size:.76rem}
+  /* tracks */
+  .rh__app.is-mobile .rh__track{grid-template-columns:1.2rem 1.6rem 1fr auto;padding:.3rem .6rem}.rh__app.is-mobile .rh__wave{display:none}
+  .rh__app.is-mobile .rh__tracks{gap:.25rem}.rh__app.is-mobile .rh__track:nth-child(n+9){display:none}
+  /* assets */
+  .rh__app.is-mobile .rh__grid{grid-template-columns:repeat(2,1fr)}.rh__app.is-mobile .rh__asset:nth-child(n+5){display:none}
+  /* budget: donut beside the bars, chart full width */
+  .rh__app.is-mobile .rh__budget{grid-template-columns:1fr;grid-template-rows:auto auto auto;gap:.8rem}
+  .rh__app.is-mobile .rh__donut{width:7.5rem;height:7.5rem;margin:0 auto}.rh__app.is-mobile .rh__donut::before{inset:.9rem}.rh__app.is-mobile .rh__donut b{font-size:1.05rem}
+  .rh__app.is-mobile .rh__brows{gap:.4rem}.rh__app.is-mobile .rh__brow{grid-template-columns:5.5rem 1fr 4.2rem;font-size:.78rem}.rh__app.is-mobile .rh__bnote{display:none}
+  .rh__app.is-mobile .rh__spend{padding:.8rem}.rh__app.is-mobile .rh__bars{height:4rem}
+  .rh__app.is-mobile .rh__pend{display:none}
+  /* ready to roll: ring on top, checks in two columns */
+  .rh__app.is-mobile .rh__ready{grid-template-columns:1fr;gap:.8rem}
+  .rh__app.is-mobile .rh__ready-ring{width:6.5rem;height:6.5rem;margin:0 auto}.rh__app.is-mobile .rh__ready-ring::before{inset:.6rem}.rh__app.is-mobile .rh__ready-ring b{font-size:1.5rem}
+  .rh__app.is-mobile .rh__check{grid-template-columns:repeat(2,1fr);gap:.4rem}
+  .rh__app.is-mobile .rh__check li{display:grid;grid-template-columns:auto 1fr;gap:.4rem;align-items:start;padding:.55rem .6rem;font-size:.78rem}
+  .rh__app.is-mobile .rh__check li div span{display:none}.rh__app.is-mobile .rh__check li .rh__av,.rh__app.is-mobile .rh__check li .tag{display:none}
+  .rh__app.is-mobile .rh__ship{grid-column:1;font-size:.76rem}
+  /* caption: two lines on phones */
+  @media (max-width:640px){.rh__note{text-align:left}}
+</style>
+
+<script>
+  const app = document.querySelector<HTMLElement>('[data-rh]');
+  if (app) {
+    const tabs = Array.from(app.querySelectorAll<HTMLButtonElement>('[data-tab]'));
+    const panels = Array.from(app.querySelectorAll<HTMLElement>('[data-panel]'));
+    const crumb = app.querySelector<HTMLElement>('[data-rh-crumb]');
+    let idx = 0, timer: number | undefined, paused = false;
+    const CYCLE = 4200;
+    const show = (i: number) => {
+      idx = i;
+      tabs.forEach((t, j) => { t.classList.toggle('is-on', j === i); t.setAttribute('aria-pressed', String(j === i)); const bar = t.querySelector('i')!; bar.style.animation = 'none'; void bar.offsetWidth; bar.style.animation = ''; });
+      panels.forEach((p, j) => p.classList.toggle('is-on', j === i));
+      if (crumb) crumb.textContent = tabs[i].textContent!.replace(/\d+\/?\d*$/, '').trim();
+    };
+    const tick = () => { if (!paused) show((idx + 1) % tabs.length); };
+    const start = () => { stop(); timer = window.setInterval(tick, CYCLE); };
+    const stop = () => { if (timer) window.clearInterval(timer); };
+    tabs.forEach((t, i) => t.addEventListener('click', () => { show(i); start(); }));
+    app.addEventListener('mouseenter', () => (paused = true));
+    app.addEventListener('mouseleave', () => (paused = false));
+    new IntersectionObserver(([e]) => (e.isIntersecting ? start() : stop()), { threshold: 0.3 }).observe(app);
+    // fixed design size, uniform scale to fit the container; native layout on small screens
+    const stage = document.querySelector<HTMLElement>('[data-rh-stage]')!;
+    const fit = () => {
+      const w = stage.clientWidth;
+      if (w < 640) { app.classList.add('is-mobile'); app.style.transform = ''; stage.style.height = ''; return; }
+      app.classList.remove('is-mobile');
+      const k = Math.min(1.3, w / 1120); app.style.transform = `scale(${k})`; stage.style.height = app.offsetHeight * k + 'px';
+    };
+    fit(); window.addEventListener('resize', fit); new ResizeObserver(fit).observe(app);
+  }
+</script>

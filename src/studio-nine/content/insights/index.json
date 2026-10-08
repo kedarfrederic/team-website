@@ -1,0 +1,102 @@
+[
+  {
+    "slug": "the-88-percent-problem",
+    "cat": "Strategy",
+    "min": 8,
+    "date": "2026-07-08",
+    "title": "The 88% Problem: Why Most Music Fails Before Anyone Hears It",
+    "dek": "Last year, 88% of tracks on streaming platforms received fewer than 1,000 plays. Let that land for a second.",
+    "words": 1699,
+    "img": "ins-88-problem"
+  },
+  {
+    "slug": "the-real-ai-problem-in-music",
+    "cat": "Industry",
+    "min": 5,
+    "date": "2026-06-24",
+    "title": "The Real AI Problem in Music Has Nothing to Do With Music",
+    "dek": "The music industry is deep in its AI era. Every panel, every post, every conversation is circling the same question: what happens when AI can make music?",
+    "words": 1064,
+    "img": "ins-ai-problem"
+  },
+  {
+    "slug": "music-release-management-software",
+    "cat": "Guides",
+    "min": 3,
+    "date": "2026-05-12",
+    "title": "Music Release Management Software: What It Is and How to Choose One",
+    "dek": "Music release management software is a tool that coordinates everything involved in putting out a record: the timeline, the tasks, the assets, the approvals, the pitching, and the people responsible for each.",
+    "words": 685,
+    "img": "ins-release-software"
+  },
+  {
+    "slug": "music-and-ai-nuance",
+    "cat": "Industry",
+    "min": 3,
+    "date": "2026-04-14",
+    "title": "The Music Industry's Relationship With AI Is More Nuanced Than You Think",
+    "dek": "The conversation about AI in music tends to collapse into two camps. One says it will replace everyone. The other says it is a gimmick that will pass.",
+    "words": 446,
+    "img": "ins-ai-nuance"
+  },
+  {
+    "slug": "introducing-teammate",
+    "cat": "Product",
+    "min": 3,
+    "date": "2026-04-05",
+    "title": "Introducing TeamMate: your AI-powered release companion",
+    "dek": "TeamMate is now live for every Team user. It's an AI release companion built directly into your workflow — and unlike most AI features bolted onto SaaS products, it actually does the work.",
+    "words": 538,
+    "img": "ins-teammate"
+  },
+  {
+    "slug": "independent-label-playbook-2026",
+    "cat": "Industry",
+    "min": 3,
+    "date": "2026-03-22",
+    "title": "The independent label playbook for 2026",
+    "dek": "2026 has been a brutal year for indie labels operating on yesterday's playbook. Editorial playlist culture is changing. Algorithmic discovery is doing more work, and rewarding different signals.",
+    "words": 762,
+    "img": "ins-label-playbook"
+  },
+  {
+    "slug": "stop-treating-your-release-like-a-project",
+    "cat": "Strategy",
+    "min": 3,
+    "date": "2026-03-18",
+    "title": "Stop Treating Your Release Like a Project",
+    "dek": "Most release plans are built like projects. There is a kickoff, a set of tasks, a deadline, and a finish line called release day. You work toward it, you cross it, and then you move on to the next one from scratch.",
+    "words": 420,
+    "img": "ins-not-a-project"
+  },
+  {
+    "slug": "playlist-pitching-2026",
+    "cat": "Guides",
+    "min": 4,
+    "date": "2026-03-15",
+    "title": "Playlist pitching: what actually works in 2026",
+    "dek": "Editorial, algorithmic, and independent playlists each operate on different logic. What works for one will get you ignored on another. Here's what curators in each category actually respond to in 2026.",
+    "words": 845,
+    "img": "ins-playlist-pitching"
+  },
+  {
+    "slug": "release-day-checklist",
+    "cat": "Guides",
+    "min": 3,
+    "date": "2026-02-25",
+    "title": "The Release Day Checklist for Independent Artists",
+    "dek": "Release day is the one moment your whole campaign has been pointing at. The pitching, the assets, the pre-saves, the plan, all of it lands or leaks in a single 24-hour window.",
+    "words": 411,
+    "img": "ins-release-checklist"
+  },
+  {
+    "slug": "when-to-pitch-dsps",
+    "cat": "Guides",
+    "min": 3,
+    "date": "2026-02-20",
+    "title": "When to Pitch to DSPs: A Timeline Guide",
+    "dek": "Getting on an editorial playlist can transform a release. But timing your pitch wrong — too early, too late, or with the wrong information — means your track never gets heard by the curators who matter.",
+    "words": 660,
+    "img": "ins-when-to-pitch"
+  }
+]

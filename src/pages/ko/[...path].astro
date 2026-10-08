@@ -1,0 +1,23 @@
+---
+import Home from "../../studio-nine/pages/index.astro";
+import Pricing from "../../studio-nine/pages/pricing.astro";
+import Rollouts from "../../studio-nine/pages/rollouts.astro";
+import Teammate from "../../studio-nine/pages/teammate.astro";
+import Assets from "../../studio-nine/pages/assets.astro";
+import Tours from "../../studio-nine/pages/tours.astro";
+import Connectors from "../../studio-nine/pages/connectors.astro";
+import Contact from "../../studio-nine/pages/contact.astro";
+import Security from "../../studio-nine/pages/security.astro";
+import About from "../../studio-nine/pages/about.astro";
+import Artists from "../../studio-nine/pages/for-artists.astro";
+import Managers from "../../studio-nine/pages/for-managers.astro";
+import Labels from "../../studio-nine/pages/for-labels.astro";
+import Partners from "../../studio-nine/pages/for-partners.astro";
+import Enterprise from "../../studio-nine/pages/enterprise.astro";
+import Demo from "../../studio-nine/pages/demo.astro";
+import NotFound from "../../studio-nine/pages/404.astro";
+const pages:Record<string, typeof Home>={"":Home,"pricing":Pricing,"rollouts":Rollouts,"teammate":Teammate,"assets":Assets,"tours":Tours,"connectors":Connectors,"contact":Contact,"security":Security,"about":About,"for-artists":Artists,"for-managers":Managers,"for-labels":Labels,"for-partners":Partners,"enterprise":Enterprise,"demo":Demo};
+const Page = pages[Astro.params.path || ""] ?? NotFound;
+if(Page===NotFound)Astro.response.status=404;
+---
+<Page />

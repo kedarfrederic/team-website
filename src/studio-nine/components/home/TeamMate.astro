@@ -1,0 +1,97 @@
+---
+const log = [
+  { t:'23:41', m:'Re-cut the release timeline around the new date. 11 tasks moved.', ok:true, src:'Timeline', ic:'', c:'var(--team-music)' },
+  { t:'23:43', m:'Updated the budget in Notion and the one-sheet to match the sheet.', ok:true, src:'Sheets → Notion', ic:'googlesheets', c:'var(--viv-lav)' },
+  { t:'02:57', m:'Re-briefed the press list on the new embargo date.', ok:true, src:'Gmail', ic:'gmail', c:'var(--viv-pink)' },
+  { t:'04:12', m:'Chased Juno Vale for the feature stem. It landed and is filed.', ok:true, src:'Gmail → Assets', ic:'dropbox', c:'var(--viv-cyan)' },
+  { t:'06:05', m:'Vinyl PO #1042 needs your sign-off before Friday.', ok:false, src:'Needs you', ic:'', c:'var(--viv-orange)' },
+];
+---
+<section class="tm section section--paper" id="teammate">
+  <div class="wrap tm__in">
+    <div class="tm__copy">
+      <p class="pro-label" data-reveal><b>Pro</b>Included in the 14-day trial</p>
+      <h2 class="h1 lines"><span class="line"><span>While you were</span></span><span class="line"><span>in the <em>studio.</em></span></span></h2>
+      <p class="lead" data-reveal>TeamMate is the AI inside Team. It reads the whole release, does the admin that eats your week, and shows its work. It changes things only where it is safe to, and asks you only when it needs you.</p>
+      <ul class="tm__points" data-reveal-stagger>
+        <li><i class="tm__pi" style="--c:var(--viv-lav)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5M12 8v4l3 2"/></svg></i><span><b>It remembers.</b> Every version, thread, decision and date, across the whole release.</span></li>
+        <li><i class="tm__pi" style="--c:var(--lime)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></i><span><b>It does.</b> Updates the sheet, re-briefs the partner, drafts the post, files the stem.</span></li>
+        <li><i class="tm__pi" style="--c:var(--viv-orange);color:var(--white)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 9a3 3 0 1 1 4.5 2.6c-.9.5-1.5 1.2-1.5 2.4M12 17.5v.1"/></svg></i><span><b>It asks.</b> Money, dates and anything that touches a partner wait for you.</span></li>
+      </ul>
+      <div class="cta-row" data-reveal>
+        <a class="btn btn--primary" href="/teammate">Meet TeamMate <span class="arr">→</span></a>
+      </div>
+    </div>
+
+    <div class="tm__log" data-reveal data-tmlog>
+      <header class="tm__head"><span class="tm__dots"></span><span class="tm__crumb"><b>Midnight Static</b>overnight</span><span class="tm__live"><span class="dot"></span>TeamMate</span></header>
+      <ol class="tm__lines">
+        {log.map((l, i) => (
+          <li class:list={['tm__line', { 'is-needs': !l.ok }]} data-line={i} style={`--c:${l.c}`}>
+            <span class="tm__ic">{l.ic ? <img src={`/studio-nine/logos/${l.ic}.svg`} alt="" loading="lazy" /> : (l.ok ? '✓' : '!')}</span>
+            <span class="tm__m">{l.m}<small><span class="tm__t tnum">{l.t}</span>{l.src}</small></span>
+            <span class="tm__st">{l.ok ? '✓' : '!'}</span>
+          </li>
+        ))}
+      </ol>
+      <div class="tm__brief" data-brief>
+        <p class="tm__brief-k"><span class="dot"></span>07:00 · your morning</p>
+        <p class="tm__brief-t"><em>Four</em> things moved overnight and I handled them. The vinyl order needs a decision that's yours: it's due Friday and the quote went up by $140.</p>
+        <div class="tm__brief-acts"><button class="btn btn--lime btn--sm" type="button">Approve the PO</button><button class="btn btn--ghost btn--sm tm__ghost" type="button">Show me</button></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .tm__in{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2.5rem,6vw,6rem);align-items:center}
+  .tm__copy{display:grid;gap:1.5rem}
+  .tm__points{display:grid;gap:.75rem;margin-top:.25rem}
+  .tm__points li{display:grid;grid-template-columns:2.3rem 1fr;gap:.9rem;align-items:start;color:var(--ink-60);line-height:1.5}
+  .tm__pi{width:2.3rem;height:2.3rem;border-radius:.75rem;background:var(--c);color:var(--ink);display:grid;place-items:center;margin-top:.05rem}
+  .tm__pi svg{width:1.15rem;height:1.15rem}
+  .tm__points b{color:var(--ink);font-weight:500}
+  .tm__log{background:var(--ink);color:var(--on-dark);border-radius:var(--r-xl);box-shadow:var(--shadow-lg);padding:1.1rem;display:grid;gap:.8rem}
+  .tm__head{display:flex;align-items:center;gap:.8rem;padding:.2rem .3rem .4rem;font-size:.78rem;color:var(--on-dark-60)}
+  .tm__dots{width:.45rem;height:.45rem;border-radius:50%;background:rgba(255,255,255,.3);box-shadow:.75rem 0 0 rgba(255,255,255,.3),1.5rem 0 0 rgba(255,255,255,.3);margin-right:1.5rem}
+  .tm__crumb{display:flex;gap:.5rem;align-items:baseline}.tm__crumb b{color:var(--white);font-weight:500;font-size:.9rem}
+  .tm__live{margin-left:auto;display:flex;align-items:center;gap:.4rem;font-weight:500;color:var(--white)}
+  .tm__lines{display:grid;gap:.4rem}
+  .tm__line{display:grid;grid-template-columns:2rem 1fr auto;gap:.7rem;align-items:center;padding:.65rem .75rem;border-radius:calc(var(--r-xl) - 1.1rem);background:rgba(255,255,255,.07);opacity:0;transform:translateY(8px);transition:opacity .5s var(--ease),transform .6s var(--ease)}
+  .tm__line.is-in{opacity:1;transform:none}
+  .tm__ic{width:2rem;height:2rem;border-radius:.6rem;background:var(--c);color:var(--ink);display:grid;place-items:center;font-size:.8rem;font-weight:700}
+  .tm__ic img{width:1.1rem;height:1.1rem}
+  .tm__m{font-size:.9rem;line-height:1.35;color:var(--white)}
+  .tm__m small{display:flex;gap:.6rem;font-size:.72rem;color:var(--on-dark-60);margin-top:.15rem}
+  .tm__t{font-variant-numeric:tabular-nums}
+  .tm__st{width:1.3rem;height:1.3rem;border-radius:50%;background:var(--lime);color:var(--ink);display:grid;place-items:center;font-size:.66rem;font-weight:700}
+  .tm__line.is-needs{background:var(--viv-orange)}.tm__line.is-needs .tm__ic{background:var(--white);color:var(--viv-orange)}.tm__line.is-needs .tm__st{background:var(--white);color:var(--viv-orange)}.tm__line.is-needs .tm__m small{color:rgba(255,255,255,.75)}
+  .tm__brief{padding:1rem 1.1rem;border-radius:calc(var(--r-xl) - 1.1rem);background:var(--lime);color:var(--ink);display:grid;gap:.5rem;opacity:0;transform:translateY(8px);transition:opacity .6s var(--ease) .2s,transform .7s var(--ease) .2s}
+  .tm__brief.is-in{opacity:1;transform:none}
+  .tm__brief-k{font-size:.72rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-60);display:flex;align-items:center;gap:.5rem}
+  .tm__brief-k .dot{background:var(--ink);box-shadow:none}
+  .tm__brief-t{font-size:1.02rem;line-height:1.35}
+  .tm__brief-t em{font-family:var(--serif);font-weight:300;font-style:italic;font-size:1.15em}
+  .tm__brief-acts{display:flex;gap:.5rem;margin-top:.3rem}
+  .tm__brief .btn--lime{background:var(--ink);color:var(--white)}
+  .tm__ghost{box-shadow:inset 0 0 0 1px var(--ink)}
+  @media (max-width:900px){.tm__in{grid-template-columns:1fr}}
+</style>
+
+<script>
+  const box = document.querySelector<HTMLElement>('[data-tmlog]');
+  if (box) {
+    const lines = Array.from(box.querySelectorAll<HTMLElement>('[data-line]'));
+    const brief = box.querySelector<HTMLElement>('[data-brief]')!;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let done = false;
+    // Phones scroll past faster, so the log fills in about half the time there
+    const step = window.matchMedia('(max-width: 900px)').matches ? 260 : 520;
+    const run = () => {
+      if (done) return; done = true;
+      lines.forEach((l, i) => setTimeout(() => l.classList.add('is-in'), reduce ? 0 : 250 + i * step));
+      setTimeout(() => brief.classList.add('is-in'), reduce ? 0 : 250 + lines.length * step + 200);
+    };
+    new IntersectionObserver(([e]) => { if (e.isIntersecting) run(); }, { threshold: 0.2 }).observe(box);
+  }
+</script>

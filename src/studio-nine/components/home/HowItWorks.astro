@@ -1,0 +1,315 @@
+---
+import { img } from '../../data/images';
+// pinned card stack: counter + title left, cards centre (scale up and rise away), caption right.
+const steps = [
+  { t:'Start a release', cap:'Name it, set your release date, enter some basic details and you\'re off. Team lays out the plan from announcement to release day and beyond. And for Pro customers, TeamMate can build the whole thing for you.' },
+  { t:'Bring the files and the people', cap:'Masters, artwork, video. The manager, the label, the distributor. One central release, with everyone included.' },
+  { t:'TeamMate does the admin', cap:'Keeps the plan current, chases what is missing, drafts what is next. Quietly, overnight, showing its work.' },
+  { t:'You call the shots', cap:'Money, dates and anything that touches a partner wait for you. Nothing gets signed off without you.' },
+  { t:'Release day, and everything after', cap:'The record is out, and the work is not over. Team keeps the rollout running through the weeks that decide how far a release travels.' },
+];
+const people = [['AN','var(--team-music)','Artist'],['TS','var(--team-mgmt)','Manager'],['MR','var(--team-mkt)','Label'],['SD','var(--team-distro)','Distro'],['JP','var(--team-press)','PR']];
+---
+<section class="hiw section" id="how-it-works">
+  <div class="wrap">
+    <div class="hiw__top">
+      <h2 class="h1 lines"><span class="line"><span>How it</span></span><span class="line"><span><em>actually</em> works.</span></span></h2>
+      <div class="hiw__aside" data-reveal><p>Five steps, from first idea to release day and beyond.</p><a class="btn btn--primary" href="/rollouts">See a rollout</a></div>
+    </div>
+  </div>
+
+  <div class="hiw__pin" data-hiw>
+    <div class="wrap hiw__stage">
+      <div class="hiw__left">
+        {steps.map((s, i) => (
+          <div class:list={['hiw__step', { 'is-on': i === 0 }]} data-step={i}>
+            <p class="hiw__num tnum"><b>0{i + 1}</b><span>/ 05</span></p>
+            <h3 class="h2">{s.t}</h3>
+          </div>
+        ))}
+      </div>
+
+      <div class="hiw__deck">
+        <div class="hcard hcard--1" data-card="0">
+          <div class="hcard__bar"><span class="hcard__bar-l"><i class="hcard__dots"></i>New release</span><span>09:12</span></div>
+          <div class="hcard__msg hcard__msg--user"><span class="hcard__av"><img src={img('hero-artist')} alt="" /></span><p>Album out 30 October. Ten tracks, no plan yet.</p></div>
+          <div class="hcard__msg hcard__msg--tm"><span class="hcard__av hcard__av--tm"></span><p>On it. Building the rollout from today to release day.</p></div>
+          <div class="hcard__msg hcard__msg--user"><span class="hcard__av"><img src={img('hero-artist')} alt="" /></span><p>Vinyl too, and a Berlin show if it works.</p></div>
+          <div class="hcard__msg hcard__msg--tm"><span class="hcard__av hcard__av--tm"></span><p>Added. 22 tasks, dated and owned. Vinyl lead time is 11 weeks, so the PO goes in this Friday.</p></div>
+          <div class="hcard__built"><span class="dot"></span><b>Rollout built</b> · 22 tasks · 5 people · 41 days</div>
+        </div>
+        <div class="hcard hcard--2" data-card="1">
+          <img class="hcard__photo" src={img('hiw-2-producer')} alt="" loading="lazy" />
+          <div class="hcard__bar hcard__bar--over"><span class="hcard__bar-l"><i class="hcard__dots"></i>Midnight Static</span><span>5 on the release</span></div>
+          <ul class="hcard__joins">
+            {[['AN','Ava','Artist','var(--team-music)','Dropped Master_v10.wav'],['TS','Theo','Manager','var(--team-mgmt)','Joined · can approve money'],['MR','Maya','Label · marketing','var(--team-mkt)','Joined · owns the pitch'],['SD','Sam','Distributor','var(--team-distro)','Joined · delivery window']].map(([i,n,r,c,d]) => <li><i style={`background:${c}`}>{i}</i><div><b>{n} <span>{r}</span></b><small>{d}</small></div></li>)}
+          </ul>
+        </div>
+        <div class="hcard hcard--3" data-card="2">
+          <div class="hcard__bar hcard__bar--ink"><span class="hcard__bar-l"><span class="dot"></span>TeamMate · overnight</span><span>4 done · 1 for you</span></div>
+          <ul class="hcard__feed">
+            <li><img src="/studio-nine/logos/white/googlesheets.svg" alt="" /><div><b>Budget</b><span>Content $2,500 → $3,100. Notion and the one-sheet updated to match.</span></div><time>23:43</time></li>
+            <li><img src="/studio-nine/logos/white/gmail.svg" alt="" /><div><b>Press</b><span>Re-briefed the list on the new embargo date.</span></div><time>02:57</time></li>
+            <li><img src="/studio-nine/logos/white/dropbox.svg" alt="" /><div><b>Assets</b><span>Juno's stem landed. Filed under Tracks, v9 flagged.</span></div><time>04:12</time></li>
+            <li class="is-needs"><i>!</i><div><b>Needs you</b><span>Vinyl PO #1042 before Friday.</span></div><time>06:05</time></li>
+          </ul>
+          <div class="hcard__brief"><span class="hcard__brief-k">07:00 · your morning</span><p>Four things moved overnight. I handled three. <em>One needs you.</em></p></div>
+        </div>
+        <div class="hcard hcard--4" data-card="3">
+          <div class="hcard__bar hcard__bar--lav"><span class="hcard__bar-l"><span class="dot"></span>TeamMate · 06:05</span><span>1 needs you</span></div>
+          <div class="hcard__ask">
+            <span class="hcard__ask-k"><i style="background:var(--viv-orange)"></i>Needs your sign-off</span>
+            <p class="hcard__ask-t">Vinyl PO #1042 is up <em>$140</em> to $1,190.</p>
+            <p class="hcard__ask-why">Pallas raised their per-unit price. The budget can absorb it, and the 11-week lead time means it has to go in by Friday to make release day.</p>
+            <ul class="hcard__ask-facts"><li><span>Due</span><b>Fri 26</b></li><li><span>Budget</span><b>$1,050 → $1,190</b></li><li><span>Impact if late</span><b>Vinyl misses release</b></li></ul>
+            <div class="hcard__ask-btns"><span class="hcard__approve">Approve</span><span class="hcard__ask-alt">Ask Pallas for a better price</span></div>
+          </div>
+          <p class="hcard__ask-foot">Nothing gets signed off without you.</p>
+        </div>
+        <div class="hcard hcard--5" data-card="4">
+          <div class="hcard__bar hcard__bar--lime"><span class="hcard__bar-l"><i class="hcard__dots"></i>Midnight Static</span><span>Out · 30 Oct</span></div>
+          <p class="hcard__big">Released. <em>Now it keeps going.</em></p>
+          <div class="hcard__stat"><div><span>Streams · first 8 days</span><b class="tnum">248k</b></div><span class="hcard__up">↗ +40% in Germany</span></div>
+          <div class="hcard__chart">{[14,18,22,30,26,41,55,48,62,70,58,64,80,92].map((v,i) => <i style={`--v:${v}`} class:list={[{ 'is-now': i === 13 }]}></i>)}</div>
+          <ul class="hcard__after">
+            <li><b>D+1</b>Recap written and sent to the label</li>
+            <li><b>D+3</b>Added to 4 editorial playlists · pitching 6 more</li>
+            <li><b>D+8</b>Berlin date suggested for the run · Astra has a hold</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="hiw__nav" data-hiw-nav hidden>
+        <button class="hiw__arrow" type="button" data-hiw-prev aria-label="Previous step">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7" /></svg>
+        </button>
+        <span class="hiw__count"><b data-hiw-now>01</b><i>/</i><span>{String(steps.length).padStart(2, '0')}</span></span>
+        <button class="hiw__arrow" type="button" data-hiw-next aria-label="Next step">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7" /></svg>
+        </button>
+      </div>
+
+      <div class="hiw__right">
+        {steps.map((s, i) => <p class:list={['hiw__cap', { 'is-on': i === 0 }]} data-cap={i}>{s.cap}</p>)}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hiw{background:var(--paper);padding-bottom:0}
+  .hiw__top{display:flex;justify-content:space-between;align-items:flex-end;gap:2rem;margin-bottom:clamp(1rem,3vw,2rem)}
+  .hiw__aside{display:grid;gap:1.1rem;justify-items:start;max-width:22rem;padding-bottom:.35rem}
+  .hiw__aside p{font-size:var(--t-lead);line-height:1.4;color:var(--ink);font-weight:450}
+  /* pinned stage */
+  .hiw__pin{position:relative}
+  .hiw__stage{display:grid;grid-template-columns:1fr 26rem 1fr;gap:clamp(1.5rem,4vw,4rem);align-items:center;min-height:100vh;padding-block:2rem}
+  .hiw__left{position:relative;min-height:9rem}
+  .hiw__step{position:absolute;inset:0;display:grid;align-content:center;gap:.6rem;opacity:0;transform:translateY(18px);transition:opacity .45s var(--ease),transform .5s var(--ease);pointer-events:none}
+  .hiw__step.is-on{opacity:1;transform:none}
+  .hiw__num{font-size:1.6rem;letter-spacing:-.02em;display:flex;gap:.3rem;align-items:baseline}
+  .hiw__num b{font-weight:500}.hiw__num span{color:var(--ink-40)}
+  .hiw__right{position:relative;min-height:6rem}
+  .hiw__cap{position:absolute;inset:0;display:grid;align-content:center;font-size:1.05rem;line-height:1.5;color:var(--ink-60);opacity:0;transform:translateY(18px);transition:opacity .45s var(--ease),transform .5s var(--ease)}
+  .hiw__cap.is-on{opacity:1;transform:none}
+  /* the deck */
+  .hiw__nav{display:none;align-items:center;justify-content:center;gap:1rem;margin-top:1.1rem}
+  .hiw__arrow{width:2.75rem;height:2.75rem;border-radius:50%;display:grid;place-items:center;background:var(--white);color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink-12);transition:background .2s var(--ease),box-shadow .2s var(--ease)}
+  .hiw__arrow:hover{background:var(--paper)}
+  .hiw__arrow:active{background:var(--ink);color:var(--white)}
+  .hiw__count{font-size:.9rem;font-weight:500;font-variant-numeric:tabular-nums;color:var(--ink-40);min-width:3.5rem;text-align:center}
+  .hiw__count b{color:var(--ink);font-weight:500}
+  .hiw__count i{font-style:normal;margin:0 .15rem}
+  .hiw__deck{position:relative;width:26rem;height:31rem;justify-self:center}
+  .hcard{position:absolute;inset:0;border-radius:1.5rem;overflow:hidden;transform-origin:50% 100%;will-change:transform,opacity;display:grid;align-content:start;gap:1rem;padding:1.4rem;box-shadow:0 20px 50px rgba(14,13,11,.14),inset 0 0 0 1px rgba(255,255,255,.08)}
+  /* shared app bar on every card */
+  .hcard__bar{display:flex;justify-content:space-between;align-items:center;font-size:.76rem;font-weight:500;padding:.5rem .7rem;border-radius:.7rem;background:rgba(255,255,255,.12);color:inherit}
+  .hcard__bar-l{display:flex;align-items:center;gap:.5rem}
+  .hcard__dots{width:.5rem;height:.5rem;border-radius:50%;background:currentColor;opacity:.5;box-shadow:.8rem 0 0 currentColor,1.6rem 0 0 currentColor;margin-right:1.6rem}
+  .hcard__bar--over{position:absolute;left:1.2rem;right:1.2rem;top:1.2rem;background:rgba(255,255,255,.9);backdrop-filter:blur(8px);color:var(--ink);z-index:2}
+  .hcard__bar--olive{background:rgba(255,255,255,.14);color:var(--white)}
+  .hcard__bar--lime{background:rgba(255,255,255,.55);color:var(--ink)}
+  /* card 1: chat on deep green */
+  .hcard--1{background:var(--viv-green);color:var(--white)}
+  .hcard__chrome{display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem}
+  .hcard__tabs{display:inline-flex;padding:.2rem;border-radius:var(--r-pill);background:rgba(255,255,255,.14);font-size:.8rem}
+  .hcard__tabs b,.hcard__tabs span{padding:.35rem .9rem;border-radius:var(--r-pill)}.hcard__tabs b{background:var(--white);color:var(--viv-green);font-weight:500}
+  .hcard__logo{width:1.6rem;height:1.6rem;display:grid;place-items:center}.hcard__logo img{width:100%;filter:none}
+  .hcard__msg{display:flex;gap:.6rem;align-items:flex-start}
+  .hcard__msg p{font-family:var(--serif);font-weight:300;font-size:1.2rem;line-height:1.15;padding:.55rem .8rem;border-radius:1rem 1rem 1rem .25rem;background:var(--paper);color:var(--ink);box-decoration-break:clone;-webkit-box-decoration-break:clone}
+  .hcard__msg--tm{flex-direction:row-reverse}
+  .hcard--1{gap:.6rem;grid-template-rows:auto auto auto auto auto 1fr}
+  .hcard--1 .hcard__built{align-self:end}
+  .hcard__built{margin-top:auto;display:flex;align-items:center;gap:.5rem;padding:.6rem .8rem;border-radius:.7rem;background:rgba(255,255,255,.14);font-size:.8rem}.hcard__built b{font-weight:500;color:var(--white)}
+  .hcard--1 .hcard__chrome{margin-top:.2rem}
+  .hcard__msg--tm p{background:var(--viv-pink);border-radius:1rem 1rem .25rem 1rem}
+  .hcard__av{flex:none;width:2.4rem;height:2.4rem;border-radius:50%;overflow:hidden;border:2px solid var(--white)}
+  .hcard__av img{width:100%;height:100%;object-fit:cover}
+  .hcard__av--tm{background:var(--viv-pink);display:grid;place-items:center}
+  .hcard__av--tm::before{content:'';width:1rem;height:1rem;border-radius:.3rem;background:var(--ink)}
+  /* card 2: photo + people */
+  .hcard--2{padding:0;background:var(--ink)}
+  .hcard__photo{position:absolute;inset:0;width:100%;height:100%;max-width:none;object-fit:cover}
+  .hcard__over{position:absolute;inset:auto 0 0 0;padding:1.5rem;background:linear-gradient(180deg,transparent,rgba(14,13,11,.75));color:var(--white);display:grid;gap:.9rem}
+  .hcard__over-k{display:flex;align-items:center;gap:.5rem;font-size:.9rem;font-weight:500}
+  .hcard__joins{position:absolute;left:1.2rem;right:1.2rem;bottom:1.2rem;display:grid;gap:.4rem}
+  .hcard__joins li{display:flex;gap:.6rem;align-items:center;padding:.5rem .65rem;border-radius:.7rem;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);color:var(--ink);font-size:.76rem;box-shadow:var(--shadow-md)}
+  .hcard__joins i{flex:none;width:1.7rem;height:1.7rem;border-radius:50%;display:grid;place-items:center;font-size:.55rem;font-weight:700;font-style:normal}
+  .hcard__joins b{font-weight:500;display:block}.hcard__joins b span{font-weight:400;color:var(--ink-60)}.hcard__joins small{font-size:.66rem;color:var(--ink-40)}
+  /* card 3: ink feed */
+  .hcard--3{background:var(--ink);color:var(--on-dark);padding:1.4rem;grid-template-rows:auto 1fr auto}
+  .hcard--3 .hcard__feed{align-self:start}
+  .hcard__bar--ink{background:rgba(255,255,255,.1);color:var(--on-dark)}
+  .hcard__feed{display:grid;gap:.45rem}
+  .hcard__feed li{display:grid;grid-template-columns:1.6rem 1fr auto;gap:.6rem;align-items:start;padding:.6rem .7rem;border-radius:.7rem;background:rgba(255,255,255,.07);font-size:.78rem;line-height:1.3}
+  .hcard__feed img{width:1.3rem;height:1.3rem;opacity:.9}
+  .hcard__feed i{width:1.3rem;height:1.3rem;border-radius:50%;background:var(--viv-orange);color:var(--white);font-style:normal;font-weight:700;font-size:.7rem;display:grid;place-items:center}
+  .hcard__feed b{display:block;font-weight:500;color:var(--white)}
+  .hcard__feed span{color:var(--on-dark-60)}
+  .hcard__feed time{font-size:.68rem;color:var(--on-dark-60);font-variant-numeric:tabular-nums}
+  .hcard__feed .is-needs{background:rgba(242,106,46,.16)}
+  .hcard__brief{margin-top:auto;padding:.8rem .9rem;border-radius:.8rem;background:var(--lime);color:var(--ink);font-size:.9rem;line-height:1.3}
+  .hcard__brief-k{display:block;font-size:.66rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-60);margin-bottom:.25rem}
+  .hcard__brief em{font-family:var(--serif);font-weight:300;font-style:italic;font-size:1.15em}
+  /* card 4: approval */
+  .hcard__ask{background:var(--white);color:var(--ink);border-radius:1rem;padding:1rem 1.1rem;display:grid;gap:.7rem;box-shadow:var(--shadow-md)}
+  .hcard__ask-k{display:flex;align-items:center;gap:.4rem;font-size:.72rem;font-weight:600;color:var(--ink-60)}
+  .hcard__ask-k i{width:.6rem;height:.6rem;border-radius:50%}
+  .hcard__ask-t{font-size:1.25rem;font-weight:500;letter-spacing:-.02em;line-height:1.2}
+  .hcard__ask-t em{font-family:var(--serif);font-weight:300;font-size:1.12em}
+  .hcard__ask-facts{display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem}
+  .hcard__ask-facts b{white-space:normal;line-height:1.2}
+  .hcard__ask-facts li{display:grid;gap:.1rem;padding:.5rem .6rem;border-radius:.6rem;background:var(--paper);font-size:.72rem}
+  .hcard__ask-facts span{color:var(--ink-40)}.hcard__ask-facts b{font-weight:500;font-size:.78rem}
+  .hcard__ask-btns{display:flex;gap:.5rem;align-items:center;margin-top:.2rem}
+  .hcard__ask-alt{font-size:.82rem;font-weight:500;color:var(--ink-60)}
+  .hcard__ask-foot{text-align:center;font-size:.78rem;color:var(--ink-60);margin-top:auto}
+  /* card 5: release day */
+  .hcard__stat{display:flex;justify-content:space-between;align-items:flex-end;padding:.8rem .9rem .6rem;border-radius:.8rem .8rem 0 0;background:rgba(255,255,255,.5)}
+  .hcard__stat span{display:block;font-size:.7rem;color:var(--ink-60)}.hcard__stat b{font-size:1.8rem;font-weight:500;letter-spacing:-.03em;line-height:1}
+  .hcard__up{font-size:.74rem;font-weight:600;color:var(--green-ink);padding-bottom:.2rem}
+  .hcard__chart{display:flex;align-items:flex-end;gap:.25rem;height:5rem;padding:0 .9rem .8rem;border-radius:0 0 .8rem .8rem;background:rgba(255,255,255,.5);margin-top:-1rem}
+  .hcard__chart i{flex:1;height:calc(var(--v) * 1%);border-radius:3px 3px 0 0;background:var(--ink);opacity:.25}
+  .hcard__chart i.is-now{opacity:1}
+  .hcard__chips{display:flex;flex-wrap:wrap;gap:.35rem}
+  .hcard__chips li{font-size:.72rem;font-weight:500;padding:.3rem .6rem;border-radius:var(--r-pill);background:var(--ink);color:var(--lime)}
+  /* (legacy) card 3 photo styles kept for the photo cards */
+  .hcard__notes{position:absolute;left:1rem;right:1rem;top:4.2rem;display:grid;gap:.55rem}
+  .hcard__notes li{width:max-content;max-width:78%;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-radius:.8rem;padding:.5rem .7rem;font-size:.76rem;line-height:1.3;color:var(--ink);box-shadow:var(--shadow-md);transform:translateX(calc(var(--i) * 1.4rem))}
+  .hcard__notes li:nth-child(even){justify-self:end}
+  .hcard__note-k{display:flex;align-items:center;gap:.35rem;font-weight:500;margin-bottom:.1rem}
+  .hcard__note-k i{width:.85rem;height:.85rem;border-radius:.25rem}
+  .hcard__note-k small{color:var(--ink-40);font-weight:400}
+  .hcard__notes li.is-serif{font-family:var(--serif);font-size:.95rem;background:var(--lime);margin-top:auto}
+  /* card 4: needs-you stack on olive */
+  .hcard--4{background:var(--viv-lav);color:var(--ink);justify-items:stretch;align-content:start;gap:.8rem;grid-template-rows:auto 1fr auto}
+  .hcard--4 .hcard__ask{align-self:start}
+  .hcard__bar--lav{background:rgba(255,255,255,.5);color:var(--ink)}
+  .hcard__ask-why{font-size:.78rem;line-height:1.35;color:var(--ink-60)}
+  .hcard__k-top{display:flex;align-items:center;gap:.5rem;font-size:.8rem;font-weight:500}
+  .hcard__stack{position:relative;width:100%;height:11.5rem}
+  .hcard__op{position:absolute;left:50%;transform:translateX(-50%);width:88%;background:var(--white);color:var(--ink);border-radius:1rem;padding:.85rem 1rem;display:grid;gap:.5rem;box-shadow:var(--shadow-md)}
+  .hcard__op--3{top:0;width:78%;opacity:.55}.hcard__op--2{top:1.3rem;width:83%;opacity:.8}.hcard__op--1{top:2.6rem}
+  .hcard__op-k{width:max-content;font-size:.66rem;font-weight:600;padding:.15rem .5rem;border-radius:var(--r-pill);color:var(--ink)}
+  .hcard__op-t{font-size:1.1rem;font-weight:500;letter-spacing:-.02em;line-height:1.25}
+  .hcard__op-t em{font-family:var(--serif);font-weight:300;font-size:1.12em}
+  .hcard__approve{background:var(--ink);color:var(--white);font-weight:500;font-size:.88rem;padding:.6rem 1rem;border-radius:var(--r-btn)}
+  /* card 5: lime release day */
+  .hcard--5{background:var(--lime);color:var(--ink);align-content:start;gap:.8rem;grid-template-rows:auto auto auto auto 1fr}
+  .hcard--5 .hcard__after{align-self:end}
+  .hcard--5 .hcard__big{margin-top:.1rem;font-size:1.9rem;line-height:1.05}
+  .hcard--5 .hcard__after{margin-top:auto}
+  .hcard__k-top--ink{color:var(--ink-80)}
+  .hcard__big{font-size:2.6rem;line-height:1;letter-spacing:-.04em;font-weight:500}
+  .hcard__big em{font-family:var(--serif);font-weight:300;font-style:italic;font-size:1.12em}
+  .hcard__after{display:grid;gap:.4rem}
+  .hcard__after li{display:grid;grid-template-columns:2.6rem 1fr;gap:.5rem;padding:.6rem .75rem;border-radius:.7rem;background:rgba(255,255,255,.55);font-size:.86rem;line-height:1.3}
+  .hcard__after b{font-weight:600;font-variant-numeric:tabular-nums}
+  .hcard__ready{display:flex;align-items:center;gap:.5rem;font-size:.82rem;color:var(--ink-80)}
+  .hcard__ready span{width:1.3rem;height:1.3rem;border-radius:50%;background:var(--ink);color:var(--lime);display:grid;place-items:center;font-size:.7rem}
+  @media (max-width:960px){
+    .hiw__top{flex-direction:column;align-items:flex-start}
+    .hiw__stage{grid-template-columns:1fr;min-height:0;gap:1rem;padding-block:1rem 3rem}
+    .hiw__left,.hiw__right{min-height:0}
+    /* Every headline and caption shares one grid cell, so the block is always as tall as the
+       longest of them. Swapping cards then never shifts the card or anything below it. */
+    .hiw__left,.hiw__right{display:grid}
+    .hiw__step,.hiw__cap{position:static;grid-area:1/1;display:grid;transform:none;opacity:0;visibility:hidden;pointer-events:none}
+    .hiw__step.is-on,.hiw__cap.is-on{opacity:1;visibility:visible;pointer-events:auto}
+    .hiw__deck{width:min(100%,24rem);height:31rem}  /* matches the desktop card height so the last row of cards 4 and 5 is not clipped */
+    .hcard{padding:1.25rem}
+    .hiw__nav{display:flex}
+  }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger } from '../../scripts/motion';
+  const root = document.querySelector<HTMLElement>('[data-hiw]');
+  if (root) {
+    const cards = Array.from(root.querySelectorAll<HTMLElement>('[data-card]'));
+    const steps = Array.from(root.querySelectorAll<HTMLElement>('[data-step]'));
+    const caps = Array.from(root.querySelectorAll<HTMLElement>('[data-cap]'));
+    const N = cards.length;
+    const activate = (i: number) => { steps.forEach((s, j) => s.classList.toggle('is-on', j === i)); caps.forEach((c, j) => c.classList.toggle('is-on', j === i)); };
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const desktop = window.matchMedia('(min-width: 961px)');
+    // layout for a fractional progress p in [0, N-1]: card k sits behind if k>p, current at p, gone if k<p
+    const layout = (p: number) => {
+      cards.forEach((c, k) => {
+        const d = k - p;                       // 0 = current, +1 next behind, -1 just finished
+        if (d >= 0) { const s = Math.max(.72, 1 - d * .06); gsap.set(c, { y: d * 26, scale: s, opacity: d > 3.2 ? 0 : 1, zIndex: 10 - k }); }
+        else { const t = Math.min(1, -d); gsap.set(c, { y: -t * 640, scale: 1, opacity: Math.max(0, 1 - t * 1.6), rotate: -t * 5, zIndex: 10 - k }); }
+      });
+    };
+    let st: ScrollTrigger | null = null;
+    const build = () => {
+      st?.kill(); root.style.height = '';
+      if (reduce || !desktop.matches) {
+        cards.forEach((c) => gsap.set(c, { clearProps: 'all' }));
+        layout(0); activate(0);
+        if (!desktop.matches) {
+          // Phone: one card at a time, driven by arrows, a swipe, or a 10s dwell.
+          const nav = root.querySelector<HTMLElement>('[data-hiw-nav]');
+          const now = root.querySelector<HTMLElement>('[data-hiw-now]');
+          const deck = root.querySelector<HTMLElement>('.hiw__deck');
+          if (nav) nav.hidden = false;
+          let i = 0, timer = 0;
+          const show = (n: number) => {
+            i = (n + N) % N;
+            cards.forEach((c, k) => gsap.set(c, { opacity: k === i ? 1 : 0, y: 0, scale: 1, rotate: 0, zIndex: k === i ? 10 : 1 }));
+            activate(i);
+            if (now) now.textContent = String(i + 1).padStart(2, '0');
+          };
+          // Taking control restarts the clock, so a card never flicks away the moment you land on it.
+          const arm = () => { window.clearInterval(timer); timer = window.setInterval(() => show(i + 1), 10000); };
+          const go = (n: number) => { show(n); arm(); };
+          root.querySelector('[data-hiw-prev]')?.addEventListener('click', () => go(i - 1));
+          root.querySelector('[data-hiw-next]')?.addEventListener('click', () => go(i + 1));
+          if (deck) {
+            let x0 = 0, dragging = false;
+            deck.addEventListener('pointerdown', (e) => { dragging = true; x0 = e.clientX; });
+            deck.addEventListener('pointerup', (e) => {
+              if (!dragging) return; dragging = false;
+              const dx = e.clientX - x0;
+              if (Math.abs(dx) > 45) go(i + (dx < 0 ? 1 : -1));
+            });
+            deck.addEventListener('pointercancel', () => { dragging = false; });
+          }
+          show(0); arm();
+        }
+        return;
+      }
+      layout(0); activate(0);
+      st = ScrollTrigger.create({
+        trigger: root, start: 'top top', end: () => `+=${(N - 1) * 980}`, pin: true, scrub: .5, anticipatePin: 1,
+        onUpdate: (self) => {
+          // each card holds for 62% of its segment, then hands over in the remaining 38%
+          const raw = self.progress * (N - 1), i = Math.min(N - 1, Math.floor(raw)), f = raw - i;
+          const e = Math.min(1, Math.max(0, (f - .62) / .38)); const p = i + e * e * (3 - 2 * e);
+          layout(p); activate(Math.min(N - 1, Math.round(p)));
+        },
+      });
+    };
+    build(); desktop.addEventListener('change', build);
+  }
+</script>
