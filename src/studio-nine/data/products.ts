@@ -1,6 +1,13 @@
 export type Mock = { title: string; rows: { l: string; s?: string; tag?: string; tone?: 'lime'|'orange'|'ink' }[]; foot?: string };
 export type Product = {
-  slug: string; name: string; pro: boolean; title: string; h1: [string, string]; lead: string;
+  slug: string; name: string; pro: boolean;
+  /** Paid plan that unlocks it, shown as a tag in the nav and on related cards. */
+  plan?: 'Pro' | 'Ultra';
+  /** Hero label: the bold pill, then the line beside it. */
+  badge?: [string, string];
+  /** Plans it is sold on, for structured data. */
+  plans: ('free' | 'pro' | 'ultra')[];
+  title: string; h1: [string, string]; lead: string;
   cta: { label: string; href: string }; cta2: { label: string; href: string }; note: string;
   problem: [string, string]; problemBody: string;
   demos: { h: string; d: string; mock: Mock }[];
@@ -12,7 +19,7 @@ const app = 'https://app.teamrollouts.com/onboarding';
 
 export const products: Product[] = [
   {
-    slug: 'rollouts', name: 'Rollouts', pro: false, title: 'Rollouts — plan and run every release',
+    slug: 'rollouts', name: 'Rollouts', pro: false, plans: ['free'], title: 'Rollouts — plan and run every release',
     h1: ['Every release,', 'planned and run.'],
     lead: 'Rollouts is where a release goes from idea to live. The timeline, the tracks, the artwork, the budget, the territories and the pitches in one place, with TeamMate keeping it all moving.',
     cta: { label: 'Start a release, free', href: app + '?plan=free' }, cta2: { label: 'Book a demo', href: '/demo' }, note: 'Free forever. No card.',
@@ -27,7 +34,7 @@ export const products: Product[] = [
     related: ['assets', 'teammate', 'tours'],
   },
   {
-    slug: 'assets', name: 'Assets', pro: false, title: 'Assets — every file for the release, release-ready',
+    slug: 'assets', name: 'Assets', pro: false, plans: ['free'], title: 'Assets — every file for the release, release-ready',
     h1: ['Every file,', 'release-ready.'],
     lead: 'Assets is the creative library for the release. Artwork, audio, video, documents and links in one place, versioned so the final is always the final, and shareable so no one sends a zip again.',
     cta: { label: 'Open a library, free', href: app + '?plan=free' }, cta2: { label: 'Book a demo', href: '/demo' }, note: 'Free forever. No card.',
@@ -42,10 +49,10 @@ export const products: Product[] = [
     related: ['rollouts', 'teammate', 'connectors'],
   },
   {
-    slug: 'tours', name: 'Tours', pro: true, title: 'Tours — take the release on the road',
+    slug: 'tours', name: 'Tours', pro: true, plan: 'Ultra', badge: ['Ultra', 'Included in the 14-day trial'], plans: ['ultra'], title: 'Tours — take the release on the road',
     h1: ['Take the release', 'on the road.'],
     lead: 'Tours is where a release becomes a run of shows. Build the routing, advance every date, run the day sheets, and keep holds, on-sales, guarantees and settlement in one place, with TeamMate across all of it.',
-    cta: { label: 'Start a 14-day Pro trial', href: app + '?plan=pro' }, cta2: { label: 'Book a demo', href: '/demo' }, note: 'Pro · cancel any time.',
+    cta: { label: 'Start a 14-day trial', href: app + '?plan=ultra' }, cta2: { label: 'Book a demo', href: '/demo' }, note: 'On Ultra. Cancel any time.',
     problem: ['A tour is a hundred details', 'that all move at once.'],
     problemBody: 'Holds and offers, routing that has to make sense on a map, advances with every venue, day sheets the crew will actually read, guarantees and settlement. Tours holds all of it in one run, so a change in one place updates everywhere it touches.',
     demos: [
@@ -57,10 +64,10 @@ export const products: Product[] = [
     related: ['rollouts', 'teammate', 'connectors'],
   },
   {
-    slug: 'teammate', name: 'TeamMate', pro: true, title: 'TeamMate — the AI that does the admin',
+    slug: 'teammate', name: 'TeamMate', pro: true, badge: ['Free', '10 messages a day'], plans: ['free', 'pro'], title: 'TeamMate — the AI that does the admin',
     h1: ['The AI that', 'does the admin.'],
     lead: 'TeamMate is AI, inside Team. It reads the whole release, remembers every version, thread and decision, does the admin that eats your week, and asks you only when it needs you. And it shows its work.',
-    cta: { label: 'Start a 14-day Pro trial', href: app + '?plan=pro' }, cta2: { label: 'Book a demo', href: '/demo' }, note: 'Pro · cancel any time.',
+    cta: { label: 'Start a 14-day trial', href: app + '?plan=pro' }, cta2: { label: 'Book a demo', href: '/demo' }, note: 'All of TeamMate on Pro. Cancel any time.',
     problem: ['The answer to "where do we stand?"', 'should be one question away.'],
     problemBody: 'Every master version, every thread, every budget change, every approval, every deadline. TeamMate holds the whole history of a release in one place, so nothing has to live in someone\'s memory until they are on holiday.',
     demos: [
@@ -72,10 +79,10 @@ export const products: Product[] = [
     related: ['rollouts', 'connectors', 'security'],
   },
   {
-    slug: 'connectors', name: 'Connectors', pro: true, title: 'Connectors — works with the tools you already use',
+    slug: 'connectors', name: 'Connectors', pro: true, plan: 'Pro', badge: ['Pro', 'Included in the 14-day trial'], plans: ['pro'], title: 'Connectors — works with the tools you already use',
     h1: ['Works with the tools', 'you already use.'],
     lead: 'Connectors feed every file, message, plan and number from the tools you already run on into Team, and write back. Nothing to migrate, nothing to rip out, no new habits to learn.',
-    cta: { label: 'Start a 14-day Pro trial', href: app + '?plan=pro' }, cta2: { label: 'See the catalogue', href: '#catalogue' }, note: 'Pro · cancel any time.',
+    cta: { label: 'Start a 14-day trial', href: app + '?plan=pro' }, cta2: { label: 'See the catalogue', href: '#catalogue' }, note: 'On Pro. Cancel any time.',
     problem: ['Not an export.', 'A live wire.'],
     problemBody: 'Most tools let you export. Team stays connected. It sees a new file, thread or number the moment it lands, works out what changed, and updates the doc, the budget or the partner, and tells you what it did.',
     demos: [

@@ -4,7 +4,6 @@
   "Who it is for": "누구를 위한 서비스인가요?",
   "Team runs the release.": "Team과 함께 릴리스를 운영하세요.",
   "See how it works": "사용 방법 보기",
-  "Free forever, no card. TeamMate is on Pro, with a 14-day trial.": "평생 무료, 카드 없이. TeamMate는 Pro에서 14일 체험할 수 있습니다.",
   "An engineer and a drummer tuning the kit in the live room.": "스튜디오에서 드럼을 조율하는 엔지니어와 드러머.",
   "TeamMate · 07:00": "TeamMate · 07:00",
   "Your morning: master locked, content ready to approve, feature in. One thing due: finish the distributor metadata.": "아침 브리핑이에요. 마스터 확정, 콘텐츠 승인 대기, 피처링 파일 도착. 한 가지는 유통사 메타데이터를 마무리해야 해요.",
@@ -160,5 +159,6 @@
   "Nova LP is missing two ISRCs for the window in 9 days. Asked the label, with the exact fields.": "9일 후 납품할 Nova LP의 ISRC 두 개가 빠졌어요. 정확한 항목을 레이블에 요청했어요.",
   "Kite delivery confirmed. Marked done across both sides.": "Kite 납품이 확인됐어요. 양쪽 모두 완료로 표시했어요.",
   "Ava North master v10 replaced v9 in the delivery package.": "Ava North 납품 패키지에서 v9을 마스터 v10으로 교체했어요.",
-  "Midnight Static window closes Friday and artwork sizes are not at spec. Needs you or the label.": "Midnight Static 납품 접수가 금요일에 마감되는데 아트워크 사이즈가 규격에 맞지 않아요. 여러분 또는 레이블의 확인이 필요해요."
+  "Midnight Static window closes Friday and artwork sizes are not at spec. Needs you or the label.": "Midnight Static 납품 접수가 금요일에 마감되는데 아트워크 사이즈가 규격에 맞지 않아요. 여러분 또는 레이블의 확인이 필요해요.",
+  "Free forever, no card. Every new account starts with 14 days of Ultra.": "평생 무료, 카드 없이. 새 계정은 모두 Ultra 14일 체험으로 시작합니다."
 }

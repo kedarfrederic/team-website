@@ -1,27 +1,72 @@
 ---
 import Base from '../layouts/Base.astro';
-const app = 'https://app.teamrollouts.com/onboarding';
-const compare: [string, string, string][] = [
-  ['Rollouts', '✓', '✓'], ['Assets', '✓', '✓'], ['Tours', '–', '✓'], ['TeamMate, the AI that does the admin', '–', '✓'], ['Connectors to the tools you use', '–', '✓'], ['TeamMate by email and text', '–', '✓'],
-  ['Artists and releases', 'Unlimited', 'Unlimited'], ['Collaborators and workspaces', 'Unlimited', 'Unlimited'], ['Seats included', '1', '2, then per seat'], ['First access to new betas', '–', '✓'], ['Support', 'Standard', 'Priority'],
-];
+import { plans, planLink, freeLink, yearlySaving, trialDays } from '../data/plans';
 import { pricingFaq as faq } from '../data/faqs';
-import { graph, faq as faqSchema } from '../lib/seo';
+import { graph, faq as faqSchema, pricing } from '../lib/seo';
 
-const schema = graph(faqSchema(faq.map(([q, a]) => ({ q, a }))));
+const title = 'Pricing — Free, Pro, Ultra and Enterprise';
+const description = `Free for one person and one artist. Pro is $${plans.pro.yearly} a seat a month billed yearly, Ultra $${plans.ultra.yearly}. Collaborators and shared links are always free. Every account starts with ${trialDays} days of Ultra.`;
+const schema = graph(pricing(description), faqSchema(faq.map(([q, a]) => ({ q, a }))));
+
+// '✓' included, '–' not included, anything else is shown as text.
+type Row = [feature: string, free: string, pro: string, ultra: string, enterprise: string];
+const compare: { g: string; rows: Row[] }[] = [
+  { g: 'Run the release', rows: [
+    ['Releases, rollout plan, tasks, files and budget', '✓', '✓', '✓', '✓'],
+    ['Day to day: your plate, schedule, waiting on and offers', '✓', '✓', '✓', '✓'],
+    ['Document intake and templates', '✓', '✓', '✓', '✓'],
+    ['Drop links', 'Unlimited', 'Unlimited', 'Unlimited', 'Unlimited'],
+    ['iPhone app', '✓', '✓', '✓', '✓'],
+    ['Boards', '1', 'Unlimited', 'Unlimited', 'Unlimited'],
+    ['Largest single upload', '1 GB', '5 GB', '20 GB', 'Custom'],
+  ] },
+  { g: 'TeamMate', rows: [
+    ['TeamMate, the AI that does the admin', '10 messages a day', '✓', '✓', '✓'],
+    ['TeamMate by email and text', '–', '✓', '✓', '✓'],
+    ['Intelligence refresh', 'Every month', 'Every week', 'Every day', 'Custom'],
+  ] },
+  { g: 'Your team', rows: [
+    ['Seats', '1', 'Up to 4', 'Up to 20', '21 or more'],
+    ['Artists', '1', 'Up to 5', 'Unlimited', 'Unlimited'],
+    ['Sub-labels', '–', 'Up to 3', 'Unlimited', 'Unlimited'],
+    ['Collaborators, view-only people and shared links', 'Free', 'Free', 'Free', 'Free'],
+    ['Team Chat', '–', '✓', '✓', '✓'],
+    ['Reports and sharing', '–', '✓', '✓', '✓'],
+    ['Command center', '–', '✓', '✓', '✓'],
+    ['Connectors to the tools you use', '–', '✓', '✓', '✓'],
+  ] },
+  { g: 'Labels, A&R and touring', rows: [
+    ['A&R prospects', '–', '✓', '✓', '✓'],
+    ['A&R pipeline', '–', '–', '✓', '✓'],
+    ['One view across every artist', '–', '–', '✓', '✓'],
+    ['Touring', '–', '–', '✓', '✓'],
+  ] },
+  { g: 'For the whole company', rows: [
+    ['SSO', '–', '–', '–', '✓'],
+    ['API access', '–', '–', '–', '✓'],
+    ['Dedicated support', '–', '–', '–', '✓'],
+  ] },
+];
+const cols = ['free', 'pro', 'ultra', 'enterprise'] as const;
+const freeForEveryone = [
+  ['Outside collaborators', 'View, comment, upload files and answer reviews on a release'],
+  ['View-only people', 'Anyone who only needs to look'],
+  ['Tour crew, venues and portals', 'Every crew, venue and portal link'],
+  ['People you share with', 'Anyone who gets a shared link or report'],
+];
 ---
-<Base title="Pricing — start free, go Pro when you want more" description="Rollouts and Assets are free forever. Pro adds TeamMate, Tours and Connectors at beta pricing. 14-day trial, no card for Free." theme="paper" closing="handled" schema={schema}>
+<Base title={title} description={description} theme="paper" closing="handled" schema={schema}>
   <section class="pr">
     <div class="wrap">
       <div class="prh" data-reveal>
         <h1 class="prh__h">
           <span class="prh__l"><span class="stk stk--tile stk--lime" data-stk><b>$0</b></span>Start <em>free.</em><span class="stk stk--pill stk--pink" data-stk>Free forever</span></span>
-          <span class="prh__l">Go Pro when<span class="stk stk--av" data-stk><img src="/studio-nine/img/set/hero-manager.webp" alt="" loading="lazy" /></span></span>
-          <span class="prh__l"><span class="stk stk--pill stk--cyan" data-stk>✓ 14-day trial</span>you <em>want more</em><span class="stk stk--tile stk--ink" data-stk><img src="/studio-nine/logo/team-logomark-white.png" alt="" /></span><span class="stk stk--dot" data-stk></span></span>
+          <span class="prh__l">Add seats<span class="stk stk--av" data-stk><img src="/studio-nine/img/set/hero-manager.webp" alt="" loading="lazy" /></span></span>
+          <span class="prh__l"><span class="stk stk--pill stk--cyan" data-stk>✓ 14 days of Ultra</span>as you <em>grow.</em><span class="stk stk--tile stk--ink" data-stk><img src="/studio-nine/logo/team-logomark-white.png" alt="" /></span><span class="stk stk--dot" data-stk></span></span>
         </h1>
-        <p class="lead">Rollouts and Assets are free forever, with unlimited artists, releases and collaborators. Pro adds TeamMate, Tours and Connectors, at beta pricing while we are in early access.</p>
+        <p class="lead">Free for one person and one artist. Pro and Ultra are priced per seat, and the people you share with never need one. Every new account starts with 14 days of Ultra.</p>
         <div class="toggle" role="group" aria-label="Billing period">
-          <button class="toggle__b is-on" data-period="year" aria-pressed="true">Yearly <span class="tag tag--lime">Save about 20%</span></button>
+          <button class="toggle__b is-on" data-period="year" aria-pressed="true">Yearly <span class="tag tag--lime">Save {yearlySaving}%</span></button>
           <button class="toggle__b" data-period="month" aria-pressed="false">Monthly</button>
         </div>
       </div>
@@ -29,40 +74,110 @@ const schema = graph(faqSchema(faq.map(([q, a]) => ({ q, a }))));
         <article class="pl__card">
           <p class="pl__k">Free</p>
           <p class="pl__price"><b>$0</b><span>forever</span></p>
-          <p class="pl__d">The full release platform for every artist, manager and label. 1 seat, unlimited everything else.</p>
-          <ul class="pl__list"><li>Rollouts, the release plan</li><li>Assets, the creative library</li><li>Unlimited artists and releases</li><li>Unlimited collaborators and workspaces</li></ul>
-          <a class="btn btn--lime btn--lg" href={app + '?plan=free'}>Start free <span class="arr">→</span></a>
-          <p class="cta-note">No card required.</p>
+          <p class="pl__d">For one person getting a release out. 1 seat, 1 artist.</p>
+          <ul class="pl__list">
+            <li>Releases, rollout plan, tasks, files and budget</li>
+            <li>Day to day: your plate, schedule, waiting on and offers</li>
+            <li>TeamMate, 10 messages a day</li>
+            <li>Document intake and templates</li>
+            <li>Unlimited drop links</li>
+            <li>The iPhone app</li>
+          </ul>
+          <div class="pl__go">
+            <a class="btn btn--lime btn--lg" href={freeLink}>Start free <span class="arr">→</span></a>
+            <p class="cta-note">No card required.</p>
+          </div>
         </article>
-        <article class="pl__card pl__card--pro">
-          <p class="pl__k">Pro <span class="tag tag--lime">Beta pricing · about half off</span></p>
-          <p class="pl__price"><b><s data-list-year="$79.96" data-list-month="$99.95">$79.96</s> <span data-price-year="$39.96" data-price-month="$49.95">$39.96</span></b><span data-per-year="/mo, billed yearly · 2 seats" data-per-month="/mo, billed monthly · 2 seats">/mo, billed yearly · 2 seats</span></p>
-          <p class="pl__d">Then <span data-seat-year="$23.96" data-seat-month="$29.95">$23.96</span>/mo per extra seat. For teams who want TeamMate doing the admin and their tools connected.</p>
-          <ul class="pl__list"><li>Everything in Free</li><li>TeamMate, the AI that does the admin</li><li>Tours</li><li>Connectors to the tools you already use</li><li>TeamMate by email and text</li><li>First access to new betas, priority support</li></ul>
-          <a class="btn btn--lime btn--lg" href={app + '?plan=pro&period=yearly'} data-pro-link>Start a 14-day Pro trial <span class="arr">→</span></a>
-          <p class="cta-note">Cancel any time.</p>
+        <article class="pl__card">
+          <p class="pl__k">Pro</p>
+          <p class="pl__price"><b data-price-year={'$' + plans.pro.yearly} data-price-month={'$' + plans.pro.monthly}>${plans.pro.yearly}</b><span data-per-year="per seat a month, billed yearly" data-per-month="per seat a month, billed monthly">per seat a month, billed yearly</span></p>
+          <p class="pl__d">For a small team running a few artists. Up to 4 seats and 5 artists.</p>
+          <ul class="pl__list">
+            <li>Everything in Free</li>
+            <li>All of TeamMate, by email and text too</li>
+            <li>Team Chat, reports and sharing</li>
+            <li>Connectors to the tools you use</li>
+            <li>Command center</li>
+            <li>Unlimited boards and A&R prospects</li>
+            <li>Up to 3 sub-labels</li>
+          </ul>
+          <div class="pl__go">
+            <a class="btn btn--primary btn--lg" href={planLink('pro')} data-period-link>Choose Pro <span class="arr">→</span></a>
+            <p class="cta-note">Starts with a 14-day trial. Cancel any time.</p>
+          </div>
+        </article>
+        <article class="pl__card pl__card--dark">
+          <p class="pl__k">Ultra <span class="tag tag--lime">14 days free</span></p>
+          <p class="pl__price"><b data-price-year={'$' + plans.ultra.yearly} data-price-month={'$' + plans.ultra.monthly}>${plans.ultra.yearly}</b><span data-per-year="per seat a month, billed yearly" data-per-month="per seat a month, billed monthly">per seat a month, billed yearly</span></p>
+          <p class="pl__d">For a management company or label, on the road too. From 1 seat to 20, unlimited artists.</p>
+          <ul class="pl__list">
+            <li>Everything in Pro</li>
+            <li>Touring</li>
+            <li>Unlimited artists and sub-labels</li>
+            <li>The A&R pipeline</li>
+            <li>One view across every artist</li>
+            <li>Daily intelligence refresh, 20 GB uploads</li>
+            <li class="is-soon">Audit history, coming soon</li>
+          </ul>
+          <div class="pl__go">
+            <a class="btn btn--lime btn--lg" href={planLink('ultra')} data-period-link>Choose Ultra <span class="arr">→</span></a>
+            <p class="cta-note">Starts with a 14-day trial. Cancel any time.</p>
+          </div>
+        </article>
+        <article class="pl__card pl__card--soft">
+          <p class="pl__k">Enterprise</p>
+          <p class="pl__price"><b>Custom</b><span>Priced for your company</span></p>
+          <p class="pl__d">For 21 seats or more, and anything custom.</p>
+          <ul class="pl__list">
+            <li>Everything in Ultra</li>
+            <li>SSO</li>
+            <li>API access</li>
+            <li>Dedicated support</li>
+            <li>Custom intelligence refresh and upload size</li>
+          </ul>
+          <div class="pl__go">
+            <a class="btn btn--ghost btn--lg" href="/contact">Talk to us <span class="arr">→</span></a>
+            <p class="cta-note"><a class="link" href="/enterprise">See Enterprise <span class="arr">→</span></a></p>
+          </div>
         </article>
       </div>
-      <p class="pr__ent" data-reveal>Running a label or distributor at scale? <a class="link" href="/enterprise">See Enterprise <span class="arr">→</span></a></p>
+
+      <div class="free4" data-reveal>
+        <div class="free4__head">
+          <h2 class="h3">Free on every plan.</h2>
+          <p>You pay for seats, and a seat is a member who edits, admins included. Everyone else is free.</p>
+        </div>
+        <ul class="free4__list">
+          {freeForEveryone.map(([h, d]) => <li><b>{h}</b><span>{d}</span></li>)}
+        </ul>
+      </div>
     </div>
   </section>
 
   <section class="section cmpsec">
     <div class="wrap">
-      <div class="head head--center"><h2 class="h1">Compare <em>Free and Pro.</em></h2><p class="lead" data-reveal style="margin-inline:auto">Everything in both plans, side by side. The two columns stay with you as you scroll.</p></div>
+      <div class="head head--center"><h2 class="h1">Every plan, <em>side by side.</em></h2><p class="lead" data-reveal style="margin-inline:auto">What each plan includes. The plan names stay with you as you scroll.</p></div>
       <div class="cmp" data-reveal>
         <div class="cmp__sticky">
           <div class="cmp__what">What you get</div>
-          <div class="cmp__tier"><b>Free</b><span>$0 · forever</span><a class="btn btn--lime btn--sm" href={app + '?plan=free'}>Start free</a></div>
-          <div class="cmp__tier cmp__tier--pro"><b>Pro <span class="tag tag--lime">Beta</span></b><span data-price-year="$39.96/mo" data-price-month="$49.95/mo">$39.96/mo</span><a class="btn btn--lime btn--sm" href={app + '?plan=pro&period=yearly'} data-pro-link>Start Pro trial</a></div>
+          <div class="cmp__tier"><b>Free</b><span>$0 · forever</span><a class="btn btn--lime btn--sm" href={freeLink}>Start free</a></div>
+          <div class="cmp__tier"><b>Pro</b><span><span data-price-year={'$' + plans.pro.yearly} data-price-month={'$' + plans.pro.monthly}>${plans.pro.yearly}</span> <span class="cmp__per">per seat a month</span></span><a class="btn btn--primary btn--sm" href={planLink('pro')} data-period-link>Choose Pro</a></div>
+          <div class="cmp__tier cmp__tier--dark"><b>Ultra</b><span><span data-price-year={'$' + plans.ultra.yearly} data-price-month={'$' + plans.ultra.monthly}>${plans.ultra.yearly}</span> <span class="cmp__per">per seat a month</span></span><a class="btn btn--lime btn--sm" href={planLink('ultra')} data-period-link>Choose Ultra</a></div>
+          <div class="cmp__tier"><b>Enterprise</b><span>Custom</span><a class="btn btn--ghost btn--sm" href="/contact">Talk to us</a></div>
         </div>
         <div class="cmp__rows">
-          {compare.map(([f, a, b], i) => (
-            <div class:list={['cmp__row', { 'cmp__row--group': i === 0 || i === 6 }]}>
-              <div class="cmp__f">{f}</div>
-              <div class:list={['cmp__c', { 'is-no': a === '–', 'is-yes': a === '✓' }]}>{a}</div>
-              <div class:list={['cmp__c cmp__c--pro', { 'is-no': b === '–', 'is-yes': b === '✓' }]}>{b}</div>
-            </div>
+          {compare.map(({ g, rows }) => (
+            <>
+              <div class="cmp__group">{g}</div>
+              {rows.map(([f, ...vals]) => (
+                <div class="cmp__row">
+                  <div class="cmp__f">{f}</div>
+                  {vals.map((v, i) => (
+                    <div class:list={['cmp__c', `cmp__c--${cols[i]}`, { 'is-no': v === '–', 'is-yes': v === '✓' }]}>{v === '✓' ? <span class="sr">Included</span> : v === '–' ? <span aria-label="Not included">–</span> : v}</div>
+                  ))}
+                </div>
+              ))}
+            </>
           ))}
         </div>
       </div>
@@ -106,53 +221,83 @@ const schema = graph(faqSchema(faq.map(([q, a]) => ({ q, a }))));
   .toggle__b{height:2.5rem;padding:0 1rem;border-radius:var(--r-pill);font-weight:500;font-size:.92rem;color:var(--ink-60);display:inline-flex;align-items:center;gap:.5rem;transition:background .2s,color .2s}
   .toggle__b.is-on{background:var(--ink);color:var(--white)}
   .toggle__b.is-on .tag{background:var(--lime);color:var(--ink)}
-  .pl__grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.25rem;max-width:58rem;margin-inline:auto}
-  .pl__card{background:var(--white);border:1px solid var(--line);border-radius:var(--r-xl);padding:2rem;display:grid;gap:1rem;align-content:start}
-  .pl__card--pro{background:var(--ink);color:var(--on-dark);border-color:transparent}
-  .pl__k{font-weight:500;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
-  .pl__price{display:flex;align-items:baseline;gap:.5rem;flex-wrap:wrap}
+
+  /* Plan cards: four across on wide screens, two on tablets, one on phones */
+  .pl__grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem;max-width:var(--maxw);margin-inline:auto}
+  .pl__card{background:var(--white);border:1px solid var(--line);border-radius:var(--r-xl);padding:1.75rem;display:grid;grid-template-rows:auto auto auto 1fr auto;gap:1rem;min-width:0}
+  .pl__card--dark{background:var(--ink);color:var(--on-dark);border-color:transparent}
+  .pl__card--soft{background:var(--paper-2);border-color:transparent}
+  .pl__k{font-weight:500;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;min-height:1.7rem}
+  .pl__price{display:grid;gap:.4rem;justify-items:start}
   .pl__price b{font-size:3rem;font-weight:500;letter-spacing:-.04em;line-height:1}
-  .pl__price s{font-size:1.4rem;color:var(--on-dark-60);font-weight:400;letter-spacing:-.02em}
-  .pl__price>span{color:var(--ink-40);font-size:.9rem}
-  .pl__card--pro .pl__price>span,.pl__card--pro .pl__d,.pl__card--pro .cta-note{color:var(--on-dark-60)}
+  .pl__price>span{color:var(--ink-40);font-size:.9rem;line-height:1.3;min-height:1.3em}
+  .pl__card--dark .pl__price>span,.pl__card--dark .pl__d,.pl__card--dark .cta-note{color:var(--on-dark-60)}
   .pl__d{color:var(--ink-60);line-height:1.5}
-  .pl__list{display:grid;gap:.45rem;margin:.5rem 0 .75rem}
-  .pl__list li{position:relative;padding-left:1.4rem;font-size:.95rem}
-  .pl__list li::before{content:'✓';position:absolute;left:0;top:.35em;width:.9rem;height:.9rem;border-radius:50%;background:var(--lime);color:var(--ink);font-size:.55rem;display:grid;place-items:center}
-  .pl__card .btn{justify-self:start}.pl__card .cta-note{margin-top:0}
-  .pr__ent{text-align:center;margin-top:2rem;color:var(--ink-60)}
-  .cmp{--c1:1.15fr;--c2:1fr;--c3:1fr;position:relative}
-    .cmp__sticky{position:sticky;top:4.4rem;z-index:5;display:grid;grid-template-columns:var(--c1) var(--c2) var(--c3);gap:.75rem;padding:.6rem 0 .75rem;background:var(--paper)}
+  .pl__list{display:grid;gap:.45rem;margin:.25rem 0 .5rem;align-content:start}
+  .pl__list li{position:relative;padding-left:1.4rem;font-size:.95rem;line-height:1.4}
+  .pl__list li::before{content:'✓';position:absolute;left:0;top:.25em;width:.9rem;height:.9rem;border-radius:50%;background:var(--lime);color:var(--ink);font-size:.55rem;display:grid;place-items:center}
+  .pl__list li.is-soon{color:var(--on-dark-60)}
+  .pl__list li.is-soon::before{content:'';background:transparent;box-shadow:inset 0 0 0 1.5px var(--on-dark-60)}
+  .pl__go{display:grid;gap:.75rem;justify-items:start}
+  .pl__go .cta-note{margin-top:0}
+  .pl__card .btn{justify-self:start}
+  @media (max-width:1180px){.pl__grid{grid-template-columns:repeat(2,minmax(0,1fr));max-width:58rem}}
+  @media (max-width:640px){.pl__grid{grid-template-columns:minmax(0,1fr)}.pl__card{padding:1.5rem}}
+
+  /* Who never needs a seat */
+  .free4{max-width:var(--maxw);margin:1rem auto 0;padding:1.5rem 1.75rem;border-radius:var(--r-xl);background:var(--white);border:1px solid var(--line);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2.2fr);gap:1.5rem;align-items:center}
+  .free4__head{display:grid;gap:.4rem}
+  .free4__head p{color:var(--ink-60);line-height:1.5;font-size:.95rem}
+  .free4__list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.75rem}
+  .free4__list li{display:grid;gap:.25rem;padding:.9rem 1rem;border-radius:var(--r-lg);background:var(--paper);font-size:.88rem;line-height:1.4}
+  .free4__list li b{font-weight:600}
+  .free4__list li span{color:var(--ink-60)}
+  @media (max-width:1180px){.free4{grid-template-columns:minmax(0,1fr);max-width:58rem}.free4__list{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media (max-width:520px){.free4{padding:1.25rem}.free4__list{grid-template-columns:minmax(0,1fr);gap:.5rem}.free4__list li{padding:.75rem .9rem}}
+
+  /* Compare table: four plans, sticky plan header */
+  .cmp{--cols:minmax(0,1.5fr) repeat(4,minmax(0,1fr));position:relative}
+  .cmp__sticky{position:sticky;top:4.4rem;z-index:5;display:grid;grid-template-columns:var(--cols);gap:.6rem;padding:.6rem 0 .75rem;background:var(--paper)}
   .cmp__what{align-self:end;padding-bottom:.9rem;border-bottom:1px solid var(--line);margin-bottom:-.75rem;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-40);font-weight:500}
-  .cmp__tier{display:grid;gap:.35rem;justify-items:start;padding:.9rem 1rem;border-radius:var(--r-lg);background:var(--white);border:1px solid var(--line);box-shadow:var(--shadow-md)}
+  .cmp__tier{display:grid;gap:.35rem;justify-items:start;align-content:start;padding:.9rem 1rem;border-radius:var(--r-lg);background:var(--white);border:1px solid var(--line);box-shadow:var(--shadow-md);min-width:0}
   .cmp__tier b{font-weight:500;display:flex;align-items:center;gap:.4rem}
   .cmp__tier>span{font-size:.82rem;color:var(--ink-60)}
   .cmp__tier .btn{margin-top:.25rem}
-  .cmp__tier--pro{background:var(--ink);color:var(--on-dark);border-color:transparent}
-  .cmp__tier--pro>span{color:var(--on-dark-60)}
+  .cmp__tier--dark{background:var(--ink);color:var(--on-dark);border-color:transparent}
+  .cmp__tier--dark>span{color:var(--on-dark-60)}
   .cmp__rows{display:grid}
-  .cmp__row{display:grid;grid-template-columns:var(--c1) var(--c2) var(--c3);gap:.75rem;align-items:center;border-bottom:1px solid var(--line)}
-  .cmp__row--group{border-top:1px solid var(--ink-12)}
-  .cmp__f{padding:1rem 1rem 1rem 0;font-size:.98rem}
-  .cmp__c{align-self:stretch;display:grid;place-items:center;padding:1rem;font-weight:500;font-size:.95rem;text-align:center;background:var(--paper)}
-  .cmp__c--pro{background:var(--paper-2)}
+  .cmp__group{padding:1.6rem 0 .6rem;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-40);font-weight:500;border-bottom:1px solid var(--ink-12)}
+  .cmp__row{display:grid;grid-template-columns:var(--cols);gap:.6rem;align-items:center;border-bottom:1px solid var(--line)}
+  .cmp__f{padding:1rem 1rem 1rem 0;font-size:.98rem;line-height:1.35;word-break:keep-all}
+  .cmp__c{position:relative;align-self:stretch;display:grid;place-items:center;padding:1rem .5rem;font-weight:500;font-size:.92rem;text-align:center;background:var(--paper);line-height:1.3}
+  .cmp__c--ultra{background:var(--paper-2)}
   .cmp__c.is-no{color:var(--ink-40);font-weight:400}
-  .cmp__c.is-yes{color:var(--ink)}
-  .cmp__c.is-yes::before{content:'';width:1.15rem;height:1.15rem;border-radius:50%;background:var(--lime) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230e0d0b' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 13l4 4L19 7'/%3E%3C/svg%3E") center/60% no-repeat;font-size:0}
-  .cmp__c.is-yes{font-size:0}
-  .cmp__row:last-child .cmp__c{border-radius:0 0 var(--r-md) var(--r-md)}
-  @media (max-width:640px){.cmp{--c1:1.3fr;--c2:1fr;--c3:1fr}.cmp__tier .btn{display:none}.cmp__tier{padding:.6rem}.cmp__sticky{top:4rem;padding-bottom:0}.cmp__what{align-self:stretch;display:flex;align-items:flex-end;margin-bottom:0;padding-bottom:.6rem}}
-  @media (max-width:760px){.pl__grid{grid-template-columns:1fr}}
+  .cmp__c.is-yes::before{content:'';width:1.15rem;height:1.15rem;border-radius:50%;background:var(--lime) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230e0d0b' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 13l4 4L19 7'/%3E%3C/svg%3E") center/60% no-repeat}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  /* Tablet: drop the buttons from the sticky header so it stays short */
+  @media (max-width:900px){.cmp__tier .btn{display:none}.cmp__tier{padding:.6rem .7rem}}
+  /* Phone: the feature name gets its own line, the four plans sit beneath it. No sideways scroll. */
+  @media (max-width:640px){
+    .cmp{--cols:repeat(4,minmax(0,1fr))}
+    .cmp__sticky{top:4rem;gap:.35rem;padding:.5rem 0}
+    .cmp__what{display:none}
+    .cmp__tier{padding:.5rem .2rem;justify-items:center;text-align:center;gap:.15rem;border-radius:var(--r-md)}
+    .cmp__tier b{font-size:.8rem;letter-spacing:-.02em;word-break:keep-all;line-height:1.2}
+    .cmp__tier>span{font-size:.72rem;line-height:1.25}
+    .cmp__per{display:none}
+    .cmp__row{gap:.35rem;row-gap:0;border-bottom:1px solid var(--line)}
+    .cmp__f{grid-column:1/-1;padding:.85rem 0 .45rem;font-size:.92rem}
+    .cmp__c{padding:.55rem .25rem .7rem;font-size:.76rem;border-radius:var(--r-md) var(--r-md) 0 0}
+    .cmp__group{padding-top:1.25rem}
+  }
 </style>
 <script>
   const btns = document.querySelectorAll<HTMLButtonElement>('[data-period]');
-  const set = (p: 'year'|'month') => {
+  const set = (p: 'year' | 'month') => {
     btns.forEach(b => { const on = b.dataset.period === p; b.classList.toggle('is-on', on); b.setAttribute('aria-pressed', String(on)); });
     document.querySelectorAll<HTMLElement>('[data-price-year]').forEach(e => e.textContent = e.dataset[p === 'year' ? 'priceYear' : 'priceMonth']!);
-    document.querySelectorAll<HTMLElement>('[data-list-year]').forEach(e => e.textContent = e.dataset[p === 'year' ? 'listYear' : 'listMonth']!);
     document.querySelectorAll<HTMLElement>('[data-per-year]').forEach(e => e.textContent = e.dataset[p === 'year' ? 'perYear' : 'perMonth']!);
-    document.querySelectorAll<HTMLElement>('[data-seat-year]').forEach(e => e.textContent = e.dataset[p === 'year' ? 'seatYear' : 'seatMonth']!);
-    document.querySelectorAll<HTMLAnchorElement>('[data-pro-link]').forEach(a => a.href = a.href.replace(/period=\w+/, 'period=' + (p === 'year' ? 'yearly' : 'monthly')));
+    document.querySelectorAll<HTMLAnchorElement>('[data-period-link]').forEach(a => a.href = a.href.replace(/period=\w+/, 'period=' + (p === 'year' ? 'yearly' : 'monthly')));
   };
-  btns.forEach(b => b.addEventListener('click', () => set(b.dataset.period as any)));
+  btns.forEach(b => b.addEventListener('click', () => set(b.dataset.period as 'year' | 'month')));
 </script>

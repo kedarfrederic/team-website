@@ -16,7 +16,7 @@ const line = (label: string, path: string, note: string) => `- [${label}](${SITE
 export const GET: APIRoute = () => {
   const body = `# Team
 
-> ${site.tagline} Team is the home of the release: the plan, the files, the money, the dates and the people in one place. Rollouts and Assets are free for artists, managers and labels. Pro adds TeamMate, the AI that does the admin, plus Tours and Connectors.
+> ${site.tagline} Team is the home of the release: the plan, the files, the money, the dates and the people in one place. Free covers one person and one artist. Pro ($15 a seat a month, $12 billed yearly, up to 4 seats) adds all of TeamMate, Team Chat, reports and Connectors. Ultra ($25 a seat a month, $20 billed yearly, up to 20 seats) adds touring, the A&R pipeline and one view across every artist. Enterprise is custom, for 21 seats or more.
 
 Team is made by Team Rollouts, Inc. This site is designed and built by Studio Nine (https://studionine.agency).
 
@@ -29,7 +29,7 @@ ${audiences.map((a) => line(a.name, `/${a.slug}`, a.lead)).join('\n')}
 ${line('Enterprise', '/enterprise', 'Deploy Team across every imprint and team, with SSO, SCIM, role-based access and an auditable trail.')}
 
 ## Plans
-${line('Pricing', '/pricing', 'Free and Pro side by side. Rollouts and Assets are free forever with unlimited artists, releases and collaborators. Pro adds TeamMate, Tours and Connectors.')}
+${line('Pricing', '/pricing', 'Free, Pro, Ultra and Enterprise side by side. Every new account starts with 14 days of Ultra. Collaborators, view-only people and shared links are free on every plan.')}
 
 ## Company
 ${line('About', '/about', 'Why Team exists, what we believe, and the people building it.')}

@@ -1,17 +1,17 @@
 # Team
 
-> Team is the operational brain for music releases. It connects the tools a music operation already runs on — releases, creative assets, and touring — into one living picture, and adds TeamMate, an AI layer that remembers the history, reasons across everything, and tells you what changed, what matters, and what to do next. The platform (Rollouts, Assets) is free; the Pro tier adds Tours, TeamMate and connections to your wider stack.
+> Team is the operational brain for music releases. It connects the tools a music operation already runs on — releases, creative assets, and touring — into one living picture, and adds TeamMate, an AI layer that remembers the history, reasons across everything, and tells you what changed, what matters, and what to do next. Free covers one person and one artist. Pro ($15 a seat a month, or $12 billed yearly, up to 4 seats) adds all of TeamMate and connections to your wider stack. Ultra ($25 a seat a month, or $20 billed yearly, up to 20 seats) adds Tours. Enterprise is custom, for 21 seats or more.
 
 ## Platform
 - [Rollouts](https://teamrollouts.com/rollouts): Run a music release like a campaign — timeline, budget, tracks, assets and territories in one workspace.
 - [Assets](https://teamrollouts.com/assets): The creative library for a release — artwork, audio, video, documents and links, versioned and release-ready.
-- [Tours](https://teamrollouts.com/tours): Tour management for the whole run — routing, show advancing, day sheets and settlement (Pro).
-- [TeamMate](https://teamrollouts.com/teammate): The AI intelligence across every module — memory, reasoning and answers over your whole operation (Pro).
+- [Tours](https://teamrollouts.com/tours): Tour management for the whole run — routing, show advancing, day sheets and settlement (Ultra).
+- [TeamMate](https://teamrollouts.com/teammate): The AI intelligence across every module — memory, reasoning and answers over your whole operation (10 messages a day on Free, all of it on Pro).
 - [Connections](https://teamrollouts.com/connections): Bring the tools you already use — Notion, Slack, Gmail, Drive, Dropbox, Sheets and more (Pro).
 - [Security & trust](https://teamrollouts.com/security): Encryption, permissioned and revocable connections, and data that stays yours.
 
 ## Plans
-- [Pricing](https://teamrollouts.com/pricing): Compare Free and Pro side by side. Free = Rollouts + Assets (no card); Pro adds Tours, TeamMate + connections, at beta pricing during early access.
+- [Pricing](https://teamrollouts.com/pricing): Free, Pro, Ultra and Enterprise side by side. Free is $0 for one person and one artist (no card). Pro is $15 a seat a month ($12 billed yearly), up to 4 seats. Ultra is $25 a seat a month ($20 billed yearly), up to 20 seats, with touring. Enterprise is custom for 21+ seats. Every new account starts with 14 days of Ultra. Collaborators, view-only people and shared links are free on every plan.
 
 ## Solutions
 - [Solo artists](https://teamrollouts.com/for-artists): A label-grade rollout, run solo.

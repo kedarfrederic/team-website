@@ -62,11 +62,13 @@
   "A release from plan to release day, the overnight log, and the morning brief.": "계획부터 발매일까지, 밤사이 작업 기록, 아침 브리핑.",
   "Managers with a roster, labels with a slate, distributors and agencies working many releases.": "여러 아티스트를 맡는 매니저, 전체 릴리스를 관리하는 레이블, 많은 릴리스를 지원하는 유통사와 에이전시.",
   "What happens after": "이후에는",
-  "You start free, or we set up a Pro trial with your real releases. No pressure either way.": "무료로 시작하거나 실제 릴리스로 Pro 체험을 설정합니다. 원하는 방식으로 선택하세요.",
   "Just want to try it?": "바로 사용해 보고 싶으신가요?",
   "Start free now": "지금 무료로 시작하기",
   "If the calendar does not load,": "캘린더가 표시되지 않으면,",
   "open it in a new tab": "새 탭에서 열기",
   "or": "또는",
-  "send us a message": "메시지 보내기"
+  "send us a message": "메시지 보내기",
+  "You start free, or we set up a trial with your real releases. No pressure either way.": "무료로 시작하거나 실제 릴리스로 체험을 설정합니다. 원하는 방식으로 선택하세요.",
+  "For 21 seats or more, with SSO, API access and dedicated support.": "좌석 21개 이상 조직을 위해 SSO, API 접근, 전담 지원을 제공합니다.",
+  "Fewer seats? See Pro and Ultra": "좌석이 더 적다면 Pro와 Ultra를 확인하세요"
 }
