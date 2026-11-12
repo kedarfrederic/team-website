@@ -118,5 +118,11 @@
   "Team is the home of the release: the plan, the files, the money, the dates and the people in one place.": "Team은 음악 릴리스의 중심입니다. 계획, 파일, 예산, 일정, 사람을 한곳에서 관리하세요.",
   "Music release management": "음악 릴리스 관리",
   "Security and trust": "보안과 신뢰",
-  "How Team handles your data: never used to train a model, permissioned, revocable and exportable.": "Team은 데이터를 모델 학습에 사용하지 않습니다. 권한 설정, 연결 철회, 내보내기를 지원합니다."
+  "How Team handles your data: never used to train a model, permissioned, revocable and exportable.": "Team은 데이터를 모델 학습에 사용하지 않습니다. 권한 설정, 연결 철회, 내보내기를 지원합니다.",
+  "Audit history — coming soon": "감사 기록 — 곧 제공 예정",
+  "A record of every action, with who did it and when. We are building it now.": "누가 언제 무엇을 했는지 모든 작업을 기록합니다. 지금 만들고 있습니다.",
+  "SCIM provisioning, coming soon": "SCIM 계정 프로비저닝 (곧 제공 예정)",
+  "Audit history, coming soon": "감사 기록 (곧 제공 예정)",
+  "Team reads your files, messages, money and plans to help you run releases. Here is how it stays private, permissioned and yours: never trained on, revocable in a click, encrypted.": "Team은 릴리스 운영을 돕기 위해 파일, 메시지, 예산, 계획을 읽습니다. 학습에 사용하지 않고, 클릭 한 번으로 연결을 끊을 수 있으며, 암호화로 데이터를 지키는 방법을 안내합니다.",
+  "The controls underneath every connection, so Team only ever sees what you allow.": "모든 연결에 적용되는 제어 기능으로, Team은 허용한 내용만 읽습니다."
 }

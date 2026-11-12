@@ -4,6 +4,8 @@
  * Everything is generated from the same data files the pages render from, so the markup
  * search engines and language models read can never drift from what a visitor sees.
  */
+import { plans, type PlanId } from '../data/plans';
+
 export const SITE = 'https://teamrollouts.com';
 export const ORG_ID = `${SITE}/#organization`;
 
@@ -39,8 +41,26 @@ export function website() {
   };
 }
 
-/** Product pages: a SaaS product, free or Pro. */
-export function software(p: { name: string; description: string; url: string; pro: boolean }) {
+/** One schema.org Offer per plan, priced per seat per month, monthly and billed yearly. */
+export function planOffer(id: Exclude<PlanId, 'enterprise'>) {
+  const p = plans[id];
+  if (id === 'free') return { '@type': 'Offer', name: p.name, category: p.name, price: '0', priceCurrency: 'USD', url: abs('/pricing') };
+  return {
+    '@type': 'Offer',
+    name: p.name,
+    category: p.name,
+    price: String(p.monthly),
+    priceCurrency: 'USD',
+    url: abs('/pricing'),
+    priceSpecification: [
+      { '@type': 'UnitPriceSpecification', price: String(p.monthly), priceCurrency: 'USD', unitText: 'per seat a month, billed monthly' },
+      { '@type': 'UnitPriceSpecification', price: String(p.yearly), priceCurrency: 'USD', unitText: 'per seat a month, billed yearly' },
+    ],
+  };
+}
+
+/** Product pages: a SaaS product, offered on the plans that include it. */
+export function software(p: { name: string; description: string; url: string; plans: Exclude<PlanId, 'enterprise'>[] }) {
   return {
     '@type': 'SoftwareApplication',
     name: `Team ${p.name}`,
@@ -50,9 +70,22 @@ export function software(p: { name: string; description: string; url: string; pr
     url: abs(p.url),
     description: p.description,
     publisher: { '@id': ORG_ID },
-    offers: p.pro
-      ? { '@type': 'Offer', price: '39.96', priceCurrency: 'USD', category: 'Pro', url: abs('/pricing') }
-      : { '@type': 'Offer', price: '0', priceCurrency: 'USD', category: 'Free', url: abs('/pricing') },
+    offers: p.plans.map(planOffer),
+  };
+}
+
+/** The pricing page: Team itself, on every self-serve plan. Enterprise is priced on a call. */
+export function pricing(description: string) {
+  return {
+    '@type': 'SoftwareApplication',
+    name: 'Team',
+    applicationCategory: 'BusinessApplication',
+    applicationSubCategory: 'Music release management',
+    operatingSystem: 'Web, iOS',
+    url: abs('/pricing'),
+    description,
+    publisher: { '@id': ORG_ID },
+    offers: (['free', 'pro', 'ultra'] as const).map(planOffer),
   };
 }
 

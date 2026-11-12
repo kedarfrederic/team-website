@@ -37,7 +37,7 @@ const icons: Record<string,string> = {
               <a class="nav__row" href={i.href} role="menuitem">
                 <span class="nav__ic" style={`--c:${i.c}`}><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" set:html={icons[i.icon]}></svg></span>
                 <span class="nav__txt"><b>{i.label}</b><span>{i.desc}</span></span>
-                {i.pro && <em class="nav__pro">Pro</em>}
+                {i.plan && <em class="nav__pro">{i.plan}</em>}
               </a>
             ))}
             <a class="nav__row" href="/security" role="menuitem">
@@ -69,7 +69,7 @@ const icons: Record<string,string> = {
             </a>
             <a class="nav__row" href="/pricing" role="menuitem">
               <span class="nav__ic" style="--c:var(--paper-2)"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M7 8.5c0-1.7 2-3 5-3s5 1.3 5 3-2 2.5-5 3-5 1.3-5 3 2 3 5 3 5-1.3 5-3"/></svg></span>
-              <span class="nav__txt"><b>Pricing</b><span>Free, or Pro when you want more</span></span>
+              <span class="nav__txt"><b>Pricing</b><span>Free, Pro, Ultra and Enterprise</span></span>
             </a>
           </div>
           <a class="nav__feature nav__feature--ink" href="/demo">
@@ -104,7 +104,7 @@ const icons: Record<string,string> = {
       <LanguagePicker />
       <p class="mnav__k">Product</p>
       <ul class="mnav__grid">
-        {site.nav.product.map(i => <li><a class="mnav__tile" href={i.href} style={`--c:${i.c}`}><span class="mnav__ic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" set:html={icons[i.icon]}></svg></span><b>{i.label}{i.pro && <span class="mnav__pro">Pro</span>}</b><span>{i.desc}</span></a></li>)}
+        {site.nav.product.map(i => <li><a class="mnav__tile" href={i.href} style={`--c:${i.c}`}><span class="mnav__ic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" set:html={icons[i.icon]}></svg></span><b>{i.label}{i.plan && <span class="mnav__pro">{i.plan}</span>}</b><span>{i.desc}</span></a></li>)}
         <li><a class="mnav__tile" href="/security" style="--c:var(--viv-green);--fg:var(--white)"><span class="mnav__ic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 4v5c0 5-3.5 8-7 9-3.5-1-7-4-7-9V7z"/></svg></span><b>Security</b><span>Your data stays yours</span></a></li>
       </ul>
 
