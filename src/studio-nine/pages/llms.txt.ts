@@ -29,7 +29,7 @@ ${audiences.map((a) => line(a.name, `/${a.slug}`, a.lead)).join('\n')}
 ${line('Enterprise', '/enterprise', 'Deploy Team across every imprint and team, with SSO, API access and dedicated support. Audit history is coming soon.')}
 
 ## Plans
-${line('Pricing', '/pricing', 'Free, Pro, Ultra and Enterprise side by side. Every new account starts with 14 days of Ultra. Collaborators, view-only people and shared links are free on every plan.')}
+${line('Pricing', '/pricing', 'Free, Pro, Ultra and Enterprise side by side. Pro has a 30-day free trial with no card; Ultra has a 14-day free trial with a card. Collaborators, view-only people, share links and drop links are free on every plan.')}
 
 ## Company
 ${line('About', '/about', 'Why Team exists, what we believe, and the people building it.')}

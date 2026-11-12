@@ -18,7 +18,8 @@ export const plans = {
 /** The yearly saving, worked out from the prices rather than typed by hand. */
 export const yearlySaving = Math.round((1 - plans.pro.yearly / plans.pro.monthly) * 100);
 
-export const trialDays = 14;
+/** Free trials (Kedar, 12 Nov 2026): Pro 30 days with no card; Ultra 14 days with a card at checkout. */
+export const trials = { pro: 30, ultra: 14 } as const;
 
 /** App handoff for a paid plan. The billing toggle rewrites `period=` in place. */
 export const planLink = (plan: PaidPlanId, period: 'yearly' | 'monthly' = 'yearly') => `${app}?plan=${plan}&period=${period}`;

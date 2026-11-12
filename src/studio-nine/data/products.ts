@@ -67,7 +67,7 @@ export const products: Product[] = [
     slug: 'teammate', name: 'TeamMate', pro: true, badge: ['Free', '10 messages a day'], plans: ['free', 'pro'], title: 'TeamMate — the AI that does the admin',
     h1: ['The AI that', 'does the admin.'],
     lead: 'TeamMate is AI, inside Team. It reads the whole release, remembers every version, thread and decision, does the admin that eats your week, and asks you only when it needs you. And it shows its work.',
-    cta: { label: 'Start a 14-day trial', href: app + '?plan=pro' }, cta2: { label: 'Book a demo', href: '/demo' }, note: 'All of TeamMate on Pro. Cancel any time.',
+    cta: { label: 'Start a 30-day free trial', href: app + '?plan=pro' }, cta2: { label: 'Book a demo', href: '/demo' }, note: 'All of TeamMate on Pro. Cancel any time.',
     problem: ['The answer to "where do we stand?"', 'should be one question away.'],
     problemBody: 'Every master version, every thread, every budget change, every approval, every deadline. TeamMate holds the whole history of a release in one place, so nothing has to live in someone\'s memory until they are on holiday.',
     demos: [
@@ -79,10 +79,10 @@ export const products: Product[] = [
     related: ['rollouts', 'connectors', 'security'],
   },
   {
-    slug: 'connectors', name: 'Connectors', pro: true, plan: 'Pro', badge: ['Pro', 'Included in the 14-day trial'], plans: ['pro'], title: 'Connectors — works with the tools you already use',
+    slug: 'connectors', name: 'Connectors', pro: true, plan: 'Pro', badge: ['Pro', 'Included in the 30-day trial'], plans: ['pro'], title: 'Connectors — works with the tools you already use',
     h1: ['Works with the tools', 'you already use.'],
     lead: 'Connectors feed every file, message, plan and number from the tools you already run on into Team, and write back. Nothing to migrate, nothing to rip out, no new habits to learn.',
-    cta: { label: 'Start a 14-day trial', href: app + '?plan=pro' }, cta2: { label: 'See the catalogue', href: '#catalogue' }, note: 'On Pro. Cancel any time.',
+    cta: { label: 'Start a 30-day free trial', href: app + '?plan=pro' }, cta2: { label: 'See the catalogue', href: '#catalogue' }, note: 'On Pro. Cancel any time.',
     problem: ['Not an export.', 'A live wire.'],
     problemBody: 'Most tools let you export. Team stays connected. It sees a new file, thread or number the moment it lands, works out what changed, and updates the doc, the budget or the partner, and tells you what it did.',
     demos: [

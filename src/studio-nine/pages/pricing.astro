@@ -1,11 +1,11 @@
 ---
 import Base from '../layouts/Base.astro';
-import { plans, planLink, freeLink, yearlySaving, trialDays } from '../data/plans';
+import { plans, planLink, freeLink, yearlySaving, trials } from '../data/plans';
 import { pricingFaq as faq } from '../data/faqs';
 import { graph, faq as faqSchema, pricing } from '../lib/seo';
 
 const title = 'Pricing — Free, Pro, Ultra and Enterprise';
-const description = `Free for one person and one artist. Pro is $${plans.pro.yearly} a seat a month billed yearly, Ultra $${plans.ultra.yearly}. Collaborators and shared links are always free. Every account starts with ${trialDays} days of Ultra.`;
+const description = `Free for one person and one artist. Pro is $${plans.pro.yearly} a seat a month billed yearly, Ultra $${plans.ultra.yearly}. Collaborators, share links and drop links are free on every plan. Try Pro free for ${trials.pro} days with no card, or Ultra free for ${trials.ultra} days.`;
 const schema = graph(pricing(description), faqSchema(faq.map(([q, a]) => ({ q, a }))));
 
 // '✓' included, '–' not included, anything else is shown as text.
@@ -15,6 +15,7 @@ const compare: { g: string; rows: Row[] }[] = [
     ['Releases, rollout plan, tasks, files and budget', '✓', '✓', '✓', '✓'],
     ['Day to day: your plate, schedule, waiting on and offers', '✓', '✓', '✓', '✓'],
     ['Document intake and templates', '✓', '✓', '✓', '✓'],
+    ['Share links', 'Unlimited', 'Unlimited', 'Unlimited', 'Unlimited'],
     ['Drop links', 'Unlimited', 'Unlimited', 'Unlimited', 'Unlimited'],
     ['iPhone app · Android coming soon', '✓', '✓', '✓', '✓'],
     ['Boards', '1', 'Unlimited', 'Unlimited', 'Unlimited'],
@@ -29,7 +30,7 @@ const compare: { g: string; rows: Row[] }[] = [
     ['Seats', '1', 'Any number', 'Up to 20', '21 or more'],
     ['Artists', '1', 'Up to 5', 'Unlimited', 'Unlimited'],
     ['Sub-labels', '–', 'Up to 3', 'Unlimited', 'Unlimited'],
-    ['Collaborators, view-only people and shared links', 'Free', 'Free', 'Free', 'Free'],
+    ['Collaborators and view-only people', 'Free', 'Free', 'Free', 'Free'],
     ['Team Chat', '–', '✓', '✓', '✓'],
     ['Reports and sharing', '–', '✓', '✓', '✓'],
     ['Command center', '–', '✓', '✓', '✓'],
@@ -53,7 +54,8 @@ const about: Record<string, string> = {
   'Releases, rollout plan, tasks, files and budget': 'Every release in one place: the plan from announce to release day, who owns each task, the files and the money.',
   'Day to day: your plate, schedule, waiting on and offers': 'Your daily view of what needs you, what is scheduled, what you are waiting on from others and the offers on the table.',
   'Document intake and templates': 'Drop in a contract, offer or one-sheet and Team reads it into the release. Start new releases from a template instead of a blank page.',
-  'Drop links': 'Share a file or folder with a link anyone can open, no account needed.',
+  'Share links': 'Send tracks and files to anyone with a link. Add a passcode, choose whether they can download, and trade comments back and forth on each file.',
+  'Drop links': 'Give a collaborator a secure link to send you files. What they upload lands straight in your workspace, in the release or folder you chose. They see nothing else and need no account.',
   'iPhone app · Android coming soon': 'Run your releases from your phone with the Team app for iPhone. Android is on the way.',
   'Boards': 'Lay work out in columns you choose, so you can see where everything stands at a glance.',
   'Largest single upload': 'The biggest single file you can upload, such as a master or a video.',
@@ -63,7 +65,7 @@ const about: Record<string, string> = {
   'Seats': 'A seat is a member who edits, admins included. Collaborators, view-only people and anyone you share with do not need one.',
   'Artists': 'How many artists you can run releases for in your workspace.',
   'Sub-labels': 'Group artists and releases under their own imprint, each with its own view.',
-  'Collaborators, view-only people and shared links': 'Outside collaborators can view, comment, upload files and answer reviews. They never need a seat, and neither does anyone who only views or gets a shared link.',
+  'Collaborators and view-only people': 'Outside collaborators can view, comment, upload files and answer reviews. They never need a seat, and neither does anyone who only views, opens a share link or sends you files through a drop link.',
   'Team Chat': 'Talk with your team inside Team, right next to the release you are talking about.',
   'Reports and sharing': 'Turn a release into a clean report and share it with a link. Nobody needs an account to read it.',
   'Command center': 'One screen for what is moving, what is late and what needs a decision across your releases.',
@@ -81,7 +83,7 @@ const freeForEveryone = [
   ['Outside collaborators', 'View, comment, upload files and answer reviews on a release'],
   ['View-only people', 'Anyone who only needs to look'],
   ['Tour crew and venue links (with Ultra touring)', 'Crew, venue and portal links never need seats'],
-  ['People you share with', 'Anyone who gets a shared link or report'],
+  ['People you share with', 'Anyone who opens a share link or report, or sends you files through a drop link'],
 ];
 ---
 <Base title={title} description={description} theme="paper" closing="handled" schema={schema}>
@@ -91,9 +93,9 @@ const freeForEveryone = [
         <h1 class="prh__h">
           <span class="prh__l"><span class="stk stk--tile stk--lime" data-stk><b>$0</b></span>Start <em>free.</em><span class="stk stk--pill stk--pink" data-stk>Free forever</span></span>
           <span class="prh__l">Add seats<span class="stk stk--av" data-stk><img src="/studio-nine/img/set/hero-manager.webp" alt="" loading="lazy" /></span></span>
-          <span class="prh__l"><span class="stk stk--pill stk--cyan" data-stk>✓ 14 days of Ultra</span>as you <em>grow.</em><span class="stk stk--tile stk--ink" data-stk><img src="/studio-nine/logo/team-logomark-white.png" alt="" /></span><span class="stk stk--dot" data-stk></span></span>
+          <span class="prh__l"><span class="stk stk--pill stk--cyan" data-stk>✓ Pro free for 30 days</span>as you <em>grow.</em><span class="stk stk--tile stk--ink" data-stk><img src="/studio-nine/logo/team-logomark-white.png" alt="" /></span><span class="stk stk--dot" data-stk></span></span>
         </h1>
-        <p class="lead">Free for one person and one artist. Pro and Ultra are priced per seat, and the people you share with never need one. Every new account starts with 14 days of Ultra.</p>
+        <p class="lead">Free for one person and one artist. Pro and Ultra are priced per seat, and the people you share with never need one. Try Pro free for 30 days with no card, or Ultra free for 14 days.</p>
         <div class="toggle" role="group" aria-label="Billing period">
           <button class="toggle__b is-on" data-period="year" aria-pressed="true">Yearly <span class="tag tag--lime">Save {yearlySaving}%</span></button>
           <button class="toggle__b" data-period="month" aria-pressed="false">Monthly</button>
@@ -109,7 +111,7 @@ const freeForEveryone = [
             <li>Day to day: your plate, schedule, waiting on and offers</li>
             <li>TeamMate, 10 messages a day</li>
             <li>Document intake and templates</li>
-            <li>Unlimited drop links</li>
+            <li>Unlimited share links and drop links</li>
             <li>iPhone app · Android coming soon</li>
           </ul>
           <div class="pl__go">
@@ -118,7 +120,7 @@ const freeForEveryone = [
           </div>
         </article>
         <article class="pl__card">
-          <p class="pl__k">Pro</p>
+          <p class="pl__k">Pro <span class="tag tag--lime">30 days free</span></p>
           <p class="pl__price"><b data-price-year={'$' + plans.pro.yearly} data-price-month={'$' + plans.pro.monthly}>${plans.pro.yearly}</b><span data-per-year="per seat a month, billed yearly" data-per-month="per seat a month, billed monthly">per seat a month, billed yearly</span></p>
           <p class="pl__d">For a small team running a few artists. Up to 5 artists.</p>
           <ul class="pl__list">
@@ -132,7 +134,7 @@ const freeForEveryone = [
           </ul>
           <div class="pl__go">
             <a class="btn btn--primary btn--lg" href={planLink('pro')} data-period-link>Choose Pro <span class="arr">→</span></a>
-            <p class="cta-note">Starts with a 14-day trial. Cancel any time.</p>
+            <p class="cta-note">30 days free, no card needed.</p>
           </div>
         </article>
         <article class="pl__card pl__card--dark">
@@ -150,7 +152,7 @@ const freeForEveryone = [
           </ul>
           <div class="pl__go">
             <a class="btn btn--lime btn--lg" href={planLink('ultra')} data-period-link>Choose Ultra <span class="arr">→</span></a>
-            <p class="cta-note">Starts with a 14-day trial. Cancel any time.</p>
+            <p class="cta-note">14 days free. Add a card to start, cancel any time.</p>
           </div>
         </article>
         <article class="pl__card pl__card--soft">
