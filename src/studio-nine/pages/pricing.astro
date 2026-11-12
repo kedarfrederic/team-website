@@ -16,7 +16,7 @@ const compare: { g: string; rows: Row[] }[] = [
     ['Day to day: your plate, schedule, waiting on and offers', '✓', '✓', '✓', '✓'],
     ['Document intake and templates', '✓', '✓', '✓', '✓'],
     ['Drop links', 'Unlimited', 'Unlimited', 'Unlimited', 'Unlimited'],
-    ['iPhone app', '✓', '✓', '✓', '✓'],
+    ['iPhone app · Android coming soon', '✓', '✓', '✓', '✓'],
     ['Boards', '1', 'Unlimited', 'Unlimited', 'Unlimited'],
     ['Largest single upload', '1 GB', '5 GB', '20 GB', 'Custom'],
   ] },
@@ -48,10 +48,39 @@ const compare: { g: string; rows: Row[] }[] = [
   ] },
 ];
 const cols = ['free', 'pro', 'ultra', 'enterprise'] as const;
+// What each feature does, opened from the "?" beside its name. One or two plain sentences.
+const about: Record<string, string> = {
+  'Releases, rollout plan, tasks, files and budget': 'Every release in one place: the plan from announce to release day, who owns each task, the files and the money.',
+  'Day to day: your plate, schedule, waiting on and offers': 'Your daily view of what needs you, what is scheduled, what you are waiting on from others and the offers on the table.',
+  'Document intake and templates': 'Drop in a contract, offer or one-sheet and Team reads it into the release. Start new releases from a template instead of a blank page.',
+  'Drop links': 'Share a file or folder with a link anyone can open, no account needed.',
+  'iPhone app · Android coming soon': 'Run your releases from your phone with the Team app for iPhone. Android is on the way.',
+  'Boards': 'Lay work out in columns you choose, so you can see where everything stands at a glance.',
+  'Largest single upload': 'The biggest single file you can upload, such as a master or a video.',
+  'TeamMate, the AI that does the admin': 'The AI inside Team. It answers questions about your releases, drafts what is next and does the admin, and asks you before anything that touches money, dates or partners.',
+  'TeamMate by email and text': 'Email or text TeamMate a question or a file, and it works on the release for you.',
+  'Intelligence refresh': 'How often Team refreshes the data and insights about your artists and releases.',
+  'Seats': 'A seat is a member who edits, admins included. Collaborators, view-only people and anyone you share with do not need one.',
+  'Artists': 'How many artists you can run releases for in your workspace.',
+  'Sub-labels': 'Group artists and releases under their own imprint, each with its own view.',
+  'Collaborators, view-only people and shared links': 'Outside collaborators can view, comment, upload files and answer reviews. They never need a seat, and neither does anyone who only views or gets a shared link.',
+  'Team Chat': 'Talk with your team inside Team, right next to the release you are talking about.',
+  'Reports and sharing': 'Turn a release into a clean report and share it with a link. Nobody needs an account to read it.',
+  'Command center': 'One screen for what is moving, what is late and what needs a decision across your releases.',
+  'Connectors to the tools you use': 'Connect Dropbox, Drive, Gmail, Slack, Sheets, Notion and more. Team reads from them and writes back.',
+  'A&R prospects': 'Keep the artists you are watching in one list, with notes and links.',
+  'A&R pipeline': 'Move prospects through stages, from first listen to signed, with the whole team seeing the same picture.',
+  'One view across every artist': 'Every release across your roster on one screen, with what each one is waiting on.',
+  'Touring': 'Plan and run shows: routing, holds and offers, advancing, day sheets and settlement. Crew and venue links never need a seat.',
+  'SSO': 'Your team signs in through your company identity provider, such as Okta.',
+  'API access': 'Connect your own systems to Team through our API.',
+  'Dedicated support': 'A named contact who knows your setup, with hands-on onboarding and help when you need it.',
+};
+const tipId = (f: string) => 'tip-' + f.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 const freeForEveryone = [
   ['Outside collaborators', 'View, comment, upload files and answer reviews on a release'],
   ['View-only people', 'Anyone who only needs to look'],
-  ['Tour crew, venues and portals', 'Every crew, venue and portal link'],
+  ['Tour crew and venue links (with Ultra touring)', 'Crew, venue and portal links never need seats'],
   ['People you share with', 'Anyone who gets a shared link or report'],
 ];
 ---
@@ -81,7 +110,7 @@ const freeForEveryone = [
             <li>TeamMate, 10 messages a day</li>
             <li>Document intake and templates</li>
             <li>Unlimited drop links</li>
-            <li>The iPhone app</li>
+            <li>iPhone app · Android coming soon</li>
           </ul>
           <div class="pl__go">
             <a class="btn btn--lime btn--lg" href={freeLink}>Start free <span class="arr">→</span></a>
@@ -171,7 +200,7 @@ const freeForEveryone = [
               <div class="cmp__group">{g}</div>
               {rows.map(([f, ...vals]) => (
                 <div class="cmp__row">
-                  <div class="cmp__f">{f}</div>
+                  <div class="cmp__f"><span>{f}</span>{about[f] && <><button type="button" class="tip" aria-expanded="false" aria-controls={tipId(f)} aria-describedby={tipId(f)} aria-label="More about this feature"><span aria-hidden="true">?</span></button><span class="tip__b" role="tooltip" id={tipId(f)} hidden>{about[f]}</span></>}</div>
                   {vals.map((v, i) => (
                     <div class:list={['cmp__c', `cmp__c--${cols[i]}`, { 'is-no': v === '–', 'is-yes': v === '✓' }]}>{v === '✓' ? <span class="sr">Included</span> : v === '–' ? <span aria-label="Not included">–</span> : v}</div>
                   ))}
@@ -268,7 +297,15 @@ const freeForEveryone = [
   .cmp__rows{display:grid}
   .cmp__group{padding:1.6rem 0 .6rem;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-40);font-weight:500;border-bottom:1px solid var(--ink-12)}
   .cmp__row{display:grid;grid-template-columns:var(--cols);gap:.6rem;align-items:center;border-bottom:1px solid var(--line)}
-  .cmp__f{padding:1rem 1rem 1rem 0;font-size:.98rem;line-height:1.35;word-break:keep-all}
+  .cmp__f{position:relative;padding:1rem 1rem 1rem 0;font-size:.98rem;line-height:1.35;word-break:keep-all}
+  /* Feature info: a small "?" that opens a short blurb on click, tap, keyboard or hover */
+  .tip{display:inline-grid;place-items:center;width:1.15rem;height:1.15rem;margin-left:.4rem;border-radius:50%;vertical-align:.1em;font-size:.68rem;font-weight:600;line-height:1;color:var(--ink-60);box-shadow:inset 0 0 0 1px var(--ink-12);background:var(--white);cursor:pointer;transition:background .15s,color .15s,box-shadow .15s}
+  .tip:hover,.tip[aria-expanded='true']{background:var(--ink);color:var(--white);box-shadow:none}
+  .tip:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+  .tip::after{content:'';position:absolute;inset:-.6rem}
+  .tip{position:relative}
+  .tip__b{position:absolute;left:0;top:calc(100% - .55rem);z-index:30;width:min(21rem,calc(100vw - 2.5rem));padding:.75rem .9rem;border-radius:var(--r-md);background:var(--ink);color:var(--on-dark);font-size:.86rem;font-weight:400;line-height:1.45;box-shadow:var(--shadow-md);word-break:keep-all}
+  .tip__b[hidden]{display:none}
   .cmp__c{position:relative;align-self:stretch;display:grid;place-items:center;padding:1rem .5rem;font-weight:500;font-size:.92rem;text-align:center;background:var(--paper);line-height:1.3}
   .cmp__c--ultra{background:var(--paper-2)}
   .cmp__c.is-no{color:var(--ink-40);font-weight:400}
@@ -287,6 +324,7 @@ const freeForEveryone = [
     .cmp__per{display:none}
     .cmp__row{gap:.35rem;row-gap:0;border-bottom:1px solid var(--line)}
     .cmp__f{grid-column:1/-1;padding:.85rem 0 .45rem;font-size:.92rem}
+    .tip__b{width:100%;font-size:.84rem}
     .cmp__c{padding:.55rem .25rem .7rem;font-size:.76rem;border-radius:var(--r-md) var(--r-md) 0 0}
     .cmp__group{padding-top:1.25rem}
   }
@@ -300,4 +338,35 @@ const freeForEveryone = [
     document.querySelectorAll<HTMLAnchorElement>('[data-period-link]').forEach(a => a.href = a.href.replace(/period=\w+/, 'period=' + (p === 'year' ? 'yearly' : 'monthly')));
   };
   btns.forEach(b => b.addEventListener('click', () => set(b.dataset.period as 'year' | 'month')));
+
+  // Feature info bubbles. Click, tap, Enter or Space toggles one (pinned); mouse hover previews it.
+  // Escape or a click outside closes. Only one is open at a time.
+  const tips = [...document.querySelectorAll<HTMLButtonElement>('.tip')];
+  let pinned: HTMLButtonElement | null = null;
+  const show = (b: HTMLButtonElement, on: boolean) => {
+    const t = document.getElementById(b.getAttribute('aria-controls')!);
+    if (t) t.hidden = !on;
+    b.setAttribute('aria-expanded', String(on));
+  };
+  const closeAll = (except?: HTMLButtonElement) => tips.forEach(b => { if (b !== except) show(b, false); });
+  tips.forEach(b => {
+    b.addEventListener('click', e => {
+      e.stopPropagation();
+      const wasPinned = pinned === b;
+      closeAll(b);
+      show(b, !wasPinned);
+      pinned = wasPinned ? null : b;
+    });
+    b.addEventListener('pointerenter', e => { if (e.pointerType !== 'mouse' || pinned) return; closeAll(b); show(b, true); });
+    b.addEventListener('pointerleave', e => { if (e.pointerType !== 'mouse' || pinned === b) return; show(b, false); });
+  });
+  document.addEventListener('click', e => {
+    if ((e.target as Element).closest?.('.tip__b')) return;
+    closeAll(); pinned = null;
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    const open = tips.find(b => b.getAttribute('aria-expanded') === 'true');
+    if (open) { closeAll(); pinned = null; open.focus(); }
+  });
 </script>

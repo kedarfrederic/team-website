@@ -14,8 +14,8 @@ export const homeFaq: Faq[] = [
 ];
 
 export const pricingFaq: Faq[] = [
-  ['Is Free really free?', 'Yes. One person and one artist, with no card and no end date. Releases, the rollout plan, files, budget, Day to day, document intake, drop links and the iPhone app are all in it, with TeamMate for 10 messages a day.'],
-  ['What counts as a seat?', 'A seat is a member who edits, admins included. Outside collaborators on a release, view-only people, tour crew, venue and portal links, and anyone you send a link or report to are free on every plan.'],
+  ['Is Free really free?', 'Yes. One person and one artist, with no card and no end date. Releases, the rollout plan, files, budget, Day to day, document intake, drop links and the iPhone app (Android is coming soon) are all in it, with TeamMate for 10 messages a day.'],
+  ['What counts as a seat?', 'A seat is a member who edits, admins included. Outside collaborators on a release, view-only people and anyone you send a link or report to are free on every plan. With Ultra touring, crew, venue and portal links never need a seat either.'],
   ['What is the difference between Pro and Ultra?', 'Pro is for a small team running a few artists: up to 5 artists, with all of TeamMate, Team Chat, reports, Connectors and A&R prospects. Pro has no seat limit, so move to Ultra when you need touring, more artists or sub-labels, or the roster view. Ultra is for a management company or label: up to 20 seats, unlimited artists and sub-labels, touring, the A&R pipeline and one view across every artist.'],
   ['How does the trial work?', 'Every new account starts with 14 days of Ultra. When it ends, choose a plan, or carry on with Free.'],
   ['Do I need a card?', 'Not for Free, ever. You add a card when you choose Pro or Ultra, and you can cancel any time.'],
