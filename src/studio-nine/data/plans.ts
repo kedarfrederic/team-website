@@ -10,7 +10,7 @@ export const app = 'https://app.teamrollouts.com/onboarding';
 
 export const plans = {
   free: { name: 'Free', monthly: 0, yearly: 0, seats: '1' },
-  pro: { name: 'Pro', monthly: 15, yearly: 12, seats: 'Up to 4' },
+  pro: { name: 'Pro', monthly: 15, yearly: 12, seats: 'Any number' },
   ultra: { name: 'Ultra', monthly: 25, yearly: 20, seats: 'Up to 20' },
   enterprise: { name: 'Enterprise', monthly: null, yearly: null, seats: '21 or more' },
 } as const;

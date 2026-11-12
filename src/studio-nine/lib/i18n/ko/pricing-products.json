@@ -119,7 +119,6 @@
   "The iPhone app": "iPhone 앱",
   "per seat a month, billed yearly": "좌석당 월 요금, 연간 결제",
   "per seat a month, billed monthly": "좌석당 월 요금, 월간 결제",
-  "For a small team running a few artists. Up to 4 seats and 5 artists.": "아티스트 몇 명을 관리하는 소규모 팀에게. 좌석 최대 4개, 아티스트 최대 5명.",
   "All of TeamMate, by email and text too": "TeamMate 전체 기능, 이메일과 문자로도",
   "Team Chat, reports and sharing": "팀 채팅, 리포트 및 공유",
   "Command center": "커맨드 센터",
@@ -171,7 +170,6 @@
   "Every day": "매일",
   "Your team": "팀 구성",
   "Seats": "좌석",
-  "Up to 4": "최대 4개",
   "Up to 20": "최대 20개",
   "21 or more": "21개 이상",
   "Up to 5": "최대 5명",
@@ -188,7 +186,6 @@
   "What counts as a seat?": "좌석은 어떻게 계산하나요?",
   "A seat is a member who edits, admins included. Outside collaborators on a release, view-only people, tour crew, venue and portal links, and anyone you send a link or report to are free on every plan.": "좌석은 편집 권한이 있는 멤버를 말하며 관리자도 포함됩니다. 릴리스의 외부 협업자, 보기 전용 사용자, 투어 크루와 공연장·포털 링크, 링크나 리포트를 받는 사람은 모든 플랜에서 무료입니다.",
   "What is the difference between Pro and Ultra?": "Pro와 Ultra는 무엇이 다른가요?",
-  "Pro is for a small team running a few artists: up to 4 seats and 5 artists, with all of TeamMate, Team Chat, reports, Connectors and A&R prospects. Ultra is for a management company or label: up to 20 seats, unlimited artists and sub-labels, touring, the A&R pipeline and one view across every artist.": "Pro는 아티스트 몇 명을 관리하는 소규모 팀을 위한 플랜으로, 좌석 최대 4개와 아티스트 최대 5명에 TeamMate 전체 기능, 팀 채팅, 리포트, Connectors, A&R 후보 관리가 포함됩니다. Ultra는 매니지먼트사와 레이블을 위한 플랜으로, 좌석 최대 20개, 아티스트와 서브 레이블 무제한, 투어 관리, A&R 파이프라인, 모든 아티스트를 한 화면에서 보는 기능이 포함됩니다.",
   "How does the trial work?": "체험은 어떻게 진행되나요?",
   "Every new account starts with 14 days of Ultra. When it ends, choose a plan, or carry on with Free.": "새 계정은 모두 Ultra 14일 체험으로 시작합니다. 체험이 끝나면 플랜을 선택하거나 무료 플랜으로 계속 사용하세요.",
   "Not for Free, ever. You add a card when you choose Pro or Ultra, and you can cancel any time.": "무료 플랜에는 카드가 필요 없습니다. Pro나 Ultra를 선택할 때 카드를 등록하며, 언제든 취소할 수 있습니다.",
@@ -200,5 +197,8 @@
   "On Ultra. Cancel any time.": "Ultra 플랜. 언제든 취소할 수 있습니다.",
   "All of TeamMate on Pro. Cancel any time.": "Pro에서는 TeamMate 전체 기능. 언제든 취소할 수 있습니다.",
   "On Pro. Cancel any time.": "Pro 플랜. 언제든 취소할 수 있습니다.",
-  "Priced for your company": "회사에 맞춘 요금"
+  "Priced for your company": "회사에 맞춘 요금",
+  "For a small team running a few artists. Up to 5 artists.": "아티스트 몇 명을 관리하는 소규모 팀에게. 아티스트 최대 5명.",
+  "Any number": "제한 없음",
+  "Pro is for a small team running a few artists: up to 5 artists, with all of TeamMate, Team Chat, reports, Connectors and A&R prospects. Pro has no seat limit, so move to Ultra when you need touring, more artists or sub-labels, or the roster view. Ultra is for a management company or label: up to 20 seats, unlimited artists and sub-labels, touring, the A&R pipeline and one view across every artist.": "Pro는 아티스트 몇 명을 관리하는 소규모 팀을 위한 플랜으로, 아티스트 최대 5명에 TeamMate 전체 기능, 팀 채팅, 리포트, Connectors, A&R 후보 관리가 포함됩니다. Pro는 좌석 수 제한이 없으니, 투어 관리나 더 많은 아티스트, 서브 레이블, 전체 아티스트 화면이 필요할 때 Ultra로 옮기세요. Ultra는 매니지먼트사와 레이블을 위한 플랜으로, 좌석 최대 20개, 아티스트와 서브 레이블 무제한, 투어 관리, A&R 파이프라인, 모든 아티스트를 한 화면에서 보는 기능이 포함됩니다."
 }
