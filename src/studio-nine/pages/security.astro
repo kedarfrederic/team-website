@@ -6,7 +6,7 @@ const controls = [
   ['Encrypted in transit and at rest', 'Your data is encrypted in transit and at rest. Credentials for your connected tools live in a dedicated secrets vault, never in plain text.'],
   ['Permissioned and revocable', 'You decide what each connection can see, and you can cut any of them off in one click. Team only ever reads the scopes you have granted.'],
   ['Granular access', 'Role-based controls decide who on your team sees what. The right people get the whole picture, everyone else gets exactly their slice.'],
-  ['A full audit trail', 'Every action Team takes is logged, so you can always see what changed, when, and where the answer came from.'],
+  ['Audit history — coming soon', 'A record of every action, with who did it and when. We are building it now.'],
 ];
 const faq = [
   ['Does TeamMate train on my data?', 'No. TeamMate uses your connected data to answer your questions and do work for your release. We do not train models on it, and neither do our providers. Your data is never pooled with other customers.'],
@@ -17,7 +17,7 @@ const faq = [
 ];
 const schema = graph(webpage({ name: 'Security and trust', description: 'How Team handles your data: never used to train a model, permissioned, revocable and exportable.', url: '/security' }), faqSchema(faq.map(([q, a]) => ({ q, a }))));
 ---
-<Base title="Security and trust — your data, your rules" description="Team reads your files, messages, money and plans to help you run releases. Here is how it stays private, permissioned and yours: never trained on, revocable in a click, encrypted, audited." schema={schema} closing="covered">
+<Base title="Security and trust — your data, your rules" description="Team reads your files, messages, money and plans to help you run releases. Here is how it stays private, permissioned and yours: never trained on, revocable in a click, encrypted." schema={schema} closing="covered">
   <section class="sh">
     <div class="wrap sh__in">
       <div>
@@ -44,7 +44,7 @@ const schema = graph(webpage({ name: 'Security and trust', description: 'How Tea
 
   <section class="section">
     <div class="wrap">
-      <div class="head"><h2 class="h1">Protection built in, <em>not bolted on.</em></h2><p class="lead" data-reveal>The controls underneath every connection, so Team only ever sees what you allow, and you can prove what it did.</p></div>
+      <div class="head"><h2 class="h1">Protection built in, <em>not bolted on.</em></h2><p class="lead" data-reveal>The controls underneath every connection, so Team only ever sees what you allow.</p></div>
       <div class="ctrls" data-reveal-stagger>{controls.map(([h, d], i) => <div class="ctrl"><span class="ctrl__badge" style={`--c:${['var(--viv-green)','var(--viv-cyan)','var(--viv-pink)','var(--viv-lav)'][i]}`}><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d={['M6 10V8a6 6 0 0 1 12 0v2M5 10h14v10H5z','M12 3l7 4v5c0 5-3.5 8-7 9-3.5-1-7-4-7-9V7z','M16 11a4 4 0 1 0-8 0 4 4 0 0 0 8 0zM4 21a8 8 0 0 1 16 0','M4 7h16M4 12h10M4 17h13'][i]} /></svg></span><h3 class="h3">{h}</h3><p>{d}</p></div>)}</div>
     </div>
   </section>
@@ -52,7 +52,7 @@ const schema = graph(webpage({ name: 'Security and trust', description: 'How Tea
   <section class="section section--paper">
     <div class="wrap ent">
       <div><h2 class="h2">Enterprise controls, <em>when you need them.</em></h2><p class="lead">Running at scale means stricter requirements. Team is built to meet them, with the controls and paperwork procurement teams expect.</p><a class="link" href="/enterprise">Explore Enterprise <span class="arr">→</span></a></div>
-      <ul class="ent__list" data-reveal-stagger>{['SSO and SAML sign-on','Role-based access control','SCIM provisioning','DPA on request','Data residency options','Exportable audit logs'].map((t, i) => <li><i style={`background:${['var(--lime)','var(--viv-cyan)','var(--viv-pink)','var(--viv-lav)','var(--viv-orange)','var(--viv-green)'][i]}`}></i>{t}</li>)}</ul>
+      <ul class="ent__list" data-reveal-stagger>{['SSO and SAML sign-on','Role-based access control','SCIM provisioning, coming soon','DPA on request','Data residency options','Audit history, coming soon'].map((t, i) => <li><i style={`background:${['var(--lime)','var(--viv-cyan)','var(--viv-pink)','var(--viv-lav)','var(--viv-orange)','var(--viv-green)'][i]}`}></i>{t}</li>)}</ul>
     </div>
   </section>
 

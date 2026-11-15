@@ -4,8 +4,8 @@ import MockCard from '../components/MockCard.astro';
 import { audiences } from '../data/audiences';
 const cards = [
   { h: 'Deploy across the company', d: 'Stand Team up across every imprint, team and release, then manage it all from one administrative view.' },
-  { h: 'Access on your terms', d: 'SSO, SAML, SCIM and role-based access, scoped per imprint, run through the systems you already have.' },
-  { h: 'Auditable by design', d: 'Every action logged, with who did it and when, exportable for your security and compliance teams on demand.' },
+  { h: 'Access on your terms', d: 'SSO and SAML through the identity provider you already use, with access set per imprint.' },
+  { h: 'Audit history — coming soon', d: 'A record of every action, with who did it and when, for your security and compliance teams. We are building it now.' },
   { h: 'A partner, not a portal', d: 'Dedicated onboarding, a named point of contact and hands-on rollout, with us alongside you.' },
 ];
 ---
@@ -16,6 +16,7 @@ const cards = [
         <h1 class="display lines"><span class="line"><span>Team for the</span></span><span class="line"><span><em>whole company.</em></span></span></h1>
         <p class="lead" data-reveal style="transition-delay:.2s">Labels and distributors running at scale need more than a tool. They need Team across the whole organisation, the controls procurement expects, and a partner on the other end. One release home per release, one view over everything.</p>
         <div class="cta-row" data-reveal style="transition-delay:.3s"><a class="btn btn--primary btn--lg" href="/contact">Talk to us <span class="arr">→</span></a><a class="btn btn--ghost btn--lg" href="/demo">Book a demo</a></div>
+        <p class="cta-note eh__plans" data-reveal style="transition-delay:.35s"><span>For 21 seats or more, with SSO, API access and dedicated support.</span> <a class="link" href="/pricing">Fewer seats? See Pro and Ultra <span class="arr">→</span></a></p>
       </div>
       <div class="eh__media" data-reveal style="transition-delay:.25s">
         <div class="org">
@@ -26,11 +27,11 @@ const cards = [
                 <span class="org__unit-k"><b>{n}</b><span class="org__st">{st}</span></span>
                 <span class="org__unit-s">{s}</span>
                 <span class="org__meter"><i></i></span>
-                <span class="org__chips"><i>SSO</i><i>Audit</i><i>RBAC</i></span>
+                <span class="org__chips"><i>SSO</i><i>API</i><i>RBAC</i></span>
               </div>
             ))}
           </div>
-          <div class="org__foot"><span class="dot"></span><span><b>TeamMate</b> · Synced 40 roles from your IdP overnight. Quarter's audit export is ready for security.</span></div>
+          <div class="org__foot"><span class="dot"></span><span><b>TeamMate</b> · SSO is on for every imprint. Two new admins were invited this morning.</span></div>
         </div>
       </div>
     </div>
@@ -48,8 +49,8 @@ const cards = [
           {/* Mini scene per card: what the console actually shows */}
           <div class="esc" aria-hidden="true">
             {i === 0 && <>{[['North Records','14 releases','var(--team-music)'],['Glass House','9 releases','var(--team-mkt)'],['Kite Publishing','6 releases','var(--team-mgmt)']].map(([n, r, col]) => <span class="esc__row"><i class="esc__sw" style={`background:${col}`}></i><b>{n}</b><span>{r}</span><em class="esc__ok">Live</em></span>)}</>}
-            {i === 1 && <>{[['SSO · Okta','On'],['SCIM provisioning','On'],['Role: Imprint admin','12 people']].map(([n, v], k) => <span class="esc__row"><i class:list={['esc__tog', { 'is-on': k < 2 }]}></i><b>{n}</b><em class="esc__val">{v}</em></span>)}</>}
-            {i === 2 && <>{[['09:14','Maya R. approved Master_v10','Log #4821'],['09:20','Sam D. delivered · 12 DSPs','Log #4822'],['11:02','Export · security@ · 30 days','Sent']].map(([t, e, r]) => <span class="esc__row esc__log"><em class="esc__t">{t}</em><b>{e}</b><span class="esc__rc">{r}</span></span>)}</>}
+            {i === 1 && <>{[['SSO · Okta','On'],['SAML sign-in','On'],['Role: Imprint admin','12 people']].map(([n, v], k) => <span class="esc__row"><i class:list={['esc__tog', { 'is-on': k < 2 }]}></i><b>{n}</b><em class="esc__val">{v}</em></span>)}</>}
+            {i === 2 && <><span class="esc__row"><i class="esc__tog"></i><b>Audit history</b><em class="esc__val">Coming soon</em></span><span class="esc__msg">Who did what, and when, across every imprint. On the way.</span></>}
             {i === 3 && <><span class="esc__row esc__who"><i class="esc__av">JT</i><b>Jake, your named contact</b><em class="esc__ok">Onboarding · week 2</em></span><span class="esc__msg">Rollout plan for the remaining imprints is in your console. Thursday to walk the finance team through budgets?</span></>}
           </div>
         </div>
@@ -66,6 +67,7 @@ const cards = [
   </section>
 </Base>
 <style>
+  .eh__plans{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem .75rem}
   .eh{padding:calc(4.5rem + clamp(3rem,7vw,6rem)) 0 clamp(2rem,4vw,3rem)}
   .eh__in{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(2rem,5vw,5rem);align-items:center;margin-bottom:clamp(2rem,4vw,3rem)}
   .eh__copy{display:grid;gap:1.5rem}

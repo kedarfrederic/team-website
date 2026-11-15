@@ -12,9 +12,9 @@ export const site = {
     product: [
       { label: 'Rollouts', desc: 'Plan and run every release', href: '/rollouts', icon: 'rollouts', c: 'var(--team-music)' },
       { label: 'Assets', desc: 'The creative library, release-ready', href: '/assets', icon: 'assets', c: 'var(--team-press)' },
-      { label: 'Tours', desc: 'Take the release on the road', href: '/tours', icon: 'tours', pro: true, c: 'var(--team-distro)' },
-      { label: 'TeamMate', desc: 'The AI that runs the admin', href: '/teammate', icon: 'teammate', pro: true, c: 'var(--ink)' },
-      { label: 'Connectors', desc: 'Works with your tools, both ways', href: '/connectors', icon: 'connectors', pro: true, c: 'var(--team-mgmt)' },
+      { label: 'Tours', desc: 'Take the release on the road', href: '/tours', icon: 'tours', plan: 'Ultra', c: 'var(--team-distro)' },
+      { label: 'TeamMate', desc: 'The AI that runs the admin', href: '/teammate', icon: 'teammate', c: 'var(--ink)' },
+      { label: 'Connectors', desc: 'Works with your tools, both ways', href: '/connectors', icon: 'connectors', plan: 'Pro', c: 'var(--team-mgmt)' },
     ],
     who: [
       { label: 'Artists', desc: 'Run a release like a whole team', href: '/for-artists', icon: 'artists', c: 'var(--team-music)' },

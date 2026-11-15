@@ -28,7 +28,6 @@
   "Enterprise": "엔터프라이즈",
   "Deploy across the whole company": "회사 전체에 도입하세요",
   "Pricing": "요금 안내",
-  "Free, or Pro when you want more": "무료로 시작하고, 더 필요할 때 Pro로",
   "20 minutes": "20분",
   "See it on": "직접 확인해 보세요,",
   "your": "여러분의",
@@ -248,5 +247,6 @@
   "Out · 30 Oct": "발매 · 10월 30일",
   "While you were": "여러분이",
   "in the": "작업실에서",
-  "studio.": "작업하는 동안."
+  "studio.": "작업하는 동안.",
+  "Free, Pro, Ultra and Enterprise": "무료, Pro, Ultra, 엔터프라이즈"
 }
