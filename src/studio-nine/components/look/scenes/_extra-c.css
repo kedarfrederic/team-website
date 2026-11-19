@@ -1,0 +1,184 @@
+/* _extra-c.css: agent c (TeamMate rail, dock, snap toast, Budget page).
+   Everything is scoped under .tapp. Most of this file is REAL app CSS (from the full staging app.css) that the
+   shaker dropped because the captured screens never rendered those states (question / action / approval cards,
+   the snap toast .tm-sw, the dock-circle pill). Those rules are copied verbatim, only re-scoped. The rest are
+   small demo-only states (typed spans instead of inputs, snap highlight, skeleton). */
+
+/* ---------- Header bell count (Tailwind utility classes aren't in tapp.css) ---------- */
+.tapp .uin .top .next-notification-trigger { position: relative; }
+.tapp .uin .top .next-notification-count { position: absolute; top: -4px; right: -4px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 999px; display: grid; place-items: center; background: var(--lime); color: rgb(14, 13, 11); font-size: 10px; font-weight: 600; line-height: 1; }
+
+/* ---------- Budget: snap highlight on the RELEASE BUDGET tile (demo-only) ---------- */
+@keyframes cSnapPulse { 0% { box-shadow: inset 0 0 0 2px var(--lime), 0 0 0 0 rgba(217, 250, 135, .75); } 60% { box-shadow: inset 0 0 0 2px var(--lime), 0 0 0 10px rgba(217, 250, 135, 0); } 100% { box-shadow: inset 0 0 0 2px var(--lime), 0 0 22px 2px rgba(217, 250, 135, .35); } }
+.tapp .uin .bn-summary { overflow: visible; }
+.tapp .uin .bn-summary > :first-child { border-radius: 20px 0 0 20px; }
+.tapp .uin .bn-summary > :last-child { border-radius: 0 20px 20px 0; }
+.tapp .uin .bn-summary > .snap-hi { position: relative; z-index: 1; border-radius: 20px; background: color-mix(in srgb, var(--lime) 10%, var(--card)); box-shadow: inset 0 0 0 2px var(--lime), 0 0 22px 2px rgba(217, 250, 135, .35); animation: cSnapPulse 1.1s var(--ease) both; transition: background .4s, box-shadow .4s; }
+
+/* ---------- Budget: loading skeleton (demo-only; mirrors the app's grey blocks) ---------- */
+.tapp .uin .bud-skel { display: grid; gap: 18px; align-content: start; padding-top: 4px; }
+.tapp .uin .bud-skel[hidden] { display: none; }
+.tapp .uin .bud-skel i { display: block; border-radius: 16px; background: color-mix(in srgb, var(--ink) 5%, transparent); }
+.tapp .uin .bud-skel .t { height: 10px; width: 330px; border-radius: 999px; }
+.tapp .uin .bud-skel .b { height: 30px; width: 58%; border-radius: 999px; }
+.tapp .uin .bud-skel .r { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.tapp .uin .bud-skel .r i { height: 96px; }
+.tapp .uin .bud-skel .c { height: 240px; }
+.tapp .uin #panel.bud-loading .ph h2 .bud-h-ok, .tapp .uin #panel:not(.bud-loading) .ph h2 .bud-h-load { display: none; }
+.tapp .uin #panel.bud-loading .ph h2 { color: var(--ink-3); font-size: 21px; }
+.tapp .uin #panel.bud-loading .tabs { visibility: hidden; height: 0; padding: 0; }
+/* the real ".panel h2 span" greys spans; our heading-swap spans must keep the h2 ink */
+.tapp .uin #panel .ph h2 .bud-h-ok, .tapp .uin #panel .ph h2 .bud-h-load { color: inherit; }
+
+/* ===== Real app CSS ported verbatim (re-scoped) from the full staging app.css: rules tapp.css lacks because no capture showed these states. ===== */
+.tapp .uin .dock.dock-circle { left: auto; right: 24px; bottom: 24px; transform: none; width: auto; padding: 0px; gap: 10px; background: transparent; box-shadow: none; cursor: pointer; }
+.tapp .uin .dock.dock-circle.hide { transform: translateY(120px); }
+.tapp .uin .dock.dock-circle .mk { width: 56px; height: 56px; background: rgb(14, 13, 11); box-shadow: rgba(0, 0, 0, 0.6) 0px 30px 60px -20px, rgba(255, 255, 255, 0.08) 0px 0px 0px 1px inset; }
+.tapp .uin .dock.dock-circle .mk svg { width: 20px; height: 20px; }
+.tapp .uin .dock.dock-circle .att { left: auto; right: 2px; top: 2px; }
+.tapp .uin .dock.dock-circle .note { font-size: 13px; color: var(--dark-fg); background: rgb(14, 13, 11); padding: 9px 14px; border-radius: 999px; white-space: nowrap; box-shadow: rgba(0, 0, 0, 0.5) 0px 18px 40px -18px; }
+.tapp .uin .tm-sw { position: fixed; left: 50%; bottom: 92px; z-index: 58; transform: translate(-50%); display: flex; align-items: center; gap: 12px; max-width: min(640px, -32px + 100vw); padding: 8px 8px 8px 10px; border-radius: 999px; background: rgb(14, 13, 11); color: var(--dark-fg,#F3F0E8); box-shadow: rgba(0, 0, 0, 0.6) 0px 30px 60px -20px, rgba(255, 255, 255, 0.08) 0px 0px 0px 1px inset; animation: tmSwIn .32s var(--ease) both; }
+.tapp .uin .tm-sw.out { opacity: 0; transform: translate(-50%, 10px); transition: opacity .22s var(--ease),transform .22s var(--ease); }
+.tapp .uin .tm-sw.still, .tapp .uin .tm-sw.still.out { animation: auto ease 0s 1 normal none running none; transition: none; }
+.tapp .uin .tm-sw-mk { flex: 0 0 auto; width: 32px; height: 32px; border-radius: 50%; background: var(--lime); display: grid; place-items: center; }
+.tapp .uin .tm-sw-mk svg { width: 13px; height: 13px; fill: rgb(14, 13, 11); }
+.tapp .uin .tm-sw-tx { display: grid; gap: 1px; min-width: 0px; }
+.tapp .uin .tm-sw-tx b { font-size: 13.5px; font-weight: 500; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tapp .uin .tm-sw-tx small { font: 500 12px/1.35 var(--mono); color: rgba(243, 240, 232, 0.62); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tapp .uin .tm-sw-tx .tm-sw-else { font-family: inherit; display: flex; gap: 8px; align-items: baseline; }
+.tapp .uin .tm-sw-link { color: var(--lime); text-decoration: underline; text-underline-offset: 2px; font-size: 12px; }
+.tapp .uin .tm-sw-act { display: flex; align-items: center; gap: 4px; margin-left: auto; flex: 0 0 auto; }
+.tapp .uin .tm-sw-b { min-height: 32px; padding: 0px 13px; border-radius: 999px; font-size: 12.5px; font-weight: 500; color: inherit; background: rgba(255, 255, 255, 0.08); white-space: nowrap; }
+.tapp .uin .tm-sw-b:hover { background: rgba(255, 255, 255, 0.16); }
+.tapp .uin .tm-sw-b.on { background: var(--lime); color: rgb(14, 13, 11); }
+.tapp .uin .tm-sw-x { width: 32px; height: 32px; border-radius: 50%; font-size: 17px; line-height: 1; color: rgba(243, 240, 232, 0.62); }
+.tapp .uin .tm-sw-x:hover { color: inherit; background: rgba(255, 255, 255, 0.08); }
+.tapp .uin .tm-sw :focus-visible { outline: 2px solid var(--lime); outline-offset: 2px; }
+.tapp .uin .tm-sw-n { color: var(--lime); margin-right: 8px; }
+.tapp .uin .tm-sw-prog { position: absolute; left: 22px; right: 22px; bottom: 3px; height: 2px; border-radius: 2px; background: rgba(255, 255, 255, 0.1); overflow: hidden; pointer-events: none; }
+.tapp .uin .tm-sw-prog i { display: block; height: 100%; border-radius: inherit; background: var(--lime); transform-origin: left center; transform: scaleX(var(--from,1)); }
+.tapp .uin .tm-sw-prog i.run { animation: auto linear 0s 1 normal forwards running tmSwProg; }
+.tapp .uin .toast:has(#toastD[style=""]), .tapp .uin .toast:has(#toastA[style=""]) { border-radius: 18px; padding: 10px 12px 10px 10px; }
+.tapp .uin .tm-card { background: var(--tm-s1); border: 1px solid var(--tm-hair); border-radius: 16px; padding: 13px 15px; min-width: 0px; font-weight: 400; }
+.tapp .uin .tm-ch { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 9px; }
+.tapp .uin .tm-eb { display: inline-flex; align-items: center; gap: 7px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--dark-fg-3); }
+.tapp .uin .tm-eb .ic { width: 13px; height: 13px; }
+.tapp .uin .tm-badge { font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
+.tapp .uin .tm-badge.is-done { color: var(--tm-lime); background: rgba(217, 250, 135, 0.12); }
+.tapp .uin .tm-badge.is-queued { color: var(--tm-amber); background: rgba(255, 217, 138, 0.1); }
+.tapp .uin .tm-badge.is-approval { color: rgb(255, 178, 135); background: rgba(245, 96, 2, 0.16); }
+.tapp .uin .tm-badge.is-running { color: var(--dark-fg-2); background: rgba(255, 255, 255, 0.07); }
+.tapp .uin .tm-stt { font-size: 14px; font-weight: 500; color: var(--dark-fg); letter-spacing: -0.005em; }
+.tapp .uin .tm-sts { font-size: 12.5px; color: var(--dark-fg-2); margin-top: 2px; line-height: 1.45; }
+.tapp .uin .tm-acts { display: grid; gap: 8px; min-width: 0px; }
+.tapp .uin .tm-ah { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--dark-fg-3); }
+.tapp .uin .tm-ah .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--tm-lime); }
+.tapp .uin .tm-al { display: grid; gap: 8px; }
+.tapp .uin .tm-act { display: grid; grid-template-columns: 22px minmax(0px, 1fr) auto; gap: 10px; align-items: start; padding: 12px 14px; }
+.tapp .uin .tm-act .tk { width: 20px; height: 20px; border-radius: 50%; background: var(--tm-lime); color: rgb(14, 13, 11); display: grid; place-items: center; font-size: 12px; font-weight: 700; margin-top: 1px; }
+.tapp .uin .tm-act .tk .ic { width: 11px; height: 11px; stroke-width: 3; }
+.tapp .uin .tm-act[data-partial="true"] .tk { background: var(--tm-amber); }
+.tapp .uin .tm-act .tt { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 8px; font-size: 13.5px; font-weight: 500; color: var(--dark-fg); }
+.tapp .uin .tm-act .bd { font-size: 12.5px; color: var(--dark-fg-2); margin-top: 2px; overflow-wrap: anywhere; }
+.tapp .uin .tm-ver { display: inline-flex; align-items: center; gap: 4px; font-size: 10.5px; font-weight: 500; padding: 2px 7px; border-radius: 999px; color: var(--tm-lime); background: rgba(217, 250, 135, 0.1); }
+.tapp .uin .tm-ver .ic { width: 9px; height: 9px; stroke-width: 3; }
+.tapp .uin .tm-open { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--dark-fg); white-space: nowrap; padding: 4px 2px; border-bottom: 1px solid rgba(255, 255, 255, 0.25); transition: border-color 0.15s; }
+.tapp .uin .tm-open:hover { border-color: var(--tm-lime); }
+.tapp .uin .tm-open .ic { width: 12px; height: 12px; }
+.tapp .uin .tm-appr { border-color: rgba(245, 96, 2, 0.34); background: linear-gradient(180deg,rgba(245,96,2,.09),var(--tm-s1) 70%); transition: border-color 0.4s, background 0.4s; }
+.tapp .uin .tm-appr[data-resolved="true"] { border-color: var(--tm-hair); background: var(--tm-s1); }
+.tapp .uin .tm-appr-eb { color: rgb(255, 178, 135); }
+.tapp .uin .tm-appr[data-resolved="true"] .tm-appr-eb { color: var(--dark-fg-3); }
+.tapp .uin .tm-appr .pulse { width: 7px; height: 7px; border-radius: 50%; background: var(--ember); animation: 1.3s ease-in-out 0s infinite normal none running tmPulse; }
+.tapp .uin .tm-appr[data-resolved="true"] .pulse { background: var(--tm-lime); animation: auto ease 0s 1 normal none running none; }
+.tapp .uin .tm-apb { font-size: 13px; line-height: 1.5; color: var(--dark-fg-2); margin: -2px 0px 11px; }
+.tapp .uin .tm-apr { display: grid; grid-template-columns: 30px minmax(0px, 1fr); gap: 4px 11px; align-items: start; padding: 11px 12px; border-radius: 12px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.06); transition: background 0.35s, border-color 0.35s, opacity 0.35s; }
+.tapp .uin .tm-apr > .tm-mk { grid-row: 1 / span 2; align-self: start; }
+.tapp .uin .tm-apr[data-state="approved"] { background: rgba(217, 250, 135, 0.07); border-color: rgba(217, 250, 135, 0.2); }
+.tapp .uin .tm-apr[data-state="dismissed"] { opacity: 0.55; }
+.tapp .uin .tm-apr[data-state="busy"] { opacity: 0.78; }
+.tapp .uin .tm-apr .meta { min-width: 0px; padding-top: 1px; }
+.tapp .uin .tm-apr .tt { font-size: 13px; font-weight: 500; color: var(--dark-fg); overflow-wrap: anywhere; line-height: 1.4; }
+.tapp .uin .tm-apr .tm-dt { font-size: 12px; color: var(--dark-fg-3); margin-top: 1px; white-space: pre-line; }
+.tapp .uin .tm-apr .tm-dt.tm-rows { list-style: none; margin: 7px 0px 2px; padding: 0px; display: grid; gap: 4px; font-size: 12.5px; line-height: 1.45; color: var(--dark-fg-2); white-space: normal; }
+.tapp .uin .tm-apr .tm-dt.tm-rows li { position: relative; padding-left: 12px; overflow-wrap: anywhere; }
+.tapp .uin .tm-apr .tm-dt.tm-rows li::before { content: ""; position: absolute; left: 1px; top: 0.62em; width: 4px; height: 4px; border-radius: 50%; background: var(--dark-fg-3); }
+.tapp .uin .tm-apr .tm-acts2, .tapp .uin .tm-apr > .tm-open, .tapp .uin .tm-apr > .tm-busy, .tapp .uin .tm-apr > .tm-dis { grid-column: 2; justify-self: start; margin-top: 6px; }
+.tapp .uin .tm-apr .tm-acts2 { display: flex; gap: 6px; }
+.tapp .uin .tm-busy, .tapp .uin .tm-dis { font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--dark-fg-3); white-space: nowrap; }
+.tapp .uin .tm-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 32px; padding: 0px 14px; border-radius: 999px; font-size: 12.5px; font-weight: 500; white-space: nowrap; transition: transform .15s var(--ease),background .15s,border-color .15s,filter .15s; }
+.tapp .uin .tm-btn .ic { width: 13px; height: 13px; }
+.tapp .uin .tm-btn.solid { background: var(--tm-lime); color: rgb(14, 13, 11); }
+.tapp .uin .tm-btn.solid:hover { filter: brightness(1.05); transform: translateY(-1px); }
+.tapp .uin .tm-btn.ghost { border: 1px solid rgba(255, 255, 255, 0.18); color: var(--dark-fg); }
+.tapp .uin .tm-btn.ghost:hover { background: rgba(255, 255, 255, 0.06); }
+.tapp .uin .tm-btn.danger { background: rgb(226, 86, 43); color: rgb(255, 255, 255); }
+.tapp .uin .tm-btn.sm { min-height: 30px; padding: 0px 12px; font-size: 12px; }
+.tapp .uin .tm-btn:disabled { opacity: 0.42; cursor: default; transform: none; filter: none; }
+.tapp .uin .tm-q .tm-qq { display: grid; gap: 8px; }
+.tapp .uin .tm-q .tm-qq + .tm-qq { margin-top: 12px; }
+.tapp .uin .tm-q .tx { font-size: 13.5px; font-weight: 500; color: var(--dark-fg); }
+.tapp .uin .tm-qo { display: flex; flex-wrap: wrap; gap: 6px; }
+.tapp .uin .tm-qo button { padding: 7px 12px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.15); font-size: 12.5px; color: var(--dark-fg-2); transition: background .15s,border-color .15s,color .15s,transform .15s var(--ease); }
+.tapp .uin .tm-qo button:not([aria-pressed="true"]):hover:not(:disabled) { border-color: rgba(255, 255, 255, 0.3); color: var(--dark-fg); transform: translateY(-1px); }
+.tapp .uin .tm-qo button[aria-pressed="true"] { background: var(--tm-lime); border-color: var(--tm-lime); color: rgb(14, 13, 11); }
+.tapp .uin .tm-qo button:disabled { cursor: default; }
+.tapp .uin .tm-q[data-answered="true"] .tm-qo button:not([aria-pressed="true"]) { opacity: 0.45; }
+.tapp .uin .tm-q[data-inert="true"] { opacity: 0.72; }
+.tapp .uin .tm-qi { width: 100%; min-height: 38px; padding: 8px 12px; border-radius: 11px; border: 1px solid rgba(255, 255, 255, 0.12); background: rgba(255, 255, 255, 0.04); color: var(--dark-fg); font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: inherit; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; font-language-override: inherit; font-size: 13px; }
+.tapp .uin .tm-qi::placeholder { color: var(--dark-fg-3); }
+.tapp .uin .tm-qi:focus { outline: none; border-color: rgba(217, 250, 135, 0.5); background: rgba(255, 255, 255, 0.06); }
+.tapp .uin .tm-qh { font-size: 12px; color: var(--dark-fg-3); }
+.tapp .uin .tm-qa { display: flex; gap: 8px; margin-top: 12px; }
+.tapp .uin .tm-mk.xs .lg, .tapp .uin .tm-mk.xs .ic { width: 10px; height: 10px; }
+.tapp .uin .tm-mk.sm { width: 24px; height: 24px; border-radius: 7px; }
+.tapp .uin .tm-mk.sm .lg { width: 14px; height: 14px; }
+.tapp .uin .tm-mk.md { width: 30px; height: 30px; border-radius: 9px; }
+.tapp .uin .tm-mk.md .lg { width: 17px; height: 17px; }
+.tapp .uin .tm-mk.md .ic { width: 15px; height: 15px; }
+.tapp .uin .tm-mk-in { background: rgb(43, 40, 34); color: var(--dark-fg); }
+.tapp .uin .tm-mk-in svg:not(.ic) { width: 52%; height: 52%; fill: rgb(243, 240, 232); }
+.tapp .uin .tm-mk-in .ic { width: 55%; height: 55%; }
+.tapp .uin .toast.on { transform: translate(-50%); opacity: 1; }
+.tapp .uin .toast.warn i { background: var(--att-bg); color: var(--att); }
+.tapp .uin .dock.wait .att { display: block; background: var(--lime); animation: bwPulse 2.4s var(--ease) infinite; }
+.tapp .uin .dock.wait .mk { animation: bwPulse 2.4s var(--ease) infinite; }
+.tapp .uin .dock.wait .in [data-t="wait"] { color: var(--dark-fg); }
+@keyframes tmSwIn { 0% { opacity: 0; transform: translate(-50%, 10px); } 100% { opacity: 1; transform: translate(-50%); } }
+@keyframes tmSwProg { 0% { transform: scaleX(var(--from,1)); } 100% { transform: scaleX(0); } }
+@keyframes bwPulse { 0%, 100% { box-shadow: 0 0 color-mix(in srgb,var(--lime) 60%,transparent); } 50% { box-shadow: transparent 0px 0px 0px 6px; } }
+
+/* ---------- TeamMate rail (ov-panel) demo hooks ---------- */
+/* tapp.css styles the conversation body and composer by the real ids (#rbody, #railGo); our engine ids get the same rules. */
+.tapp .uin #tmBody { padding: 18px 20px 22px; gap: 16px; grid-template-columns: minmax(0px, 1fr); overscroll-behavior: contain; scroll-behavior: auto; }
+.tapp .uin #rail { --tm-rail-w: 520px; }
+/* composer: typed span + placeholder instead of a textarea (engine types into #tmInput) */
+.tapp .uin #railIn { position: relative; white-space: pre-wrap; overflow-wrap: anywhere; }
+.tapp .uin #railIn .tm-ph { color: var(--dark-fg-3); }
+.tapp .uin #railIn #tmInput:not(:empty) + .tm-ph { display: none; }
+.tapp .uin #railIn #tmInput:not(:empty)::after { content: ""; display: inline-block; width: 1.5px; height: 1.1em; margin-left: 1px; vertical-align: -0.18em; background: var(--tm-lime); animation: cCaret 1s steps(1) infinite; }
+@keyframes cCaret { 50% { opacity: 0; } }
+/* send button states: default = real lime "ready"; .idle = demo dimmed; .stop = real #railGo.stop */
+.tapp .uin #tmSend > span { display: grid; place-items: center; }
+.tapp .uin #tmSend .i-stop, .tapp .uin #tmSend.stop .i-go { display: none; }
+.tapp .uin #tmSend.stop .i-stop { display: grid; }
+.tapp .uin #tmSend.stop { background: rgb(243, 240, 232); color: rgb(14, 13, 11); }
+.tapp .uin #tmSend.stop .ic { width: 13px; height: 13px; fill: rgb(14, 13, 11); }
+.tapp .uin #tmSend.idle { background: rgb(43, 40, 34); color: var(--dark-fg-3); }
+/* working steps: one markup, three states via data-state (pending | active | done) */
+.tapp .uin .tm-work li[data-state="done"] .tk i, .tapp .uin .tm-work li:not([data-state="done"]) .tk svg { display: none; }
+/* file links in answers render as plain browser links in the live app (blue, underlined) */
+.tapp .uin .tm-prose a { color: #9DB8FF; text-decoration: underline; text-underline-offset: 2px; text-decoration-color: rgba(157,184,255,.5); }
+
+/* ---------- Dock (ov-dock): typed span instead of the real <input> ---------- */
+.tapp .uin .dock.dock-ask #dockTxt { flex: 1 1 0%; min-width: 0px; color: var(--dark-fg); font-size: 14px; white-space: nowrap; overflow: hidden; }
+.tapp .uin .dock.dock-ask #dockTxt:not(:empty) + .ph { display: none; }
+.tapp .uin .dock.dock-ask:has(#dockTxt:not(:empty)) .go { background: var(--lime); color: rgb(14, 13, 11); }
+
+/* ---------- Snap toast + TeamMate pill (ov-toast): demo toggles with .on ---------- */
+.tapp .uin .tm-sw:not(.on) { display: none; }
+.tapp .uin .tm-sw.on .tm-sw-prog i { animation: tmSwProg var(--sw-dur, 6s) linear forwards; }
+.tapp .uin #tmPill { transition: transform .4s var(--spring), opacity .3s; }
+.tapp .uin #tmPill:not(.on) { transform: translateY(120px); opacity: 0; pointer-events: none; }
+.tapp .uin #tmPill .att { display: block; background: rgb(14, 13, 11); border-color: rgb(243, 240, 232); }
+.tapp .uin #tmPill.wait .att { background: var(--lime); border-color: rgb(14, 13, 11); }

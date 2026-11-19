@@ -1,0 +1,47 @@
+/* Engine-level styles for the in-app demo: the 1440x900 virtual screen, scene switching and
+   the demo-only "doing things" states. App look comes from tapp.css; keep this file small. */
+
+/* virtual screen: real app pixels, scaled to the frame by the engine (--k = frame width / 1440) */
+.tapp{position:absolute;left:0;top:0;width:1440px;height:900px;overflow:hidden;transform-origin:0 0;transform:scale(var(--k,.5));
+  font-family:"Inter UIN",Inter,-apple-system,"Segoe UI",Roboto,sans-serif;color:#0E0D0B;background:#F6F5F1;
+  -webkit-font-smoothing:antialiased;text-align:left;line-height:normal;letter-spacing:normal;user-select:none;
+  font-size:16px;font-weight:400;font-style:normal;text-transform:none;word-spacing:normal;white-space:normal;cursor:default}
+.tapp .uin{position:relative;width:1440px;height:900px;overflow:hidden}
+.tapp .page{position:relative;width:1440px;height:900px;overflow:hidden}
+
+.tapp [hidden]{display:none!important}
+
+/* scenes: one visible at a time, soft cross-fade */
+.tapp .xscene{position:absolute;inset:0;overflow:hidden;opacity:1;transition:opacity .4s cubic-bezier(.22,1,.36,1)}
+.tapp .xscene[hidden]{display:block!important;opacity:0;pointer-events:none;visibility:hidden;transition:opacity .4s cubic-bezier(.22,1,.36,1),visibility 0s .4s}
+.tapp .xscene.is-instant,.tapp .xscene.is-instant[hidden]{transition:none}
+
+/* overlays: each keeps the real app's own hidden/open states (the engine adds .on to the .tov root
+   and/or the real element's open class). The wrapper itself never blocks the page. */
+.tapp .tov{position:absolute;inset:0;z-index:60;pointer-events:none}
+
+/* scroll beats: the engine translates the scroll wrapper of a long page */
+.tapp .t-scroll{transition:transform .9s cubic-bezier(.22,1,.36,1),clip-path .9s cubic-bezier(.22,1,.36,1);will-change:transform}
+
+/* cards that pop in */
+.tapp .t-pop{animation:t-pop .55s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes t-pop{0%{opacity:0;transform:translateY(10px) scale(.94)}100%{opacity:1;transform:none}}
+.tapp .t-in{animation:t-in .45s cubic-bezier(.22,1,.36,1) both}
+@keyframes t-in{0%{opacity:0;transform:translateY(8px)}100%{opacity:1;transform:none}}
+
+/* typed text caret */
+.tapp .t-caret::after{content:"";display:inline-block;width:1.5px;height:1.05em;margin-left:1px;vertical-align:-.15em;background:currentColor;animation:t-blink 1s steps(1) infinite}
+@keyframes t-blink{50%{opacity:0}}
+
+/* a pressed button flash (cursor click) */
+/* uses the independent `scale` property so it never fights an element's own transform (e.g. centred bars) */
+.tapp .t-press{animation:t-press .3s ease}
+@keyframes t-press{40%{scale:.97}}
+
+/* a "working on it" beat on a clicked button (publishing, connecting…) */
+.tapp .t-busy{animation:t-busy .9s ease-in-out infinite;pointer-events:none}
+@keyframes t-busy{50%{opacity:.55}}
+
+/* Chrome paints backdrop-filter at the wrong offset for fixed-position popovers inside a scaled
+   container (the 1440 screen is transform-scaled), leaving a ghost panel. Use a solid fill instead. */
+.tapp .csel-menu,.tapp .menu,.tapp .dp{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;background:rgba(255,255,255,.98)!important}

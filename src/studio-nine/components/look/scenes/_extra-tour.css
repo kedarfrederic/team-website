@@ -1,0 +1,35 @@
+/* _extra-tour.css: demo-only states for the touring chapter (tours.html, tourb.html, ov-tourshow.html).
+   The app's own touring CSS is in _extra-tour-app.css. */
+
+/* ov-tourshow: the engine toggles .on on the overlay root; mirror the app's #scrim.on / #panel.on open state */
+.tapp .uin .tov[data-ov="tourshow"].on > .scrim { opacity: 1; pointer-events: auto; }
+.tapp .uin .tov[data-ov="tourshow"].on > .panel { transition-delay: 0s; visibility: visible; transform: none; opacity: 1; pointer-events: auto; }
+.tapp .uin:has(.tov[data-ov="tourshow"].on) .page { filter: blur(8px) saturate(0.85); transform: scale(0.995); }
+.tapp .uin .tov[data-ov="tourshow"] .tsm-body { overflow: hidden; }
+
+/* the routed map plays in: legs draw one after another (a solid mask stroke runs along each dashed leg),
+   pins pop as the route reaches them, distance labels follow. .is-done = the finished map, no animation (seek). */
+.tapp #trMap .tm-pin, .tapp #trMap .tm-lab { opacity: 0; animation: none; }
+.tapp #trMap.is-in .tr-mk { animation: tr-draw .5s cubic-bezier(.45,0,.2,1) calc(var(--i) * .3s + .55s) both; }
+.tapp #trMap.is-in .tm-pin { animation: tr-pin .5s cubic-bezier(.34,1.56,.64,1) calc(var(--i) * .3s + .3s) both; }
+.tapp #trMap.is-in .tm-lab { animation: tr-fade .4s ease calc(var(--i) * .3s + .95s) both; }
+.tapp #trMap.is-done .tr-mk { animation: none; stroke-dashoffset: 0; }
+.tapp #trMap.is-done .tm-pin, .tapp #trMap.is-done .tm-lab { animation: none; opacity: 1; }
+@keyframes tr-draw { to { stroke-dashoffset: 0; } }
+@keyframes tr-pin { from { opacity: 0; scale: .3; } to { opacity: 1; scale: 1; } }
+@keyframes tr-fade { from { opacity: 0; } to { opacity: 1; } }
+
+/* a confirmed show: the row and its pin flip colour in place */
+.tapp .tr-row .tr-num, .tapp .tm-pin i { transition: background-color .4s ease; }
+.tapp .t-flash { animation: tr-flash 1s ease; }
+@keyframes tr-flash { 0% { box-shadow: 0 0 0 0 rgba(217,250,135,.0); } 30% { box-shadow: 0 0 0 4px rgba(217,250,135,.9); } 100% { box-shadow: 0 0 0 0 rgba(217,250,135,0); } }
+
+/* the snap toast doubles as a plain confirmation (no Undo / Stay here) */
+.tapp #snapToast.t-plain .tm-sw-act { display: none; }
+
+/* the app's active map-mode pill renders dark text on the dark pill (unreadable in the product too); make it legible */
+.tapp .uin #v-tour .tm-mode button[aria-pressed="true"] { color: #F6F5F1 !important; }
+
+/* the show panel's body already clips its own overflow, so its scroll beat needs no clip-path (which visibly ran ahead
+   of the translate and blanked the sections above Settlement mid-scroll) */
+.tapp #tsmScroll.t-scroll { clip-path: none !important; }

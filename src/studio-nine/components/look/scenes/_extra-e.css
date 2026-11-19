@@ -1,0 +1,122 @@
+/* _extra-e.css: additions for today / daytoday / schedule / docs scenes and the ov-synccal overlay (agent e).
+   Everything is scoped under .tapp and only covers what the real app sets with JS, demo-only states,
+   or app rules the tree-shaken tapp.css lacks because no capture rendered them (marked "from app CSS"). */
+
+/* ---------- from app CSS: rules for states no capture rendered (Release details / Spotify pitch panes, etc.),
+   lifted verbatim from the app stylesheet because tapp.css was shaken without them. ---------- */
+.tapp .uin .cn18-steps li i .ic { width: 11px; height: 11px; }
+.tapp .uin .cn18-steps li.done { color: var(--dk-2); }
+.tapp .uin .cn18-steps li.done i { background: rgba(217, 250, 135, 0.16); color: rgb(217, 250, 135); box-shadow: none; }
+.tapp .uin .cn18-sum { margin: 0px; padding: 14px 16px; border-radius: 14px; border: 1px solid rgba(217, 250, 135, 0.22); background: rgba(217, 250, 135, 0.05); font-size: 13.5px; line-height: 1.55; color: rgb(250, 250, 247); }
+.tapp .uin .cn18-live { width: 10px; height: 10px; border-radius: 50%; background: var(--lime); flex: 0 0 auto; box-shadow: rgba(198, 242, 93, 0.75) 0px 0px; animation: rpPulse 1.8s var(--ease) infinite; }
+.tapp .uin .cn18-reads { list-style: none; margin: 0px; padding: 0px; display: grid; gap: 4px; }
+.tapp .uin .cn18-reads li { display: flex; align-items: center; gap: 11px; padding: 7px 8px 7px 10px; border-radius: 12px; background: rgba(255, 255, 255, 0.04); }
+.tapp .uin .cn18-reads .t { flex: 1 1 0%; min-width: 0px; display: grid; }
+.tapp .uin .cn18-reads b { font-size: 13.5px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tapp .uin .cn18-reads small { font-size: 11.5px; color: var(--dk-3); }
+.tapp .uin .dlg.fx.rh-details .rh-tm { padding: 0px 26px 14px; }
+.tapp .uin .dlg.fx.rh-details .rh-tm .fx-drop { grid-template-columns: auto 1fr; justify-items: start; text-align: left; column-gap: 14px; padding: 14px 16px; }
+.tapp .uin .dlg.fx.rh-details .rh-tm .fx-drop .rh-mk { grid-row: span 2; width: 36px; height: 36px; border-radius: 50%; background: rgb(43, 40, 34); display: grid; place-items: center; }
+.tapp .uin .dlg.fx.rh-details .rh-tm .fx-drop .rh-mk svg { width: 15px; height: 15px; fill: var(--d-fg); }
+.tapp .uin .dlg.fx.rh-details .rh-trk { grid-template-columns: 44px minmax(0px, 1fr) 180px 140px; align-items: start; }
+.tapp .uin .dlg.fx.rh-details .rh-trk .rh-no { display: flex; align-items: center; gap: 6px; height: 38px; font: 500 11px var(--mono); color: var(--d-4); }
+.tapp .uin .dlg.fx.rh-details .rh-trk .rh-no .ic { width: 13px; height: 13px; }
+.tapp .uin .dlg.fx.rh-details .rh-trk .rh-ex { height: 38px; display: grid; place-items: center; font: 600 9px var(--mono); color: var(--d-4); }
+.tapp .uin .dlg.fx.rh-details .rh-trk .rh-ex.rh-pw { display: block; height: auto; font: inherit; min-width: 0px; }
+.tapp .uin .dlg.fx.rh-details .rh-trk .fx-fhint { margin-top: 4px; }
+.tapp .uin .dlg.rh-inline .rh-tmrow { display: flex; align-items: center; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.tapp .uin .dlg.rh-inline .rh-tmrow > span:first-child { flex: 1 1 auto; min-width: 0px; }
+.tapp .uin .dlg.fx.rh-details .rh-trk .rh-mv { display: inline-grid; gap: 0px; }
+.tapp .uin .dlg.fx.rh-details .rh-trk .rh-mv button { width: 16px; height: 15px; display: grid; place-items: center; color: var(--d-4); border-radius: 4px; }
+.tapp .uin .dlg.fx.rh-details .rh-trk .rh-mv button:disabled { opacity: 0.3; }
+.tapp .uin .dlg.fx.rh-details .rh-trk .rh-mv .ic { width: 11px; height: 11px; }
+.tapp .uin .dlg.rh-inline .rh-ready { margin: 0px 26px 12px; padding: 10px 12px; border-radius: 12px; background: var(--d-s2); border: 1px solid var(--d-l1); }
+.tapp .uin .dlg.rh-inline .rh-readyhead { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.tapp .uin .dlg.rh-inline .rh-readygh { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 12.5px; color: var(--d-fg); }
+.tapp .uin .dlg.rh-inline .rh-readygh .ic { width: 13px; height: 13px; color: var(--d-4); }
+.tapp .uin .dlg.rh-inline .rh-readygh b { font-weight: 500; }
+.tapp .uin .dlg.rh-inline .rh-pitchhint { margin: 0px 0px 14px; flex-wrap: nowrap; align-items: flex-start; }
+.tapp .uin .dlg.rh-inline .rh-pitchhint .fx-hintline { margin: 0px; flex: 1 1 auto; }
+.tapp .uin .dlg.rh-inline .rh-pitchhint .fx-b { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 6px; }
+.tapp .uin .dlg.rh-inline .rh-pitch .fx-tagfield, .tapp .uin .dlg.rh-inline .rh-pitch .fx-area { margin-bottom: 12px; }
+.tapp .uin .fx-b { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 38px; padding: 8px 12px; border-radius: 12px; font-size: 12.5px; font-weight: 600; flex: 1 1 0%; white-space: nowrap; transition: transform .2s var(--ease),background .15s,box-shadow .2s; }
+.tapp .uin .fx-b .ic { width: 14px; height: 14px; }
+.tapp .uin .fx-b.line { background: transparent; border: 1px solid var(--line-2); color: var(--ink); }
+.tapp .uin .dlg.fx .fx-dtabs, .tapp .uin .dlg.fx .db { position: relative; z-index: 1; }
+.tapp .uin .dlg.fx .fx-area { min-height: 88px; resize: none; line-height: 1.5; overflow: hidden; }
+.tapp .uin .dlg.fx .csel { background: var(--d-s2); border-color: var(--d-l1); color: var(--d-fg); }
+.tapp .uin .dlg.fx .fx-g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.tapp .uin .dlg.fx .fx-g2 > div { display: grid; gap: 8px; align-content: start; min-width: 0px; }
+.tapp .uin .dlg.fx .fx-b.line { border-color: var(--d-l2); color: var(--d-fg); }
+.tapp .uin .dlg.fx .fx-dtabs { display: flex; gap: 4px; padding: 0px 26px 10px; overflow-x: auto; scrollbar-width: none; flex: 0 0 auto; }
+.tapp .uin .dlg.fx .fx-dtabs button { display: inline-flex; align-items: center; gap: 6px; padding: 8px 13px; border-radius: 999px; font-size: 12.5px; font-weight: 500; color: var(--d-3); white-space: nowrap; transition: background 0.18s, color 0.18s; }
+.tapp .uin .dlg.fx .fx-dtabs button[aria-selected="true"] { background: rgb(250, 250, 247); color: rgb(14, 13, 11); }
+.tapp .uin .dlg.fx .fx-dtabs .n { font-size: 10.5px; font-weight: 600; padding: 1px 6px; border-radius: 999px; background: var(--d-s3); color: var(--d-2); }
+.tapp .uin .dlg.fx .fx-dtabs button[aria-selected="true"] .n { background: rgba(14, 13, 11, 0.1); color: rgb(14, 13, 11); }
+.tapp .uin .dlg.fx .fx-dtabs .n.warn { background: rgb(245, 96, 2); color: rgb(14, 13, 11); }
+.tapp .uin .dlg.fx .fx-drop { width: 100%; display: grid; place-items: center; align-content: center; gap: 6px; padding: 14px; border-radius: 16px; border: 1.5px dashed var(--d-l2); background: var(--d-s1) center/cover; color: var(--d-3); text-align: center; transition: border-color .2s,background-color .2s,transform .25s var(--spring); position: relative; overflow: hidden; }
+.tapp .uin .dlg.fx .fx-drop b { font-size: 12.5px; font-weight: 500; color: var(--d-2); }
+.tapp .uin .dlg.fx .fx-drop small { font-size: 11.5px; color: var(--d-4); }
+.tapp .uin .dlg.fx .fx-tagfield { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; min-height: 42px; padding: 5px 8px; border-radius: 14px; border: 1px solid var(--d-l1); background: var(--d-s2); }
+.tapp .uin .dlg.fx .fx-tagfield:focus-within { border-color: rgba(255, 255, 255, 0.35); }
+.tapp .uin .dlg.fx .fx-tagfield input { flex: 1 1 0%; min-width: 140px; border: 0px; background: transparent; color: var(--d-fg); font-size: 13px; outline: none; padding: 5px 4px; }
+.tapp .uin .dlg.fx .fx-tagfield input::placeholder { color: var(--d-ph); }
+.tapp .uin .dlg.fx .fx-fhint { display: flex; align-items: baseline; gap: 6px; font-size: 11.5px; color: var(--d-4); margin-top: -2px; text-wrap: pretty; }
+.tapp .uin .dlg.fx .fx-fhint i { flex: 0 0 auto; transform: translateY(-1px); }
+.tapp .uin .dlg.fx .fx-fhint i { width: 6px; height: 6px; border-radius: 50%; background: var(--d-4); }
+.tapp .uin .dlg.fx .fx-fhint.warn { color: rgb(245, 185, 74); }
+.tapp .uin .dlg.fx .fx-fhint.warn i { background: rgb(245, 185, 74); }
+.tapp .uin .td-feed-metric { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; border-top: 1px solid var(--line); padding-top: 14px; margin: 14px 0px; color: var(--ink-2); font-size: 11px; }
+.tapp .uin .td-feed-metric strong { font-size: 30px; font-weight: 300; color: var(--ink); letter-spacing: -0.03em; }
+
+
+/* ---------- Today: For your attention deck ---------- */
+/* The deck-peek inset (top/left/right) is computed in JS in the real app; tapp.css keeps only the bottom offset.
+   Measured from dom2/today-jd.png: each layer is inset 10px per depth and tucked under the card. */
+.tapp .uin .td-review-deck .td-deck-peek { top: 0; left: calc(var(--depth) * 10px); right: calc(var(--depth) * 10px); }
+/* one attention card at a time: the article's display beats the UA [hidden] rule */
+.tapp .uin .td-review-deck .td-feed-card[hidden] { display: none; }
+
+/* ---------- Today: living card panes ---------- */
+/* Demo-only wrapper per pane so the engine can swap panes with [hidden]; it adds no box of its own. */
+.tapp .uin .dlg.rh-inline .td-pane:not([hidden]) { display: contents; }
+.tapp .uin .dlg.rh-inline .td-pane[hidden] { display: none; }
+/* Release details: text fields are spans (slot-fillable), styled like the app's .fx-in inputs */
+.tapp .uin .dlg.fx .fx-in.e-field { display: flex; align-items: center; }
+.tapp .uin .dlg.fx .fx-in.e-ph { color: var(--d-ph); }
+.tapp .uin .dlg.fx.rh-details .rh-trk { display: grid; gap: 10px; }
+.tapp .uin .dlg.fx.rh-details .rh-trk > span { display: grid; gap: 8px; min-width: 0; }
+.tapp .uin .dlg.fx.rh-details .rh-trk .rh-no { display: flex; }
+.tapp .uin .dlg.rh-inline .rh-tmrow .e-half { flex: 0 0 calc(50% - 4px); justify-content: center; }
+.tapp .uin .dlg.rh-inline .rh-readyhead .e-grow { flex: 1 1 auto; max-width: 285px; justify-content: center; }
+.tapp .uin .dlg.rh-inline .rh-readygh.e-warn, .tapp .uin .dlg.rh-inline .rh-readygh.e-warn .ic { color: rgb(245, 185, 74); }
+.tapp .uin .dlg.rh-inline .rh-readygh.e-warn b { font-weight: 500; }
+
+/* ---------- Schedule: synced Google Calendar events (demo state) ---------- */
+/* synced rows/days/chip start [hidden]; their classes set display, so restate the UA rule */
+.tapp .uin .d2d-sched [data-sync][hidden], .tapp .uin .d2d-sched #schedSynced[hidden] { display: none; }
+/* a week that gains a synced event drops its "Nothing planned." line */
+.tapp .uin .d2d-wk:has([data-sync]:not([hidden])) .e-sync-empty { display: none; }
+/* small Google Calendar mark in front of a synced event title */
+.tapp .uin .d2d-what .e-gcal { width: 13px; height: 13px; display: inline-block; vertical-align: -1px; margin-right: 7px; }
+.tapp .uin .d2d-what:has(.e-gcal) { display: block; }
+.tapp .uin .d2d-sched-acts .e-synced-chip { display: inline-flex; align-items: center; gap: 7px; height: 32px; padding: 0 12px; align-self: center; }
+.tapp .uin .d2d-sched-acts .e-synced-chip .e-gcal { width: 14px; height: 14px; }
+
+/* ---------- ov-synccal: the engine toggles .on on the .tov root; mirror the app's .scrim.on / .dlg.on open
+   states and blur the page behind like the app's .page.dim does. ---------- */
+.tapp .uin .tov[data-ov="synccal"].on > .scrim { opacity: 1; pointer-events: auto; }
+.tapp .uin .tov[data-ov="synccal"].on > .dlg { transform: translate(-50%, -50%); opacity: 1; pointer-events: auto; transition-delay: 0s; visibility: visible; }
+.tapp .uin:has(> .tov.on[data-ov="synccal"]) .page { filter: blur(8px) saturate(0.85); transform: scale(0.995); }
+/* Done step swap: .cn18-dk sets display, so restate the UA [hidden] rule */
+.tapp .uin .cn18-dlg .cn18-dk[hidden] { display: none; }
+/* The app's dark dialog skin ".dlg, .dlg.on { background: #0E0D0B }" sat in a later cascade layer than the base light
+   ".dlg { background: var(--card) }"; flattening lost that order, so restate it for this (root-toggled) dialog. */
+.tapp .uin .tov[data-ov="synccal"] > .dlg.cn18-dlg { background: rgb(14, 13, 11); color: rgb(250, 250, 247); border-color: rgba(255, 255, 255, 0.08); }
+
+/* ---------- Docs: new upload row (demo state) ---------- */
+.tapp .uin .aw-clus .dr[hidden] { display: none; }
+.tapp .uin .aw-clus .dr.is-reading .e-active, .tapp .uin .aw-clus .dr:not(.is-reading) .e-reading { display: none; }
+.tapp .uin .aw-clus .dr.is-reading .ds { color: var(--ink); }
+.tapp .uin .aw-clus .dr.is-reading .e-reading { animation: e-reading 1.2s ease-in-out infinite; }
+@keyframes e-reading { 50% { opacity: .4; } }

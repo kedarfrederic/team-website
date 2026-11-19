@@ -1,0 +1,217 @@
+/* Create Post v2 (design: clients/team/design/261021-create-post-redesign/share/create-post-v2.html),
+   scoped under .tapp .cp2 and resolved for the fixed 1440x900 demo screen. Generated; edit the design, then re-run. */
+
+/* tokens mirror teamrollouts.com (src/styles/global.css) */
+.tapp .cp2 {
+  --black: #191919;
+  --ink: #111;
+  --text-2: #454545;
+  --muted: #8a8a8a;
+  --grey: #e0e0e0;
+  --line: #ebebeb;
+  --bg: #fafafa;
+  --lime: #d9fa87;
+  --lime-soft: #f1fcd6;
+  --lime-ink: #3b5200;
+  --accent: #f56002;
+  --mono: ui-monospace, "SF Mono", Menlo, monospace;
+  --ease: cubic-bezier(.16, 1, .3, 1);
+  --gut: clamp(16px, 72px, 96px);
+  --pv-w: 400px;
+  --chip-shadow: 0 1px 2px rgba(0,0,0,.05), 0 6px 18px rgba(0,0,0,.06);
+}
+.tapp .cp2 * { box-sizing: border-box; margin: 0; padding: 0; }
+.tapp .cp2 { font-family: "Inter UIN", Inter, sans-serif; color: var(--black); font-size: 14px; -webkit-font-smoothing: antialiased; background: var(--bg); min-height: 900px; overflow-x: hidden; }
+.tapp .cp2 button { font: inherit; color: inherit; border: 0; background: none; cursor: pointer; }
+
+/* the website's concentric-ring field */
+.tapp .cp2 .rings { position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background: repeating-radial-gradient(circle at 92% 42%, transparent 0 15px, rgba(25,25,25,.05) 15px 16px);
+  -webkit-mask-image: radial-gradient(circle at 92% 42%, #000 0, rgba(0,0,0,.6) 35%, transparent 70%);
+          mask-image: radial-gradient(circle at 92% 42%, #000 0, rgba(0,0,0,.6) 35%, transparent 70%); }
+
+/* top bar + fade band so content dissolves before reaching it */
+.tapp .cp2 .bar { position: sticky; top: 0; z-index: 5; isolation: isolate; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px var(--gut); }
+.tapp .cp2 .bar::before { content: ""; position: absolute; inset: 0 0 -36px; z-index: -1; pointer-events: none; background: var(--bg);
+  -webkit-mask-image: linear-gradient(#000 calc(100% - 52px), transparent); mask-image: linear-gradient(#000 calc(100% - 52px), transparent); }
+.tapp .cp2 .bar-l, .tapp .cp2 .bar-r { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.tapp .cp2 .x { width: 40px; height: 40px; flex: none; border-radius: 50%; background: #fff; box-shadow: var(--chip-shadow); display: grid; place-items: center; font-size: 14px; color: var(--text-2); }
+.tapp .cp2 .crumb { font-size: 13.5px; color: var(--text-2); display: flex; align-items: center; gap: 10px; white-space: nowrap; min-width: 0; }
+.tapp .cp2 .crumb .cv { width: 24px; height: 24px; border-radius: 6px; flex: none; }
+.tapp .cp2 .crumb b { color: var(--black); font-weight: 600; }
+.tapp .cp2 .crumb .t { font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em; color: var(--black); background: var(--lime); padding: 4px 8px; border-radius: 6px; }
+.tapp .cp2 .crumb .sep { width: 3px; height: 3px; border-radius: 50%; background: var(--muted); }
+.tapp .cp2 .saved { font-size: 12.5px; color: var(--muted); display: flex; align-items: center; gap: 7px; white-space: nowrap; }
+.tapp .cp2 .saved i { width: 6px; height: 6px; border-radius: 50%; background: #7bbf2a; }
+.tapp .cp2 .btn { font-weight: 500; font-size: 15px; height: 46px; padding: 0 18px; border-radius: 12px; border: 1px solid var(--black); background: transparent; white-space: nowrap; display: inline-flex; align-items: center; gap: 12px; transition: transform .2s var(--ease); }
+.tapp .cp2 .btn:hover { transform: translateY(-1px); }
+.tapp .cp2 .btn.go { background: var(--black); color: #fff; padding: 0 6px 0 18px; }
+.tapp .cp2 .btn .arr { width: 34px; height: 34px; border-radius: 8px; background: var(--lime); color: var(--black); display: grid; place-items: center; font-size: 16px; transition: transform .3s var(--ease); }
+.tapp .cp2 .btn.go:hover .arr { transform: translateX(2px); }
+
+/* page */
+.tapp .cp2 .wrap { position: relative; z-index: 1; padding: 20px var(--gut) 140px; transition: padding .35s var(--ease); }
+.tapp .cp2 .main { max-width: 1040px; container-type: inline-size; }
+.tapp .cp2.pv-open .wrap { padding-right: calc(var(--pv-w) + 48px + var(--gut) / 2); }
+
+/* hero sentence: Inter display with a Nyght italic accent, like the site's hero */
+.tapp .cp2 .eyebrow { font-family: var(--mono); font-size: 10.5px; letter-spacing: .22em; color: var(--text-2); text-transform: uppercase; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.tapp .cp2 .eyebrow::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 0 3px rgba(217,250,135,.35); }
+.tapp .cp2 .sentence { font-weight: 500; font-size: clamp(30px, 4.8cqi, 54px); line-height: 1.55; letter-spacing: -.045em; color: var(--ink); }
+.tapp .cp2 .sentence em { font-family: "Nyght"; font-style: italic; font-weight: 300; letter-spacing: -.02em; }
+.tapp .cp2 .tok { display: inline-flex; align-items: center; gap: .55em; height: 2.75em; padding: 0 .9em 0 .35em; margin: 0 .08em; border-radius: .7em; vertical-align: middle; position: relative; top: -.12em;
+  background: #fff; box-shadow: var(--chip-shadow); border: 1px solid rgba(0,0,0,.04);
+  font: 500 max(14px, .36em)/1 "Inter"; letter-spacing: -.01em; white-space: nowrap; cursor: pointer; transition: box-shadow .2s; }
+.tapp .cp2 .tok:hover { box-shadow: 0 0 0 1px var(--black), var(--chip-shadow); }
+.tapp .cp2 .tok .th, .tapp .cp2 .tok .av, .tapp .cp2 .tok .spk { width: 2.05em; height: 2.05em; border-radius: .45em; flex: none; display: grid; place-items: center; }
+.tapp .cp2 .tok .av { border-radius: 50%; background: var(--lime); color: var(--black); font-size: .72em; width: 2.85em; height: 2.85em; font-weight: 700; }
+.tapp .cp2 .tok .spk { border-radius: 50%; background: var(--lime); color: var(--black); }
+.tapp .cp2 .tok .ics { display: flex; }
+.tapp .cp2 .tok .ics span { width: 2.05em; height: 2.05em; border-radius: 50%; display: grid; place-items: center; border: 2px solid #fff; margin-right: -.6em; color: #fff; }
+.tapp .cp2 .tok .ics span:last-child { margin-right: .1em; }
+.tapp .cp2 .tok .chev { color: var(--muted); font-size: .7em; }
+.tapp .cp2 .why { margin-top: 14px; font-size: 14px; line-height: 1.5; color: var(--text-2); display: flex; gap: 10px; align-items: flex-start; }
+.tapp .cp2 .why .ai-dot { width: 20px; height: 20px; border-radius: 50%; background: var(--lime); display: grid; place-items: center; flex: none; }
+.tapp .cp2 .why a { color: var(--black); text-decoration: underline; text-decoration-color: var(--lime); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+
+/* rows */
+.tapp .cp2 .rows { margin-top: 44px; border-top: 1px solid var(--line); }
+.tapp .cp2 .row { display: grid; grid-template-columns: 140px minmax(0, 1fr); gap: 24px; padding: 28px 0; border-bottom: 1px solid var(--line); }
+.tapp .cp2 .row:last-child { border-bottom: 0; }
+.tapp .cp2 .k { display: flex; align-items: baseline; gap: 10px; }
+.tapp .cp2 .k i { font-style: normal; font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.tapp .cp2 .k b { font-size: 15px; font-weight: 600; letter-spacing: -.01em; }
+.tapp .cp2 .sub { font-family: var(--mono); font-size: 10.5px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; display: flex; justify-content: space-between; gap: 12px; }
+.tapp .cp2 .sub a { font-family: "Inter UIN", Inter; letter-spacing: 0; text-transform: none; font-size: 12.5px; color: var(--black); text-decoration: underline; text-decoration-color: var(--lime); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+
+/* media */
+.tapp .cp2 .media { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 20px 18px; align-items: center; }
+.tapp .cp2 .f { border-radius: 12px; position: relative; overflow: hidden; flex: none; }
+.tapp .cp2 .f.sel { width: 84px; height: 126px; box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--black); }
+.tapp .cp2 .f.sm { width: 56px; height: 84px; cursor: pointer; transition: transform .2s var(--ease); }
+.tapp .cp2 .f.sm:hover { transform: translateY(-2px); }
+.tapp .cp2 .f .lb { position: absolute; left: 6px; bottom: 5px; font-family: var(--mono); font-size: 9.5px; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.4); }
+.tapp .cp2 .f .ok { position: absolute; right: 6px; top: 6px; width: 18px; height: 18px; border-radius: 50%; background: var(--lime); color: var(--black); font-size: 10px; font-weight: 700; display: grid; place-items: center; }
+.tapp .cp2 .f.up { width: 56px; height: 84px; border: 1.5px dashed #cfcfcf; display: grid; place-items: center; color: var(--muted); font-size: 20px; font-weight: 300; }
+.tapp .cp2 .meta .nm { font-size: 14.5px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tapp .cp2 .meta .sp { font-family: var(--mono); font-size: 11.5px; color: var(--muted); margin: 6px 0 10px; }
+.tapp .cp2 .fit { display: inline-flex; gap: 6px; align-items: center; font-size: 12.5px; font-weight: 500; color: var(--lime-ink); background: var(--lime-soft); padding: 5px 10px 5px 6px; border-radius: 8px; }
+.tapp .cp2 .fit i { width: 16px; height: 16px; border-radius: 50%; background: var(--lime); display: grid; place-items: center; font-style: normal; font-size: 9px; color: var(--black); }
+.tapp .cp2 .lib { grid-column: 1 / -1; padding-top: 18px; border-top: 1px dashed var(--line); }
+.tapp .cp2 .strip { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding: 4px 2px; }
+
+/* caption: dark segmented switch, as on the site's hero (Chat | Release) */
+.tapp .cp2 .cap-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 18px; }
+.tapp .cp2 .switch { display: inline-flex; gap: 2px; padding: 3px; border-radius: 999px; background: var(--black); max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+.tapp .cp2 .switch span { display: inline-flex; align-items: center; gap: 7px; padding: 7px 14px; border-radius: 999px; font-size: 12.5px; font-weight: 500; color: rgba(255,255,255,.62); white-space: nowrap; cursor: pointer; transition: background .2s, color .2s; }
+.tapp .cp2 .switch span:hover { color: #fff; }
+.tapp .cp2 .switch span.on { background: #fff; color: var(--black); }
+.tapp .cp2 .switch svg { width: 13px; height: 13px; }
+.tapp .cp2 .switch .dt { width: 6px; height: 6px; border-radius: 50%; background: var(--lime); }
+.tapp .cp2 .counter { font-family: var(--mono); font-size: 11.5px; color: var(--muted); white-space: nowrap; }
+.tapp .cp2 .counter b { color: var(--text-2); font-weight: 500; }
+.tapp .cp2 .cap { font-size: clamp(17px, 2.1cqi, 22px); line-height: 1.55; letter-spacing: -.015em; outline: none; }
+.tapp .cp2 .cap .hl { background: linear-gradient(transparent 58%, var(--lime) 58%, var(--lime) 92%, transparent 92%); }
+.tapp .cp2 .assist { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+.tapp .cp2 .pill { font-size: 13px; font-weight: 500; padding: 8px 13px; border-radius: 10px; background: #fff; box-shadow: var(--chip-shadow); color: var(--text-2); display: inline-flex; gap: 7px; align-items: center; white-space: nowrap; cursor: pointer; }
+.tapp .cp2 .pill.ai { background: var(--lime); color: var(--black); box-shadow: none; }
+.tapp .cp2 .pill.ghost { background: transparent; box-shadow: none; border: 1px dashed #cfcfcf; }
+.tapp .cp2 .pill .src { font-size: 11px; color: var(--muted); font-weight: 400; }
+
+/* when */
+.tapp .cp2 .days { display: grid; grid-template-columns: repeat(11, minmax(50px, 1fr)); gap: 6px; overflow-x: auto; scrollbar-width: none; padding-top: 22px; }
+.tapp .cp2 .d { height: 84px; border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; position: relative; color: var(--text-2); cursor: pointer; transition: background .2s; }
+.tapp .cp2 .d:hover { background: #fff; box-shadow: var(--chip-shadow); }
+.tapp .cp2 .d .w { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; color: var(--muted); }
+.tapp .cp2 .d .n { font-size: 21px; font-weight: 500; letter-spacing: -.03em; }
+.tapp .cp2 .d .ps { display: flex; gap: 3px; height: 5px; }
+.tapp .cp2 .d .ps i { width: 5px; height: 5px; border-radius: 50%; background: #c8c8c8; }
+.tapp .cp2 .d.sel { background: var(--black); color: #fff; box-shadow: 0 12px 28px rgba(25,25,25,.22); }
+.tapp .cp2 .d.sel .w { color: rgba(255,255,255,.6); } .tapp .cp2 .d.sel .ps i { background: var(--lime); }
+.tapp .cp2 .d.rel { background: var(--lime); color: var(--black); }
+.tapp .cp2 .d.rel .w { color: var(--lime-ink); } .tapp .cp2 .d.rel .ps i { background: var(--black); }
+.tapp .cp2 .d .tag { position: absolute; top: -20px; font-size: 11px; font-weight: 600; color: var(--black); white-space: nowrap; }
+.tapp .cp2 .times { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; align-items: center; }
+.tapp .cp2 .tm { font-size: 13.5px; padding: 8px 14px; border-radius: 10px; background: #fff; box-shadow: var(--chip-shadow); color: var(--text-2); font-variant-numeric: tabular-nums; cursor: pointer; display: inline-flex; gap: 6px; align-items: center; }
+.tapp .cp2 .tm.on { background: var(--black); color: #fff; font-weight: 600; }
+.tapp .cp2 .tm svg { color: var(--lime); }
+.tapp .cp2 .tz { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.tapp .cp2 .now { margin-left: auto; font-size: 13px; color: var(--text-2); display: flex; gap: 8px; align-items: center; white-space: nowrap; cursor: pointer; }
+.tapp .cp2 .sw { width: 36px; height: 22px; border-radius: 999px; background: var(--grey); position: relative; transition: background .2s; }
+.tapp .cp2 .sw::after { content: ""; position: absolute; left: 3px; top: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.2); transition: transform .25s var(--ease); }
+.tapp .cp2 .now.on .sw { background: var(--black); } .tapp .cp2 .now.on .sw::after { transform: translateX(14px); background: var(--lime); }
+
+/* details */
+.tapp .cp2 .fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.tapp .cp2 .fld { background: #fff; box-shadow: var(--chip-shadow); border-radius: 12px; padding: 10px 14px; }
+.tapp .cp2 .fld .l { font-size: 11.5px; color: var(--muted); margin-bottom: 3px; }
+.tapp .cp2 .fld .v { font-size: 14px; display: flex; align-items: center; gap: 8px; }
+.tapp .cp2 .fld .auto { font-family: var(--mono); font-size: 10px; color: var(--lime-ink); background: var(--lime-soft); padding: 2px 6px; border-radius: 5px; margin-left: auto; }
+
+@container (max-width: 720px) {
+  .tapp .cp2 .row { grid-template-columns: minmax(0, 1fr); gap: 14px; padding: 22px 0; }
+  .tapp .cp2 .fields { grid-template-columns: minmax(0, 1fr); }
+  .tapp .cp2 .now { margin-left: 0; width: 100%; }
+  .tapp .cp2 .cap-top { flex-direction: column; align-items: flex-start; }
+}
+
+/* preview: white glass card like the site's hero media, Teammate speaks in a serif bubble */
+.tapp .cp2 .pv { position: fixed; z-index: 10; right: 24px; bottom: 24px; width: var(--pv-w); max-height: calc(900px - 100px); overflow: auto; scrollbar-width: none;
+  border-radius: 28px; background: rgba(255,255,255,.82); backdrop-filter: blur(18px) saturate(1.2); -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  border: 1px solid rgba(0,0,0,.06); box-shadow: 0 40px 90px rgba(25,25,25,.16), 0 2px 6px rgba(0,0,0,.04);
+  transform-origin: bottom right; transition: opacity .25s ease, transform .4s var(--ease); }
+.tapp .cp2:not(.pv-open) .pv { opacity: 0; transform: scale(.5) translateY(40px); pointer-events: none; }
+.tapp .cp2 .pv-h { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 16px 16px 14px 20px; }
+.tapp .cp2 .pv-h .t { font-family: var(--mono); font-size: 10.5px; letter-spacing: .22em; color: var(--text-2); }
+.tapp .cp2 .pv-h .ctl { display: flex; gap: 8px; align-items: center; }
+.tapp .cp2 .pv .switch span { padding: 6px 11px; font-size: 12px; }
+.tapp .cp2 .min { width: 34px; height: 34px; border-radius: 50%; background: #fff; box-shadow: var(--chip-shadow); display: grid; place-items: center; }
+
+.tapp .cp2 .phone { position: relative; margin: 0 auto; height: min(470px, calc(900px - 380px)); min-height: 300px; aspect-ratio: 262 / 520; border-radius: 38px; background: #0e0e0e; padding: 7px; box-shadow: 0 20px 40px rgba(0,0,0,.18); }
+.tapp .cp2 .screen { width: 100%; height: 100%; border-radius: 32px; overflow: hidden; position: relative; color: #fff; }
+.tapp .cp2 .screen > * { position: absolute; }
+.tapp .cp2 .screen .art, .tapp .cp2 .screen .shade { inset: 0; }
+.tapp .cp2 .screen .shade { background: linear-gradient(180deg, rgba(0,0,0,.25), transparent 18%, transparent 55%, rgba(0,0,0,.7)); }
+.tapp .cp2 .screen .tb { top: 16px; left: 18px; right: 18px; display: flex; justify-content: space-between; font-size: 14px; font-weight: 600; }
+.tapp .cp2 .screen .tease { top: 26%; left: 0; right: 0; text-align: center; }
+.tapp .cp2 .screen .tease .t1 { font-family: "Nyght"; font-style: italic; font-size: 44px; line-height: .95; letter-spacing: -.02em; }
+.tapp .cp2 .screen .tease .t2 { font-family: var(--mono); font-size: 10px; letter-spacing: .3em; margin-top: 10px; opacity: .85; }
+.tapp .cp2 .screen .rail { right: 10px; bottom: 90px; display: flex; flex-direction: column; gap: 16px; }
+.tapp .cp2 .screen .info { left: 12px; right: 52px; bottom: 16px; }
+.tapp .cp2 .screen .who { display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 600; }
+.tapp .cp2 .screen .who .pp { width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid #fff; }
+.tapp .cp2 .screen .who .fl { font-size: 10.5px; border: 1px solid rgba(255,255,255,.7); padding: 1px 7px; border-radius: 6px; font-weight: 500; }
+.tapp .cp2 .screen .ct { font-size: 11.5px; line-height: 1.4; margin-top: 7px; }
+.tapp .cp2 .screen .ct span { opacity: .7; }
+.tapp .cp2 .screen .au { font-size: 10.5px; margin-top: 7px; }
+
+.tapp .cp2 .pv-foot { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 10px; }
+.tapp .cp2 .okrow { display: flex; gap: 6px; flex-wrap: wrap; }
+.tapp .cp2 .okrow span { font-size: 12px; font-weight: 500; color: var(--lime-ink); background: var(--lime-soft); padding: 5px 9px; border-radius: 8px; }
+.tapp .cp2 .say { display: flex; gap: 10px; align-items: flex-start; }
+.tapp .cp2 .say .av { width: 30px; height: 30px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 0 3px #fff, 0 0 0 4px rgba(25,25,25,.08); display: grid; place-items: center; font-size: 10px; font-weight: 700; flex: none; }
+.tapp .cp2 .bubble { background: #fff; box-shadow: var(--chip-shadow); border-radius: 4px 16px 16px 16px; padding: 12px 14px; }
+.tapp .cp2 .bubble p { font-family: "NyghtUp", serif; font-size: 17px; line-height: 1.3; letter-spacing: -.01em; color: var(--ink); }
+.tapp .cp2 .bubble .acts { display: flex; gap: 6px; margin-top: 10px; }
+.tapp .cp2 .bubble .acts button { font-size: 12.5px; font-weight: 500; padding: 6px 11px; border-radius: 8px; }
+.tapp .cp2 .bubble .acts .y { background: var(--black); color: #fff; }
+.tapp .cp2 .bubble .acts .n { color: var(--text-2); border: 1px solid var(--line); }
+
+/* collapsed: a sticky button in the site's "Start free" style */
+.tapp .cp2 .fab { position: fixed; z-index: 10; right: 24px; bottom: 24px; height: 60px; padding: 6px 6px 6px 6px; border-radius: 16px; background: var(--black); color: #fff;
+  display: flex; align-items: center; gap: 12px; box-shadow: 0 20px 40px rgba(25,25,25,.25); font-weight: 600; font-size: 15px; transition: opacity .2s, transform .3s var(--ease); }
+.tapp .cp2 .fab .th { width: 48px; height: 48px; border-radius: 11px; flex: none; }
+.tapp .cp2 .fab .s { font-weight: 400; color: rgba(255,255,255,.55); font-size: 13px; margin-left: 4px; }
+.tapp .cp2 .fab .arr { width: 48px; height: 48px; border-radius: 11px; background: var(--lime); color: var(--black); display: grid; place-items: center; margin-left: 6px; }
+.tapp .cp2 .fab:hover .arr svg { transform: translateY(-2px); } .tapp .cp2 .fab .arr svg { transition: transform .3s var(--ease); }
+.tapp .cp2.pv-open .fab { opacity: 0; transform: translateY(20px); pointer-events: none; }
+
+.tapp .cp2 .art-a { background:
+  radial-gradient(120% 70% at 30% 85%, #F56002 0%, rgba(245,96,2,0) 60%),
+  radial-gradient(90% 60% at 80% 20%, #FFB38A 0%, rgba(255,179,138,0) 60%),
+  radial-gradient(80% 80% at 10% 10%, #2A1A2E 0%, rgba(42,26,46,0) 70%),
+  linear-gradient(180deg, #1B1420 0%, #4A2230 45%, #E2551A 100%); }
+.tapp .cp2 .art-b { background: radial-gradient(90% 90% at 70% 70%, #FAD604 0%, rgba(250,214,4,0) 60%), linear-gradient(160deg, #F56002, #FF9C6B); }
+.tapp .cp2 .art-c { background: radial-gradient(80% 80% at 30% 30%, #FFD9C2, rgba(255,217,194,0) 70%), linear-gradient(200deg, #1d1d1d, #5b3a2c); }
+.tapp .cp2 .art-d { background: linear-gradient(180deg, #E8E2DA, #BFB6AB); }
+.tapp .cp2 .art-e { background: radial-gradient(70% 70% at 50% 40%, #F56002, rgba(245,96,2,0) 70%), #191919; }

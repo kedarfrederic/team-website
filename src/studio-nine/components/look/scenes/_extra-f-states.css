@@ -1,0 +1,53 @@
+/* Create Post v2 in the demo: overlay shell + the empty -> filled states the engine steps through.
+   (Design styles live in _extra-f-newpost.css, generated from the design file.) */
+.tapp .tov[data-ov="newpost"] .cp2{position:absolute;inset:0;overflow:hidden;min-height:0;opacity:0;visibility:hidden;transform:translateY(18px);
+  transition:opacity .38s cubic-bezier(.22,1,.36,1),transform .38s cubic-bezier(.22,1,.36,1),visibility 0s .38s;pointer-events:none}
+.tapp .tov[data-ov="newpost"].on .cp2{opacity:1;visibility:visible;transform:none;transition-delay:0s;pointer-events:auto}
+.tapp .cp2 .wrap{position:relative}
+
+/* placeholders in the sentence + empty media tile */
+.tapp .cp2 .cp-ph{color:#b4b4b4}
+.tapp .cp2:not(.has-media) .cp-if-media,.tapp .cp2.has-media .cp-if-nomedia{display:none}
+.tapp .cp2:not(.has-ch) .cp-if-ch{display:none!important}
+.tapp .cp2:not(.ch-ig) .cp-ic-ig,.tapp .cp2:not(.ch-tt) .cp-ic-tt,.tapp .cp2:not(.ch-yt) .cp-ic-yt{display:none!important}
+.tapp .cp2 #cpPicked .cp-empty{display:none}
+.tapp .cp2:not(.has-media) #cpPicked{background:#fff!important;box-shadow:none;border:1.5px dashed #cfcfcf;display:grid;place-items:center}
+.tapp .cp2:not(.has-media) #cpPicked .ok,.tapp .cp2:not(.has-media) #cpPicked .lb{display:none}
+.tapp .cp2:not(.has-media) #cpPicked .cp-empty{display:grid;justify-items:center;gap:6px;color:#9a9a9a;font-size:22px;font-weight:300;text-align:center}
+.tapp .cp2 #cpPicked .cp-empty small{font-size:10.5px;line-height:1.3;font-weight:500;padding:0 8px}
+.tapp .cp2 #cpMeta{transition:opacity .35s ease}
+.tapp .cp2:not(.has-media) #cpMeta{opacity:0}
+.tapp .cp2:not(.has-media) #cpSaved{visibility:hidden}
+.tapp .cp2.has-media #cpPicked{animation:cp-pick .45s cubic-bezier(.34,1.56,.64,1)}
+@keyframes cp-pick{0%{transform:scale(.9);opacity:.4}100%{transform:none;opacity:1}}
+.tapp .cp2 .f.sm.is-picked{box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--black)}
+
+/* channels dropdown (opens from the sentence token) */
+.tapp .cp2 #cpTokCh{position:relative}
+.tapp .cp2 .cp-menu{position:absolute;left:0;top:calc(100% + 10px);z-index:20;display:grid;gap:2px;min-width:300px;padding:6px;border-radius:16px;background:#fff;
+  box-shadow:0 1px 2px rgba(0,0,0,.06),0 18px 44px rgba(0,0,0,.16);font-family:"Inter UIN",Inter,sans-serif;font-size:14px;line-height:1.2;letter-spacing:0;font-weight:400;color:var(--black);text-align:left;animation:cp-menu .22s cubic-bezier(.22,1,.36,1)}
+@keyframes cp-menu{0%{opacity:0;transform:translateY(-6px)}100%{opacity:1;transform:none}}
+.tapp .cp2 .cp-mi{display:grid;grid-template-columns:18px 26px 1fr auto;align-items:center;gap:12px;padding:10px 12px;border-radius:11px}
+.tapp .cp2 .cp-mi.is-hot{background:#f4f4f1}
+.tapp .cp2 .cp-mi b{font-weight:600}
+.tapp .cp2 .cp-mi i{font-style:normal;font-family:var(--mono);font-size:11px;color:var(--muted)}
+.tapp .cp2 .cp-ck{width:18px;height:18px;border-radius:5px;border:1.5px solid #cfcfcf;display:grid;place-items:center;transition:background .15s,border-color .15s}
+.tapp .cp2 .cp-mi.on .cp-ck{background:var(--black);border-color:var(--black)}
+.tapp .cp2 .cp-mi.on .cp-ck::after{content:"";width:8px;height:4px;border:2px solid var(--lime);border-top:0;border-right:0;transform:translateY(-1px) rotate(-45deg)}
+.tapp .cp2 .cp-bi{width:26px;height:26px;border-radius:50%;display:grid;place-items:center}
+.tapp .cp2 .cp-bi svg{width:14px;height:14px}
+
+/* caption: placeholder, Teammate writing state */
+.tapp .cp2 .cp-capph{color:#b4b4b4}
+.tapp .cp2 #cpCapTxt:not(:empty) + .cp-capph{display:none}
+.tapp .cp2 #cpRewrite .cp-rwb{display:none}
+.tapp .cp2 #cpRewrite.is-busy .cp-rw{display:none}
+.tapp .cp2 #cpRewrite.is-busy .cp-rwb{display:inline}
+.tapp .cp2 #cpRewrite.is-busy{animation:cp-busy 1s ease-in-out infinite}
+.tapp .cp2 #cpRewrite.is-busy svg{animation:cp-spin 1.2s linear infinite}
+@keyframes cp-busy{50%{box-shadow:0 0 0 4px rgba(217,250,135,.55)}}
+@keyframes cp-spin{to{transform:rotate(360deg)}}
+
+/* schedule stays dimmed until the post is complete */
+.tapp .cp2 #cpSchedule{transition:opacity .25s ease}
+.tapp .cp2 #cpSchedule:not(.is-ready){opacity:.4}

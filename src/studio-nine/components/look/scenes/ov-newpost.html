@@ -1,0 +1,173 @@
+<!-- ov-newpost: "Create New Post" v2 (design: clients/team/design/261021-create-post-redesign/share/create-post-v2.html).
+ Full-page composer over the release. Styles: _extra-f-newpost.css (generated from the design) + _extra-f-states.css (demo states).
+ Toggle: class "on" on the .tov root. Opens EMPTY; the engine fills it as the cursor clicks:
+   #cpAsset1 (asset in the strip) -> .cp2.has-media           #cpTokCh -> #cpChMenu (unhide) -> #cpChIG/#cpChTT/#cpChYT get .on -> .cp2.has-ch
+   #cpRewrite -> .is-busy (Teammate writing) -> caption typed into #cpCapTxt (+ #cpCount, #cpPvCap)
+   #cpDay22 / #cpTime18 get .sel / .on -> #cpWhenTxt         #cpFab -> .cp2.pv-open (preview card)      #cpSchedule .is-ready -> click
+ Scroll the form with the engine's scrollTo on #cpScroll. -->
+<div class="tov" data-ov="newpost"><div class="cp2" id="cp2">
+<div class="rings"></div>
+
+<header class="bar">
+  <div class="bar-l">
+    <button class="x" id="cpClose" aria-label="Close">✕</button>
+    <div class="crumb"><div class="cv art-a"></div><b data-f="release">Afterglow</b><span class="sep"></span><span data-f="artist">Nova Reed</span><span class="t">OUT IN <span data-f="days">32</span> DAYS</span></div>
+  </div>
+  <div class="bar-r">
+    <span class="saved" id="cpSaved"><i></i>Draft saved</span>
+    <button class="btn">Save draft</button>
+    <button class="btn go" id="cpSchedule">Schedule <span class="arr">→</span></button>
+  </div>
+</header>
+
+<div class="wrap" id="cpScroll">
+<main class="main">
+  <section>
+    <div class="eyebrow">New post</div>
+    <h1 class="sentence">
+      Post the <span class="tok" id="cpTokMedia"><span class="th art-a cp-if-media"></span><span class="cp-if-media">Teaser · 0:24</span><span class="cp-if-nomedia cp-ph">Pick media</span><span class="chev">⌄</span></span>
+      to <span class="tok" id="cpTokCh"><span class="ics cp-if-ch">
+        <span class="cp-ic-ig" style="background:linear-gradient(45deg,#FEC564,#F9373F 45%,#C913B9 80%)"><svg width="45%" height="45%" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/></g></svg></span>
+        <span class="cp-ic-tt" style="background:#111"><svg width="40%" height="40%" viewBox="0 0 24 24"><path fill="currentColor" d="M16.5 3c.4 2.4 1.9 3.9 4.3 4.1v3.3c-1.6.1-3-.4-4.3-1.2v6.3c0 3.6-2.7 6-6 6-3.4 0-6-2.6-6-5.9 0-3.6 3.1-6.2 6.8-5.7v3.4c-1.8-.5-3.5.7-3.5 2.4 0 1.4 1.1 2.5 2.7 2.5 1.6 0 2.7-1.1 2.7-2.9V3h3.3z"/></svg></span>
+        <span class="cp-ic-yt" style="background:#FF0000"><svg width="40%" height="40%" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5v14l11-7z"/></svg></span>
+      </span><span id="cpChTxt"><span class="cp-ph">Pick channels</span></span><span class="chev">⌄</span>
+        <span class="cp-menu" id="cpChMenu" hidden>
+          <span class="cp-mi" id="cpChIG"><span class="cp-ck"></span><span class="cp-bi" style="background:linear-gradient(45deg,#FEC564,#F9373F 45%,#C913B9 80%)"><svg viewBox="0 0 24 24"><g fill="none" stroke="#fff" stroke-width="2.4"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/></g></svg></span><b>Instagram</b><i data-f="handle">@novareed</i></span>
+          <span class="cp-mi" id="cpChTT"><span class="cp-ck"></span><span class="cp-bi" style="background:#111"><svg viewBox="0 0 24 24"><path fill="#fff" d="M16.5 3c.4 2.4 1.9 3.9 4.3 4.1v3.3c-1.6.1-3-.4-4.3-1.2v6.3c0 3.6-2.7 6-6 6-3.4 0-6-2.6-6-5.9 0-3.6 3.1-6.2 6.8-5.7v3.4c-1.8-.5-3.5.7-3.5 2.4 0 1.4 1.1 2.5 2.7 2.5 1.6 0 2.7-1.1 2.7-2.9V3h3.3z"/></svg></span><b>TikTok</b><i data-f="handle">@novareed</i></span>
+          <span class="cp-mi" id="cpChYT"><span class="cp-ck"></span><span class="cp-bi" style="background:#FF0000"><svg viewBox="0 0 24 24"><path fill="#fff" d="M8 5v14l11-7z"/></svg></span><b>YouTube</b><i data-f="handle">@novareed</i></span>
+        </span>
+      </span>
+      on <span class="tok" id="cpTokWhen"><span class="spk"><svg width="42%" height="42%" viewBox="0 0 24 24"><path d="M12 2l2.2 6.6L21 11l-6.8 2.4L12 20l-2.2-6.6L3 11l6.8-2.4z" fill="currentColor"/></svg></span><span id="cpWhenTxt"><span class="cp-ph">Pick a time</span></span><span class="chev">⌄</span></span>
+      <em>with</em> <span class="tok"><span class="av" id="cpTmAv">K</span><span data-f="teammate">Dave</span><span class="chev">⌄</span></span>
+    </h1>
+    <p class="why"><span class="ai-dot"><svg width="11" height="11" viewBox="0 0 24 24"><path d="M12 2l2.2 6.6L21 11l-6.8 2.4L12 20l-2.2-6.6L3 11l6.8-2.4z" fill="currentColor"/></svg></span><span>Teammate suggests Thursday evening: your audience peaks then, and it fills a gap in the run-up to release. <a>Why?</a></span></p>
+  </section>
+
+  <div class="rows">
+    <section class="row">
+      <div class="k"><i>01</i><b>Media</b></div>
+      <div class="media">
+        <div class="f sel art-a" id="cpPicked"><span class="ok">✓</span><span class="lb">0:24</span><span class="cp-empty">+<small>Pick a video or photo</small></span></div>
+        <div class="meta" id="cpMeta">
+          <div class="nm" id="cpFile">afterglow-teaser-v3.mp4</div>
+          <div class="sp">9:16 · 1080×1920 · 0:24</div>
+          <span class="fit"><i>✓</i>Fits Reel, TikTok &amp; Short</span>
+        </div>
+        <div class="lib">
+          <div class="sub"><span>From <span data-f="release">Afterglow</span></span> <a>All 38 assets</a></div>
+          <div class="strip">
+            <div class="f sm art-a" id="cpAsset1"><span class="lb">0:24</span></div>
+            <div class="f sm art-b"><span class="lb">COVER</span></div>
+            <div class="f sm art-c"><span class="lb">0:15</span></div>
+            <div class="f sm art-e"><span class="lb">0:09</span></div>
+            <div class="f sm art-d"><span class="lb">PRESS</span></div>
+            <div class="f sm art-c" style="filter:saturate(.5)"><span class="lb">BTS</span></div>
+            <div class="f up">+</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="row">
+      <div class="k"><i>02</i><b>Caption</b></div>
+      <div>
+        <div class="cap-top">
+          <div class="switch">
+            <span class="on">Everywhere</span>
+            <span><svg viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/></g></svg>Instagram</span>
+            <span><svg viewBox="0 0 24 24"><path fill="currentColor" d="M16.5 3c.4 2.4 1.9 3.9 4.3 4.1v3.3c-1.6.1-3-.4-4.3-1.2v6.3c0 3.6-2.7 6-6 6-3.4 0-6-2.6-6-5.9 0-3.6 3.1-6.2 6.8-5.7v3.4c-1.8-.5-3.5.7-3.5 2.4 0 1.4 1.1 2.5 2.7 2.5 1.6 0 2.7-1.1 2.7-2.9V3h3.3z"/></svg>TikTok</span>
+            <span><svg viewBox="0 0 24 24"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>YouTube</span>
+          </div>
+          <div class="counter"><b id="cpCount">0</b> / 2,200</div>
+        </div>
+        <div class="cap" id="cpCap"><span id="cpCapTxt"></span><span class="cp-capph">Write it yourself, or let Teammate draft it…</span></div>
+        <div class="assist">
+          <span class="pill ai" id="cpRewrite"><svg width="12" height="12" viewBox="0 0 24 24"><path d="M12 2l2.2 6.6L21 11l-6.8 2.4L12 20l-2.2-6.6L3 11l6.8-2.4z" fill="currentColor"/></svg><span class="cp-rw">Write with Teammate</span><span class="cp-rwb">Teammate is writing…</span></span>
+          <span class="pill">🔗 Pre-save link <span class="src">Smart link</span></span>
+          <span class="pill ghost">+ #newmusic</span>
+          <span class="pill ghost">+ #altpop</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="row">
+      <div class="k"><i>03</i><b>When</b></div>
+      <div>
+        <div class="days">
+          <div class="d"><span class="tag">Today</span><span class="w">WED</span><span class="n">21</span><span class="ps"><i></i></span></div>
+          <div class="d" id="cpDay22"><span class="w">THU</span><span class="n">22</span><span class="ps"></span></div>
+          <div class="d"><span class="w">FRI</span><span class="n">23</span><span class="ps"><i></i></span></div>
+          <div class="d"><span class="w">SAT</span><span class="n">24</span><span class="ps"><i></i></span></div>
+          <div class="d"><span class="w">SUN</span><span class="n">25</span><span class="ps"></span></div>
+          <div class="d"><span class="w">MON</span><span class="n">26</span><span class="ps"></span></div>
+          <div class="d"><span class="w">TUE</span><span class="n">27</span><span class="ps"><i></i></span></div>
+          <div class="d"><span class="w">WED</span><span class="n">28</span><span class="ps"></span></div>
+          <div class="d"><span class="w">THU</span><span class="n">29</span><span class="ps"><i></i><i></i></span></div>
+          <div class="d"><span class="w">FRI</span><span class="n">30</span><span class="ps"></span></div>
+          <div class="d"><span class="w">SAT</span><span class="n">31</span><span class="ps"><i></i></span></div>
+        </div>
+        <div class="times">
+          <span class="tm">12:00</span><span class="tm">15:00</span>
+          <span class="tm" id="cpTime18"><svg width="11" height="11" viewBox="0 0 24 24"><path d="M12 2l2.2 6.6L21 11l-6.8 2.4L12 20l-2.2-6.6L3 11l6.8-2.4z" fill="currentColor"/></svg>18:00</span>
+          <span class="tm">21:00</span><span class="tm">Custom</span>
+          <span class="tz">GMT</span>
+          <span class="now">Post now instead <span class="sw"></span></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="row">
+      <div class="k"><i>04</i><b>Details</b></div>
+      <div class="fields">
+        <div class="fld"><div class="l">Timeline label</div><div class="v">Teaser reel, T–31<span class="auto">AUTO</span></div></div>
+        <div class="fld"><div class="l">Visible to</div><div class="v">Your team only</div></div>
+      </div>
+    </section>
+  </div>
+</main>
+</div>
+
+<aside class="pv" aria-label="Preview">
+  <div class="pv-h">
+    <span class="t">PREVIEW</span>
+    <div class="ctl">
+      <div class="switch"><span class="on">Instagram</span><span>TikTok</span><span>YouTube</span></div>
+      <button class="min" aria-label="Collapse preview"><svg width="14" height="14" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
+    </div>
+  </div>
+  <div class="phone">
+    <div class="screen">
+      <div class="art art-a"></div>
+      <div class="shade"></div>
+      <div class="tb"><span>Reels</span><span style="font-weight:400">⌕</span></div>
+      <div class="tease"><div class="t1" id="cpTease">Afterglow</div><div class="t2">22 · 11 · 26</div></div>
+      <div class="rail">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 21s-7-4.5-9.5-9A5 5 0 0 1 12 6a5 5 0 0 1 9.5 6C19 16.5 12 21 12 21z"/></svg>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M22 3L11 13M22 3l-7 19-4-9-9-4z"/></svg>
+      </div>
+      <div class="info">
+        <div class="who"><div class="pp art-b"></div><span data-f="handle">@novareed</span> <span class="fl">Follow</span></div>
+        <div class="ct" id="cpPvCap"></div>
+        <div class="au">♫ <span data-f="artist">Nova Reed</span> · <span data-f="release">Afterglow</span> (teaser)</div>
+      </div>
+    </div>
+  </div>
+  <div class="pv-foot">
+    <div class="okrow"><span>✓ Fits all 3</span><span>✓ 9:16 · 0:24</span><span>✓ Caption length</span></div>
+    <div class="say" id="say">
+      <div class="av">TM</div>
+      <div class="bubble">
+        <p>Your caption says “link in bio”. Want me to add the <span data-f="release">Afterglow</span> smart link?</p>
+        <div class="acts"><button class="y">Add link</button><button class="n">Not now</button></div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<button class="fab" id="cpFab" aria-label="Open preview">
+  <span class="th art-a"></span>
+  <span>Preview<span class="s">Reel · TikTok · Short</span></span>
+  <span class="arr"><svg width="16" height="16" viewBox="0 0 24 24" style="transform:rotate(180deg)"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></span>
+</button>
+</div></div>

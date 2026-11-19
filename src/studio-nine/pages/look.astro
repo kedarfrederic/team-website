@@ -1,0 +1,271 @@
+---
+import Base from '../layouts/Base.astro';
+import TeamApp from '../components/look/TeamApp.astro';
+import engineJs from '../components/look/look-engine.js?raw';
+import { freeLink } from '../data/plans';
+// Personalized demo landing page (local working build — not for deploy).
+// The "video" is an interactive, self-driving recreation of the Team product, built
+// from the real app (captured from pilot-staging). It plays the full story —
+// roster → add an artist → start a release → work the rollout → add a task →
+// schedule a post → TeamMate does the work → your Today — personalised from URL params:
+//   ?name= &company= &artist= &release= &days= &teammate= &handle= &reldate= &budget= &seg= &c=
+// seg = label | sublabel | management (alias: manager, mgmt) | distributor | agency | artist
+//       (shapes the "you" framing + which chapters play). Unknown/missing → label.
+// c = opaque CRM contact id, passed through to the dataLayer analytics events only.
+// Every field has a fallback, and each is wired to a CRM contact field in a later phase.
+---
+<Base title="A quick look" description="A short, personal look at how Team runs your releases." theme="white" noindex>
+  <section class="look">
+    <div class="wrap look__head">
+      <h1 class="display look__h1" id="headline">Hi there, <em>here&rsquo;s how <span class="mark">your roster</span> would run on Team.</em></h1>
+      <p class="lead look__lead" id="lead">The actual product, playing itself through a real release. Press play, jump to any chapter, or poke around.</p>
+    </div>
+
+    <div class="wrap">
+      <div class="stage" id="stage">
+        <figure class="demo" id="demo">
+          <div class="demo__bar">
+            <span class="tl"><i></i><i></i><i></i></span>
+            <span class="url">app.teamrollouts.com</span>
+          </div>
+          <div class="demo__screen" id="screen">
+            <div class="app" id="app" aria-label="Interactive Team demo">
+              <TeamApp />
+
+              <!-- onboarding coachmark (guide highlight + spotlight) + cursor -->
+              <div class="coach" id="coach" aria-hidden="true"><span class="coach__cap" id="coachCap"></span></div>
+              <div class="cursor" id="cursor" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 2.5l0 16.8 4.3-4.1 2.7 5.8 3-1.3-2.7-5.7 5.8 0z" fill="#fff" stroke="#111" stroke-width="1.3" stroke-linejoin="round"/></svg></div>
+            </div>
+
+            <!-- player controls -->
+            <div class="ctrl is-paused" id="ctrl">
+              <button class="ctrl__pp" id="pp" aria-label="Play or pause">
+                <svg class="i-pause" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+                <svg class="i-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              </button>
+              <div class="ctrl__track" id="track"><div class="ctrl__fill" id="fill"></div></div>
+              <span class="ctrl__time" id="time">0:00</span>
+              <span class="ctrl__chap" id="chap">Your roster</span>
+              <button class="ctrl__replay" id="replay" aria-label="Replay" hidden>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v4h4"/></svg>
+                <span>Replay</span>
+              </button>
+            </div>
+          </div>
+        </figure>
+
+        <aside class="head" id="head" title="Drag me around &mdash; Kedar's intro clip drops in here">
+          <span class="head__circle"><span class="head__init">K</span></span>
+          <span class="head__tag"><span class="head__dot"></span><b>Kedar</b><span class="head__role">co-founder</span></span>
+        </aside>
+      </div>
+    </div>
+
+    <div class="wrap look__steps">
+      <p class="look__kick">How it runs</p>
+      <ol class="steps">
+        <li class="step" data-chap="artist"><span class="step__n">01</span><h3 class="step__h">Add your artist</h3><p class="step__p">Pull any artist from Spotify and spin up their workspace in seconds.</p></li>
+        <li class="step" data-chap="startrel rollout"><span class="step__n">02</span><h3 class="step__h">Build the release</h3><p class="step__p">Name it, date it, and the whole rollout plan builds itself around release day.</p></li>
+        <li class="step" data-chap="post"><span class="step__n">03</span><h3 class="step__h">Post everywhere</h3><p class="step__p">Pick the clip, the channels and the time. TeamMate drafts the caption and you see the post before it goes live.</p></li>
+        <li class="step" data-chap="snap tmplan"><span class="step__n">03</span><h3 class="step__h">TeamMate does the work</h3><p class="step__p">Ask in plain English. It makes the change, shows you where, and checks its own work.</p></li>
+        <li class="step" data-chap="dna today"><span class="step__n">04</span><h3 class="step__h">Know your artist</h3><p class="step__p">Artist DNA and a shareable Rundown, researched from every source and kept current.</p></li>
+        <li class="step" data-chap="tour"><span class="step__n">05</span><h3 class="step__h">Take it on the road</h3><p class="step__p">Route the tour on a map, confirm shows, project the settlement and send the crew their day sheets.</p></li>
+      </ol>
+    </div>
+
+    <div class="wrap look__feat">
+      <p class="look__kick">Everything a release needs, in one place</p>
+      <div class="feat">
+        <div class="feat__card" style="--c:var(--team-mgmt)"><span class="feat__dot"></span><h3 class="feat__h">The plan</h3><p class="feat__p">Every task, post and date for the release on one living timeline.</p></div>
+        <div class="feat__card" style="--c:var(--team-music)"><span class="feat__dot"></span><h3 class="feat__h">The posts</h3><p class="feat__p">Draft, schedule and ship to every channel from one composer.</p></div>
+        <div class="feat__card" style="--c:var(--team-finance)"><span class="feat__dot"></span><h3 class="feat__h">The money</h3><p class="feat__p">Track spend across ads, content, PR and tour as it goes out.</p></div>
+        <div class="feat__card" style="--c:var(--team-distro)"><span class="feat__dot"></span><h3 class="feat__h">The schedule</h3><p class="feat__p">Shows, travel and studio days beside every release date, synced with your calendar.</p></div>
+        <div class="feat__card" style="--c:var(--team-press)"><span class="feat__dot"></span><h3 class="feat__h">The files</h3><p class="feat__p">Contracts, budgets and assets in one place. TeamMate reads your docs and your Drive.</p></div>
+        <div class="feat__card" style="--c:var(--lime)"><span class="feat__dot"></span><h3 class="feat__h">The artist</h3><p class="feat__p">Artist DNA and a one-link Rundown for press, promoters and partners.</p></div>
+      </div>
+    </div>
+
+    <div class="wrap look__cta">
+      <div class="look__ctacard">
+        <div>
+          <h2 class="look__ctah" id="ctah">Want to see it with your roster in it?</h2>
+          <p class="look__ctap">Happy to walk you through it properly. Half an hour, whenever suits you. Or jump straight in and try it yourself.</p>
+        </div>
+        <div class="look__ctabtns">
+          <a class="bookfab bookfab--inline" href="/demo" id="book" data-look-cta="book">Book a walkthrough<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          <span class="look__signup"><a href={freeLink} id="tryfree" data-look-cta="try_free">Sign up for free</a><span class="look__nocard">No card needed</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- pinned jump bar: top under nav (desktop) / bottom (mobile), only while the demo is on screen -->
+    <div class="jumppin" id="jumpPin" aria-hidden="true">
+      <div class="jumppin__inner"><div class="jumppin__track" id="jumpBtns"><!-- rendered from the chapter playlist --></div></div>
+    </div>
+
+    <!-- floating book-a-walkthrough: on from load, hidden while the CTA card is on screen (it would duplicate it) -->
+    <a class="bookfab" id="bookfab" href="/demo" aria-hidden="true" data-look-cta="book_fab">Book a walkthrough<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+  </section>
+
+  <script is:inline set:html={engineJs}></script>
+
+  <style is:global>
+    /* Scoped by the .look prefix (this class only exists on this page). */
+    .look{padding:calc(4.5rem + clamp(2.5rem,6vw,5rem)) 0 clamp(4rem,8vw,7rem);background:
+      radial-gradient(1200px 560px at 82% -8%, var(--lime-wash) 0%, rgba(238,251,208,0) 58%), var(--white);}
+    .look .look__head{max-width:54rem;margin:0 auto clamp(1.4rem,2.4vw,2rem);text-align:center}
+    .look .look__h1{font-size:clamp(1.95rem,4.2vw,3.3rem);line-height:1.07;letter-spacing:-.015em;margin:0 0 .85rem;overflow-wrap:break-word}
+    .look .look__h1 em{font-style:italic}
+    .look .mark{background:linear-gradient(0deg, var(--lime) 0 32%, transparent 32%);padding:0 .08em;border-radius:.08em}
+    .look .look__lead{max-width:40rem;margin:0 auto;font-size:clamp(1rem,1.3vw,1.12rem);color:var(--ink-60)}
+    /* jump tabs — scrub the demo to a moment (single line, scrollable if tight) */
+    .look .look__jump{display:flex;flex-wrap:nowrap;align-items:center;justify-content:center;gap:.5rem;margin-top:1.5rem;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;padding:.15rem .15rem .3rem}
+    .look .look__jump::-webkit-scrollbar{display:none}
+    .look .look__jumplbl{flex:none;font-size:.74rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-45,rgba(0,0,0,.38));margin-right:.2rem}
+    .look .look__jumpbtn{flex:none;font-family:inherit;font-size:.88rem;font-weight:600;white-space:nowrap;color:var(--ink-80);background:var(--white);border:1px solid var(--line);border-radius:999px;padding:.48rem 1rem;cursor:pointer;transition:background .2s var(--ease),color .2s var(--ease),border-color .2s var(--ease)}
+    .look .look__jumpbtn:hover{border-color:var(--ink);color:var(--ink)}
+    .look .look__jumpbtn.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+    /* pinned jump bar (fixed): top under nav on desktop, bottom on mobile */
+    .look .jumppin{position:fixed;left:0;right:0;top:var(--navh,4.5rem);z-index:40;display:flex;justify-content:center;pointer-events:none;opacity:0;transform:translateY(-.6rem);transition:opacity .25s var(--ease),transform .25s var(--ease)}
+    .look .jumppin.show{opacity:1;transform:none;pointer-events:auto}
+    .look .jumppin__inner{display:flex;max-width:min(94vw,66rem);overflow:hidden;background:rgba(255,255,255,.88);backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:999px;padding:.4rem .5rem;box-shadow:0 .5rem 1.7rem rgba(14,13,11,.12)}
+    /* the tabs scroll sideways inside the pill; fades show which side has more, and the playing chapter is kept in view (look-engine.js) */
+    .look .jumppin__track{display:flex;align-items:center;gap:.45rem;min-width:0;overflow-x:auto;scrollbar-width:none;overscroll-behavior-x:contain;border-radius:999px;cursor:grab;--fl:0px;--fr:0px;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 var(--fl),#000 calc(100% - var(--fr)),transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 var(--fl),#000 calc(100% - var(--fr)),transparent 100%)}
+    .look .jumppin__track::-webkit-scrollbar{display:none}
+    .look .jumppin__track.fade-l{--fl:2.6rem}
+    .look .jumppin__track.fade-r{--fr:2.6rem}
+    .look .jumppin__track.is-drag{cursor:grabbing;user-select:none}
+    .look .jumppin .look__jumpbtn{background:transparent;border-color:transparent}
+    .look .jumppin .look__jumpbtn:hover{background:var(--paper,#f2f0e8)}
+    .look .jumppin .look__jumpbtn.on{background:var(--ink);color:#fff}
+    /* floating book-a-demo */
+    .look .bookfab{position:fixed;right:1.1rem;bottom:1.1rem;z-index:40;display:inline-flex;align-items:center;gap:.45rem;background:var(--ink);color:#fff;font-weight:600;font-size:.95rem;text-decoration:none;border-radius:999px;padding:.8rem 1.25rem;box-shadow:0 .6rem 1.9rem rgba(14,13,11,.3);opacity:0;transform:translateY(.7rem) scale(.96);pointer-events:none;transition:opacity .25s var(--ease),transform .25s var(--ease)}
+    .look .bookfab.show{opacity:1;transform:none;pointer-events:auto}
+    .look .bookfab svg{width:1rem;height:1rem}
+    @media(max-width:720px){
+      .look .jumppin{left:.6rem;right:.6rem}
+      .look .jumppin__inner{max-width:100%;justify-content:flex-start}
+      .look .bookfab{right:.9rem;bottom:.9rem}
+    }
+    /* section kicker */
+    .look .look__kick{font-size:.78rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-60);margin:0 0 1.5rem}
+    /* how it runs */
+    .look .look__steps{margin-top:clamp(3rem,6vw,5.5rem)}
+    .look .steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1.4rem}
+    .look .step{padding-top:1.1rem;border-top:2px solid var(--ink);cursor:pointer;transition:border-color .2s var(--ease)}
+    .look .step:hover .step__h{text-decoration:underline;text-decoration-color:var(--lime-2);text-underline-offset:3px}
+    .look .step.on{border-top-color:var(--lime-2)}
+    .look .step__n{font-family:var(--mono);font-size:.85rem;color:var(--ink-60);font-weight:600}
+    .look .step__h{font-family:var(--serif);font-weight:400;font-size:1.4rem;margin:.55rem 0 .45rem;letter-spacing:-.01em}
+    .look .step__p{color:var(--ink-60);font-size:.95rem;line-height:1.45;margin:0}
+    /* feature cards */
+    .look .look__feat{margin-top:clamp(3rem,6vw,5.5rem)}
+    .look .feat{display:grid;grid-template-columns:repeat(auto-fit,minmax(13.5rem,1fr));gap:1rem}
+    .look .feat__card{background:var(--white);border:1px solid var(--line);border-radius:var(--r-md,1rem);padding:1.4rem 1.3rem;transition:box-shadow .3s var(--ease),transform .3s var(--ease)}
+    .look .feat__card:hover{box-shadow:0 .8rem 2rem rgba(14,13,11,.09);transform:translateY(-2px)}
+    .look .feat__dot{display:block;width:1.65rem;height:1.65rem;border-radius:.5rem;background:var(--c,var(--lime-2));margin-bottom:.95rem}
+    .look .feat__h{font-family:var(--serif);font-weight:400;font-size:1.3rem;margin:0 0 .35rem}
+    .look .feat__p{color:var(--ink-60);font-size:.92rem;line-height:1.45;margin:0}
+    @media(max-width:1100px){ .look .steps{grid-template-columns:repeat(3,1fr)} }
+    @media(max-width:900px){ .look .steps{grid-template-columns:repeat(2,1fr)} }
+    @media(max-width:560px){ .look .steps{grid-template-columns:1fr} }
+
+    .look .stage{position:relative;z-index:0}
+    .look .stage::before{content:"";position:absolute;inset:-8% -3% -12%;z-index:-1;border-radius:50%;
+      background:radial-gradient(58% 58% at 50% 42%, var(--lime) 0%, rgba(217,250,135,0) 70%);filter:blur(46px);opacity:.6}
+
+    .look .demo{position:relative;z-index:1;margin:0;border-radius:var(--r-lg);background:var(--white);
+      box-shadow:var(--shadow-lg);border:1px solid var(--line);overflow:hidden}
+    .look .demo__bar{display:flex;align-items:center;gap:.6rem;padding:.8rem 1rem;border-bottom:1px solid var(--line);background:var(--paper)}
+    .look .demo__bar .tl{display:flex;gap:.45rem}
+    .look .demo__bar .tl i{width:.72rem;height:.72rem;border-radius:999px;background:var(--ink-12)}
+    .look .demo__bar .url{margin-left:.6rem;font-family:var(--mono);font-size:var(--t-micro);color:var(--ink-60);
+      background:var(--white);border:1px solid var(--line);border-radius:var(--r-pill);padding:.3rem .9rem}
+    .look .demo__screen{position:relative;line-height:normal;background:#f4f3ee}
+
+    /* ====== interactive app ====== */
+    .look .app{position:relative;width:100%;aspect-ratio:16/10;overflow:hidden;background:
+      #F6F5F1;
+      font-family:var(--sans);font-size:clamp(7.5px,1.12vw,12.5px);color:var(--ink)}
+    .look [hidden]{display:none!important}
+    /* onboarding coachmark (guide highlight) */
+    .look .coach{position:absolute;z-index:9;border:2.5px solid var(--lime);border-radius:.7em;opacity:0;pointer-events:none;box-shadow:0 0 0 0 rgba(12,12,10,0);
+      transition:opacity .45s var(--ease),left .6s var(--ease),top .6s var(--ease),width .6s var(--ease),height .6s var(--ease),box-shadow .5s var(--ease)}
+    .look .coach.on{opacity:1;box-shadow:0 0 0 100vmax rgba(12,12,10,.52),0 0 .7em .12em rgba(217,250,135,.55)}
+    .look .coach__cap{position:absolute;white-space:nowrap;background:var(--lime);color:var(--green-ink);font-weight:700;font-size:.95em;padding:.55em 1em;border-radius:.6em;box-shadow:0 .5em 1.4em rgba(0,0,0,.45)}
+    .look .coach__cap::before{content:'';position:absolute;width:.6em;height:.6em;background:var(--lime);transform:rotate(45deg)}
+    /* demo cursor */
+    .look .cursor{position:absolute;z-index:11;left:50%;top:62%;width:1.7em;height:1.7em;margin:-.15em 0 0 -.12em;pointer-events:none;opacity:0;
+      transition:opacity .35s var(--ease);filter:drop-shadow(0 .18em .3em rgba(0,0,0,.45));will-change:left,top}
+    .look .cursor.on{opacity:1}
+    .look .cursor svg{width:100%;height:100%;display:block}
+    .look .cursor::after{content:'';position:absolute;left:.05em;top:.05em;width:1.3em;height:1.3em;border-radius:999px;border:2.5px solid var(--lime);opacity:0;transform:scale(.3);transform-origin:center}
+    .look .cursor.click::after{animation:cursorclick .5s var(--ease)}
+    .look .cursor.click svg{animation:cursorpress .26s ease}
+    @keyframes cursorpress{35%{transform:scale(.86) translate(1px,1px)}}
+    @keyframes cursorclick{0%{opacity:.95;transform:scale(.3)}100%{opacity:0;transform:scale(1.5)}}
+    .look .coach.cap-bottom .coach__cap{top:calc(100% + .7em);left:50%;transform:translateX(-50%)}
+    .look .coach.cap-bottom .coach__cap::before{top:-.25em;left:50%;margin-left:-.3em}
+    .look .coach.cap-top .coach__cap{bottom:calc(100% + .7em);left:50%;transform:translateX(-50%)}
+    .look .coach.cap-top .coach__cap::before{bottom:-.25em;left:50%;margin-left:-.3em}
+    .look .coach.cap-left .coach__cap{right:calc(100% + .7em);top:50%;transform:translateY(-50%)}
+    .look .coach.cap-left .coach__cap::before{right:-.25em;top:50%;margin-top:-.3em}
+    .look .coach.cap-right .coach__cap{left:calc(100% + .7em);top:50%;transform:translateY(-50%)}
+    .look .coach.cap-right .coach__cap::before{left:-.25em;top:50%;margin-top:-.3em}
+
+    /* player controls */
+    .look .ctrl{position:absolute;left:0;right:0;bottom:0;z-index:8;display:flex;align-items:center;gap:.75rem;
+      padding:.7rem 1rem;background:linear-gradient(to top, rgba(10,10,9,.72) 0%, rgba(10,10,9,0) 100%);opacity:0;transition:opacity .22s var(--ease)}
+    .look .demo__screen:hover .ctrl, .look .ctrl.is-paused{opacity:1}
+    .look .ctrl__pp{flex:none;width:34px;height:34px;border-radius:999px;border:0;cursor:pointer;background:var(--lime);color:var(--green-ink);display:grid;place-items:center}
+    .look .ctrl__pp svg{width:18px;height:18px}
+    .look .ctrl__pp .i-play{display:none}
+    .look .ctrl.is-paused .ctrl__pp .i-play{display:block}
+    .look .ctrl.is-paused .ctrl__pp .i-pause{display:none}
+    .look .ctrl__track{flex:1;height:5px;border-radius:999px;background:rgba(255,255,255,.28);cursor:pointer}
+    .look .ctrl__fill{height:100%;width:0;border-radius:999px;background:var(--lime)}
+    .look .ctrl__time{flex:none;font-family:var(--mono);font-size:.72rem;color:#fff;min-width:2.4rem}
+    .look .ctrl__chap{flex:none;font-size:.72rem;color:rgba(255,255,255,.85);font-weight:600;padding:.1rem .5rem;background:rgba(255,255,255,.14);border-radius:999px}
+    .look .ctrl__replay{flex:none;display:inline-flex;align-items:center;gap:.4rem;border:0;cursor:pointer;background:var(--lime);color:var(--green-ink);border-radius:999px;padding:.4rem .8rem;font-family:var(--sans);font-weight:700;font-size:.78rem}
+    .look .ctrl__replay svg{width:15px;height:15px}
+
+    /* draggable founder bubble */
+    .look .head{position:absolute;left:-.5rem;bottom:-.75rem;z-index:7;display:flex;align-items:center;gap:.6rem;cursor:grab;touch-action:none;user-select:none;transition:transform .18s var(--ease)}
+    .look .head:hover{transform:translateY(-2px)}
+    .look .head.is-drag{cursor:grabbing;transition:none}
+    .look .head__circle{width:clamp(60px,6.4vw,80px);height:clamp(60px,6.4vw,80px);border-radius:999px;overflow:hidden;border:3px solid #fff;box-shadow:0 10px 24px rgba(14,13,11,.42);background:linear-gradient(158deg,#44562f 0%, #1b2117 72%);display:grid;place-items:center;flex:none}
+    .look .head__init{font-family:var(--serif);font-size:clamp(1.3rem,1.7vw,1.7rem);color:#f3f6ea;line-height:1}
+    .look .head__tag{display:inline-flex;align-items:center;gap:.4rem;white-space:nowrap;background:#fff;border:1px solid var(--line);border-radius:var(--r-pill);padding:.34rem .72rem;box-shadow:var(--shadow-sm);font-size:.78rem}
+    .look .head__tag b{font-weight:700;color:var(--ink)}
+    .look .head__role{color:var(--ink-60)}
+    .look .head__dot{width:.5rem;height:.5rem;border-radius:999px;background:var(--lime-2);flex:none}
+
+    .look .facets{list-style:none;display:flex;flex-wrap:wrap;gap:.6rem 1.5rem;margin:1.6rem 0 0;padding:0;justify-content:center}
+    .look .facets li{display:inline-flex;align-items:center;gap:.5rem;font-size:.9rem;color:var(--ink-80);font-weight:600}
+    .look .facets li::before{content:"";width:.62rem;height:.62rem;border-radius:999px;background:var(--c, var(--lime-2))}
+
+    .look .look__cta{margin-top:clamp(2.5rem,5vw,4rem)}
+    .look .look__ctacard{display:flex;flex-wrap:wrap;gap:1.5rem 2.5rem;align-items:center;justify-content:space-between;background:linear-gradient(135deg, var(--lime) 0%, var(--lime-2) 100%);border:1px solid var(--lime-2);border-radius:var(--r-lg);padding:clamp(1.75rem,3vw,2.5rem)}
+    .look .look__ctah{font-family:var(--serif);font-weight:400;font-size:var(--t-h3);margin:0 0 .4rem;letter-spacing:-.01em;color:var(--ink)}
+    .look .look__ctap{color:var(--green-ink);margin:0;max-width:34rem}
+    .look .look__ctabtns{display:flex;flex-direction:column;align-items:center;gap:.8rem}
+    .look .bookfab--inline{position:static;opacity:1;transform:none;pointer-events:auto;font-size:1.05rem;padding:1rem 1.6rem;box-shadow:0 .5rem 1.4rem rgba(14,13,11,.18)}
+    .look .bookfab--inline:hover{background:var(--ink-hover,#2a2925)}
+    .look .look__signup{display:flex;align-items:baseline;gap:.5rem;font-size:.92rem;color:var(--green-ink)}
+    .look .look__signup a{color:var(--ink);font-weight:500;text-decoration:underline;text-underline-offset:.2em;text-decoration-thickness:1px}
+    .look .look__signup a:hover{text-decoration-thickness:2px}
+    .look .look__nocard{opacity:.8}
+    .look .look__nocard::before{content:'·';margin-right:.5rem}
+
+    @media (max-width:720px){
+      .look .head{left:-.3rem;bottom:-.5rem}
+      .look .today{grid-template-columns:1fr;gap:1.2em}
+      .look .today__r,.look .poster__r{display:none}
+      .look .tmpanel,.look .drawer{width:72%}.look .poster{width:86%}
+      .look .modal--artist,.look .modal--wizard{width:84%}
+      .look .ctrl__chap{display:none}
+      .look .facets{justify-content:flex-start}
+      .look .look__ctacard{flex-direction:column;align-items:flex-start}
+    }
+  </style>
+</Base>
