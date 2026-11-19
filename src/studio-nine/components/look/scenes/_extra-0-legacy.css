@@ -85,6 +85,18 @@
 .tapp .uin .collab .cn { display: grid; gap: 4px; padding: 16px 18px; border-radius: 16px; border: 1px solid var(--line); background: var(--card); }
 .tapp .uin .collab .cn small { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--label); }
 .tapp .uin .dlg, .tapp .uin #darkBand, .tapp .uin .dock, .tapp .uin .toast { --focus: var(--lime); }
+.tapp .uin .aw-feed { position: relative; overflow: hidden; max-width: 620px; padding: 30px 32px; border-radius: 26px; background: rgb(14, 13, 11); color: rgb(250, 250, 247); box-shadow: rgba(14, 13, 11, 0.7) 0px 40px 80px -40px, rgba(255, 255, 255, 0.05) 0px 0px 0px 1px inset; isolation: isolate; }
+.tapp .uin .aw-feed .glow { position: absolute; right: -140px; top: -160px; width: 420px; height: 420px; border-radius: 50%; background: radial-gradient(closest-side, rgba(217, 250, 135, 0.34), transparent); z-index: -1; animation: awBreath 7s var(--ease) infinite; }
+.tapp .uin .aw-feed::after { content: ""; position: absolute; left: -80px; bottom: -140px; width: 320px; height: 320px; border-radius: 50%; background: radial-gradient(closest-side, rgba(245, 96, 2, 0.2), transparent); z-index: -1; }
+.tapp .uin .aw-feed .fk { display: flex; align-items: center; gap: 10px; font: 500 10px var(--mono); letter-spacing: 0.18em; text-transform: uppercase; color: rgba(250, 250, 247, 0.6); }
+.tapp .uin .aw-feed .chip { width: 24px; height: 24px; border-radius: 8px; display: grid; place-items: center; background: rgba(217, 250, 135, 0.1); border: 1px solid rgba(217, 250, 135, 0.28); }
+.tapp .uin .aw-feed h3 { margin: 22px 0px 10px; font-family: Nyght, Georgia, serif; font-style: italic; font-weight: 300; font-size: clamp(30px, 3.4vw, 40px); line-height: 1.05; color: rgb(250, 250, 247); }
+.tapp .uin .aw-feed .ctas { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+.tapp .uin .aw-feed .ctas button { height: 40px; padding: 0px 18px; border-radius: 999px; font-size: 13px; font-weight: 600; transition: transform .2s var(--ease),background .2s; }
+.tapp .uin .aw-feed .ctas .p { background: var(--lime); color: rgb(14, 13, 11); }
+.tapp .uin .aw-feed .ctas .p:hover { transform: translateY(-1px); }
+.tapp .uin .aw-feed .ctas .o { border: 1px solid rgba(255, 255, 255, 0.22); color: rgb(250, 250, 247); font-weight: 500; }
+.tapp .uin .aw-feed .ctas .o:hover { background: rgba(255, 255, 255, 0.07); }
 .tapp .uin .aw .report { margin: 0px; padding: 56px clamp(20px, 3vw, 48px) 72px; border: 0px; border-radius: 28px; background: var(--aw-card-2); box-shadow: inset 0 0 0 1px var(--line); gap: clamp(32px, 4vw, 64px); }
 .tapp .uin .aw .report .toc { top: 20px; }
 .tapp .uin .aw .report .toc .eb { font: 500 10.5px var(--mono); letter-spacing: 0.16em; color: var(--ink-3); margin-bottom: 12px; }
@@ -101,6 +113,7 @@
 .tapp .uin .aw .dsec .lead { margin: 22px 0px 30px; font-size: clamp(20px, 2.1vw, 28px); font-weight: 200; letter-spacing: -0.02em; line-height: 1.2; max-width: 32ch; color: var(--ink); }
 .tapp .uin .aw .dcard .cl { font: 600 9.5px var(--mono); letter-spacing: 0.12em; color: var(--ink-3); }
 .tapp .uin .aw .mapwrap { background: var(--card); box-shadow: inset 0 0 0 1px var(--line); }
+.tapp .uin .aw-feed h3, .tapp .uin .aw-quiet { text-wrap: balance; }
 .tapp .uin #v-artist .report .toc a .n { color: var(--ink-3); }
 .tapp .uin .bw-ser, .tapp .uin .panel h2 em.bw-ser { font-family: Nyght, Georgia, serif; font-style: italic; font-weight: 300; letter-spacing: -0.01em; }
 .tapp .uin .panel h2 em.bw-ser { color: var(--ink); font-size: 1.1em; padding-right: 0.04em; }
@@ -555,8 +568,52 @@
 .tapp .uin .d2d-setup .td-feed-body h2 { font-size: 19px; }
 .tapp .uin .d2d-setup .td-feed-body p { margin: 10px 0px 0px; }
 .tapp .uin .d2d-setup .td-feed-actions { margin-top: 14px; }
+.tapp .uin .d2d-sched-h { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+.tapp .uin .d2d-sched-h h2 { margin: 6px 0px; font-size: clamp(26px, 2.6vw, 36px); font-weight: 500; letter-spacing: -0.02em; line-height: 1.15; text-wrap: balance; }
+.tapp .uin .d2d-sched-h p { margin: 0px; max-width: 62ch; font-size: 14px; line-height: 1.6; color: var(--ink-2); text-wrap: pretty; }
+.tapp .uin .d2d-sched-h .ic, .tapp .uin .d2d-sched-nav .ic { width: 14px; height: 14px; }
+.tapp .uin .d2d-sched-nav { display: flex; gap: 8px; flex-wrap: wrap; }
+.tapp .uin .d2d-sched-nav .aw-btn { height: 34px; padding: 0px 14px; font-size: 12.5px; }
+.tapp .uin .d2d-sched-nav { align-items: center; }
 .tapp .uin .d2d-sched-nav .aw-btn[aria-label] { width: 34px; padding: 0px; justify-content: center; }
+.tapp .uin .d2d-sched-range { min-width: 150px; text-align: center; font: 500 11px var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-2); }
+.tapp .uin .d2d-weeks { display: grid; gap: 16px; }
+.tapp .uin .d2d-wk { padding: 18px 22px; border-radius: 22px; background: var(--card); border: 1px solid var(--line); box-shadow: var(--sh-card); min-width: 0px; }
+.tapp .uin .d2d-wk h3 { margin: 0px 0px 6px; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; font-size: 17px; font-weight: 500; letter-spacing: -0.01em; }
+.tapp .uin .d2d-wk h3 small { font: 500 10.5px var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); }
+.tapp .uin .d2d-wk-empty { margin: 2px 0px 0px; font-size: 13px; color: var(--ink-3); }
+.tapp .uin .d2d-days { list-style: none; margin: 0px; padding: 0px; display: grid; }
+.tapp .uin .d2d-day { display: grid; grid-template-columns: 52px minmax(0px, 1fr); gap: 14px; padding: 10px 0px; border-top: 1px solid var(--line); }
+.tapp .uin .d2d-day:first-child { border-top: 0px; }
+.tapp .uin .d2d-dd { display: grid; justify-items: center; align-content: start; gap: 2px; padding-top: 6px; }
+.tapp .uin .d2d-dd b { font: 500 10px var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); }
+.tapp .uin .d2d-dd span { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; font-size: 18px; font-weight: 500; }
 .tapp .uin .d2d-day.is-today .d2d-dd span { background: var(--ink); color: var(--bg); }
+.tapp .uin .d2d-day > ul { list-style: none; margin: 0px; padding: 0px; display: grid; gap: 2px; min-width: 0px; }
+.tapp .uin .d2d-ent > button, .tapp .uin .d2d-ent > div { width: 100%; display: grid; grid-template-columns: 118px minmax(0px, 1fr) auto; gap: 12px; align-items: center; padding: 8px 10px; border-radius: 12px; text-align: left; color: var(--ink); }
+.tapp .uin .d2d-ent > button { transition: background 0.15s; }
+.tapp .uin .d2d-ent > button:hover { background: var(--bg-2); }
+.tapp .uin .d2d-ent > button:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
+.tapp .uin .d2d-when { font-size: 12.5px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.tapp .uin .d2d-what { display: grid; gap: 2px; min-width: 0px; }
+.tapp .uin .d2d-what b { font-weight: 500; font-size: 14.5px; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tapp .uin .d2d-what small { font-size: 12.5px; color: var(--ink-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tapp .uin .d2d-chip { justify-self: end; }
+.tapp .uin .aw-limepill.d2d-chip { padding: 5px 10px; font-size: 10px; }
+.tapp .uin .pill.d2d-chip .ic { width: 11px; height: 11px; }
+.tapp .uin .d2d-ent-holiday .d2d-what b { color: var(--ink-2); font-weight: 400; }
+.tapp .uin .pill.d2d-chip-holiday { background: transparent; border-style: dashed; border-color: var(--line-2); color: var(--ink-3); }
+.tapp .uin .d2d-ent.is-span .d2d-when { color: var(--ink-2); font-weight: 500; line-height: 1.35; }
+.tapp .uin .d2d-ent-note { display: grid; grid-template-columns: 14px minmax(0px, 1fr); gap: 8px; align-items: start; margin: 4px 10px 2px; padding: 8px 10px; border-radius: 10px; background: var(--ember-wash); color: var(--ember-ink); font-size: 12.5px; line-height: 1.4; list-style: none; }
+.tapp .uin .d2d-ent-note .ic { width: 14px; height: 14px; margin-top: 1px; color: var(--ember); }
+.tapp .uin .d2d-sched-acts { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: flex-end; }
+.tapp .uin .d2d-ent:has(> .mycal-slot) { display: flex; align-items: center; gap: 2px; }
+.tapp .uin .d2d-ent:has(> .mycal-slot) > button { flex: 1 1 0%; min-width: 0px; }
+.tapp .uin .mycal-slot { flex: 0 0 auto; display: grid; }
+.tapp .uin .mycal-ib { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 50%; color: var(--ink-3); transition: background 0.15s, color 0.15s; }
+.tapp .uin .mycal-ib .ic { width: 15px; height: 15px; }
+.tapp .uin .mycal-ib:hover { background: var(--bg-2); color: var(--ink); }
+.tapp .uin .mycal-ib:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
 .tapp .uin .release-inbox-welcome .shx-addr { align-items: flex-start; }
 .tapp .uin .release-inbox-welcome .shx-addr code { white-space: normal; overflow-wrap: anywhere; text-overflow: clip; user-select: all; }
 .tapp .uin .rsu-section + .rsu-section { border-top: 1px solid var(--line); padding-top: 24px; }

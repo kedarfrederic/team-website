@@ -549,7 +549,10 @@
   chap('schedule', 'Schedule', 'Schedule', function(s){
     s.run(function(i){ if (curScene() && curScene().getAttribute('data-scene')!=='daytoday') scene('daytoday', i); })
      .tap('#dtdTabSched', function(i){ scene('schedule', i); hideCursor(); }, { gap: 900 })
-     .coach(function(){ return $q('#schedScroll > *') || $('schedScroll'); },'Shows, studio days, press and travel, beside every release','cap-bottom',2300)
+     .coach('#schedWeek','Shows, studio days, press and travel, beside every release','cap-bottom',2300)
+     // "Add calendar" sits at the foot of the rail: bring it clear of the player bar first
+     .run(function(i){ scrollToEl($q('main', sc('schedule')), 'schedSync', 560, i); })
+     .wait(700)
      .tap('#schedSync', function(){ ov('synccal', true); }, { gap: 700 })
      .run(function(){ hideCursor(); })
      .coach(function(){ return inOv('synccal','.dlg') || ovRoot('synccal'); },'You choose exactly what TeamMate reads','cap-left',2100)
