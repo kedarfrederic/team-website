@@ -16,6 +16,8 @@ const PREVIEW_HOST = import.meta.env.PUBLIC_PREVIEW_HOST === 'true';
 interface Props {
   title: string; description?: string; theme?: 'white' | 'paper'; noFooterCta?: boolean;
   closing?: 'released' | 'handled' | 'covered'; section?: 'product' | 'who';
+  /** Closing headline: a character image that pops out of the avatar circle, or several that take turns (see Footer). */
+  closingPop?: string | { src: string; wash?: string }[];
   /** Structured data for this page, from src/lib/seo.ts. */
   schema?: string;
   /** Social card override — defaults to the site card. */
@@ -23,7 +25,7 @@ interface Props {
   /** Articles get og:type article plus a published date. */
   published?: string; noindex?: boolean;
 }
-const { closing = 'released', section, schema, image, published, noindex = false, title, description = 'Team is the home of the release. Free for artists, managers and labels. Pro adds TeamMate, the AI that does the admin.', theme = 'white' } = Astro.props;
+const { closing = 'released', closingPop, section, schema, image, published, noindex = false, title, description = 'Team is the home of the release. Free for artists, managers and labels. Pro adds TeamMate, the AI that does the admin.', theme = 'white' } = Astro.props;
 const fullTitle = title.includes('Team') ? title : `${title} — Team`;
 const canonical = new URL(canonicalLocalePath(Astro.url.pathname.replace(/^\/preview(?=\/insights\/)/,''),locale), SITE).href;
 const socialImage = new URL(image ?? '/studio-nine/img/og.png', SITE).href;
@@ -83,7 +85,7 @@ const schemaJson = schema ?? graph(webpage({ name: fullTitle, description, url: 
     <main id="main">
       <slot />
     </main>
-    <Footer closing={closing} />
+    <Footer closing={closing} pop={closingPop} />
     <Analytics />
     <CookieBanner />
     {previewMode && <VisualEditing />}

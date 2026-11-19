@@ -1,0 +1,753 @@
+---
+// Paid-social landing page: the release's own tracks complain, Team answers. Plan: docs/lp-tracks.md.
+// Characters are clay poses cut from the character sheets, normalised to one body size and baseline
+// (public/img/lp/tracks/<char>-<mood>-<n>.webp) so stop-motion pose swaps never jump.
+import Base from '../../layouts/Base.astro';
+import { pricingFaq } from '../../data/faqs';
+import { app, trials } from '../../data/plans';
+
+// Kedar's trial terms (data/plans.ts): Pro is free for 30 days with no card. Same link as the site's own trial buttons.
+const trial = app + '?plan=pro';
+const img = (p: string) => `/studio-nine/img/lp/tracks/${p}.webp`;
+const poses = (id: string, mad: number, glad: number) => [
+  ...Array.from({ length: mad }, (_, i) => `mad-${i + 1}`),
+  ...Array.from({ length: glad }, (_, i) => `glad-${i + 1}`),
+].map((p) => ({ key: p, src: img(`${id}-${p}`) }));
+
+const cast = [
+  { id: 'single', dot: '#5b77a6', name: 'Single', wash: '#e2e8f2', mad: 6, glad: 2,
+    gripe: 'I live in Dropbox, someone\'s Google Drive and about forty text threads.',
+    fix: 'Every file in one library, versioned, with the final one actually marked final.', product: 'Assets' },
+  { id: 'focus', dot: '#e9a22a', name: 'Focus Track', wash: '#f8eccb', mad: 4, glad: 3,
+    gripe: 'I drop in two weeks. Has anyone told the fans?',
+    fix: 'The whole rollout on one timeline, from announce to release day, with an owner on every task.', product: 'Rollouts' },
+  { id: 'feature', dot: '#6f7f3a', name: 'Feature', wash: '#e3e8d6', mad: 4, glad: 2,
+    gripe: 'Collab agreed. Clearance? Artwork? Delivery? Nobody knows.',
+    fix: 'Every sign-off in one checklist. On Pro, TeamMate chases the ones that slip.', product: 'Rollouts + TeamMate' },
+  { id: 'remix', dot: '#e0502c', name: 'Remix', wash: '#f6ddd3', mad: 4, glad: 3,
+    gripe: 'Four producers, zero credits filed. Who even wrote me?',
+    fix: 'Credits, splits and codes live with the track, ready for delivery.', product: 'Rollouts' },
+  { id: 'radio', dot: '#9a6fb0', name: 'Radio Edit', wash: '#ebe1ef', mad: 3, glad: 3,
+    gripe: 'I don\'t even have a label. Literally.',
+    fix: 'Every version sits with its track, labelled and ready to send.', product: 'Assets' },
+];
+
+// Hero: the line-up takes turns, Single first. Each speaker gets its gripe, 2-3 stickers about it, and a pose swap per turn.
+const turns = [
+  { id: 'single', text: 'I\'m in Dropbox, someone\'s Google Drive and forty text threads.' },
+  { id: 'focus' },
+  { id: 'remix' },
+  { id: 'feature' },
+  { id: 'radio' },
+].map((t) => { const c = cast.find((x) => x.id === t.id)!; return { ...t, name: c.name, dot: c.dot, wash: c.wash, text: t.text ?? c.gripe }; });
+
+// Stickers on the hero bubble, in the site's sticker language (icon tiles + pills, vivid set, tilted).
+// Slots keep them on the bubble's edges and padding, never over the text: a tile on the top-right corner,
+// a pill hanging off the bottom-left, an optional pill on the top edge.
+const ico: Record<string, string> = {
+  folder: '<path d="M3.5 7.5a2 2 0 0 1 2-2h3.8l2 2h7.2a2 2 0 0 1 2 2v7.5a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z"/>',
+  file: '<path d="M7 3.5h6.5L18 8v10.5a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-13a2 2 0 0 1 2-2z"/><path d="M13 3.5V8h5"/>',
+  chat: '<path d="M5 5h14a2 2 0 0 1 2 2v7.5a2 2 0 0 1-2 2h-7.5L7 20v-3.5H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/>',
+  calendar: '<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+  clock: '<path d="M12 3.5a8.5 8.5 0 1 0 0 17 8.5 8.5 0 0 0 0-17z"/><path d="M12 7.5V12l3 2"/>',
+  megaphone: '<path d="M4.5 10v4l9.5 4V6z"/><path d="M17 9.5a3.2 3.2 0 0 1 0 5"/>',
+  people: '<path d="M9 4.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 3.5 6"/>',
+  wave: '<path d="M4 12v2M8 8v8M12 5v14M16 9v6M20 11v2"/>',
+  list: '<path d="M10 6.5h10M10 12h10M10 17.5h10"/><path d="m3.5 6.5 1.5 1.5 2.5-3M3.5 12l1.5 1.5 2.5-3"/><path d="M4 17.5h3"/>',
+  image: '<rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="m20.5 15.5-5-5-11 9"/><path d="M8.5 8v.5"/>',
+  label: '<path d="M3.5 12.5V5a1.5 1.5 0 0 1 1.5-1.5h7.5L21 12l-8.5 8.5z"/><path d="M8 7.5v1"/>',
+};
+type Sticker = { c: 'lime' | 'pink' | 'cyan' | 'lav' | 'orange' | 'green'; icon: string; text?: string };
+const stickers: Record<string, Sticker[]> = {
+  single: [{ c: 'orange', icon: 'folder' }, { c: 'cyan', icon: 'file', text: 'FINAL_final_v3.wav' }, { c: 'pink', icon: 'chat', text: '40 text threads' }],
+  focus: [{ c: 'orange', icon: 'calendar' }, { c: 'lime', icon: 'clock', text: 'Drops in 14 days' }, { c: 'pink', icon: 'megaphone', text: '0 posts planned' }],
+  remix: [{ c: 'lav', icon: 'people' }, { c: 'orange', icon: 'wave', text: '0 credits filed' }, { c: 'cyan', icon: 'people', text: '4 producers' }],
+  feature: [{ c: 'green', icon: 'list' }, { c: 'pink', icon: 'list', text: '0 of 3 signed off' }, { c: 'cyan', icon: 'image', text: 'Artwork missing' }],
+  radio: [{ c: 'cyan', icon: 'label' }, { c: 'lav', icon: 'file', text: 'untitled_edit.wav' }],
+};
+const svg = (k: string) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${ico[k]}</svg>`;
+
+const reels = [
+  { src: 'complaints', title: 'Can I speak to the manager?', len: '1:06' },
+  { src: 'single-metadata', title: 'Sort out my metadata', len: '0:30' },
+  { src: 'single-prerelease', title: 'Plan my pre-release', len: '0:15' },
+  { src: 'single-ep', title: 'Where\'s the rest of my EP?', len: '0:27' },
+];
+
+// Each tile takes its character's wash from the cast, so a track keeps one colour down the page.
+const wash = (id: string) => cast.find((c) => c.id === id)!.wash;
+// Hero line-up: the whole release, still grumpy, with Single in the middle doing the talking.
+const lineup = ['focus', 'feature', 'single', 'remix', 'radio'].map((id) => cast.find((c) => c.id === id)!);
+const steps = [
+  { char: 'focus', pose: 'glad-2', h: 'Put the release in', p: 'Tracks, files, dates, budget and people. Team already knows what a release is, so it is set up in minutes.' },
+  { char: 'feature', pose: 'glad-1', h: 'TeamMate does the admin', pro: true, p: 'It keeps the plan current, chases what is missing and asks you only when it needs you.' },
+  { char: 'remix', pose: 'glad-1', h: 'Everyone is in step', p: 'Artist, manager, label and partners each see their part of the same release.' },
+];
+
+// Closing circle: every track pops up in turn, each happy in a different stance, on its own wash.
+const closingPops = [['single', 'glad-1'], ['focus', 'glad-1'], ['feature', 'glad-1'], ['remix', 'glad-1'], ['radio', 'glad-3']]
+  .map(([id, pose]) => ({ src: img(`${id}-${pose}`), wash: wash(id) }));
+
+// trial first: it is what the page is selling
+const faq = [/trial work/, /really free/, /need a card/, /data mine/].map((re) => pricingFaq.find(([q]) => re.test(q))!).filter(Boolean);
+const arrow = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+---
+<Base title="Your single has a few complaints" image="/studio-nine/img/og-lp-tracks.jpg" noindex description={`Lost files, missing metadata, no rollout plan. Your release has notes. Put it in Team: try Pro free for ${trials.pro} days with no card, then carry on with Free if you like.`} closing="released" closingPop={closingPops}>
+
+  <!-- 1. Hero: the whole release, each speaker in turn; the ground drifts to the speaker's wash -->
+  <section class="lph" style={`--hero-bg:${turns[0].wash};--hero-dot:${turns[0].dot}`}>
+    <div class="wrap lph__in">
+      <div class="lph__stage" data-reveal data-hero>
+        <div class="bubble" aria-live="polite" data-bubble>
+          <p class="bubble__msg" data-msg>{turns[0].text}</p>
+          {turns.map((t, i) => (
+            <div class="bstk" data-stk-set={t.id} hidden={i !== 0} aria-hidden="true">
+              {stickers[t.id].map((k, j) => k.text
+                ? <span class={`bstk__k bstk__pill bstk--${k.c} bstk__slot-${j === 1 ? 'b' : 't'}`} style={`--k:${j}`}><Fragment set:html={svg(k.icon)} />{k.text}</span>
+                : <span class={`bstk__k bstk__tile bstk--${k.c} bstk__slot-c`} style={`--k:${j}`} set:html={svg(k.icon)} />)}
+            </div>
+          ))}
+        </div>
+        <div class="lph__line">
+          {lineup.map((c, i) => (
+            <div class:list={['clay clay--line', { 'is-talking': c.id === turns[0].id }]} data-clay data-cycle="mad" data-hero-clay={c.id} style={`--i:${i}`}>
+              <div class="clay__breathe"><div class="clay__boil"><div class="clay__pop">
+                {Array.from({ length: c.mad }, (_, j) => `mad-${j + 1}`).map((p, j) => <img src={img(`${c.id}-${p}`)} alt="" data-pose={p} class:list={{ 'is-on': j === 0 }} loading="eager" decoding="async" width="600" height="717" />)}
+              </div></div></div>
+            </div>
+          ))}
+        </div>
+        <script is:inline type="application/json" data-turns set:html={JSON.stringify(turns)} />
+      </div>
+      <div class="lph__copy">
+        <h1 class="display lines">
+          <span class="line"><span>Your single has</span></span>
+          <span class="line"><span><em>a few complaints.</em></span></span>
+        </h1>
+        <p class="lead" data-reveal style="transition-delay:.25s">Lost in five folders. Metadata nowhere. A drop date and no plan. <strong>Put the whole release in Team</strong> and give it nothing to moan about.</p>
+        <div class="cta-row" data-reveal style="transition-delay:.35s">
+          <a class="btn btn--hero btn--hero-lg" href={trial} data-cta>Start your free trial <span class="tile" set:html={arrow} /></a>
+        </div>
+        <p class="cta-note" data-reveal style="transition-delay:.45s">Pro free for {trials.pro} days. No card, and Free is yours after that.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. The cast: before / in Team -->
+  <section class="section section--paper cast" data-cast data-state="mad">
+    <div class="wrap">
+      <div class="cast__head">
+        <div class="head">
+          <h2 class="h1">The whole release <em>has notes.</em></h2>
+          <p class="lead">Every track on the record has been keeping a list. Flip the switch to see the same release with Team.</p>
+        </div>
+        <div class="seg" role="tablist" aria-label="Show the release before or with Team" data-seg>
+          <span class="seg__knob" aria-hidden="true" data-seg-knob></span>
+          <button class="seg__opt is-on" type="button" role="tab" aria-selected="true" data-state-btn="mad" style="--c:var(--orange)"><i></i>Before Team</button>
+          <button class="seg__opt" type="button" role="tab" aria-selected="false" tabindex="-1" data-state-btn="glad" style="--c:var(--lime-2)"><i></i>With Team</button>
+        </div>
+      </div>
+      <ul class="cast__grid" data-reveal-stagger>
+        {cast.map((c) => (
+          <li class="ccard" style={`--wash:${c.wash}`} data-ccard>
+            <button class="ccard__stage" type="button" aria-label={`Make ${c.name} move`} data-poke>
+              <div class="clay" data-clay data-mad={c.mad} data-glad={c.glad}>
+                <div class="clay__breathe"><div class="clay__boil"><div class="clay__pop">
+                  {poses(c.id, c.mad, c.glad).map((p) => <img src={p.src} alt="" data-pose={p.key} class:list={{ 'is-on': p.key === 'mad-1' }} loading="lazy" decoding="async" width="600" height="717" />)}
+                </div></div></div>
+              </div>
+            </button>
+            <div class="ccard__body">
+              <p class="ccard__name">{c.name}</p>
+              <p class="ccard__say ccard__say--mad">“{c.gripe}”</p>
+              <p class="ccard__say ccard__say--glad">{c.fix}</p>
+              <span class="tag tag--orange ccard__k ccard__k--mad">Before Team</span>
+              <span class="tag tag--lime ccard__k ccard__k--glad">✓ {c.product}</span>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- 3. The reels -->
+  <section class="section section--dark reels">
+    <div class="wrap">
+      <div class="head head--center">
+        <h2 class="h1">Hear it from <em>the tracks.</em></h2>
+        <p class="lead" style="margin-inline:auto">Four short films from a release that is running out of patience. Sound on.</p>
+      </div>
+      <ul class="reels__grid" data-reveal-stagger>
+        {reels.map((r) => (
+          <li class="reel">
+            <div class="reel__frame">
+              <video src={`/studio-nine/video/lp/${r.src}.mp4`} poster={`/studio-nine/video/lp/${r.src}.jpg`} preload="none" playsinline data-reel></video>
+              <button class="reel__play" type="button" aria-label={`Play: ${r.title}`} data-reel-btn><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg></button>
+            </div>
+            <p class="reel__t">{r.title}</p>
+            <p class="reel__m tnum">{r.len}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- 4. How it works -->
+  <section class="section how">
+    <div class="wrap">
+      <div class="head head--center">
+        <h2 class="h1">Give the release <em>one home.</em></h2>
+      </div>
+      <ol class="how__grid" data-reveal-stagger>
+        {steps.map((s) => (
+          <li class="tile how__tile" style={`--bg:${wash(s.char)}`}>
+            <div class="how__art">
+              <div class="clay clay--sm" data-clay data-cycle={`glad`} data-glad="2">
+                <div class="clay__breathe"><div class="clay__boil"><div class="clay__pop">
+                  {['glad-1', 'glad-2'].map((p) => <img src={img(`${s.char}-${p}`)} alt="" data-pose={p} class:list={{ 'is-on': p === s.pose }} loading="lazy" decoding="async" width="600" height="717" />)}
+                </div></div></div>
+              </div>
+            </div>
+            <h3 class="h3">{s.h}{s.pro && <span class="tag tag--pro how__pro">PRO</span>}</h3>
+            <p>{s.p}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- 5. Offer: the hero's old layout, the cast taking turns to say what Team fixed -->
+  <section class="section offer">
+    <div class="wrap offer__in">
+      <div class="offer__copy" data-reveal>
+        <h2 class="h1">Give your release<br /><em>nothing to complain about.</em></h2>
+        <p class="lead">Try Pro free for {trials.pro} days, no card. <strong>All of TeamMate, Team Chat and Connectors</strong>, so the admin is handled from day one.</p>
+        <div class="cta-row">
+          <a class="btn btn--hero btn--hero-lg" href={trial} data-cta>Start your free trial <span class="tile" set:html={arrow} /></a>
+          <a class="btn btn--ghost btn--lg" href="/pricing">See pricing</a>
+        </div>
+        <p class="cta-note">No card needed. When the trial ends, choose a plan or carry on with Free.</p>
+      </div>
+      <div class="offer__stage" data-reveal style={`transition-delay:.15s;--wash:${cast[0].wash}`} data-spot>
+        <div class="bubble" aria-live="polite">
+          <p class="bubble__who" data-who>{cast[0].name}</p>
+          <p class="bubble__msg" data-msg>{cast[0].fix}</p>
+        </div>
+        <span class="tag tag--lime offer__tag" data-tag>{cast[0].product}</span>
+        {cast.map((c, i) => (
+          <div class="clay clay--spot" class:list={{ 'is-cur': i === 0 }} data-clay>
+            <div class="clay__breathe"><div class="clay__boil"><div class="clay__pop">
+              {Array.from({ length: c.glad }, (_, j) => `glad-${j + 1}`).map((p, j) => <img src={img(`${c.id}-${p}`)} alt="" data-pose={p} class:list={{ 'is-on': j === 0 }} loading="lazy" decoding="async" width="600" height="717" />)}
+            </div></div></div>
+          </div>
+        ))}
+        <script is:inline type="application/json" data-turns set:html={JSON.stringify(cast.map(({ name, wash, fix, product }) => ({ name, wash, fix, product })))} />
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. FAQ (verbatim from the pricing FAQ) -->
+  <section class="section">
+    <div class="wrap faq faq--plain">
+      <div class="head"><h2 class="h1">FAQs</h2><p class="lead"><a class="link" href="/contact">Or ask us directly <span class="arr">→</span></a></p></div>
+      <div class="faq__list">
+        {faq.map(([q, a], i) => <details class="faq__i" open={i === 0}><summary><span class="faq__q">{q}</span><span class="faq__x" aria-hidden="true"></span></summary><p>{a}</p></details>)}
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* ---------- clay: stop-motion on clean grounds ---------- */
+  /* Three stacked transforms so none fight: a stepped breath, an 8fps boil, and a stepped squash on pose swaps. */
+  .clay{position:relative;aspect-ratio:600/717;width:100%}
+  .clay::after{content:'';position:absolute;left:22%;right:22%;bottom:1.2%;height:4.5%;border-radius:50%;background:radial-gradient(closest-side,rgba(14,13,11,.22),rgba(14,13,11,0));z-index:0}
+  .clay__breathe,.clay__boil,.clay__pop{position:absolute;inset:0;transform-origin:50% 97%}
+  .clay__breathe{z-index:1;animation:lp-breathe 2.6s steps(1,end) infinite}
+  .clay__boil{animation:lp-boil .5s steps(1,end) infinite;animation-delay:var(--boil-delay,0s)}
+  .clay img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0}
+  .clay img.is-on{opacity:1}
+  .clay.is-pop .clay__pop{animation:lp-pop .36s steps(1,end)}
+  .clay.is-hop .clay__pop{animation:lp-hop .6s steps(1,end)}
+  @keyframes lp-boil{
+    0%{transform:translate(0,0) rotate(0)}
+    25%{transform:translate(.7px,-.6px) rotate(.4deg)}
+    50%{transform:translate(-.6px,.4px) rotate(-.3deg)}
+    75%{transform:translate(.3px,.8px) rotate(.25deg)}
+  }
+  @keyframes lp-breathe{
+    0%,100%{transform:none}
+    17%{transform:scale(1.004,1.008)}
+    33%{transform:scale(1.008,1.016)}
+    50%{transform:scale(1.01,1.02)}
+    67%{transform:scale(1.008,1.016)}
+    83%{transform:scale(1.004,1.008)}
+  }
+  @keyframes lp-pop{
+    0%{transform:scale(1.07,.9)}
+    33%{transform:scale(.96,1.06)}
+    66%{transform:scale(1.02,.98)}
+    100%{transform:none}
+  }
+  @keyframes lp-hop{
+    0%{transform:scale(1.08,.88)}
+    17%{transform:translateY(-9%) scale(.94,1.08)}
+    33%{transform:translateY(-13%) scale(.98,1.02)}
+    50%{transform:translateY(-6%) scale(.97,1.05)}
+    67%{transform:scale(1.09,.88)}
+    83%{transform:scale(.98,1.03)}
+    100%{transform:none}
+  }
+  /* plop in when revealed */
+  :is([data-reveal],[data-reveal-stagger]):not(.is-in) .clay__pop{opacity:0}
+  .is-in .clay__pop{animation:lp-plop .72s steps(1,end) backwards;animation-delay:var(--plop-delay,.15s)}
+  .is-in .clay.is-pop .clay__pop{animation:lp-pop .36s steps(1,end)}
+  .is-in .clay.is-hop .clay__pop{animation:lp-hop .6s steps(1,end)}
+  @keyframes lp-plop{
+    0%{opacity:0}
+    17%{opacity:1;transform:translateY(-14%) scale(.92,1.1)}
+    33%{transform:scale(1.12,.82)}
+    50%{transform:scale(.95,1.07)}
+    67%{transform:scale(1.03,.97)}
+    83%,100%{transform:none}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .clay__breathe,.clay__boil{animation:none}
+    .clay__pop,.is-in .clay__pop{animation:none!important;opacity:1!important;transform:none}
+  }
+
+  /* ---------- 1. hero ---------- */
+  /* the ground takes the speaker's wash, with a faint glow of their colour behind them; registered so it eases, never cuts */
+  @property --hero-bg{syntax:'<color>';inherits:true;initial-value:#e2e8f2}
+  @property --hero-dot{syntax:'<color>';inherits:true;initial-value:#5b77a6}
+  @property --spot-x{syntax:'<length-percentage>';inherits:true;initial-value:50%}
+  .lph{padding:calc(4.5rem + clamp(2rem,5vw,4rem)) 0 clamp(3.5rem,7vw,6rem);
+    background:radial-gradient(ellipse min(34rem,70vw) 24rem at var(--spot-x) 34%,color-mix(in oklab,var(--hero-bg),var(--hero-dot) 16%),transparent 72%),var(--hero-bg);
+    transition:--hero-bg 1.4s var(--ease),--hero-dot 1.4s var(--ease),--spot-x 1.1s var(--ease)}
+  .lph__in{display:grid;justify-items:center;gap:clamp(1.5rem,3vw,2.5rem);text-align:center}
+  .lph__stage{position:relative;width:min(100%,46rem);padding-top:clamp(6.5rem,10vw,8rem)}
+  .lph__line{display:flex;justify-content:center;align-items:end}
+  /* whoever is talking steps forward a touch (stepped, like the rest of the clay) */
+  .lph .clay--line{transition:transform .3s steps(3,end)}
+  .lph .clay--line.is-talking{transform:scale(1.12);z-index:2}
+  .lph__copy{display:grid;justify-items:center;gap:1.5rem}
+  .lph__copy .display{font-size:clamp(3.1rem,5.6vw,5rem)}
+  .lph__copy .lead{max-width:36rem}
+  .lph__copy .cta-row{justify-content:center}
+  .lph__copy .cta-note{margin-top:-.6rem;color:var(--ink-60)}
+  /* desktop: the whole hero fits one screen. The line-up and headline size off the viewport height,
+     the room above the bubble clears the nav plus the stickers. Phones and very short windows scroll as before. */
+  @media (min-width:761px) and (min-height:600px){
+    .lph{min-height:100vh;min-height:100svh;display:grid;align-content:center;padding:6.75rem 0 3vh}
+    .lph__in{gap:min(2.5rem,3vh)}
+    .lph__stage{width:min(100%,46rem,74vh);padding-top:clamp(5.5rem,12vh,8rem)}
+    .lph__copy{gap:min(1.5rem,2.2vh)}
+    .lph__copy .display{font-size:clamp(2.6rem,min(5.6vw,6.8vh),5rem)}
+    .lph__copy .lead{max-width:40rem}
+  }
+  .bubble{position:absolute;left:6%;top:7%;z-index:3;width:min(64%,20rem);padding:1rem 1.15rem 1.1rem;border-radius:var(--r-lg);background:var(--white);box-shadow:var(--shadow-md);text-align:left}
+  .bubble::after{content:'';position:absolute;right:2.2rem;bottom:-.55rem;width:1.2rem;height:1.2rem;background:var(--white);transform:rotate(45deg);border-radius:.2rem}
+  /* the bubble slides over the speaker (JS sets --bx, the bubble centre, and --tail, the speaker's x inside it) */
+  .lph .bubble{left:var(--bx,50%);top:0;width:min(72%,22rem);transform:translateX(-50%);transition:left .45s var(--ease),opacity .2s steps(2,end),scale .2s steps(2,end)}
+  .lph .bubble::after{right:auto;left:calc(var(--tail,50%) - .6rem);transition:left .45s var(--ease)}
+  .lph .bubble.is-out{opacity:0;scale:.85}
+  .bubble__who{display:flex;align-items:center;gap:.45rem;font-size:.78rem;font-weight:600;margin-bottom:.4rem}
+  .bubble__msg{font-size:clamp(1.02rem,1.35vw,1.2rem);font-weight:500;letter-spacing:-.015em;line-height:1.3;min-height:2.6em}
+  .bubble__msg .caret{display:inline-block;width:2px;height:1em;margin-left:2px;vertical-align:-.12em;background:var(--ink);animation:lp-caret 1s steps(1,end) infinite}
+  @keyframes lp-caret{50%{opacity:0}}
+  /* bubble stickers: the closing-headline sticker language at UI size. Slots only reach into the bubble's padding. */
+  .bstk__k{position:absolute;z-index:2;display:inline-flex;align-items:center;gap:.4rem;box-shadow:var(--shadow-md);rotate:var(--r);animation:lp-stk .42s steps(1,end) backwards;animation-delay:calc(.3s + var(--k) * .12s)}
+  .bstk__k :global(svg){flex:none;width:1rem;height:1rem}
+  .bstk__tile{width:2.6rem;height:2.6rem;justify-content:center;border-radius:.75rem}
+  .bstk__tile :global(svg){width:1.3rem;height:1.3rem}
+  .bstk__pill{height:2.1rem;padding:0 .8rem 0 .65rem;border-radius:var(--r-pill);font-size:.82rem;font-weight:600;letter-spacing:-.01em;white-space:nowrap}
+  .bstk__slot-c{top:-1.75rem;right:-1.7rem;--r:8deg}
+  .bstk__slot-b{bottom:-1.6rem;left:-.9rem;--r:-3deg}
+  .bstk__slot-t{top:-1.75rem;right:2.4rem;--r:2deg}
+  .bstk--lime{background:var(--lime);color:var(--ink)}
+  .bstk--pink{background:var(--viv-pink);color:var(--ink)}
+  .bstk--cyan{background:var(--viv-cyan);color:var(--ink)}
+  .bstk--lav{background:var(--viv-lav);color:var(--ink)}
+  .bstk--orange{background:var(--viv-orange);color:var(--white)}
+  .bstk--green{background:var(--viv-green);color:var(--white)}
+  @keyframes lp-stk{0%{opacity:0;scale:.5}33%{opacity:1;scale:1.12}66%{scale:.96}100%{scale:1}}
+  @media (prefers-reduced-motion:reduce){.bstk__k{animation:none}}
+  .offer__tag.is-pop{animation:lp-tagpop .36s steps(1,end)}
+  @keyframes lp-tagpop{0%{transform:rotate(4deg) scale(.6)}33%{transform:rotate(4deg) scale(1.12)}66%{transform:rotate(4deg) scale(.97)}100%{transform:rotate(4deg)}}
+
+  /* ---------- 2. cast ---------- */
+  .cast__head{display:flex;justify-content:space-between;align-items:end;gap:2rem;flex-wrap:wrap;margin-bottom:clamp(2rem,4vw,3rem)}
+  .cast__head .head{margin-bottom:0}
+  /* Before / With Team: the Studio Nine switch (see insights "the-switch"), as a two-option control.
+     A spring-driven knob that stretches by growing its width, squashes against the end it overshoots,
+     and tips toward the other side on press, committing only on release. Knob is positioned by JS. */
+  .seg{position:relative;display:inline-flex;gap:.3rem;padding:.3rem;border-radius:calc(var(--r-btn) + .3rem);background:var(--white);box-shadow:inset 0 0 0 1px var(--line);user-select:none;-webkit-user-select:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  .seg__knob{position:absolute;left:0;top:.3rem;height:2.5rem;width:0;border-radius:var(--r-btn);background:var(--orange-wash);box-shadow:0 1px 2px rgba(14,13,11,.08),0 4px 12px rgba(14,13,11,.06);pointer-events:none;will-change:transform,width}
+  .seg__opt{position:relative;z-index:1;display:inline-flex;align-items:center;gap:.5rem;height:2.5rem;padding:0 1rem 0 .8rem;border-radius:var(--r-btn);font-size:.92rem;font-weight:500;color:var(--ink-60);white-space:nowrap;transition:color .25s var(--ease)}
+  .seg__opt:hover{color:var(--ink)}
+  .seg__opt i{width:.6rem;height:.6rem;border-radius:50%;background:var(--c);box-shadow:0 0 0 2px var(--white);transition:background .25s var(--ease),transform .3s var(--ease),box-shadow .25s var(--ease)}
+  .seg__opt.is-on{color:var(--ink)}
+  .seg__opt.is-on[data-state-btn="mad"]{color:var(--orange-ink)}
+  .seg__opt.is-on i{background:var(--ink);box-shadow:none;transform:scale(.8)}
+  .seg__opt:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+  .cast__grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1rem}
+  .ccard{display:grid;grid-template-rows:auto 1fr;border-radius:var(--r-xl);background:var(--white);overflow:hidden}
+  .ccard__stage{display:block;width:100%;background:var(--wash);padding:1rem 8% 0;cursor:pointer}
+  .ccard__body{display:grid;align-content:start;gap:.7rem;padding:1.1rem 1.15rem 1.3rem}
+  .ccard__name{font-weight:600;letter-spacing:-.01em}
+  .ccard__say{font-size:.98rem;line-height:1.45;color:var(--ink-80);min-height:5.8em}
+  .ccard__say--mad{font-weight:500;color:var(--ink)}
+  .ccard__k{justify-self:start}
+  .cast[data-state="mad"] :is(.ccard__say--glad,.ccard__k--glad),
+  .cast[data-state="glad"] :is(.ccard__say--mad,.ccard__k--mad){display:none}
+
+  /* ---------- 3. reels ---------- */
+  .reels__grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(1rem,2vw,1.5rem)}
+  .reel__frame{position:relative;aspect-ratio:9/16;border-radius:var(--r-lg);overflow:hidden;background:var(--dark-2);box-shadow:0 0 0 1px rgba(243,240,232,.08)}
+  .reel video{width:100%;height:100%;object-fit:cover}
+  .reel__play{position:absolute;left:50%;top:50%;width:4.2rem;height:4.2rem;margin:-2.1rem 0 0 -2.1rem;border-radius:50%;background:var(--lime);color:var(--ink);display:grid;place-items:center;box-shadow:var(--shadow-lg);transition:transform .3s var(--ease),opacity .3s var(--ease)}
+  .reel__play svg{width:1.6rem;height:1.6rem;margin-left:.2rem}
+  .reel__play:hover{transform:scale(1.06)}
+  .reel.is-playing .reel__play{opacity:0;pointer-events:none}
+  .reel__t{margin-top:1rem;font-weight:500;letter-spacing:-.01em}
+  .reel__m{font-size:var(--t-small);color:var(--on-dark-60)}
+
+  /* ---------- 4. how ---------- */
+  .how__grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
+  .how__tile{padding:1.25rem 1.6rem 1.8rem;gap:.7rem}
+  .how__art{display:grid;place-items:center;padding:.5rem 0 .25rem}
+  .clay--sm{width:min(62%,13rem)}
+  .how__pro{margin-left:.5rem;vertical-align:.2em}
+
+  /* ---------- 5. offer ---------- */
+  .offer{background:var(--white)}
+  .offer__in{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(2rem,5vw,5rem);align-items:center}
+  .offer__copy{display:grid;gap:1.5rem;align-content:center}
+  .offer__copy .lead{max-width:32rem}
+  .offer__copy .cta-note{margin-top:-.6rem}
+  .offer__stage{position:relative;aspect-ratio:1;border-radius:var(--r-xl);background:var(--wash);transition:background-color .5s var(--ease);display:grid;place-items:end center;padding:0 12% 2%;isolation:isolate}
+  .clay--spot{grid-area:1/1;width:min(78%,26rem)}
+  .clay--spot:not(.is-cur){visibility:hidden}
+  .offer__tag{position:absolute;right:6%;top:46%;z-index:3;height:2rem;padding:0 .85rem;font-size:.82rem;box-shadow:var(--shadow-sm);transform:rotate(4deg)}
+  .clay--line{width:29%;margin:0 -4.5%;--plop-delay:calc(.12s * var(--i))}
+  .clay--line:nth-child(even){width:27%;z-index:1}
+
+  /* ---------- 6. faq: no numbers on this page ---------- */
+  .faq--plain .faq__i summary{grid-template-columns:1fr 2rem}
+  .faq--plain .faq__i p{margin-left:0}
+
+  /* ---------- responsive ---------- */
+  @media (max-width:1100px){
+    .cast__grid{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(15rem,1fr);overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:1rem;margin-inline:calc(var(--gutter) * -1);padding-inline:var(--gutter);scroll-padding-inline:var(--gutter)}
+    .ccard{scroll-snap-align:start}
+    .reels__grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  }
+  @media (max-width:960px){
+    .lph{padding-top:calc(4rem + 2.5rem)}
+    .offer__in{grid-template-columns:1fr}
+    .offer__stage{width:min(100%,30rem);justify-self:center}
+    .how__grid{grid-template-columns:minmax(0,1fr)}
+    .how__tile{grid-template-columns:8rem minmax(0,1fr);column-gap:1.25rem;align-items:center}
+    .how__art{grid-row:span 2;padding:0}
+    .clay--sm{width:100%}
+  }
+  @media (max-width:760px){
+    .faq--plain .faq__i summary{grid-template-columns:1fr 1.4rem}
+  }
+  /* smallest phones: a narrower character column so the tile text keeps room */
+  @media (max-width:400px){
+    .how__tile{grid-template-columns:5.5rem minmax(0,1fr);column-gap:.9rem;padding-inline:1.1rem}
+  }
+  @media (max-width:560px){
+    /* phones: the line-up stays first and wide; the bubble sits over Single */
+    .lph{padding-top:calc(4rem + 1.25rem)}
+    .lph__in{gap:1.75rem}
+    .lph__stage{padding-top:7.5rem}
+    .lph .bubble{width:86%}
+    .bubble{padding:.75rem .85rem .85rem;border-radius:var(--r-md)}
+    .bubble__msg{font-size:.95rem;min-height:3.9em}
+    .bstk__tile{width:2.2rem;height:2.2rem;border-radius:.65rem}
+    .bstk__tile :global(svg){width:1.1rem;height:1.1rem}
+    .bstk__pill{height:1.8rem;padding:0 .65rem 0 .55rem;font-size:.74rem}
+    .bstk__k :global(svg){width:.9rem;height:.9rem}
+    .bstk__slot-c{top:-1.75rem;right:-.9rem}
+    .bstk__slot-b{bottom:-1.45rem;left:-.4rem}
+    .bstk__slot-t{top:-1.55rem;right:2.2rem}
+    .offer__stage{aspect-ratio:6/5;place-items:end end;padding:0 3% 2%}
+    .clay--spot{width:52%}
+    .offer .bubble{left:4%;top:6%;width:58%}
+    .offer .bubble::after{right:1rem}
+    .offer__tag{top:auto;bottom:8%;left:5%;right:auto;height:1.7rem;font-size:.74rem}
+    .reels__grid{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:72%;overflow-x:auto;scroll-snap-type:x mandatory;margin-inline:calc(var(--gutter) * -1);padding-inline:var(--gutter)}
+    .reel{scroll-snap-align:start}
+  }
+</style>
+
+<script>
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
+  const rand = (a: number, b: number) => a + Math.random() * (b - a);
+
+  // ---- clay: swap to a pose with a hard cut and a stepped squash ----
+  function show(clay: HTMLElement, key: string, move: 'pop' | 'hop' = 'pop') {
+    const next = clay.querySelector<HTMLImageElement>(`img[data-pose="${key}"]`);
+    if (!next || next.classList.contains('is-on')) return;
+    clay.querySelectorAll('img.is-on').forEach((i) => i.classList.remove('is-on'));
+    next.classList.add('is-on');
+    if (reduce) return;
+    clay.classList.remove('is-pop', 'is-hop'); void clay.offsetWidth; clay.classList.add(`is-${move}`);
+  }
+  const keys = (clay: HTMLElement, mood: string) =>
+    Array.from(clay.querySelectorAll<HTMLImageElement>(`img[data-pose^="${mood}-"]`)).map((i) => i.dataset.pose!);
+  const current = (clay: HTMLElement) => clay.querySelector<HTMLImageElement>('img.is-on')?.dataset.pose ?? '';
+  function nextPose(clay: HTMLElement, mood: string) {
+    const ks = keys(clay, mood); if (!ks.length) return;
+    const i = ks.indexOf(current(clay));
+    show(clay, ks[(i + 1) % ks.length], Math.random() < .3 ? 'hop' : 'pop');
+  }
+
+  // every clay boils out of phase so a row never jitters in sync
+  document.querySelectorAll<HTMLElement>('[data-clay]').forEach((c) => c.style.setProperty('--boil-delay', `${-rand(0, .5).toFixed(2)}s`));
+
+  // only animate what is on screen
+  const visible = new WeakSet<Element>();
+  const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting ? visible.add(e.target) : visible.delete(e.target)), { threshold: .2 });
+
+  // ---- idle cycles (how-it-works tiles, offer line-up) ----
+  document.querySelectorAll<HTMLElement>('[data-clay][data-cycle]').forEach((clay) => {
+    io.observe(clay);
+    if (reduce) return;
+    const loop = async () => {
+      await wait(rand(1600, 3200));
+      if (visible.has(clay) && !document.hidden && !clay.classList.contains('is-talking')) nextPose(clay, clay.dataset.cycle!);
+      loop();
+    };
+    loop();
+  });
+
+  // ---- speech bubbles: type a line with a caret ----
+  async function typeInto(msg: HTMLElement, text: string) {
+    msg.textContent = '';
+    const caret = document.createElement('span'); caret.className = 'caret';
+    const t = document.createTextNode(''); msg.append(t, caret);
+    for (const ch of text) { t.data += ch; await wait(ch === ' ' ? 18 : 26); }
+    await wait(1600); caret.remove();
+  }
+  const popTag = (tag: HTMLElement, text: string) => { tag.textContent = text; tag.classList.remove('is-pop'); void tag.offsetWidth; tag.classList.add('is-pop'); };
+
+  // ---- hero: the line-up takes turns (Single, Focus Track, Remix, Feature, Radio Edit, repeat) ----
+  const hero = document.querySelector<HTMLElement>('[data-hero]');
+  if (hero) {
+    const clays = Array.from(hero.querySelectorAll<HTMLElement>('[data-hero-clay]'));
+    const bubble = hero.querySelector<HTMLElement>('[data-bubble]')!;
+    const msg = hero.querySelector<HTMLElement>('[data-msg]')!;
+    const sets = Array.from(hero.querySelectorAll<HTMLElement>('[data-stk-set]'));
+    const turns: { id: string; name: string; dot: string; wash: string; text: string }[] = JSON.parse(hero.querySelector('[data-turns]')!.textContent!);
+    const clayOf = (id: string) => clays.find((c) => c.dataset.heroClay === id)!;
+    // point the bubble at a speaker: centre the bubble over it, kept inside the stage
+    const aim = (clay: HTMLElement) => {
+      const st = hero.getBoundingClientRect(), r = clay.getBoundingClientRect(), bw = bubble.offsetWidth;
+      const x = r.left + r.width / 2 - st.left;
+      const bx = Math.max(bw / 2, Math.min(st.width - bw / 2, x));
+      hero.style.setProperty('--bx', `${bx}px`);
+      bubble.style.setProperty('--tail', `${Math.max(24, Math.min(bw - 24, x - (bx - bw / 2)))}px`);
+      section.style.setProperty('--spot-x', `${r.left + r.width / 2 - section.getBoundingClientRect().left}px`);
+    };
+    const section = hero.closest<HTMLElement>('.lph')!;
+    io.observe(hero);
+    let n = 0;
+    aim(clayOf(turns[0].id));
+    addEventListener('resize', () => aim(clayOf(turns[n].id)));
+    if (!reduce) {
+      const run = async () => {
+        await wait(1400);
+        if (visible.has(hero) && !document.hidden) {
+          // hand over: bubble out, next speaker steps forward, bubble back in over them
+          bubble.classList.add('is-out');
+          await wait(220);
+          clays.forEach((c) => c.classList.remove('is-talking'));
+          n = (n + 1) % turns.length;
+          const t = turns[n], clay = clayOf(t.id);
+          clay.classList.add('is-talking');
+          section.style.setProperty('--hero-bg', t.wash); section.style.setProperty('--hero-dot', t.dot);
+          aim(clay);
+          
+          msg.textContent = '';
+          // swap sticker sets while the bubble is hidden; unhiding restarts their staggered pop
+          sets.forEach((s) => { s.hidden = s.dataset.stkSet !== t.id; });
+          nextPose(clay, 'mad');
+          await wait(250);
+          bubble.classList.remove('is-out');
+          await typeInto(msg, t.text);
+          nextPose(clay, 'mad');
+          await wait(600);
+        }
+        run();
+      };
+      // Single speaks first (server-rendered); give it a beat before the first hand-over
+      wait(2600).then(run);
+    }
+  }
+
+  // ---- offer: the cast take turns on the stage, each on its own wash, saying what Team fixed ----
+  const spot = document.querySelector<HTMLElement>('[data-spot]');
+  if (spot) {
+    const clays = Array.from(spot.querySelectorAll<HTMLElement>('[data-clay]'));
+    const msg = spot.querySelector<HTMLElement>('[data-msg]')!;
+    const who = spot.querySelector<HTMLElement>('[data-who]')!;
+    const tag = spot.querySelector<HTMLElement>('[data-tag]')!;
+    const turns: { name: string; wash: string; fix: string; product: string }[] = JSON.parse(spot.querySelector('[data-turns]')!.textContent!);
+    io.observe(spot);
+    if (!reduce) {
+      let n = 0;
+      const run = async () => {
+        await wait(2400);
+        if (visible.has(spot) && !document.hidden) {
+          n = (n + 1) % turns.length;
+          const t = turns[n];
+          spot.style.setProperty('--wash', t.wash);
+          clays.forEach((c, i) => c.classList.toggle('is-cur', i === n));
+          nextPose(clays[n], 'glad');
+          who.textContent = t.name;
+          popTag(tag, t.product);
+          await typeInto(msg, t.fix);
+        }
+        run();
+      };
+      run();
+    }
+  }
+
+  // ---- two-option switch: the Studio Nine "Studio" tuning (studio-nine/website/public/embeds/toggle-lab.js) ----
+  // p runs 0 (first option) → 1 (second). Spring integrated in 1ms sub-steps; render maps p onto the two option rects.
+  function segSwitch(root: HTMLElement, opts: HTMLButtonElement[], onChange: (i: number) => void) {
+    const T = { stiffness: 420, damping: 26, stretch: .45, squish: .5, nudge: .12 };
+    const knob = root.querySelector<HTMLElement>('[data-seg-knob]')!;
+    const OFF = [253, 238, 228], ON = [217, 250, 135];   // --orange-wash → --lime
+    const mix = (t: number) => `rgb(${OFF.map((a, i) => Math.round(a + (ON[i] - a) * t)).join(',')})`;
+    const clamp = (x: number, a: number, b: number) => Math.max(a, Math.min(b, x));
+    let on = 0, p = 0, v = 0, target = 0, pressing = false, raf = 0, last = 0, swallow = false;
+    let r: { x: number; w: number }[] = [], H = 40;
+    const measure = () => { r = opts.map((o) => ({ x: o.offsetLeft, w: o.offsetWidth })); H = opts[0].offsetHeight; render(); };
+
+    function render() {
+      if (!r.length) return;
+      const t = clamp(p, 0, 1), base = r[0].w + (r[1].w - r[0].w) * t, x = r[0].x + (r[1].x - r[0].x) * t;
+      const s = H * T.stretch * clamp(Math.abs(v) / 5, 0, 1);
+      let w = base + s, left = v > 0 ? x - s : x, h = H;
+      // overshoot past either end becomes a squash against that end
+      const over = p > 1 ? p - 1 : p < 0 ? -p : 0;
+      if (over > 0) {
+        const q = Math.min(.32, over * T.squish * 4);
+        w = base * (1 - q * .35); h = H * (1 + q * .3);
+        left = p > 1 ? r[1].x + r[1].w - w : r[0].x;
+      }
+      // held down: lean toward where it is going
+      if (pressing) {
+        const grow = H * Math.min(.35, T.nudge * 1.6);
+        w = Math.max(w, base + grow);
+        if (on) left = Math.min(left, x - grow);
+      }
+      const minL = r[0].x, maxR = r[1].x + r[1].w;
+      left = clamp(left, minL, maxR - w);
+      knob.style.width = `${w}px`;
+      knob.style.height = `${h}px`;
+      knob.style.transform = `translate(${left}px, ${(H - h) / 2}px)`;
+      knob.style.background = mix(t);
+    }
+    function step(now: number) {
+      const dt = Math.min(.05, (now - last) / 1000); last = now;
+      const n = Math.max(1, Math.ceil(dt / .001)), hh = dt / n;
+      for (let i = 0; i < n; i++) { const a = -T.stiffness * (p - target) - T.damping * v; v += a * hh; p += v * hh; }
+      const done = Math.abs(p - target) < .0008 && Math.abs(v) < .01;
+      if (done) { p = target; v = 0; }
+      render();
+      raf = done ? 0 : requestAnimationFrame(step);
+    }
+    function go(to: number) {
+      target = to;
+      if (reduce) { p = to; v = 0; render(); return; }
+      if (!raf) { last = performance.now(); raf = requestAnimationFrame(step); }
+    }
+    function commit(i: number) {
+      pressing = false;
+      if (i !== on) {
+        on = i;
+        opts.forEach((o, j) => { o.tabIndex = j === i ? 0 : -1; });
+        onChange(i);
+      }
+      go(on);
+    }
+
+    root.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0) return;
+      const i = opts.findIndex((o) => o.contains(e.target as Node));
+      if (i < 0 || i === on) return;
+      pressing = true; root.setPointerCapture?.(e.pointerId);
+      go(on + (on ? -1 : 1) * T.nudge);
+    });
+    const cancel = () => { if (!pressing) return; pressing = false; go(on); };
+    root.addEventListener('pointerup', (e) => {
+      if (!pressing) return;
+      const b = root.getBoundingClientRect();
+      const inside = e.clientX >= b.left - 6 && e.clientX <= b.right + 6 && e.clientY >= b.top - 6 && e.clientY <= b.bottom + 6;
+      if (inside) commit(1 - on); else cancel();
+      swallow = true; setTimeout(() => { swallow = false; }, 0);
+    });
+    root.addEventListener('pointercancel', cancel);
+    root.addEventListener('lostpointercapture', () => { if (pressing) cancel(); });
+    // keyboard (and any click the pointer path didn't handle)
+    opts.forEach((o, i) => o.addEventListener('click', (e) => { if (swallow || e.detail > 0) return; commit(i); }));
+    root.addEventListener('keydown', (e) => {
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+      e.preventDefault(); const i = e.key === 'ArrowRight' ? 1 : 0; commit(i); opts[i].focus();
+    });
+    addEventListener('resize', measure);
+    document.fonts?.ready.then(measure);
+    measure();
+  }
+
+  // ---- cast: before / with Team ----
+  const cast = document.querySelector<HTMLElement>('[data-cast]');
+  if (cast) {
+    const clays = Array.from(cast.querySelectorAll<HTMLElement>('[data-clay]'));
+    const btns = Array.from(cast.querySelectorAll<HTMLButtonElement>('[data-state-btn]'));
+    clays.forEach((c) => io.observe(c));
+    const setState = (s: string) => {
+      cast.dataset.state = s;
+      btns.forEach((b) => { const on = b.dataset.stateBtn === s; b.classList.toggle('is-on', on); b.setAttribute('aria-selected', String(on)); });
+      clays.forEach((c, i) => setTimeout(() => show(c, `${s}-1`, s === 'glad' ? 'hop' : 'pop'), reduce ? 0 : i * 90));
+    };
+    const seg = cast.querySelector<HTMLElement>('[data-seg]');
+    if (seg) segSwitch(seg, btns, (i) => setState(btns[i].dataset.stateBtn!));
+    cast.querySelectorAll<HTMLElement>('[data-poke]').forEach((p) => p.addEventListener('click', () => nextPose(p.querySelector('[data-clay]')!, cast.dataset.state!)));
+    if (!reduce) clays.forEach((clay) => {
+      const loop = async () => {
+        await wait(rand(2200, 4200));
+        if (visible.has(clay) && !document.hidden) nextPose(clay, cast.dataset.state!);
+        loop();
+      };
+      loop();
+    });
+  }
+
+  // ---- reels: one plays at a time, with sound ----
+  const reels = Array.from(document.querySelectorAll<HTMLVideoElement>('[data-reel]'));
+  reels.forEach((v) => {
+    const li = v.closest('.reel')!;
+    const btn = li.querySelector<HTMLButtonElement>('[data-reel-btn]')!;
+    const play = () => { reels.forEach((o) => o !== v && o.pause()); v.play(); };
+    btn.addEventListener('click', play);
+    v.addEventListener('click', () => (v.paused ? play() : v.pause()));
+    v.addEventListener('play', () => li.classList.add('is-playing'));
+    v.addEventListener('pause', () => li.classList.remove('is-playing'));
+    v.addEventListener('ended', () => li.classList.remove('is-playing'));
+  });
+
+  // ---- carry ad attribution (utm_*, fbclid) onto every sign-up link ----
+  const qs = new URLSearchParams(location.search);
+  const carry = Array.from(qs).filter(([k]) => k.startsWith('utm_') || k === 'fbclid');
+  if (carry.length) document.querySelectorAll<HTMLAnchorElement>('a[data-cta]').forEach((a) => {
+    const u = new URL(a.href); carry.forEach(([k, v]) => u.searchParams.set(k, v)); a.href = u.toString();
+  });
+</script>

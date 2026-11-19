@@ -1,7 +1,10 @@
 ---
 import { site } from '../data/site';
-interface Props { cta?: boolean; closing?: 'released' | 'handled' | 'covered'; }
-const { cta = true, closing = 'released' } = Astro.props;
+// pop: a transparent character image that pops out of the avatar circle instead of the photo ('released' only).
+// Pass a list to have them take turns: each sinks back into the circle and the next pops up, on its own wash.
+interface Props { cta?: boolean; closing?: 'released' | 'handled' | 'covered'; pop?: string | { src: string; wash?: string }[]; }
+const { cta = true, closing = 'released', pop } = Astro.props;
+const pops = pop === undefined ? [] : typeof pop === 'string' ? [{ src: pop, wash: undefined }] : pop;
 // Closing section variant: 'staffed' = the headline with stickers; 'card' = the earlier lime CTA card (kept for revert).
 const CLOSING = (():'staffed'|'card' => 'staffed')();
 const cols = [
@@ -28,7 +31,9 @@ const cols = [
   <div class="wrap fst__in" data-reveal>
     {closing === 'released' && (
     <h2 class="fst__h">
-      <span class="fst__l1"><span class="stk stk--tile stk--orange" data-stk><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 12v2M8 8v8M12 5v14M16 9v6M20 11v2"/></svg></span>Consider <span class="stk stk--av" data-stk><img src="/studio-nine/img/set/story-artist.webp" alt="" loading="lazy" /></span> <em>it</em></span>
+      <span class="fst__l1"><span class="stk stk--tile stk--orange" data-stk><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 12v2M8 8v8M12 5v14M16 9v6M20 11v2"/></svg></span>Consider {pops.length
+        ? <span class="stk stk--av stk--pop" data-stk data-pops style={pops[0].wash && `--pop-bg:${pops[0].wash}`}><span class="stk__pop">{pops.map((p, i) => <img src={p.src} alt="" loading="lazy" class:list={{ 'is-on': i === 0 }} data-wash={p.wash} />)}</span></span>
+        : <span class="stk stk--av" data-stk><img src="/studio-nine/img/set/story-artist.webp" alt="" loading="lazy" /></span>} <em>it</em></span>
       <span class="fst__l2">released<span class="stk stk--tile stk--lime" data-stk><img src="/studio-nine/logo/team-logomark-black.png" alt="" /></span><span class="stk stk--pill stk--lime2" data-stk>✓ Delivered</span></span>
       <span class="stk stk--pill stk--pink" data-stk><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 12h3l2-6 3 12 3-9 2 3h3"/></svg>Pre-save live</span>
       <span class="stk stk--dot" data-stk></span>
@@ -87,6 +92,37 @@ const cols = [
 </footer>
 </div>
 
+{pops.length > 1 && (
+<script is:inline>
+  // closing circle: the characters take turns popping up out of it (only while it is on screen).
+  // Inline and only rendered when a page passes several pops, so no other page gains a script.
+  (() => {
+    const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+    document.querySelectorAll('[data-pops]').forEach((el) => {
+      const imgs = Array.from(el.querySelectorAll('img'));
+      if (imgs.length < 2 || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      let seen = false;
+      new IntersectionObserver(([e]) => { seen = e.isIntersecting; }).observe(el);
+      let n = 0;
+      const turn = async () => {
+        await wait(2600);
+        if (seen && !document.hidden) {
+          const cur = imgs[n];
+          cur.classList.add('is-out'); await wait(320);
+          cur.classList.remove('is-on', 'is-out', 'is-in');
+          n = (n + 1) % imgs.length;
+          const next = imgs[n];
+          if (next.dataset.wash) el.style.setProperty('--pop-bg', next.dataset.wash);
+          next.classList.add('is-on', 'is-in');
+        }
+        turn();
+      };
+      turn();
+    });
+  })();
+</script>
+)}
+
 <style>
   /* The CTA card straddles the boundary between the page and the dark footer. */
   .footwrap{position:relative;z-index:0;margin-top:var(--section)}
@@ -115,6 +151,20 @@ const cols = [
   .stk--lime{background:var(--lime)}
   .stk--av{width:.72em;height:.72em;border-radius:50%;overflow:hidden;border:.04em solid var(--white);box-shadow:var(--shadow-md)}
   .stk--av img{width:.72em;height:.72em;max-width:none;object-fit:cover}
+  /* pop-out: the circle is drawn behind; below its midline the character is masked to the circle, above it nothing is clipped, so it rises out of the top */
+  .stk--pop{position:relative;z-index:2;overflow:visible;border:0;box-shadow:none}
+  .stk--pop::before{content:'';position:absolute;inset:0;border-radius:50%;background:var(--pop-bg,var(--viv-lav));border:.04em solid var(--white);box-shadow:var(--shadow-md)}
+  .stk__pop{position:absolute;left:50%;bottom:0;width:1.6em;height:1.6em;margin-left:-.8em;
+    -webkit-mask:linear-gradient(#000 0 0) top/100% 1.24em no-repeat,radial-gradient(circle at 50% calc(100% - .36em),#000 .315em,transparent .32em);
+    mask:linear-gradient(#000 0 0) top/100% 1.24em no-repeat,radial-gradient(circle at 50% calc(100% - .36em),#000 .315em,transparent .32em)}
+  .stk__pop img{position:absolute;left:50%;bottom:-.24em;width:.98em;height:auto;margin-left:-.49em;max-width:none;object-fit:contain;animation:stk-boil .5s steps(1,end) infinite}
+  @keyframes stk-boil{0%{translate:0 0;rotate:0deg}25%{translate:.004em -.004em;rotate:.5deg}50%{translate:-.004em .003em;rotate:-.4deg}75%{translate:.002em .005em;rotate:.3deg}}
+  /* taking turns: hard-cut stop-motion, the current one sinks into the circle, the next springs up with a squash */
+  .stk__pop img:not(.is-on){visibility:hidden}
+  .stk__pop img.is-out{transform:translateY(.75em);transition:transform .3s steps(4,end);transform-origin:50% 100%}
+  .stk__pop img.is-in{animation:stk-boil .5s steps(1,end) infinite,stk-up .6s steps(1,end)}
+  @keyframes stk-up{0%{transform:translateY(.75em)}17%{transform:translateY(.3em) scale(.94,1.08)}33%{transform:translateY(-.06em) scale(.96,1.06)}50%{transform:scale(1.07,.92)}67%{transform:scale(.98,1.03)}100%{transform:none}}
+  @media (prefers-reduced-motion:reduce){.stk__pop img{animation:none}}
   .stk--pill{height:auto;padding:.3em .65em;border-radius:var(--r-pill);font-family:var(--sans);font-size:.2em;font-weight:600;letter-spacing:-.01em;line-height:1;gap:.35em;grid-auto-flow:column;box-shadow:var(--shadow-md);white-space:nowrap}
   .stk--pill svg{width:1.2em;height:1.2em}
   .stk--lime2{background:var(--lime);color:var(--ink);position:absolute;right:-1.1em;top:-.55em;--r:5deg}
