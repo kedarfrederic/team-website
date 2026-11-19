@@ -88,7 +88,8 @@ const steps = [
 const closingPops = [['single', 'glad-1'], ['focus', 'glad-1'], ['feature', 'glad-1'], ['remix', 'glad-1'], ['radio', 'glad-3']]
   .map(([id, pose]) => ({ src: img(`${id}-${pose}`), wash: wash(id) }));
 
-const faq = pricingFaq.filter(([q]) => /trial work|really free|need a card|data mine/.test(q));
+// trial first: it is what the page is selling
+const faq = [/trial work/, /really free/, /need a card/, /data mine/].map((re) => pricingFaq.find(([q]) => re.test(q))!).filter(Boolean);
 const arrow = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
 ---
 <Base title="Your single has a few complaints" image="/studio-nine/img/og-lp-tracks.jpg" noindex description={`Lost files, missing metadata, no rollout plan. Your release has notes. Put it in Team: try Pro free for ${trials.pro} days with no card, then carry on with Free if you like.`} closing="released" closingPop={closingPops}>
@@ -138,7 +139,7 @@ const arrow = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
       <div class="cast__head">
         <div class="head">
           <h2 class="h1">The whole release <em>has notes.</em></h2>
-          <p class="lead">Every track on the record has been keeping a list. Flip the switch to see the same release in Team.</p>
+          <p class="lead">Every track on the record has been keeping a list. Flip the switch to see the same release with Team.</p>
         </div>
         <div class="seg" role="tablist" aria-label="Show the release before or with Team" data-seg>
           <span class="seg__knob" aria-hidden="true" data-seg-knob></span>
@@ -445,13 +446,17 @@ const arrow = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
     .lph{padding-top:calc(4rem + 2.5rem)}
     .offer__in{grid-template-columns:1fr}
     .offer__stage{width:min(100%,30rem);justify-self:center}
-    .how__grid{grid-template-columns:1fr}
-    .how__tile{grid-template-columns:8rem 1fr;column-gap:1.25rem;align-items:center}
+    .how__grid{grid-template-columns:minmax(0,1fr)}
+    .how__tile{grid-template-columns:8rem minmax(0,1fr);column-gap:1.25rem;align-items:center}
     .how__art{grid-row:span 2;padding:0}
     .clay--sm{width:100%}
   }
   @media (max-width:760px){
     .faq--plain .faq__i summary{grid-template-columns:1fr 1.4rem}
+  }
+  /* smallest phones: a narrower character column so the tile text keeps room */
+  @media (max-width:400px){
+    .how__tile{grid-template-columns:5.5rem minmax(0,1fr);column-gap:.9rem;padding-inline:1.1rem}
   }
   @media (max-width:560px){
     /* phones: the line-up stays first and wide; the bubble sits over Single */

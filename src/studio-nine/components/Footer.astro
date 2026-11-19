@@ -92,31 +92,36 @@ const cols = [
 </footer>
 </div>
 
-<script>
-  // closing circle: the characters take turns popping up out of it (only while it is on screen)
-  const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
-  document.querySelectorAll<HTMLElement>('[data-pops]').forEach((el) => {
-    const imgs = Array.from(el.querySelectorAll<HTMLImageElement>('img'));
-    if (imgs.length < 2 || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    let seen = false;
-    new IntersectionObserver(([e]) => { seen = e.isIntersecting; }).observe(el);
-    let n = 0;
-    const turn = async () => {
-      await wait(2600);
-      if (seen && !document.hidden) {
-        const cur = imgs[n];
-        cur.classList.add('is-out'); await wait(320);
-        cur.classList.remove('is-on', 'is-out', 'is-in');
-        n = (n + 1) % imgs.length;
-        const next = imgs[n];
-        if (next.dataset.wash) el.style.setProperty('--pop-bg', next.dataset.wash);
-        next.classList.add('is-on', 'is-in');
-      }
+{pops.length > 1 && (
+<script is:inline>
+  // closing circle: the characters take turns popping up out of it (only while it is on screen).
+  // Inline and only rendered when a page passes several pops, so no other page gains a script.
+  (() => {
+    const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+    document.querySelectorAll('[data-pops]').forEach((el) => {
+      const imgs = Array.from(el.querySelectorAll('img'));
+      if (imgs.length < 2 || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      let seen = false;
+      new IntersectionObserver(([e]) => { seen = e.isIntersecting; }).observe(el);
+      let n = 0;
+      const turn = async () => {
+        await wait(2600);
+        if (seen && !document.hidden) {
+          const cur = imgs[n];
+          cur.classList.add('is-out'); await wait(320);
+          cur.classList.remove('is-on', 'is-out', 'is-in');
+          n = (n + 1) % imgs.length;
+          const next = imgs[n];
+          if (next.dataset.wash) el.style.setProperty('--pop-bg', next.dataset.wash);
+          next.classList.add('is-on', 'is-in');
+        }
+        turn();
+      };
       turn();
-    };
-    turn();
-  });
+    });
+  })();
 </script>
+)}
 
 <style>
   /* The CTA card straddles the boundary between the page and the dark footer. */
