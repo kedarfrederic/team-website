@@ -3,6 +3,8 @@
 //   #headline #ctah #stage #demo #app #coach #coachCap #cursor  player: #ctrl #pp #track #fill #time #chap #replay
 //   #jumpPin #jumpBtns #bookfab .look__ctacard .step[data-chap] [data-look-cta] #head (draggable founder bubble)
 // URL params: ?name= &company= &artist= &release= &days= &teammate= &handle= &reldate= &budget= &seg= &c= &utm_*
+//   CRM trial links send only name, company, seg and utm_* (see campaigns/personalized-demo/LOOK-FALLBACKS-2026-11-19.md).
+//   &today=YYYY-MM-DD fakes the viewing day, for checking the date shift.
 (function(){
   var q = new URLSearchParams(location.search);
   var cap = function(s){ return s ? s.replace(/\b\w/g, function(c){ return c.toUpperCase(); }) : s; };
@@ -11,14 +13,43 @@
     var cut=s.slice(0,max); var sp=cut.lastIndexOf(' '); if(sp>max*0.6) cut=cut.slice(0,sp); return cut.replace(/[\s,.;:–-]+$/,'')+'…'; };
   var g = function(k){ return (q.get(k)||'').trim(); };
 
+  // ---- dates: the story is written for Wed 21 Oct 2026 with release on Sun 22 Nov 2026 (T-32). Shift it by
+  // whole weeks to the viewing day so every weekday label stays true; ?today=YYYY-MM-DD fakes the viewing day.
+  var MS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+      ML=['January','February','March','April','May','June','July','August','September','October','November','December'],
+      DS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var DAY=864e5, AUTH_TODAY=new Date(2026,9,21), AUTH_RELEASE=new Date(2026,10,22);
+  function addD(d,n){ return new Date(d.getFullYear(), d.getMonth(), d.getDate()+n); }
+  var VIEW=(function(){ var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(g('today')), d=m ? new Date(+m[1],+m[2]-1,+m[3]) : new Date();
+    return new Date(d.getFullYear(), d.getMonth(), d.getDate()); })();
+  var SHIFT=7*Math.round((VIEW-AUTH_TODAY)/(7*DAY));            // days, always a whole number of weeks
+  var TODAY=addD(AUTH_TODAY, SHIFT), RELEASE=addD(AUTH_RELEASE, SHIFT);
+  var REL_DAYS=Math.round((RELEASE-VIEW)/DAY);                   // the real countdown from the viewing day (29-35)
+  // undated months in the script: Jul-Dec are 2026, Jan-Jun are 2027 (the authored timeline runs Oct 2026 - Mar 2027)
+  function yearOf(m){ return m>=6 ? 2026 : 2027; }
+  function moved(y,m,d){ return addD(new Date(y,m,d), SHIFT); }
+  var MON='(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)', MONL='('+ML.join('|')+')';
+  var DATE_RE=new RegExp('\\b'+MONL+' (\\d{1,2})(, (\\d{4}))?\\b|\\b'+MON+' (\\d{1,2})(, (\\d{4}))?\\b|\\b(\\d{1,2}) '+MON+'\\b(?!\\.?\\d)', 'g');
+  function shiftText(s){ if (!SHIFT || !s) return s;
+    return s.replace(DATE_RE, function(all, lm, ld, _ly, ly, sm, sd, _sy, sy, dd, dm){
+      var t;
+      if (lm){ var m1=ML.indexOf(lm); t=moved(ly?+ly:yearOf(m1), m1, +ld); return ML[t.getMonth()]+' '+t.getDate()+(ly?', '+t.getFullYear():''); }
+      if (sm){ var m2=MS.indexOf(sm); t=moved(sy?+sy:yearOf(m2), m2, +sd); return MS[t.getMonth()]+' '+t.getDate()+(sy?', '+t.getFullYear():''); }
+      var m3=MS.indexOf(dm); t=moved(yearOf(m3), m3, +dd); return t.getDate()+' '+MS[t.getMonth()]; }); }
+  function shiftDom(root){ if (!SHIFT || !root) return;
+    var w=document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null), n, list=[];
+    while ((n=w.nextNode())) list.push(n);
+    list.forEach(function(t){ var p=t.parentNode && t.parentNode.nodeName; if (p==='SCRIPT'||p==='STYLE') return; var v=shiftText(t.nodeValue); if (v!==t.nodeValue) t.nodeValue=v; }); }
+
   // ---- merge fields (with fallbacks, length-clamped) ----
   var first   = clamp(cap(g('name')), 18);
-  var company = clamp(g('company'), 30);
+  var company = g('company');            // never cut: slots wrap, or shrink where they can't
   var artist  = clamp(g('artist'), 28)   || 'Nova Reed';
   var release = clamp(g('release'), 34)  || 'Afterglow';
-  var days    = g('days')     || '32';
-  var teammate= clamp(cap(g('teammate')), 18) || 'Kedar';
-  var reldate = g('reldate')  || 'Sun, Nov 22';
+  var days    = g('days')     || String(REL_DAYS);
+  var teammate= clamp(cap(g('teammate')), 18) || 'Dave';
+  var tmIsDefault = !g('teammate');
+  var reldate = g('reldate')  || (DS[RELEASE.getDay()]+', '+MS[RELEASE.getMonth()]+' '+RELEASE.getDate());
   var budget  = g('budget')   || '$8,000';
   var SEG_ALIAS = { manager:'management', managers:'management', mgmt:'management', labels:'label',
                     'sub-label':'sublabel', imprint:'sublabel', distribution:'distributor', agencies:'agency', artists:'artist' };
@@ -35,11 +66,11 @@
 
   // ---- per-ICP segment config (set per-contact from the CRM) ----
   var SEGS = {
-    label:      { acct: company||'Your label',  list:[['Mara Vane','1 needs you · 2 active','in 12d'],['The Hightides','2 active · 1 live','in 1mo'],['Odeon','1 active · 3 released','in 6d'],['Saint Cloud','2 active','in 18d']] },
-    sublabel:   { acct: company||'Your imprint',list:[['Mara Vane','1 needs you · 2 active','in 12d'],['Odeon','1 active','in 6d'],['Saint Cloud','2 released',''],['Loom','1 active','in 1mo']] },
-    agency:     { acct: company||'Your agency', list:[['Caro Vega','campaign live','in 4d'],['The Hightides','1 needs you · 1 active','in 9d'],['Mara Vane','2 active','in 12d'],['Saint Cloud','brief in','in 1mo']] },
-    management: { acct: company||'Your roster', list:[['Caro Vega','on tour · 1 active','in 4d'],['Mara Vane','1 needs you · 1 active','in 12d'],['The Hale','2 released',''],['Odeon','1 active','in 6d']] },
-    distributor:{ acct: company||'Your catalog',list:[['Mara Vane','2 active · 4 released','in 12d'],['The Hightides','1 active · 11 released','in 1mo'],['Odeon','2 active','in 6d'],['Saint Cloud','3 released','']] },
+    label:      { acct: company||'Your label',  list:[['Mara Vane','1 needs you · 2 active','in 12d'],['Halden Shore','2 active · 1 live','in 1mo'],['Ottilie Banks','1 active · 3 released','in 6d'],['Tamsin Rook','2 active','in 18d']] },
+    sublabel:   { acct: company||'Your imprint',list:[['Mara Vane','1 needs you · 2 active','in 12d'],['Ottilie Banks','1 active','in 6d'],['Tamsin Rook','2 released',''],['Ivo Lennart','1 active','in 1mo']] },
+    agency:     { acct: company||'Your agency', list:[['Caro Vega','campaign live','in 4d'],['Halden Shore','1 needs you · 1 active','in 9d'],['Mara Vane','2 active','in 12d'],['Tamsin Rook','brief in','in 1mo']] },
+    management: { acct: company||'Your roster', list:[['Caro Vega','on tour · 1 active','in 4d'],['Mara Vane','1 needs you · 1 active','in 12d'],['The Marrow Quays','2 released',''],['Ottilie Banks','1 active','in 6d']] },
+    distributor:{ acct: company||'Your catalog',list:[['Mara Vane','2 active · 4 released','in 12d'],['Halden Shore','1 active · 11 released','in 1mo'],['Ottilie Banks','2 active','in 6d'],['Tamsin Rook','3 released','']] },
     artist:     { acct: artist, list:[] }
   };
   var segc = SEGS[seg] || SEGS.label;
@@ -82,11 +113,44 @@
 
   // fill [data-f] slots (inside the app, and anything cloned from a <template> later)
   var F = { first: first||'there', account: account, company: company||account, artist: artist, artistFirst: artistFirst||artist, artistLast: artistLast,
-            release: release, days: days, reldate: reldate, reldateShort: reldateShort, budget: BUD_OLD, teammate: teammate, initial: initial,
+            release: release, days: days, reldate: reldate, reldateShort: reldateShort, budget: BUD_OLD, teammate: teammate, initial: initial, tminit: teammate.split(/\s+/).map(function(w){return w[0];}).slice(0,2).join('').toUpperCase(),
             handle: handle, artinitial: (artist[0]||'N').toUpperCase(), posttitle: 'Pre-save · ' + release,
             tourname: clamp(release, 26) + ' Tour' };
   function fillSlots(root){ $$('[data-f]', root).forEach(function(el){ var k=el.getAttribute('data-f'); if (F[k]!=null) el.textContent=F[k]; }); }
+  // dates: one pass over every text in the app and its <template>s, then the places a date is split across elements
+  (function(){ if (!SHIFT) return;
+    shiftDom(tapp); $$('template', tapp).forEach(function(t){ shiftDom(t.content); });
+    // timeline columns: <span class="dom">21<small>Oct</small></span>
+    $$('.dom', tapp).forEach(function(el){ var sm=el.querySelector('small'), tn=el.firstChild; if (!sm || !tn || tn.nodeType!==3) return;
+      var m=MS.indexOf(sm.textContent.trim()), d=parseInt(tn.nodeValue,10); if (m<0 || !d) return;
+      var t=moved(yearOf(m), m, d); tn.nodeValue=String(t.getDate()); sm.textContent=MS[t.getMonth()]; });
+    // schedule week header: the day number follows its (already shifted) long date
+    $$('.d2d-cal-wk .ch', tapp).forEach(function(b){ var vh=b.querySelector('.d2d-cal-vh'), num=b.querySelector('b');
+      var m=vh && /([A-Z][a-z]+) (\d{1,2})$/.exec(vh.textContent.trim()); if (m && num) num.textContent=m[2]; });
+    // post composer day strip starts on "today"
+    $$('.cp2 .days .d .n', tapp).forEach(function(n, i){ n.textContent=String(addD(TODAY, i).getDate()); });
+    // schedule mini month: rebuild for the shifted month (today ringed, its week marked)
+    $$('.d2d-cal-mm', tapp).forEach(function(mm){ var proto=mm.querySelector('button'); if (!proto) return;
+      $$('button', mm).forEach(function(b){ b.parentNode.removeChild(b); });
+      var first=new Date(TODAY.getFullYear(), TODAY.getMonth(), 1), start=addD(first, -((first.getDay()+6)%7)), wk0=addD(TODAY, -((TODAY.getDay()+6)%7));
+      for (var k=0;k<42;k++){ var d=addD(start,k), b=proto.cloneNode(false), cls=[];
+        if (d.getMonth()!==TODAY.getMonth()) cls.push('o'); if (d>=wk0 && d<addD(wk0,7)) cls.push('w'); if (+d===+TODAY) cls.push('t');
+        b.className=cls.join(' '); b.setAttribute('aria-pressed', +d===+TODAY ? 'true' : 'false'); b.innerHTML='<b>'+d.getDate()+'</b>'; mm.appendChild(b); }
+      var hb=mm.parentNode.querySelector('.d2d-cal-mmh b'); if (hb) hb.innerHTML=ML[TODAY.getMonth()]+' <span class="ser">'+TODAY.getFullYear()+'</span>'; });
+    // release wizard date picker: the release month, release day picked
+    var wc=$('wizCal'); if (wc){ var hd=$q('.wz-cal-h b', wc), gr=$q('.wz-cal-g', wc);
+      if (hd) hd.textContent=ML[RELEASE.getMonth()]+' '+RELEASE.getFullYear();
+      if (gr){ gr.innerHTML=''; var f1=new Date(RELEASE.getFullYear(), RELEASE.getMonth(), 1), nd=new Date(RELEASE.getFullYear(), RELEASE.getMonth()+1, 0).getDate();
+        for (var s=0;s<f1.getDay();s++) gr.appendChild(document.createElement('span'));
+        for (var dd=1; dd<=nd; dd++){ var bt=document.createElement('button'); bt.type='button'; bt.textContent=dd; if (dd===RELEASE.getDate()) bt.id='wizCalPick'; gr.appendChild(bt); } } }
+  })();
   fillSlots(tapp);
+  // the company can't wrap in a top bar, so a long one gets smaller type and more room instead of an ellipsis
+  (function(){ var name=F.account||''; if (name.length<=16) return;
+    var px=Math.max(10, Math.round((13.5-(name.length-16)*0.15)*10)/10);
+    $$('header.top [data-f="account"], header.top [data-f="company"]', tapp).forEach(function(el){
+      el.style.fontSize=px+'px'; el.style.maxWidth='260px'; el.style.textOverflow='clip'; el.style.whiteSpace='nowrap'; });
+  })();
 
   // Home cards per segment (Nov 2026 shell): name, "out in N days" line, and a need-you / caught-up chip
   (function(){
@@ -104,7 +168,7 @@
     });
     // "where you left off" follows the segment's first artist
     var d0=days((segc.list[0]||[])[2]); if (d0!=null){ var ld=$('hmLeadDays'), lo=$('hmLeadOut');
-      var t=new Date(2026,9,21+d0); if(ld) ld.textContent=d0;
+      var t=addD(TODAY, d0); if(ld) ld.textContent=d0;
       if(lo) lo.textContent='Out '+['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][t.getDay()]+', '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][t.getMonth()]+' '+t.getDate(); }
   })();
 
@@ -256,9 +320,9 @@
   // ======================= story copy =======================
   var QGEN = 'What’s missing from this plan?';
   var AGEN = '<p>Quite a lot, honestly. The rollout covers about a third of what <b>'+esc(release)+'</b> needs to ship clean. I count <b>14 gaps</b> across delivery, metadata, pitching, pre-save and paid.</p><p>Here are the 3 that block everything downstream. I’ll queue the other 11 once these are in.</p>';
-  var GEN_ROWS = [['Add ISRC, UPC & ℗ line','Thu 22 Oct · high priority'],['Add track credits and splits','Fri 23 Oct · high priority'],['Upload final cover art','Sat 24 Oct · high priority']];
+  var GEN_ROWS = [['Add ISRC, UPC & ℗ line',shiftText('Thu 22 Oct · high priority')],['Add track credits and splits',shiftText('Fri 23 Oct · high priority')],['Upload final cover art',shiftText('Sat 24 Oct · high priority')]];
   var Q_SNAP = 'Raise the release budget to ' + BUD_NEW;
-  var A_SNAP = '<p>The total budget on <b>'+esc(release)+'</b> is now <b>'+BUD_NEW+'</b>, up from '+BUD_OLD+'. Nothing is planned in a category yet, so I haven’t touched those.</p><p>'+esc(teammate)+' set the previous total. Want me to let them know?</p>';
+  var A_SNAP = '<p>The total budget on <b>'+esc(release)+'</b> is now <b>'+BUD_NEW+'</b>, up from '+BUD_OLD+'. Nothing is planned in a category yet, so I haven’t touched those.</p><p>'+esc(teammate)+(tmIsDefault ? ' from finance' : '')+' set the previous total. Want me to let '+(tmIsDefault ? 'him' : 'them')+' know?</p>';
   var Q_DRIVE = 'What’s the total budget in ' + artist + '’s Drive files?';
   var slug = release.replace(/[^A-Za-z0-9]+/g,'-').replace(/^-|-$/g,'').toLowerCase() || 'release';
   var A_DRIVE = '<p>The total budget in '+esc(artist)+'’s Google Drive files is <b>$94,500</b>, across the single, two music videos and paid social.</p>'+
@@ -319,7 +383,7 @@
      .move('#wizCalPick', true)
      .run(function(){ var p=$('wizCalPick'); if(p) p.classList.add('is-hot'); })
      .click('#wizCalPick', function(){ var p=$('wizCalPick'); if(p) p.classList.add('on'); }, { gap: 250 })
-     .run(function(){ show('wizCal', false); var d=$('wizDate'); if(d) d.classList.remove('unset'); var dt=$('wizDateTxt'); if(dt) dt.textContent=reldate+', 2026'; var c=$('wizCreate'); if(c) c.removeAttribute('disabled'); })
+     .run(function(){ show('wizCal', false); var d=$('wizDate'); if(d) d.classList.remove('unset'); var dt=$('wizDateTxt'); if(dt) dt.textContent=reldate+', '+RELEASE.getFullYear(); var c=$('wizCreate'); if(c) c.removeAttribute('disabled'); })
      .wait(500)
      .run(function(i){ scrollTo(function(){ return $q('main', sc('startrel')); }, 230, i); })
      .wait(1000)
@@ -375,7 +439,7 @@
      .tap('#taskAssignFirst', function(){ show('taskAssignMenu', false); var a=$('taskAssignee'); if(a) a.innerHTML='<i class="tc-av tc-sm" style="background:#D9FA87;color:#0E0D0B">'+esc((teammate[0]||'K').toUpperCase())+'</i><span>'+esc(teammate)+'</span>'; }, { near: true })
      .tap('#taskDate', function(){ show('taskCal', true); })
      .tap('#taskCalPick', function(){ var p=$('taskCalPick'); if(p) p.classList.add('sel'); }, { near: true, gap: 250 })
-     .run(function(){ show('taskCal', false); var v=$('taskDate'); if(v) v.textContent='Sun 25 Oct'; var c=$('taskCreate'); if(c) c.classList.add('is-ready'); })
+     .run(function(){ show('taskCal', false); var v=$('taskDate'); if(v) v.textContent=shiftText('Sun 25 Oct'); var c=$('taskCreate'); if(c) c.classList.add('is-ready'); })
      .wait(300)
      .tap('#taskCreate', function(i){ ov('addtask', false); hideCursor(); }, { gap: 400 })
      .run(function(i){ pop('taskCard', i); var c=$('rollCount'); if(c) c.textContent='16'; })
@@ -406,7 +470,7 @@
      .wait(300).run(function(i){ scrollTo('cpScroll', 610, i); }).wait(800)
      // 4 · when: Teammate's suggested slot
      .tap('#cpDay22', function(){ var d=$('cpDay22'); if(d) d.classList.add('sel'); }, { gap: 120 })
-     .tap('#cpTime18', function(){ var t=$('cpTime18'); if(t) t.classList.add('on'); var w=$('cpWhenTxt'); if(w) w.textContent='Thu 22 Oct, 18:00'; var s2=$('cpSchedule'); if(s2) s2.classList.add('is-ready'); })
+     .tap('#cpTime18', function(){ var t=$('cpTime18'); if(t) t.classList.add('on'); var w=$('cpWhenTxt'); if(w) w.textContent=shiftText('Thu 22 Oct')+', 18:00'; var s2=$('cpSchedule'); if(s2) s2.classList.add('is-ready'); })
      // 5 · preview, then schedule
      .tap('#cpFab', function(){ var c=cp(); if(c) c.classList.add('pv-open'); }, { gap: 300 })
      .run(function(){ hideCursor(); }).wait(650)
@@ -531,7 +595,7 @@
      .coach('#tdsSheet','A day sheet for every show, built from the advance','cap-top',2400)
      .tap('#tdsShare', function(){ var b=$('tdsShare'); if(b) b.classList.add('t-busy'); }, { gap: 900 })
      .run(function(){ var b=$('tdsShare'); if(b) b.classList.remove('t-busy'); hideCursor(); var t=$('snapToast'); if(t) t.classList.add('t-plain');
-        var tt=$('toastT'), td=$('toastD'); if(tt) tt.textContent='Day sheet shared with the crew'; if(td) td.textContent='14 people · Roundhouse, Tue 9 Mar'; ov('toast', true); })
+        var tt=$('toastT'), td=$('toastD'); if(tt) tt.textContent='Day sheet shared with the crew'; if(td) td.textContent=shiftText('14 people · Roundhouse, Tue 9 Mar'); ov('toast', true); })
      .wait(2800)
      .run(function(){ ov('toast', false); });
   });
