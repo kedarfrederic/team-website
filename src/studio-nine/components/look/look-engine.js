@@ -88,17 +88,24 @@
   function fillSlots(root){ $$('[data-f]', root).forEach(function(el){ var k=el.getAttribute('data-f'); if (F[k]!=null) el.textContent=F[k]; }); }
   fillSlots(tapp);
 
-  // roster cards per segment (names + status line + date pill)
+  // Home cards per segment (Nov 2026 shell): name, "out in N days" line, and a need-you / caught-up chip
   (function(){
-    segc.list.forEach(function(it, i){ var c=$('rcard'+(i+1)); if(!c) return;
+    var ROLE = { label:'Label', sublabel:'Label', management:'Management', agency:'Agency', distributor:'Distributor', artist:'Artist' };
+    var rt=$('hmRmType'); if (rt) rt.textContent = ROLE[seg] || 'Label';
+    function days(w){ var m=/in\s+(\d+)\s*d/.exec(w||''); if (m) return +m[1]; if (/mo/.test(w||'')) return 30; return null; }
+    function when(w){ var d=days(w); return d==null ? 'No release coming up' : d>=28 ? 'Out in a month' : 'Out in '+d+' days'; }
+    segc.list.forEach(function(it, i){
+      $$('[data-rn="'+i+'"]', tapp).forEach(function(el){ el.textContent = it[0]; });
+      var c=$('rcard'+(i+1)); if(!c) return;
       var n=$q('[data-r="name"]',c), m=$q('[data-r="meta"]',c), w=$q('[data-r="when"]',c);
       if(n) n.textContent=it[0];
-      // rebuild the real status chips: "3 need you" (orange live dot), "2 active" (ember), "4 released" (grey)
-      if(m){ m.innerHTML=''; it[1].split(' · ').forEach(function(part){ var mm=/^(\d+)\s+(.*)$/.exec(part), c=document.createElement('span'); c.className='hm-cnt';
-          var dot=document.createElement('i'); if (/need/.test(part)) dot.className='rp-ldot'; else dot.style.background = /active|live/.test(part) ? 'var(--ember)' : 'rgba(255,255,255,.55)';
-          c.appendChild(dot); if (mm){ var b=document.createElement('b'); b.textContent=mm[1]; c.appendChild(b); c.appendChild(document.createTextNode(' '+mm[2])); } else c.appendChild(document.createTextNode(part)); m.appendChild(c); }); }
-      if(w){ if(it[2]){ var t=w.lastChild; if(t && t.nodeType===3) t.textContent=' '+it[2]; else w.appendChild(document.createTextNode(' '+it[2])); } else w.style.visibility='hidden'; }
+      if(w) w.textContent=when(it[2]);
+      if(m){ var need=/(\d+)\s+needs? you/.exec(it[1]); m.className='hn-chip '+(need?'need':'ok'); m.textContent = need ? need[0] : 'All caught up'; }
     });
+    // "where you left off" follows the segment's first artist
+    var d0=days((segc.list[0]||[])[2]); if (d0!=null){ var ld=$('hmLeadDays'), lo=$('hmLeadOut');
+      var t=new Date(2026,9,21+d0); if(ld) ld.textContent=d0;
+      if(lo) lo.textContent='Out '+['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][t.getDay()]+', '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][t.getMonth()]+' '+t.getDate(); }
   })();
 
   // Spotify-style search results, keyed off the artist's first name (deterministic, plausible)
@@ -273,6 +280,9 @@
 
   chap('roster', 'Your roster', null, function(s){
     s.run(function(i){ scene('roster', i); hideCursor(); })
+     .wait(900)
+     // the new Home is taller than the screen: bring "Add an artist, creator or brand" into view first
+     .run(function(i){ scrollToEl($q('main', sc('roster')), 'rosterNew', 700, i); })
      .wait(900).move('#rosterNew')
      .coach('#rosterNew','Add a new artist in seconds','cap-left',1900);
     // only open "New workspace" when the add-an-artist chapter follows
@@ -294,7 +304,7 @@
      .move(function(){ return inOv('spotify','#spTop'); }, true)
      .run(function(){ var t=inOv('spotify','#spTop'); if(t) t.classList.add('is-hot'); })
      .click(function(){ return inOv('spotify','#spTop'); }, function(){ ov('spotify', false); hideCursor(); }, { gap: 500 })
-     .run(function(i){ show('rcard4', false); pop('rcardNew', i); })
+     .run(function(i){ scrollTo($q('main', sc('roster')), 0, i); show('rcard4', false); pop('rcardNew', i); })
      .wait(700)
      .coach('#rcardNew','Their workspace is ready. The brain starts learning them','cap-right',2300);
   });
@@ -528,8 +538,8 @@
   var dtdFrom = null;
   chap('daytoday', 'Day to day', 'Day to day', function(s){
     // open the artist's workspace from the roster card (the new artist if we just added one)
-    s.run(function(){ ov('panel', false); var c=$('rcardNew'); dtdFrom = (c && !c.hidden) ? c : $('rcard1'); })
-     .tap(function(){ return dtdFrom || $('rcard1'); }, function(i){ scene('daytoday', i); hideCursor(); }, { gap: 900 })
+    s.run(function(){ ov('panel', false); var c=$('rcardNew'); dtdFrom = (c && !c.hidden) ? c : $('hmLeadD2d'); })
+     .tap(function(){ return dtdFrom || $('hmLeadD2d'); }, function(i){ scene('daytoday', i); hideCursor(); }, { gap: 900 })
      .coach('#dtdPlate','Everything outside a release, in one list','cap-right',2300)
      .tap('#dtdRow1 .d2d-tick', function(){ var r=$('dtdRow1'); if(r){ r.classList.add('done'); var tk=$q('.d2d-tick', r); if(tk) tk.setAttribute('aria-checked','true'); } }, { gap: 500 })
      .run(function(){ hideCursor(); })
