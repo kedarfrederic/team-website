@@ -282,7 +282,7 @@
     s.run(function(i){ scene('roster', i); hideCursor(); })
      .wait(900)
      // the new Home is taller than the screen: bring "Add an artist, creator or brand" into view first
-     .run(function(i){ scrollToEl($q('main', sc('roster')), 'rosterNew', 700, i); })
+     .run(function(i){ scrollToEl($q('main', sc('roster')), 'rosterNew', 560, i); })
      .wait(900).move('#rosterNew')
      .coach('#rosterNew','Add a new artist in seconds','cap-left',1900);
     // only open "New workspace" when the add-an-artist chapter follows
