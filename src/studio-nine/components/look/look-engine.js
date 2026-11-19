@@ -644,11 +644,38 @@
       st.setAttribute('data-seek', CHAP_AT[hit]); var num=st.querySelector('.step__n'); if (num) num.textContent=('0'+(++n)).slice(-2); });
   })();
   var jumpBtns = [].slice.call(document.querySelectorAll('[data-seek]'));
-  function updateJump(t){ var bt=-1, i, s;
+  // the pinned chapter bar scrolls sideways when the tabs don't fit: keep the playing chapter in view,
+  // show a fade on any side with more tabs, and let a mouse wheel or a drag scroll it too
+  var jumpTrack = document.getElementById('jumpBtns'), lastJump = -2, handUntil = 0;
+  function jumpEdges(){ if (!jumpTrack) return; var max=jumpTrack.scrollWidth-jumpTrack.clientWidth;
+    jumpTrack.classList.toggle('fade-l', jumpTrack.scrollLeft>2); jumpTrack.classList.toggle('fade-r', jumpTrack.scrollLeft<max-2); }
+  function jumpFollow(btn, instant){ if (!jumpTrack || !btn || !jumpTrack.contains(btn) || Date.now()<handUntil) return;
+    var left=btn.offsetLeft-(jumpTrack.clientWidth-btn.offsetWidth)/2;
+    try{ jumpTrack.scrollTo({ left: Math.max(0,left), behavior: instant ? 'auto' : 'smooth' }); }catch(e){ jumpTrack.scrollLeft=Math.max(0,left); } }
+  function updateJump(t){ var bt=-1, i, s, on=null;
     for (i=0;i<jumpBtns.length;i++){ s=+jumpBtns[i].getAttribute('data-seek'); if (t>=s-250 && s>bt) bt=s; }
-    for (i=0;i<jumpBtns.length;i++){ jumpBtns[i].classList.toggle('on', +jumpBtns[i].getAttribute('data-seek')===bt); }
+    for (i=0;i<jumpBtns.length;i++){ var hit=+jumpBtns[i].getAttribute('data-seek')===bt; jumpBtns[i].classList.toggle('on', hit); if (hit && jumpTrack && jumpTrack.contains(jumpBtns[i])) on=jumpBtns[i]; }
+    if (bt!==lastJump){ jumpFollow(on, lastJump===-2); lastJump=bt; }
   }
-  jumpBtns.forEach(function(b){ b.addEventListener('click', function(){
+  if (jumpTrack){
+    jumpTrack.addEventListener('scroll', jumpEdges, { passive: true });
+    addEventListener('resize', function(){ jumpEdges(); jumpFollow(jumpTrack.querySelector('.on'), true); });
+    // an ordinary mouse wheel scrolls the bar sideways (trackpads already do)
+    jumpTrack.addEventListener('wheel', function(e){ if (jumpTrack.scrollWidth<=jumpTrack.clientWidth || Math.abs(e.deltaX)>Math.abs(e.deltaY)) return;
+      e.preventDefault(); handUntil=Date.now()+2500; jumpTrack.scrollLeft+=e.deltaY; }, { passive: false });
+    jumpTrack.addEventListener('touchstart', function(){ handUntil=Date.now()+2500; }, { passive: true });
+    // drag to scroll with a mouse; a real drag swallows the click so it doesn't jump the demo
+    var drag=null;
+    jumpTrack.addEventListener('pointerdown', function(e){ if (e.pointerType!=='mouse' || e.button!==0) return; drag={ x:e.clientX, left:jumpTrack.scrollLeft, moved:false }; });
+    addEventListener('pointermove', function(e){ if (!drag) return; var dx=e.clientX-drag.x;
+      if (!drag.moved && Math.abs(dx)>5){ drag.moved=true; jumpTrack.classList.add('is-drag'); }
+      if (drag.moved){ handUntil=Date.now()+2500; jumpTrack.scrollLeft=drag.left-dx; } });
+    addEventListener('pointerup', function(){ if (!drag) return; var moved=drag.moved; drag=null; jumpTrack.classList.remove('is-drag');
+      if (moved){ var stop=function(ev){ ev.stopPropagation(); ev.preventDefault(); jumpTrack.removeEventListener('click', stop, true); };
+        jumpTrack.addEventListener('click', stop, true); setTimeout(function(){ jumpTrack.removeEventListener('click', stop, true); }, 0); } });
+    requestAnimationFrame(jumpEdges);
+  }
+  jumpBtns.forEach(function(b){ b.addEventListener('click', function(){ handUntil=0;
     var st=document.getElementById('stage'), nav=document.getElementById('nav');
     var navh=nav?Math.round(nav.getBoundingClientRect().height):64;
     // land the demo just below the pinned bar so it keeps showing after the jump
