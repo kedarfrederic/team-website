@@ -452,6 +452,7 @@
   function attn(n){ [1,2,3].forEach(function(k){ show('attnCard'+k, k===n); }); var of=$('attnOf'); if(of) of.textContent=n+' of 10 items';
     var dots=$('attnDots'); if(dots){ $$('button, s, span, i', dots).forEach(function(d, k){ d.setAttribute('aria-current', k===n-1 ? 'true' : 'false'); }); } }
   function tdTab(name){ ['Connect','Details','Pitch'].forEach(function(k){ var t=$('tdTab'+k); if(t) t.setAttribute('aria-selected', k===name ? 'true' : 'false'); });
+    var lv=$('tdLiving'), tb=$('tdTab'+name); if (lv && tb && tb.getAttribute('data-family')) lv.setAttribute('data-family', tb.getAttribute('data-family'));
     show('paneConnect', name==='Connect'); show('paneDetails', name==='Details'); show('panePitch', name==='Pitch'); }
 
   // the n-th centre pill (Today / Rollout / Files / Budget …) in a scene's header
