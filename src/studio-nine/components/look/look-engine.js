@@ -91,6 +91,12 @@
       try { if (window.posthog && window.posthog.capture) { var p={}; for (k in o) if (k!=='event') p[k]=o[k]; window.posthog.capture(ev, p); } } catch(e){} };
   })();
   tag('look_view');
+  // the CTAs carry the campaign tags on: /demo's form posts them to the CRM, and the app sees them at sign-up
+  (function(){ var keep=['utm_source','utm_medium','utm_campaign','utm_content','utm_term','c'].filter(function(k){ return g(k); });
+    if (!keep.length) return;
+    [].slice.call(document.querySelectorAll('a[data-look-cta]')).forEach(function(a){
+      try { var u=new URL(a.getAttribute('href'), location.href); keep.forEach(function(k){ if (!u.searchParams.has(k)) u.searchParams.set(k, g(k)); });
+        a.setAttribute('href', u.origin===location.origin ? u.pathname+u.search+u.hash : u.href); } catch(e){} }); })();
 
   // page headline + CTA
   if (first || company){
