@@ -426,7 +426,7 @@
      .wait(600).run(function(){ ov('panel', false); dockOn(false); var p=$('tmPill'); if(p) p.classList.add('wait'); var t=$('tmPillTxt'); if(t) t.textContent='Working on it…'; ov('pill', true); })
      .wait(500).run(function(i){ scene('budget', i); dockOn(false); show('budBody', false); show('budSkeleton', true); var pn=$q('#panel', sc('budget')); if(pn) pn.classList.add('bud-loading'); })
      .wait(850).run(function(){ show('budSkeleton', false); show('budBody', true); var pn=$q('#panel', sc('budget')); if(pn) pn.classList.remove('bud-loading'); })
-     .wait(700).run(function(){ var a=$('budTotal'), b=$('budAvail'); if(a) a.textContent=BUD_NEW; if(b) b.textContent=BUD_NEW; var tl=$('budTile'); if(tl) tl.classList.add('snap-hi');
+     .wait(700).run(function(){ var a=$('budTotal'), b=$('budAvail'), bp=$('budPillAmt'); if(a) a.textContent=BUD_NEW; if(b) b.textContent=BUD_NEW; if(bp) bp.textContent=BUD_NEW; var tl=$('budTile'); if(tl) tl.classList.add('snap-hi');
         var tt=$('toastT'), td=$('toastD'); if(tt) tt.textContent='Set the release budget to '+BUD_NEW; if(td) td.textContent=BUD_OLD+' → '+BUD_NEW; ov('toast', true); })
      .wait(500).run(function(){ var p=$('tmPill'); if(p) p.classList.remove('wait'); var t=$('tmPillTxt'); if(t) t.textContent='My reply is ready'; })
      .wait(300)
