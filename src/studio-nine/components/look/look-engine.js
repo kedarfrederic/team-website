@@ -13,33 +13,47 @@
     var cut=s.slice(0,max); var sp=cut.lastIndexOf(' '); if(sp>max*0.6) cut=cut.slice(0,sp); return cut.replace(/[\s,.;:–-]+$/,'')+'…'; };
   var g = function(k){ return (q.get(k)||'').trim(); };
 
-  // ---- dates: the story is written for Wed 21 Oct 2026 with release on Sun 22 Nov 2026 (T-32). Shift it by
-  // whole weeks to the viewing day so every weekday label stays true; ?today=YYYY-MM-DD fakes the viewing day.
+  // ---- dates: the story is written for Wed 21 Oct 2026 with release on Sun 22 Nov 2026 (T-32). It is shifted by the
+  // exact number of days to the viewing day, so "today" is the real today, and every weekday name is recomputed from
+  // its shifted date. Week views show the 7 days from 2 days before today (the authored layout).
+  // ?today=YYYY-MM-DD fakes the viewing day.
   var MS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
       ML=['January','February','March','April','May','June','July','August','September','October','November','December'],
-      DS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      DS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], DL=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   var DAY=864e5, AUTH_TODAY=new Date(2026,9,21), AUTH_RELEASE=new Date(2026,10,22);
   function addD(d,n){ return new Date(d.getFullYear(), d.getMonth(), d.getDate()+n); }
   var VIEW=(function(){ var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(g('today')), d=m ? new Date(+m[1],+m[2]-1,+m[3]) : new Date();
     return new Date(d.getFullYear(), d.getMonth(), d.getDate()); })();
-  var SHIFT=7*Math.round((VIEW-AUTH_TODAY)/(7*DAY));            // days, always a whole number of weeks
+  var SHIFT=Math.round((VIEW-AUTH_TODAY)/DAY);                  // days
   var TODAY=addD(AUTH_TODAY, SHIFT), RELEASE=addD(AUTH_RELEASE, SHIFT);
-  var REL_DAYS=Math.round((RELEASE-VIEW)/DAY);                   // the real countdown from the viewing day (29-35)
+  var REL_DAYS=Math.round((RELEASE-TODAY)/DAY);                  // always the authored 32
+  var WK0=addD(TODAY, -2);                                       // first day of the week views
   // undated months in the script: Jul-Dec are 2026, Jan-Jun are 2027 (the authored timeline runs Oct 2026 - Mar 2027)
   function yearOf(m){ return m>=6 ? 2026 : 2027; }
   function moved(y,m,d){ return addD(new Date(y,m,d), SHIFT); }
-  var MON='(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)', MONL='('+ML.join('|')+')';
-  var DATE_RE=new RegExp('\\b'+MONL+' (\\d{1,2})(, (\\d{4}))?\\b|\\b'+MON+' (\\d{1,2})(, (\\d{4}))?\\b|\\b(\\d{1,2}) '+MON+'\\b(?!\\.?\\d)', 'g');
+  // a weekday name in the same form as the one it replaces (Monday / Mon / MON)
+  function wdLike(orig, t){ if (orig.length>3) return DL[t.getDay()]; var s=DS[t.getDay()]; return orig===orig.toUpperCase() ? s.toUpperCase() : s; }
+  var MON='(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)', MONL='(?:'+ML.join('|')+')',
+      WD='(?:'+DL.join('|')+'|Sun|Mon|Tue|Wed|Thu|Fri|Sat|SUN|MON|TUE|WED|THU|FRI|SAT)';
+  // [weekday + sep] then: "October 19(, 2026)" | "Oct 19(, 2026)" | "22 – (Sat )24 Oct" | "22 Oct"
+  var DATE_RE=new RegExp('(?:\\b('+WD+')(, | · | ))?\\b('+MONL+' \\d{1,2}(?:, \\d{4})?|'+MON+' \\d{1,2}(?:, \\d{4})?|\\d{1,2} – (?:'+WD+' )?\\d{1,2} '+MON+'|\\d{1,2} '+MON+'(?!\\.?\\d))\\b', 'g');
   function shiftText(s){ if (!SHIFT || !s) return s;
-    return s.replace(DATE_RE, function(all, lm, ld, _ly, ly, sm, sd, _sy, sy, dd, dm){
-      var t;
-      if (lm){ var m1=ML.indexOf(lm); t=moved(ly?+ly:yearOf(m1), m1, +ld); return ML[t.getMonth()]+' '+t.getDate()+(ly?', '+t.getFullYear():''); }
-      if (sm){ var m2=MS.indexOf(sm); t=moved(sy?+sy:yearOf(m2), m2, +sd); return MS[t.getMonth()]+' '+t.getDate()+(sy?', '+t.getFullYear():''); }
-      var m3=MS.indexOf(dm); t=moved(yearOf(m3), m3, +dd); return t.getDate()+' '+MS[t.getMonth()]; }); }
+    return s.replace(DATE_RE, function(all, wd, sep, d){
+      var pre=function(t){ return wd ? wdLike(wd, t)+sep : ''; }, m, t, t2, mi;
+      if ((m=/^(\d{1,2}) – (?:(\w+) )?(\d{1,2}) (\w{3})$/.exec(d))){ mi=MS.indexOf(m[4]);
+        t=moved(yearOf(mi), mi, +m[1]); t2=moved(yearOf(mi), mi, +m[3]);
+        return pre(t)+t.getDate()+(t.getMonth()!==t2.getMonth() ? ' '+MS[t.getMonth()] : '')+' – '+(m[2] ? wdLike(m[2], t2)+' ' : '')+t2.getDate()+' '+MS[t2.getMonth()]; }
+      if ((m=/^([A-Z][a-z]+) (\d{1,2})(?:, (\d{4}))?$/.exec(d))){ var L=ML.indexOf(m[1])>=0; mi=L ? ML.indexOf(m[1]) : MS.indexOf(m[1]);
+        t=moved(m[3] ? +m[3] : yearOf(mi), mi, +m[2]); return pre(t)+(L ? ML : MS)[t.getMonth()]+' '+t.getDate()+(m[3] ? ', '+t.getFullYear() : ''); }
+      m=/^(\d{1,2}) (\w{3})$/.exec(d); mi=MS.indexOf(m[2]); t=moved(yearOf(mi), mi, +m[1]); return pre(t)+t.getDate()+' '+MS[t.getMonth()]; }); }
+  // "due Fri" style lines: the same distance from today as in the story, named for the real day
+  function shiftDue(s){ if (!SHIFT || !s) return s;
+    return s.replace(/\b([Dd]ue) (Sun|Mon|Tue|Wed|Thu|Fri|Sat)\b/g, function(all, w, d){
+      return w+' '+DS[addD(TODAY, (DS.indexOf(d)-AUTH_TODAY.getDay()+7)%7).getDay()]; }); }
   function shiftDom(root){ if (!SHIFT || !root) return;
     var w=document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null), n, list=[];
     while ((n=w.nextNode())) list.push(n);
-    list.forEach(function(t){ var p=t.parentNode && t.parentNode.nodeName; if (p==='SCRIPT'||p==='STYLE') return; var v=shiftText(t.nodeValue); if (v!==t.nodeValue) t.nodeValue=v; }); }
+    list.forEach(function(t){ var p=t.parentNode && t.parentNode.nodeName; if (p==='SCRIPT'||p==='STYLE') return; var v=shiftDue(shiftText(t.nodeValue)); if (v!==t.nodeValue) t.nodeValue=v; }); }
 
   // ---- merge fields (with fallbacks, length-clamped) ----
   var first   = clamp(cap(g('name')), 18);
@@ -126,21 +140,28 @@
   // dates: one pass over every text in the app and its <template>s, then the places a date is split across elements
   (function(){ if (!SHIFT) return;
     shiftDom(tapp); $$('template', tapp).forEach(function(t){ shiftDom(t.content); });
-    // timeline columns: <span class="dom">21<small>Oct</small></span>
+    // rollout timeline columns: <span class="dow">Wed</span><span class="dom">21<small>Oct</small></span>
     $$('.dom', tapp).forEach(function(el){ var sm=el.querySelector('small'), tn=el.firstChild; if (!sm || !tn || tn.nodeType!==3) return;
       var m=MS.indexOf(sm.textContent.trim()), d=parseInt(tn.nodeValue,10); if (m<0 || !d) return;
-      var t=moved(yearOf(m), m, d); tn.nodeValue=String(t.getDate()); sm.textContent=MS[t.getMonth()]; });
-    // schedule week header: the day number follows its (already shifted) long date
-    $$('.d2d-cal-wk .ch', tapp).forEach(function(b){ var vh=b.querySelector('.d2d-cal-vh'), num=b.querySelector('b');
-      var m=vh && /([A-Z][a-z]+) (\d{1,2})$/.exec(vh.textContent.trim()); if (m && num) num.textContent=m[2]; });
+      var t=moved(yearOf(m), m, d); tn.nodeValue=String(t.getDate()); sm.textContent=MS[t.getMonth()];
+      var dw=el.parentNode && el.parentNode.querySelector('.dow'); if (dw) dw.textContent=wdLike(dw.textContent.trim(), t); });
+    // schedule week header: the 7 days from WK0
+    $$('.d2d-cal-wk .ch', tapp).forEach(function(b, i){ var t=addD(WK0, i), wd=b.querySelector('span[aria-hidden]'), num=b.querySelector('b'), vh=b.querySelector('.d2d-cal-vh');
+      if (wd) wd.textContent=DS[t.getDay()]; if (num) num.textContent=String(t.getDate()); if (vh) vh.textContent=DL[t.getDay()]+', '+ML[t.getMonth()]+' '+t.getDate(); });
+    // Day to day "on your plate" week strip: day letters for the same 7 days
+    $$('.d2d-week-letters', tapp).forEach(function(box){ $$('span', box).forEach(function(s, i){ s.textContent=DS[addD(WK0, i).getDay()][0]; }); });
+    // budget's release-day tile: <b>22</b><small>Sun</small>
+    $$('.bp-up-i.is-release .bp-day', tapp).forEach(function(el){ var b=el.querySelector('b'), s=el.querySelector('small');
+      if (b) b.textContent=String(RELEASE.getDate()); if (s) s.textContent=DS[RELEASE.getDay()]; });
     // post composer day strip starts on "today"
-    $$('.cp2 .days .d .n', tapp).forEach(function(n, i){ n.textContent=String(addD(TODAY, i).getDate()); });
-    // schedule mini month: rebuild for the shifted month (today ringed, its week marked)
+    $$('.cp2 .days .d', tapp).forEach(function(d, i){ var t=addD(TODAY, i), n=d.querySelector('.n'), w=d.querySelector('.w');
+      if (n) n.textContent=String(t.getDate()); if (w) w.textContent=DS[t.getDay()].toUpperCase(); });
+    // schedule mini month: rebuild for today's month (today ringed, the shown week marked)
     $$('.d2d-cal-mm', tapp).forEach(function(mm){ var proto=mm.querySelector('button'); if (!proto) return;
-      $$('button', mm).forEach(function(b){ b.parentNode.removeChild(b); });
-      var first=new Date(TODAY.getFullYear(), TODAY.getMonth(), 1), start=addD(first, -((first.getDay()+6)%7)), wk0=addD(TODAY, -((TODAY.getDay()+6)%7));
+      $$('button', mm).forEach(function(b){ mm.removeChild(b); });
+      var first=new Date(TODAY.getFullYear(), TODAY.getMonth(), 1), start=addD(first, -((first.getDay()+6)%7));
       for (var k=0;k<42;k++){ var d=addD(start,k), b=proto.cloneNode(false), cls=[];
-        if (d.getMonth()!==TODAY.getMonth()) cls.push('o'); if (d>=wk0 && d<addD(wk0,7)) cls.push('w'); if (+d===+TODAY) cls.push('t');
+        if (d.getMonth()!==TODAY.getMonth()) cls.push('o'); if (d>=WK0 && d<addD(WK0,7)) cls.push('w'); if (+d===+TODAY) cls.push('t');
         b.className=cls.join(' '); b.setAttribute('aria-pressed', +d===+TODAY ? 'true' : 'false'); b.innerHTML='<b>'+d.getDate()+'</b>'; mm.appendChild(b); }
       var hb=mm.parentNode.querySelector('.d2d-cal-mmh b'); if (hb) hb.innerHTML=ML[TODAY.getMonth()]+' <span class="ser">'+TODAY.getFullYear()+'</span>'; });
     // release wizard date picker: the release month, release day picked
@@ -162,6 +183,20 @@
   (function(){
     var ROLE = { label:'Label', sublabel:'Label', management:'Management', agency:'Agency', distributor:'Distributor', artist:'Artist' };
     var rt=$('hmRmType'); if (rt) rt.textContent = ROLE[seg] || 'Label';
+    // the org card lists what this kind of company runs: sub-labels, artists or labels
+    (function(){ var box=$q('.hn-rm-subs', sc('roster')), st=$q('.hn-rm-stats span', sc('roster')); if (!box) return;
+      var LABELS=[['Thistlewood Records','5 releases'],['Brindle Hall Records','2 releases'],['Paperlight Recordings','1 release']];
+      var ARTISTS=segc.list.slice(0,3).map(function(it, i){ return [it[0], ['3 releases','2 releases','4 releases'][i]]; });
+      var ORG = { label:[LABELS,'Add a sub-label','8 teams'], distributor:[LABELS,'Add a label','14 labels'],
+                  sublabel:[ARTISTS,'Add an artist','6 artists'], management:[ARTISTS,'Add an artist','8 artists'],
+                  agency:[ARTISTS,'Add an artist','6 artists'] }[seg];
+      if (!ORG) return;
+      var add=box.querySelector('.hn-rm-addsub'), rows=$$('button:not(.hn-rm-addsub)', box);
+      ORG[0].forEach(function(it, i){ var r=rows[i]; if (!r) return; var sp=r.querySelectorAll('span'), sm=r.querySelector('small');
+        if (sp[0]) sp[0].textContent=it[0].replace(/^The\s+/,'')[0].toUpperCase(); if (sp[1]) sp[1].textContent=it[0]; if (sm) sm.textContent=it[1]; });
+      if (add) add.lastChild.nodeValue=ORG[1];
+      if (st) st.textContent=ORG[2];
+    })();
     function days(w){ var m=/in\s+(\d+)\s*d/.exec(w||''); if (m) return +m[1]; if (/mo/.test(w||'')) return 30; return null; }
     function when(w){ var d=days(w); return d==null ? 'No release coming up' : d>=28 ? 'Out in a month' : 'Out in '+d+' days'; }
     segc.list.forEach(function(it, i){
@@ -175,7 +210,7 @@
     // "where you left off" follows the segment's first artist
     var d0=days((segc.list[0]||[])[2]); if (d0!=null){ var ld=$('hmLeadDays'), lo=$('hmLeadOut');
       var t=addD(TODAY, d0); if(ld) ld.textContent=d0;
-      if(lo) lo.textContent='Out '+['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][t.getDay()]+', '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][t.getMonth()]+' '+t.getDate(); }
+      if(lo) lo.textContent='Out '+DS[t.getDay()]+', '+MS[t.getMonth()]+' '+t.getDate(); }
   })();
 
   // Spotify-style search results, keyed off the artist's first name (deterministic, plausible)
