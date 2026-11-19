@@ -81,7 +81,10 @@ export default defineConfig({
         !page.includes("/home-classic") &&
         // Unlisted investor deck — noindex'd; a sitemap listing would
         // contradict that and advertise the URL.
-        !page.includes("/investors"),
+        !page.includes("/investors") &&
+        // Campaign pages reached from ads and CRM emails (/lp/*, /look) — noindex'd.
+        !page.includes("/lp/") &&
+        !/\/look\/?$/.test(page),
     }),
     sanity({
       projectId: "g1olb5am",
