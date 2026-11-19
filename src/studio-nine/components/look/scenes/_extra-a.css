@@ -1,0 +1,57 @@
+/* _extra-a.css: additions for roster / new-workspace / spotify search / start-release scenes (agent a).
+   Everything is scoped under .tapp; only covers states the real app sets with JS or demo-only elements. */
+
+/* Roster: the search input is replaced by a text span so the engine can fill it (input placeholder can't be set via textContent). */
+.tapp .uin .hm-search .hm-sq { font-size: 13px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Header bell: tapp.css flattens the app's cascade layers, so the bell's "all: revert-layer" reset wipes its
+   real circle styling. Restore the look the live app renders (same as the neighbouring .circ buttons). */
+.tapp .uin .top .next-notification-trigger { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--glass-line); background: var(--glass); backdrop-filter: blur(12px); box-shadow: var(--sh-card); color: var(--ink); cursor: pointer; }
+.tapp .uin .top .next-notification-trigger svg { width: 16px; height: 16px; }
+
+/* Create-workspace overlays (ov-newws, ov-spotify): the engine toggles .on on the .tov root, so mirror the
+   app's .scrim.on / .dlg.on open states, and blur the page behind like the app's .page.dim does. */
+.tapp .uin .tov.on > .scrim { opacity: 1; pointer-events: auto; }
+.tapp .uin .tov.on > .dlg { transform: translate(-50%, -50%); opacity: 1; pointer-events: auto; transition-delay: 0s; visibility: visible; }
+.tapp .uin:has(> .tov.on[data-ov="newws"]) .page, .tapp .uin:has(> .tov.on[data-ov="spotify"]) .page { filter: blur(8px) saturate(0.85); transform: scale(0.995); }
+
+/* ov-spotify: the search field is a typed span (no real input focus in the demo). .is-focus mirrors :focus-within. */
+.tapp .uin #dlg.crx .cx-search.is-focus { border-color: rgba(217, 250, 135, 0.5); box-shadow: rgba(217, 250, 135, 0.07) 0px 0px 0px 4px; }
+.tapp .uin #dlg.crx .sp-q { display: flex; align-items: center; white-space: pre; }
+.tapp .uin #dlg.crx #spTxt:empty::before { content: "Search Spotify for an artist…"; color: rgb(107, 105, 98); }
+.tapp .uin #dlg.crx .sp-caret { display: inline-block; width: 1.5px; height: 18px; margin-left: 1px; background: var(--lime); animation: tapp-a-blink 1s steps(1) infinite; }
+.tapp .uin #dlg.crx #spTxt:empty + .sp-caret { order: -1; margin: 0 1px 0 0; }
+@keyframes tapp-a-blink { 50% { opacity: 0; } }
+/* Lime "ADD" on the artist not yet in the roster; .is-hot = the app's row :hover look for cursor beats. */
+.tapp .uin #dlg.crx .cx-open.sp-add { color: var(--lime); }
+.tapp .uin #dlg.crx .cx-row.is-hot { background: var(--cx-2); border-color: rgba(255, 255, 255, 0.08); transform: translate(2px); }
+.tapp .uin #dlg.crx .cx-row.is-hot .cx-open { color: var(--lime); }
+/* Loading line while "searching": app spinner (.tm-spin) + mono label in the dialog's label colour. */
+.tapp .uin #dlg.crx .sp-load { display: flex; align-items: center; gap: 10px; padding: 14px 12px; font: 400 10.5px var(--mono); letter-spacing: 0.03em; color: var(--cx-lab); }
+.tapp .uin #dlg.crx .sp-load[hidden] { display: none !important; }
+/* Result avatars are crops of wide /studio-nine/img/set photos: zoom onto the face (--z, --bp set inline per row). */
+.tapp .uin #dlg.crx .cx-av.img.sp-crop { background-size: var(--z) auto !important; background-position: var(--bp) !important; }
+
+/* startrel: release title is a typed span inside the real .fx-in box (no live input in the demo). */
+.tapp .uin .dlg.fx .wz-title { display: flex; align-items: center; white-space: pre; }
+.tapp .uin .dlg.fx .wz-title #wizTitle:empty::before { content: "e.g. Midnight"; color: var(--d-ph); }
+.tapp .uin .dlg.fx .wz-title.is-focus { border-color: rgba(255, 255, 255, 0.35); background: var(--d-s3); box-shadow: rgba(217, 250, 135, 0.22) 0px 0px 0px 3px; }
+.tapp .uin .dlg.fx .wz-caret { display: none; width: 1.5px; height: 17px; margin-left: 1px; background: var(--lime); animation: tapp-a-blink 1s steps(1) infinite; }
+.tapp .uin .dlg.fx .wz-title.is-focus .wz-caret { display: inline-block; }
+.tapp .uin .dlg.fx .wz-title.is-focus #wizTitle:empty + .wz-caret { order: -1; margin: 0 1px 0 0; }
+/* startrel: demo-only date picker (the app's picker isn't in the captures). Styled like the app's .pop card,
+   opening above the date field so it stays inside the 900px frame. */
+.tapp .uin .dlg.rh-inline .rh-start .wz-dwrap { position: relative; }
+/* .db is overflow:auto in the app; let the open picker escape it (it still sits inside the card). */
+.tapp .uin .dlg.rh-inline .rh-start:has(.wz-cal:not([hidden])) { overflow: visible; }
+.tapp .uin .wz-cal { position: absolute; right: 0; bottom: calc(100% + 8px); z-index: 5; width: 288px; padding: 14px 14px 12px; background: var(--card); color: var(--ink); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--sh-float); animation: rise .2s var(--ease); }
+.tapp .uin .wz-cal[hidden] { display: none !important; }
+.tapp .uin .wz-cal-h { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.tapp .uin .wz-cal-h b { font-size: 13.5px; font-weight: 600; letter-spacing: -0.01em; }
+.tapp .uin .wz-cal-nav { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--line); background: transparent; color: var(--ink-2); display: grid; place-items: center; }
+.tapp .uin .wz-cal-nav .ic { width: 14px; height: 14px; }
+.tapp .uin .wz-cal-dow, .tapp .uin .wz-cal-g { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center; }
+.tapp .uin .wz-cal-dow span { font: 500 9.5px var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); padding: 4px 0 6px; }
+.tapp .uin .wz-cal-g button { display: grid; place-items: center; padding: 0; text-align: center; height: 34px; border-radius: 10px; border: 0; background: transparent; color: var(--ink); font: 400 13px "Inter UIN", system-ui, sans-serif; cursor: pointer; transition: background .15s, color .15s; }
+.tapp .uin .wz-cal-g button:hover, .tapp .uin .wz-cal-g button.is-hot { background: var(--bg-3); }
+.tapp .uin .wz-cal-g button.on { background: var(--ink); color: var(--bg); font-weight: 600; }

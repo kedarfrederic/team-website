@@ -1,0 +1,32 @@
+---
+// The in-app half of the /look demo: a 1440x900 recreation of the real Team app, built from the
+// app's own markup + CSS (captured from pilot-staging) and scaled to fit the demo frame.
+// It renders inside a Shadow DOM so the host site's CSS (.wrap, .top, .btn, h1…) can't leak in and
+// the app's CSS can't leak out — drop this folder into any site build and it looks the same.
+// Self-contained: scenes/*.html (raw markup), tapp.css (scoped app CSS), look-engine.css, _extra-*.css.
+// Only the @font-face aliases (tapp-fonts.css) are global, because fonts must be declared on the document.
+import './tapp-fonts.css';
+import appCss from './tapp.css?raw';
+import engineCss from './look-engine.css?raw';
+const extraCss = import.meta.glob('./scenes/_extra-*.css', { query: '?raw', import: 'default', eager: true }) as Record<string, string>;
+const files = import.meta.glob('./scenes/*.html', { query: '?raw', import: 'default', eager: true }) as Record<string, string>;
+const isOverlay = (p: string) => /\/ov-[^/]+\.html$/.test(p);
+const isDraft = (p: string) => /\/_[^/]+\.html$/.test(p);
+const sceneHtml = Object.keys(files).filter(p => !isOverlay(p) && !isDraft(p)).sort().map(p => files[p]).join('\n');
+// overlays stack in this order (later = on top)
+const OV_ORDER = ['dock', 'artistmenu', 'stacks', 'panel', 'newws', 'spotify', 'addtask', 'newpost', 'synccal', 'tourshow', 'toast'];
+const ovRank = (p: string) => { const n = p.replace(/^.*\/ov-|\.html$/g, ''); const i = OV_ORDER.indexOf(n); return i < 0 ? 50 : i; };
+const overlayHtml = Object.keys(files).filter(isOverlay).sort((a, b) => ovRank(a) - ovRank(b)).map(p => files[p]).join('\n');
+const css = [appCss, ...Object.keys(extraCss).sort().map(k => extraCss[k]), engineCss].join('\n');
+---
+<div class="tapp-host" id="tappHost"></div>
+<template id="tappTpl"><style set:html={css}></style><div class="tapp" id="tapp"><div class="uin"><div class="wash"></div><div class="page" id="tpage"><Fragment set:html={sceneHtml} /></div><Fragment set:html={overlayHtml} /></div></div></template>
+<script is:inline>
+  // mount into a shadow root before the engine runs (the engine reads window.__tapp)
+  (function(){ var host=document.getElementById('tappHost'), tpl=document.getElementById('tappTpl');
+    var root=host.attachShadow ? host.attachShadow({ mode:'open' }) : host;
+    root.appendChild(tpl.content.cloneNode(true)); window.__tapp = root.getElementById ? root.getElementById('tapp') : root.querySelector('#tapp'); })();
+</script>
+<style>
+  .tapp-host{position:absolute;inset:0;overflow:hidden}
+</style>

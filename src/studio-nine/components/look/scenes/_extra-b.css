@@ -1,0 +1,128 @@
+/* _extra-b.css: agent b additions for rollout.html, ov-addtask.html, ov-stacks.html, ov-newpost.html.
+   Everything is scoped under .tapp. Rules marked "real" are copied verbatim from the app's full CSS
+   (tree-shaken out of tapp.css because the captures never rendered that state). */
+
+/* --- rollout: real stacked-release reference card (.ovc) and post-card image thumb (.tc-a.img) --- */
+.tapp .uin #v-timeline .stack-ov .skc i, .tapp .uin #v-timeline .ovc .ob i, .tapp .uin #v-timeline .col .dpl.ov i { display: inline-grid; place-items: center; min-width: 15px; height: 15px; padding: 0px 4px; border-radius: 99px; background: var(--ink-3); color: var(--bg); font-style: normal; font-family: var(--mono); font-size: 9px; font-weight: 600; letter-spacing: 0px; line-height: 1; }
+.tapp .uin #v-timeline .tc, .tapp .uin #v-timeline .msc, .tapp .uin #v-timeline .ovc, .tapp .uin #v-timeline .tourc { grid-template-columns: minmax(0px, 1fr); }
+.tapp .uin #v-timeline .tc > *, .tapp .uin #v-timeline .msc > *, .tapp .uin #v-timeline .ovc > *, .tapp .uin #v-timeline .tourc > * { min-width: 0px; }
+.tapp .uin #v-timeline .tc-a.img { background-size: cover !important; background-position: center 30% !important; }
+.tapp .uin #v-timeline .ovc { pointer-events: none; border-radius: 16px; padding: 11px 12px; display: grid; gap: 7px; background: color-mix(in srgb,var(--ink) 3%,var(--card)); border: 1px dashed var(--line-2); color: var(--ink-2); }
+.tapp .uin #v-timeline .ovc .or { display: flex; justify-content: space-between; align-items: center; gap: 6px; min-width: 0px; }
+.tapp .uin #v-timeline .ovc .ob { display: inline-flex; align-items: center; gap: 5px; min-width: 0px; font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 500; padding: 2px 8px 2px 2px; border-radius: 999px; background: color-mix(in srgb,var(--ink) 6%,transparent); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tapp .uin #v-timeline .ovc .ob i { flex: 0 0 auto; }
+.tapp .uin #v-timeline .ovc .ref { font-family: var(--mono); font-size: 8.5px; letter-spacing: 0.12em; font-weight: 600; padding: 3px 7px; border-radius: 999px; box-shadow: inset 0 0 0 1px var(--line-2); color: var(--ink-3); flex: 0 0 auto; }
+.tapp .uin #v-timeline .ovc b { font-size: 13.5px; font-weight: 500; line-height: 1.28; color: var(--ink); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.tapp .uin #v-timeline .ovc .oc { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.05em; width: fit-content; max-width: 100%; padding: 3px 8px; border-radius: 999px; background: color-mix(in srgb,var(--ink) 6%,transparent); color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* rollout: Stacks button open state (real rule keys on #stacksT; our hook id is #rollStacks) */
+.tapp .uin #v-timeline #rollStacks[aria-expanded="true"], .tapp .uin #v-timeline #rollStacks.on { border-color: var(--ctl); color: var(--ink); }
+.tapp .uin #v-timeline #rollStacks .n:empty { display: none; }
+/* rollout: assignee name next to the avatar on the new-task card (demo-only) */
+.tapp .uin #v-timeline .tc .ft .tc-who { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-2); }
+
+/* --- ov-stacks: the engine toggles .on on the overlay root; the real popover opens with .tl-pop.on --- */
+.tapp .uin .tov[data-ov="stacks"].on > .tl-pop { display: flex; flex-direction: column; gap: 0px; }
+/* checked row (class instead of the live :checked the app uses) */
+.tapp .uin .tl-pop .sk-row.is-on input.ck { background: var(--ink); border-color: var(--ink); }
+.tapp .uin .tl-pop .sk-row.is-on { background: var(--bg-2); }
+/* checkbox tick: the captured rule lost its border shorthand (var() expansion), so restore it for our overlays */
+.tapp .uin :is(.tl-pop .sk-row.is-on input.ck, .tl-pop input[type="checkbox"].ck:checked, #panel .cp-acct.is-on input.ck, #panel input[type="checkbox"].ck:checked)::after { content: ""; width: 9px; height: 5px; border-left: 2px solid var(--bg); border-bottom: 2px solid var(--bg); border-top: 0; border-right: 0; transform: rotate(-45deg) translate(1px, -1px); }
+
+/* --- ov-addtask / ov-newpost: the engine toggles .on on the overlay root; mirror the app's open state
+   (#scrim.on, #panel.on, and .page.dim on the page behind) --- */
+.tapp .uin .tov:is([data-ov="addtask"], [data-ov="newpost"]).on > .scrim { opacity: 1; pointer-events: auto; }
+.tapp .uin .tov:is([data-ov="addtask"], [data-ov="newpost"]).on > .panel { transition-delay: 0s; visibility: visible; transform: none; opacity: 1; pointer-events: auto; }
+.tapp .uin:has(.tov:is([data-ov="addtask"], [data-ov="newpost"]).on) .page { filter: blur(8px) saturate(0.85); transform: scale(0.995); }
+/* menus/popovers inside our overlays obey [hidden] even though the real CSS gives them display */
+.tapp .uin .tov :is(.csel-menu, .dp, .menu)[hidden] { display: none !important; }
+
+/* add-task: Task Name as a typed span in an input-styled box (an <input> can't be typed via textContent).
+   Matches the real focused input: .field input + #panel .ct-form input + :focus ring. */
+.tapp .uin #panel .ct-form .ct-faux { display: flex; align-items: center; width: 100%; min-height: 46px; padding: 11px 14px; border: 1px solid var(--line-2); border-radius: 14px; background: var(--card); font-size: 13.5px; color: var(--ink); box-sizing: border-box; }
+.tapp .uin #panel .ct-form .ct-faux.is-focus { border-color: var(--ink); box-shadow: 0 0 0 4px color-mix(in srgb,var(--ink) 8%,transparent); }
+.tapp .uin #panel .ct-form .ct-faux #taskName:empty::before { content: "e.g., Create TikTok content for release"; color: var(--ink-3); opacity: .8; }
+/* add-task: enabled Create Task (the app just drops [disabled]) */
+.tapp .uin #panel .ct-f .btn.black#taskCreate.is-ready { opacity: 1; }
+/* real (tree-shaken) rules: assignee avatar chip, .csel-menu dropdown and .dp date picker; position:fixed coords are 1440x900 */
+.tapp .uin .tc-av { border-radius: 50%; display: grid; place-items: center; font-weight: 600; flex: 0 0 auto; font-style: normal; line-height: 1; }
+.tapp .uin .tc-av.tc-sm { width: 22px; height: 22px; font-size: 8.5px; }
+.tapp .uin .csel-menu { position: fixed; z-index: 80; background: var(--glass); backdrop-filter: blur(26px) saturate(150%); border: 1px solid var(--glass-line); border-radius: 16px; overscroll-behavior: contain; box-shadow: var(--sh-float); padding: 6px; min-width: 220px; max-width: 340px; max-height: 320px; overflow: auto; display: grid; gap: 2px; animation: rise .18s var(--ease); }
+.tapp .uin .csel-menu button { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 9px; font-size: 13.5px; width: 100%; min-height: 36px; }
+.tapp .uin .csel-menu button:hover { background: var(--bg-2); }
+.tapp .uin .csel-menu button[aria-selected="true"] { background: var(--ink); color: var(--bg); }
+.tapp .uin .csel-menu button small { color: var(--ink-3); font-size: 12px; }
+.tapp .uin .csel-menu button[aria-selected="true"] small { color: rgba(255, 255, 255, 0.6); }
+.tapp .uin .csel-menu .grp { font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); padding: 8px 10px 2px; }
+.tapp .uin .csel-menu .sw { width: 12px; height: 12px; border-radius: 4px; flex: 0 0 auto; margin-right: 8px; }
+.tapp .uin .dp { position: fixed; z-index: 80; background: var(--card); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--sh-float); padding: 12px; width: 272px; animation: rise .18s var(--ease); }
+.tapp .uin .dp .dph { display: flex; justify-content: space-between; align-items: center; font-size: 13.5px; font-weight: 500; padding: 0px 4px 8px; }
+.tapp .uin .dp .dph button { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; }
+.tapp .uin .dp .dph button:hover { background: var(--bg-2); }
+.tapp .uin .dp .dpg { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+.tapp .uin .dp .dpg span { font-size: 10.5px; color: var(--ink-3); text-align: center; padding: 4px 0px; letter-spacing: 0.04em; }
+.tapp .uin .dp .dpg button { height: 32px; border-radius: 9px; font-size: 13px; text-align: center; display: grid; place-items: center; }
+.tapp .uin .dp .dpg button:hover { background: var(--bg-2); }
+.tapp .uin .dp .dpg button.td { box-shadow: inset 0 0 0 1.5px var(--ink); }
+.tapp .uin .dp .dpg button.sel { background: var(--ink); color: var(--bg); }
+.tapp .uin .dp .dpg button.rel { color: var(--ember); font-weight: 600; }
+.tapp .uin .dp .dpf { display: flex; justify-content: space-between; padding: 8px 4px 0px; font-size: 12px; color: var(--ink-3); }
+.tapp .uin .dp .dpf button { text-decoration: underline; text-underline-offset: 3px; color: var(--ink-2); }
+.tapp .uin .dp .dpg button.out { color: var(--ink-4); }
+
+/* --- ov-newpost: real (tree-shaken) rules for the filled media row and the phone preview --- */
+.tapp .uin #panel .cp-file { display: flex; align-items: center; gap: 14px; padding: 12px 14px; }
+.tapp .uin #panel .cp-thumb { width: 48px; height: 86px; border-radius: 10px; background: rgb(28, 26, 22); overflow: hidden; flex: 0 0 auto; display: grid; place-items: center; color: rgba(255, 255, 255, 0.6); }
+.tapp .uin #panel .cp-thumb.wide { width: 86px; height: 48px; }
+.tapp .uin #panel .cp-thumb video, .tapp .uin #panel .cp-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.tapp .uin #panel .cp-thumb svg { width: 18px; height: 18px; }
+.tapp .uin #panel .cp-fi { display: grid; gap: 2px; min-width: 0px; flex: 1 1 auto; }
+.tapp .uin #panel .cp-fi b { font-size: 13.5px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tapp .uin #panel .cp-fi small { font-family: var(--mono); font-size: 11px; color: var(--ink-3); }
+.tapp .uin #panel .cp-file .btn { border-radius: 12px; min-height: 32px; padding: 0px 14px; font-size: 12.5px; }
+.tapp .uin #panel .cp-side { position: sticky; top: 0px; align-self: start; }
+.tapp .uin #panel .cp-side-in { display: grid; gap: 14px; padding: 18px; border-radius: 22px; background: color-mix(in srgb,var(--ink) 4%,var(--bg)); }
+.tapp .uin #panel .cp-side .cp-prev { gap: 16px; padding-bottom: 10px; }
+.tapp .uin #panel .cp-side .cp-pv { width: 220px; }
+.tapp .uin #panel .cp-side .cp-ph { width: 220px; height: 440px; border-radius: 32px; padding: 7px; }
+.tapp .uin #panel .cp-side .cp-scr { border-radius: 26px; font-size: 10px; }
+.tapp .uin #panel .cp-side .cp-cap b { font-size: 10.5px; }
+.tapp .uin #panel .cp-side .cp-acts i, .tapp .uin #panel .cp-side .cp-top i.av { width: 19px; height: 19px; }
+.tapp .uin #panel .cp-side .cp-sq { top: 40px; }
+.tapp .uin :is(#panel, .prc) .cp-prev { display: flex; gap: 14px; overflow-x: auto; padding: 2px 2px 8px; scroll-snap-type: x mandatory; }
+.tapp .uin :is(#panel, .prc) .cp-pv { flex: 0 0 auto; width: 156px; display: grid; gap: 8px; scroll-snap-align: start; }
+.tapp .uin :is(#panel, .prc) .cp-ph { width: 156px; height: 300px; border-radius: 24px; background: rgb(14, 13, 11); padding: 5px; box-sizing: border-box; box-shadow: rgba(14, 13, 11, 0.45) 0px 10px 24px -12px; }
+.tapp .uin :is(#panel, .prc) .cp-scr { position: relative; width: 100%; height: 100%; border-radius: 19px; overflow: hidden; background: rgb(21, 19, 15); color: rgb(243, 240, 232); font-size: 8.5px; line-height: 1.3; }
+.tapp .uin :is(#panel, .prc) .cp-scr > video, .tapp .uin :is(#panel, .prc) .cp-scr > img { position: absolute; inset: 0px; width: 100%; height: 100%; object-fit: contain; background: rgb(0, 0, 0); }
+.tapp .uin :is(#panel, .prc) .cp-sh { position: absolute; left: 0px; right: 0px; bottom: 0px; height: 46%; background: linear-gradient(to top, rgba(14, 13, 11, 0.8), rgba(14, 13, 11, 0)); }
+.tapp .uin :is(#panel, .prc) .cp-acts { position: absolute; right: 7px; bottom: 46px; display: grid; gap: 9px; justify-items: center; }
+.tapp .uin :is(#panel, .prc) .cp-acts i, .tapp .uin :is(#panel, .prc) .cp-top i.av { width: 15px; height: 15px; border-radius: 50%; border: 1.4px solid rgba(243, 240, 232, 0.85); display: block; }
+.tapp .uin :is(#panel, .prc) .cp-acts i.av, .tapp .uin :is(#panel, .prc) .cp-top i.av { background: rgb(169, 163, 148); border-color: rgb(243, 240, 232); }
+.tapp .uin :is(#panel, .prc) .cp-cap { position: absolute; left: 8px; right: 30px; bottom: 12px; display: grid; gap: 2px; }
+.tapp .uin :is(#panel, .prc) .cp-cap b { font-weight: 600; font-size: 9px; }
+.tapp .uin :is(#panel, .prc) .cp-cap p { margin: 0px; opacity: 0.92; overflow-wrap: anywhere; }
+.tapp .uin :is(#panel, .prc) .cp-bar { position: absolute; left: 7px; right: 7px; top: 7px; height: 2px; border-radius: 1px; background: rgba(243, 240, 232, 0.35); }
+.tapp .uin :is(#panel, .prc) .cp-bar i { display: block; width: 45%; height: 100%; background: rgb(243, 240, 232); border-radius: 1px; }
+.tapp .uin :is(#panel, .prc) .cp-top { position: absolute; left: 8px; right: 8px; top: 14px; display: flex; align-items: center; gap: 5px; font-size: 9px; }
+.tapp .uin :is(#panel, .prc) .cp-pl { display: grid; gap: 3px; justify-items: start; }
+.tapp .uin :is(#panel, .prc) .cp-pl b { font-size: 12.5px; font-weight: 500; }
+.tapp .uin :is(#panel, .prc) .cp-pl small { font-size: 11px; line-height: 1.35; color: var(--ink-3); }
+.tapp .uin :is(#panel, .prc) .cp-v { font: 600 9px/1 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 7px; border-radius: 999px; }
+.tapp .uin :is(#panel, .prc) .cp-v.ready { background: var(--ink); color: var(--bg); }
+
+/* --- ov-newpost: demo states the app sets with JS --- */
+/* media: empty dropzone vs filled file row */
+.tapp .uin #panel #postMedia .cp-filled { display: none; }
+.tapp .uin #panel #postMedia.is-filled .cp-filled { display: block; }
+.tapp .uin #panel #postMedia.is-filled .cp-empty { display: none; }
+/* channels: checked look via class (app uses live :checked); tick ::after is restored further up */
+.tapp .uin #panel .cp-acct.is-on input.ck { background: var(--ink); border-color: var(--ink); }
+/* caption: typed span in a textarea-styled box (matches #panel .ct-form .field textarea) */
+.tapp .uin #panel .ct-form .cp-capbox { display: block; width: 100%; min-height: 86px; padding: 11px 14px; border: 1px solid var(--line-2); border-radius: 14px; background: var(--card); font-size: 13.5px; line-height: 1.5; color: var(--ink); box-sizing: border-box; white-space: pre-wrap; }
+.tapp .uin #panel .ct-form .cp-capbox #postCaption:empty::before { content: "Write the caption..."; color: var(--ink-3); opacity: .8; }
+/* preview: ghost phone vs filled phone */
+.tapp .uin #panel #postPreview > .cp-filled { display: none; }
+.tapp .uin #panel #postPreview.is-filled > .cp-filled { display: flex; justify-content: center; }
+.tapp .uin #panel #postPreview.is-filled > .cp-pv-empty { display: none; }
+/* Schedule enabled (the app drops [disabled]) */
+.tapp .uin #panel .ct-f .btn.black#postSchedule.is-ready { opacity: 1; }
+.tapp .uin #panel .cp-media, .tapp .uin #panel .cp-where, .tapp .uin #panel .cp-opts { border: 1px solid var(--line-2); border-radius: 14px; background: var(--card); }
